@@ -1,0 +1,35 @@
+{
+  "manifest_version": 2,
+  "name": "Firefox Pocket by PAD",
+  "version": "0.1",
+
+  "description": "Une alternative à l'ancienne extension pocket qui n'existe plus",
+  "homepage_url": "https://github.com/mdn/webextensions-examples/tree/master/beastify",
+  "icons": {
+    "48": "icons/pocket-48.png"
+  },
+
+  "applications": {
+    "gecko": {
+      "id": "firefox-pocket@mozilla.org",
+      "strict_min_version": "45.0"
+    }
+  },
+
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "webRequest",
+    "<all_urls>"
+  ],
+
+  "background": {
+    "scripts": [ "src/background.js" ]
+  },
+
+  "browser_action": {
+    "default_icon": "icons/pocket-32.png",
+    "default_popup": "src/popup/list.html"
+  }
+}
