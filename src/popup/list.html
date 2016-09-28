@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="list.css"/>
+  <script src="../libs/vue.js"></script>
 </head>
 
 <body>
@@ -12,8 +13,13 @@
 
 
   <section class='authenticated'>
-    Interface affichée une fois authentifié/loggé
+    <button class='add-current'>Add current page</button>
+    <button class='retrieve-items'>Retrieve items</button>
+    <button class='reset-list'>Reset list (debug)</button>
+    <br/>
+    <ul class='list-component'> </ul>
   </section>
+
 
   <script src="../background.js"></script>
   <script src="list.js"></script>

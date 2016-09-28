@@ -1,5 +1,93 @@
 html, body {
   width: 350px;
   height: 400px;
+  font-size: 65%;
 }
 
+section {
+  width: 95%;
+}
+
+.list-component {
+  width: 100%;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.list-component .item {
+  position: relative;
+  padding: 3px 1px;
+  opacity: 0.7;
+}
+
+.list-component .item:hover {
+  opacity: 1;
+}
+
+.list-component .item span,
+.list-component .item .tick {
+  cursor: pointer;
+}
+
+/* TODO: Flexbox for span + tick sizing */
+.list-component .item span {
+  display: inline-block;
+  width: 95%;
+  margin-left: 28px;
+  height: 16px;
+  line-height: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-component .item .title {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.list-component .item .url {
+  /* Offset 4px higher */
+  position: relative;
+  top: -4px;
+
+  font-size: 0.6rem;
+  color: #999;
+}
+
+
+.hidden  { display: none; }
+
+.list-component .item .tick,
+.list-component .item .loader {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+}
+
+.list-component .item .tick {
+  color: white;
+  font-size: 1.1rem;
+  text-align: center;
+  background-color: #ccc;
+  border-radius: 20px;
+}
+
+.list-component .item .tick:hover {
+  background-color: #f15d6c;
+}
+
+.list-component .item .loader {
+  height: 12px;
+  width: 12px;
+  animation: rotate 0.8s infinite linear;
+  border: 4px solid #f15d6c;
+  border-right-color: transparent;
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  0%    { transform: rotate(0deg); }
+  100%  { transform: rotate(360deg); }
+}
