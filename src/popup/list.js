@@ -19,7 +19,7 @@ authenticationButton.addEventListener( 'click', function() {
 
 retrieveItemsButton.addEventListener( 'click', function() {
   // TODO Display a spinner during the request
-  chrome.runtime.sendMessage({ action: 'retrieve-items' });
+  chrome.runtime.sendMessage({ action: 'retrieve-items', force: true });
 });
 
 addCurrentPageButton.addEventListener( 'click', function() {
@@ -47,7 +47,7 @@ function setupUI() {
     });
 
     // Update the list of items just in case
-    chrome.runtime.sendMessage({ action: 'retrieve-items' });
+    chrome.runtime.sendMessage({ action: 'retrieve-items', force: false });
   }, function( error ) {
     document.querySelector( '.authentication' ).style.display = 'block';
     document.querySelector( '.authenticated'  ).style.display = 'none';

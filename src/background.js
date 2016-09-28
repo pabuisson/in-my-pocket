@@ -1,5 +1,4 @@
 
-
 // --- AUTHENTICATION ---
 // TODO: Avoid the loading of a given page (redirectIntermediate variable)
 
@@ -103,12 +102,20 @@ isAuthenticated = function() {
 // --- API ACCESS ---
 
 
-function retrieveItems() {
+function retrieveItems( force ) {
+  const intervalWithoutReload = 5*3600;
+  const currentTimestamp      = ( Date.now()/1000 | 0 );
+
   browser.storage.local.get([ 'items', 'last_retrieve' ], function( data ) {
-    if ( data.items && data.last_retrieve ) {
-      retrieveDiff();
-    } else {
+    console.log( "interval without reload:  " + intervalWithoutReload );
+    console.log( "interval since last sync: " + ( currentTimestamp - data.last_retrieve ));
+
+    if ( !data.items || !data.last_retrieve ) {
       retrieveFirst();
+    } else if( force || ( currentTimestamp - data.last_retrieve > intervalWithoutReload ) ) {
+      // If we already have sync, check if intervalWithoutReload is past, then we can reload
+      // If force == true, we always reload the items anyway
+      retrieveDiff();
     }
   });
 }
@@ -310,7 +317,7 @@ chrome.runtime.onMessage.addListener( function( data ) {
       break;
     case 'retrieve-items':
       console.log("switch:retrieve-items");
-      retrieveItems();
+      retrieveItems( data.force );
       break;
     case 'add-item':
       console.log('switch:add-item');
