@@ -3,20 +3,30 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="list.css"/>
-  <script src="../libs/vue.js"></script>
+  <link rel="stylesheet" href="../../font/fontello.css"/>
 </head>
 
 <body>
   <section class='authentication'>
-    <button>Authentication</button>
+    <button>Authenticate with Pocket</button>
   </section>
 
 
   <section class='authenticated'>
-    <button class='add-current'>Add current page</button>
-    <button class='retrieve-items'>Retrieve items</button>
-    <button class='reset-list'>Reset list (debug)</button>
-    <br/>
+    <header class='top-actions'>
+      <!-- TODO Add a popover to tell what the icon does -->
+      <div class='icon add-current'><i class='icon-plus-circled-thin'></i></div>
+      <!-- TODO Add a popover to tell what the icon does -->
+      <div class='icon retrieve-items'><i class='icon-ccw'></i></div>
+      <!--
+        <button class='reset-list'> Reset list</button>
+      -->
+
+      <h1 class='title'>FX Pocket α</h1>
+    </header>
+
+    <div class='main-loader'></div>
+
     <ul class='list-component'> </ul>
   </section>
 

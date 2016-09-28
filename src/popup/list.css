@@ -2,27 +2,44 @@ html, body {
   width: 350px;
   height: 400px;
   font-size: 65%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+  font-family: sans-serif;
+  background-color: #fafafa;
 }
 
 section {
-  width: 95%;
+  width: 100%;
+}
+
+.authentication {
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* TODO Use flexbox for this component and its content instead
+ *      of hard-coded heights */
+.authenticated {
+  height: 400px;
 }
 
 .list-component {
   width: 100%;
-  padding-left: 0;
+  height: 357px;
+  margin: 0;
+  padding: 0;
   list-style-type: none;
+  overflow-y: scroll;
 }
 
 .list-component .item {
+  margin: 0;
   position: relative;
-  padding: 3px 1px;
-  opacity: 0.7;
+  padding: 8px 1px 2px 1px;
+  border-bottom: 1px solid #eee;
 }
 
-.list-component .item:hover {
-  opacity: 1;
-}
 
 .list-component .item span,
 .list-component .item .tick {
@@ -32,8 +49,8 @@ section {
 /* TODO: Flexbox for span + tick sizing */
 .list-component .item span {
   display: inline-block;
-  width: 95%;
-  margin-left: 28px;
+  width: 90%;
+  margin-left: 36px;
   height: 16px;
   line-height: 12px;
   white-space: nowrap;
@@ -42,17 +59,22 @@ section {
 }
 
 .list-component .item .title {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: bold;
+  color: #666;
+}
+
+.list-component .item:hover .title {
+  /* color: #111; */
+  color: #50bcb6;
 }
 
 .list-component .item .url {
-  /* Offset 4px higher */
   position: relative;
   top: -4px;
 
   font-size: 0.6rem;
-  color: #999;
+  color: #aaa;
 }
 
 
@@ -61,6 +83,8 @@ section {
 .list-component .item .tick,
 .list-component .item .loader {
   position: absolute;
+  top: 14px;
+  left: 6px;
   width: 20px;
   height: 20px;
   line-height: 20px;
@@ -70,12 +94,18 @@ section {
   color: white;
   font-size: 1.1rem;
   text-align: center;
-  background-color: #ccc;
+  background-color: #bbb;
   border-radius: 20px;
+  opacity: 0.4;
+}
+
+.list-component .item:hover .tick {
+  opacity: 0.7;
 }
 
 .list-component .item .tick:hover {
-  background-color: #f15d6c;
+  background-color: #f13044;
+  opacity: 1;
 }
 
 .list-component .item .loader {
@@ -88,6 +118,70 @@ section {
 }
 
 @keyframes rotate {
-  0%    { transform: rotate(0deg); }
+  0%    { transform: rotate( 0deg); }
   100%  { transform: rotate(360deg); }
+}
+
+
+.top-actions {
+  height: 32px;
+  width: 100%;
+  padding: 4px 0;
+  color: #444;
+}
+
+.top-actions .title {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: normal;
+  margin-right: 20px;
+  margin-top: 6px;
+}
+
+.top-actions .icon {
+  display: inline-block;
+  padding: 3px;
+  cursor: pointer;
+  font-size: 2rem;
+}
+
+.top-actions .icon:first-child {
+  padding-left: 0px;
+}
+
+.top-actions .icon:hover {
+  color: #f13044;
+}
+
+
+/*
+ * Thanks to Che for this example: http://codepen.io/code_dependant/pen/ciGLA?editors=1100
+ */
+.main-loader {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background-color: #666;
+}
+
+.main-loader.loading {
+  background-color: transparent;
+}
+
+.main-loader.loading:after {
+  content: '';
+  position: absolute;
+  display: block;
+  height: 100%;
+  background-color: #50bcb6;
+  left: 0%;
+  right: 100%;
+
+  animation: loading 1.2s ease infinite;
+}
+
+@keyframes loading {
+  0%   { left: 0;     right: 100%; }
+  50%  { left: 0;     right: 0;    }
+  100% { left: 100%;  right: 0;    }
 }

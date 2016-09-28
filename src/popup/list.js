@@ -4,12 +4,13 @@
 let authenticationButton = document.querySelector( '.authentication button' );
 let retrieveItemsButton  = document.querySelector( '.retrieve-items' );
 let addCurrentPageButton = document.querySelector( '.add-current' );
+let mainLoaderComponent  = document.querySelector( '.main-loader' );
 
 // FOR DEBUG ONLY
-let resetButton = document.querySelector( '.reset-list' );
-resetButton.addEventListener('click', function() {
-  browser.storage.local.remove([ 'last_retrieve', 'items' ]);
-});
+// let resetButton = document.querySelector( '.reset-list' );
+// resetButton.addEventListener('click', function() {
+//   browser.storage.local.remove([ 'last_retrieve', 'items' ]);
+// });
 // ------------
 
 
@@ -18,17 +19,28 @@ authenticationButton.addEventListener( 'click', function() {
 });
 
 retrieveItemsButton.addEventListener( 'click', function() {
-  // TODO Display a spinner during the request
+  enableMainLoader();
   chrome.runtime.sendMessage({ action: 'retrieve-items', force: true });
 });
 
 addCurrentPageButton.addEventListener( 'click', function() {
-  // TODO Display a spinner during the request
+  enableMainLoader();
   chrome.tabs.query({ active: true, currentWindow: true }, function ( tabs ) {
     let currentUrl = tabs[ 0 ].url;
     chrome.runtime.sendMessage({ action: 'add-item', url: currentUrl });
   });
 });
+
+
+function enableMainLoader() {
+  mainLoaderComponent.classList.add('loading');
+}
+
+function disableMainLoader() {
+  setTimeout( function() {
+    mainLoaderComponent.classList.remove('loading');
+  }, 2000);
+}
 
 
 // ----------------------
@@ -68,11 +80,13 @@ function buildItemElement( item ) {
   let titleContent = document.createElement('span');
   let urlContent   = document.createElement('span');
   let tickElement  = document.createElement('div');
+  let tickIconFont = document.createElement('i');
   let loadElement  = document.createElement('div');
 
   liElement.className    = 'item';
   titleContent.className = 'title';
   urlContent.className   = 'url';
+  tickIconFont.classList.add( 'icon', 'icon-ok');
   tickElement.className  = 'tick';
   loadElement.classList.add( 'loader', 'hidden' );
 
@@ -80,7 +94,7 @@ function buildItemElement( item ) {
     markAsRead( item.id );
   });
 
-  tickElement.appendChild( document.createTextNode( '✔' ) );
+  tickElement.appendChild( tickIconFont );
   titleContent.appendChild( document.createTextNode( item.resolved_title ) );
   urlContent.appendChild( document.createTextNode( item.resolved_url ) );
 
@@ -128,6 +142,7 @@ function openLink( url ) {
   browser.tabs.create({ url: url });
 }
 
+
 // TODO Directly call markAsRead method from where it's defined, and make it return a promise
 //      so that I can easily update my UI when it's successfully done
 function markAsRead( itemId ) {
@@ -155,6 +170,7 @@ chrome.runtime.onMessage.addListener( function( data ) {
         // TODO Extract to dedicated method
         document.querySelector( ".item[data-id='" + data.id + "']" ).classList.toggle( 'hidden' );
         updateBadgeCount( JSON.parse( data.items ));
+        disableMainLoader();
       });
       break;
 
@@ -167,6 +183,7 @@ chrome.runtime.onMessage.addListener( function( data ) {
           drawList( itemsList );
           updateBadgeCount( itemsList );
         }
+        disableMainLoader();
       });
       break;
 
@@ -180,6 +197,7 @@ chrome.runtime.onMessage.addListener( function( data ) {
           drawList( itemsList );
           updateBadgeCount( itemsList );
         }
+        disableMainLoader();
       });
       break;
   }
