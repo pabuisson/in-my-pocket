@@ -38,6 +38,7 @@ function setupUI() {
     document.querySelector( '.authentication' ).style.display = 'none';
     document.querySelector( '.authenticated'  ).style.display = 'block';
 
+    // Display the currently available items
     browser.storage.local.get('items', function( data ) {
       if( data.items ) {
         itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
@@ -45,6 +46,8 @@ function setupUI() {
       }
     });
 
+    // Update the list of items just in case
+    chrome.runtime.sendMessage({ action: 'retrieve-items' });
   }, function( error ) {
     document.querySelector( '.authentication' ).style.display = 'block';
     document.querySelector( '.authenticated'  ).style.display = 'none';
@@ -110,6 +113,17 @@ function drawList( items ) {
 }
 
 
+function updateBadgeCount( items ) {
+  chrome.browserAction.setBadgeBackgroundColor({ color: '#444' });
+
+  if( items ) {
+    chrome.browserAction.setBadgeText({ text: items.length.toString() });
+  } else {
+    chrome.browserAction.setBadgeText({ text: '' });
+  }
+}
+
+
 function openLink( url ) {
   browser.tabs.create({ url: url });
 }
@@ -137,8 +151,11 @@ chrome.runtime.onMessage.addListener( function( data ) {
   switch( data.action ) {
     case 'marked-as-read':
       console.log('switch:marked-as-read');
-      // TODO Extract to dedicated method
-      document.querySelector( ".item[data-id='" + data.id + "']" ).classList.toggle( 'hidden' );
+      browser.storage.local.get('items', function( data ) {
+        // TODO Extract to dedicated method
+        document.querySelector( ".item[data-id='" + data.id + "']" ).classList.toggle( 'hidden' );
+        updateBadgeCount( JSON.parse( data.items ));
+      });
       break;
 
     case 'added-item':
@@ -148,6 +165,7 @@ chrome.runtime.onMessage.addListener( function( data ) {
         if( data.items ) {
           itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
           drawList( itemsList );
+          updateBadgeCount( itemsList );
         }
       });
       break;
@@ -160,8 +178,10 @@ chrome.runtime.onMessage.addListener( function( data ) {
         if( data.items ) {
           itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
           drawList( itemsList );
+          updateBadgeCount( itemsList );
         }
       });
       break;
   }
+
 });
