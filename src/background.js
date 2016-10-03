@@ -22,7 +22,7 @@ prepareRequest = function( url, action ) {
 
   // There was a connection error of some sort
   request.onerror = function() {
-    console.error('error while reaching the server!');
+    console.error('FXPOCKET | error while reaching the server!');
     console.error(request);
   };
 
@@ -74,7 +74,7 @@ authenticate = function() {
       });
     } else {
       // We reached our target server, but it returned an error
-      console.error('server returned an error');
+      console.error('FXPOCKET | server returned an error');
     }
   };
 
@@ -103,18 +103,18 @@ isAuthenticated = function() {
 
 
 function retrieveItems( force ) {
-  const intervalWithoutReload = 5*3600;
+  const intervalWithoutReload = 15*60;
   const currentTimestamp      = ( Date.now()/1000 | 0 );
 
   browser.storage.local.get([ 'items', 'last_retrieve' ], function( data ) {
-    console.log( "interval without reload:  " + intervalWithoutReload );
-    console.log( "interval since last sync: " + ( currentTimestamp - data.last_retrieve ));
+    console.log( "FXPOCKET | interval without reload:  " + intervalWithoutReload );
+    console.log( "FXPOCKET | interval since last sync: " + ( currentTimestamp - data.last_retrieve ));
 
-    if ( !data.items || !data.last_retrieve ) {
+    if ( force || !data.items || !data.last_retrieve ) {
+      // If force == true, we always reload the whole list
       retrieveFirst();
-    } else if( force || ( currentTimestamp - data.last_retrieve > intervalWithoutReload ) ) {
+    } else if( currentTimestamp - data.last_retrieve > intervalWithoutReload ) {
       // If we already have sync, check if intervalWithoutReload is past, then we can reload
-      // If force == true, we always reload the items anyway
       retrieveDiff();
     }
   });
@@ -122,7 +122,7 @@ function retrieveItems( force ) {
 
 
 function retrieveFirst() {
-  console.log('retrieve first');
+  console.log('FXPOCKET | (retrieve first)');
 
   browser.storage.local.get('access_token', function( data ) {
     let request = prepareRequest( 'https://getpocket.com/v3/get', 'POST' );
@@ -133,10 +133,10 @@ function retrieveFirst() {
     });
 
     request.onload = function() {
-      console.log('got an answer');
       if( this.status >= 200 && this.status < 400 ) {
         const response = JSON.parse( this.response );
         console.log(response);
+        console.log(Object.keys(response.list).length + ' items in the response');
 
         let itemsList = [];
 
@@ -167,7 +167,7 @@ function retrieveFirst() {
 };
 
 function retrieveDiff() {
-  console.log('retrieve diff');
+  console.log('FXPOCKET | (retrieve diff)');
 
   browser.storage.local.get( ['access_token', 'last_retrieve', 'items'], function( data ) {
     let request = prepareRequest( 'https://getpocket.com/v3/get', 'POST' );
@@ -180,12 +180,14 @@ function retrieveDiff() {
     });
 
     request.onload = function() {
-      console.log('got an answer');
       if( this.status >= 200 && this.status < 400 ) {
         const response = JSON.parse( this.response );
         console.log(response);
+        console.log(Object.keys(response.list).length + ' items in the response');
 
         let allItems = JSON.parse( data.items );
+        console.log( 'FXPOCKET | items before: ' );
+        console.log( allItems );
 
         // TODO: Extract this into a dedicated method
         for( let itemId in response.list ) {
@@ -195,12 +197,16 @@ function retrieveDiff() {
             case '1':
             case '2':
               // Archived or deleted: we remove it from the items list
-              console.log("NEED TO ARCHIVE: " + item.resolved_title );
-              removedItemIdx = allItems.findIndex( function( item ) { return item.id === itemId });
-              allItems.splice( removedItemIdx );
+              console.log("FXPOCKET | NEED TO ARCHIVE: " + itemId + ' (' + item.resolved_title + ')' );
+              let removedItemIdx = allItems.findIndex( function( item ) { return item.id === itemId });
+
+              if( removedItemIdx >= 0 ) {
+                allItems.splice( removedItemIdx, 1 );
+              }
+
               break;
             case '0':
-              console.log("NEED TO ADD: " + item.resolved_title );
+              console.log("FXPOCKET | NEED TO ADD: " + itemId + ' (' + item.resolved_title + ')' );
               // Added: we just add it to the list
               allItems.push({
                 id:             item.item_id,
@@ -209,8 +215,14 @@ function retrieveDiff() {
                 created_at:     item.time_added
               });
               break;
+            default:
+              console.log('FXPOCKET | STATUS UNKNOW, DONT KNOW HOW TO DEAL WITH THIS : ' + item.status );
+              break;
           }
         }
+
+        console.log('FXPOCKET | ITEMS THAT WILL BE SAVED:');
+        console.log(allItems);
 
         // Save item list in storage
         browser.storage.local.set({ items: JSON.stringify( allItems ) });
@@ -232,6 +244,8 @@ function retrieveDiff() {
 // TODO Be sure to url-encode the parameters you are sending. Otherwise if your url or title
 //      have characters like ? or &, they will often break the request.
 function addItem( url ) {
+  console.log('FXPOCKET | (addItem)');
+
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
     let request = prepareRequest( 'https://getpocket.com/v3/add', 'POST' );
     let requestParams = JSON.stringify({
@@ -241,7 +255,6 @@ function addItem( url ) {
     });
 
     request.onload = function() {
-      console.log('got an answer (status = ' + this.status + ')');
       if( this.status >= 200 && this.status < 400 ) {
         const response = JSON.parse( this.response );
         console.log(response);
@@ -270,6 +283,9 @@ function addItem( url ) {
 
 
 function markAsRead( itemId ) {
+  console.log('FXPOCKET | (markAsRead)');
+  console.log('FXPOCKET | id to archive: ' + itemId );
+
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
     let request = prepareRequest( 'https://getpocket.com/v3/send', 'POST' );
     let requestParams = JSON.stringify({
@@ -281,7 +297,6 @@ function markAsRead( itemId ) {
     });
 
     request.onload = function() {
-      console.log('got an answer (status = ' + this.status + ')');
       if( this.status >= 200 && this.status < 400 ) {
         const response = JSON.parse( this.response );
         console.log(response);
@@ -289,15 +304,23 @@ function markAsRead( itemId ) {
         // TODO: Is this the right way to know if a request went well?
         // TODO: If it is, I must use it in my other API request methods
         if( response.status ) {
-          items = JSON.parse( data.items );
-          removedItemIdx = items.findIndex( function( item ) { return item.id === itemId });
-          items.splice( removedItemIdx );
-          browser.storage.local.set({ items: JSON.stringify( items ) });
+          console.log('FXPOCKET | onload - itemId = ' + itemId );
+          let items = JSON.parse( data.items );
+          let removedItemIdx = items.findIndex( function( item ) { return item.id === itemId });
+
+          if( removedItemIdx >= 0 ) {
+            console.log('FXPOCKET | the item ' + itemId + ' has been found and removed');
+            console.log('FXPOCKET | items that will be saved: ');
+            console.log(items);
+
+            items.splice( removedItemIdx, 1 );
+            browser.storage.local.set({ items: JSON.stringify( items ) });
+          }
 
           // Send a message back to the UI
           chrome.runtime.sendMessage({ action: 'marked-as-read', id: itemId });
         } else {
-          console.error( 'Could not mark the item  ' + itemId + ' as read' );
+          console.error( 'FXPOCKET | Could not mark the item  ' + itemId + ' as read' );
         }
       }
     };
@@ -309,23 +332,23 @@ function markAsRead( itemId ) {
 
 // --- MESSAGES ---
 
-chrome.runtime.onMessage.addListener( function( data ) {
-  switch( data.action ) {
+chrome.runtime.onMessage.addListener( function( eventData ) {
+  switch( eventData.action ) {
     case 'authenticate':
-      console.log("switch:authenticate");
+      console.log("FXPOCKET | switch:authenticate");
       authenticate();
       break;
     case 'retrieve-items':
-      console.log("switch:retrieve-items");
-      retrieveItems( data.force );
+      console.log("FXPOCKET | switch:retrieve-items");
+      retrieveItems( eventData.force );
       break;
     case 'add-item':
-      console.log('switch:add-item');
-      addItem( data.url );
+      console.log('FXPOCKET | switch:add-item');
+      addItem( eventData.url );
       break;
     case 'mark-as-read':
-      console.log('switch:mark-as-read');
-      markAsRead( data.id );
+      console.log('FXPOCKET | switch:mark-as-read');
+      markAsRead( eventData.id );
       break;
   }
 });
