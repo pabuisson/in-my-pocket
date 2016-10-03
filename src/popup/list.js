@@ -160,22 +160,22 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-chrome.runtime.onMessage.addListener( function( data ) {
+chrome.runtime.onMessage.addListener( function( eventData ) {
   // TODO Check if status is OK or error
   // TODO Display a warning if there's an error
-  switch( data.action ) {
+  switch( eventData.action ) {
     case 'marked-as-read':
-      console.log('switch:marked-as-read');
+      console.log('FXPOCKET | switch:marked-as-read');
       browser.storage.local.get('items', function( data ) {
         // TODO Extract to dedicated method
-        document.querySelector( ".item[data-id='" + data.id + "']" ).classList.toggle( 'hidden' );
+        document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.toggle( 'hidden' );
         updateBadgeCount( JSON.parse( data.items ));
         disableMainLoader();
       });
       break;
 
     case 'added-item':
-      console.log('switch:added-item');
+      console.log('FXPOCKET | switch:added-item');
       // TODO Just add a new item at the top of the list, and not redraw the whole list
       browser.storage.local.get('items', function( data ) {
         if( data.items ) {
@@ -190,7 +190,7 @@ chrome.runtime.onMessage.addListener( function( data ) {
     case 'retrieved-items':
       // TODO Check if status is OK or error
       // TODO Display a warning if there's an error
-      console.log('switch:retrieved-items');
+      console.log('FXPOCKET | switch:retrieved-items');
       browser.storage.local.get('items', function( data ) {
         if( data.items ) {
           itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
