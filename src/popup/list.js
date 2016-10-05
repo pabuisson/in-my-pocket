@@ -164,6 +164,11 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
   // TODO Check if status is OK or error
   // TODO Display a warning if there's an error
   switch( eventData.action ) {
+    case 'authenticated':
+      console.log('FXPOCKET | switch:authenticated');
+      window.close();
+      break;
+
     case 'marked-as-read':
       console.log('FXPOCKET | switch:marked-as-read');
       browser.storage.local.get('items', function( data ) {
@@ -179,6 +184,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       // TODO Just add a new item at the top of the list, and not redraw the whole list
       browser.storage.local.get('items', function( data ) {
         if( data.items ) {
+          // TODO Extract to dedicated method
           itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
           drawList( itemsList );
           updateBadgeCount( itemsList );
@@ -193,6 +199,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       console.log('FXPOCKET | switch:retrieved-items');
       browser.storage.local.get('items', function( data ) {
         if( data.items ) {
+          // TODO Extract to dedicated method
           itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
           drawList( itemsList );
           updateBadgeCount( itemsList );
