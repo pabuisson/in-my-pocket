@@ -1,9 +1,8 @@
 
 // --- AUTHENTICATION ---
 // TODO: Avoid the loading of a given page (redirectIntermediate variable)
-
-// TODO Replace this by an "internal" page with its own JS...
-const redirectIntermediate = 'http://blog.pabuisson.com';
+// TODO: Replace this by an "internal" page with its own JS...
+const redirectIntermediate = 'http://oauth.pabuisson.com';
 // var redirectIntermediate = chrome.extension.getURL('src/test.html');
 const redirectAuthFinished = 'https://getpocket.com';
 const consumerKey = '58817-addc87503598b7ed29e5bf72';
