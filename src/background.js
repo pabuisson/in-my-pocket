@@ -46,7 +46,9 @@ tabCallback = function( tabId, changeInfo, updatedTab ) {
         browser.storage.local.set({ access_token: access_token });
         browser.storage.local.set({ username: username });
 
+        // Send a message back to the UI
         // TODO: Display something to the user?
+        chrome.runtime.sendMessage({ action: 'authenticated' });
       }
     };
 
