@@ -1,10 +1,10 @@
 {
   "manifest_version": 2,
-  "name": "Firefox Pocket by PAD",
-  "version": "0.1",
+  "name": "Firefox Pocket",
+  "version": "0.0.1",
 
-  "description": "Une alternative à l'ancienne extension pocket qui n'existe plus",
-  "homepage_url": "https://github.com/mdn/webextensions-examples/tree/master/beastify",
+  "description": "For all those who are missing the old Firefox Pocket addon, here is an unofficial client for the excellent Pocket service. Enjoy!",
+  "homepage_url": "https://bitbucket.org/pabuisson/firefox-pocket",
   "icons": {
     "48": "icons/pocket-48.png"
   },
