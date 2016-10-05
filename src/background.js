@@ -207,14 +207,27 @@ function retrieveDiff() {
 
               break;
             case '0':
-              console.log("FXPOCKET | NEED TO ADD: " + itemId + ' (' + item.resolved_title + ')' );
-              // Added: we just add it to the list
-              allItems.push({
-                id:             item.item_id,
-                resolved_title: item.resolved_title,
-                resolved_url:   item.resolved_url,
-                created_at:     item.time_added
-              });
+              let itemIdx = allItems.findIndex( function( item ) { return item.id === itemId });
+
+              if( itemIdx >= 0 ) {
+                // Item already exists in the list (added by this current extension),
+                // we just update the missing fields
+                console.log("FXPOCKET | ITEM " + itemId + "(" + item.resolved_title + ") ALREADY PRESENT, WILL BE UPDATED" );
+                allItems[ itemIdx ] = Object.assign( allItems[ itemIdx ], {
+                  resolved_title: item.resolved_title,
+                  resolved_url:   item.resolved_url,
+                  created_at:     item.time_added
+                });
+              } else {
+                // Item does not exist in the item list, we just add it
+                console.log("FXPOCKET | NEED TO ADD: " + itemId + ' (' + item.resolved_title + ')' );
+                allItems.push({
+                  id:             item.item_id,
+                  resolved_title: item.resolved_title,
+                  resolved_url:   item.resolved_url,
+                  created_at:     item.time_added
+                });
+              }
               break;
             default:
               console.log('FXPOCKET | STATUS UNKNOW, DONT KNOW HOW TO DEAL WITH THIS : ' + item.status );
