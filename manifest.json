@@ -1,19 +1,12 @@
 {
   "manifest_version": 2,
-  "name": "Firefox Pocket",
+  "name": "In My Pocket",
   "version": "0.0.1",
 
   "description": "For all those who are missing the old Firefox Pocket addon, here is an unofficial client for the excellent Pocket service. Enjoy!",
-  "homepage_url": "https://bitbucket.org/pabuisson/firefox-pocket",
+  "homepage_url": "https://bitbucket.org/pabuisson/in-my-pocket",
   "icons": {
     "48": "icons/pocket-48.png"
-  },
-
-  "applications": {
-    "gecko": {
-      "id": "firefox-pocket@mozilla.org",
-      "strict_min_version": "45.0"
-    }
   },
 
   "permissions": [
