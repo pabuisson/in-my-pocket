@@ -9,6 +9,12 @@
     "48": "icons/pocket-48.png"
   },
 
+  "applications": {
+    "gecko": {
+      "strict_min_version": "45.0"
+    }
+  },
+
   "permissions": [
     "storage",
     "tabs",
