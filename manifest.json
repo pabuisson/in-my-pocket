@@ -11,6 +11,7 @@
 
   "applications": {
     "gecko": {
+      "id": "in-my-pocket@pabuisson.com",
       "strict_min_version": "45.0"
     }
   },
