@@ -14,7 +14,7 @@ const PocketError = {
 };
 
 
-prepareRequest = function( url, action, successCallback, errorCallback ) {
+function prepareRequest( url, action, successCallback, errorCallback ) {
   let request = new XMLHttpRequest();
   let errorObject = {
     httpCode: undefined,
@@ -105,7 +105,7 @@ prepareRequest = function( url, action, successCallback, errorCallback ) {
 const redirectIntermediate = 'http://oauth.pabuisson.com';
 const redirectAuthFinished = 'http://oauth.pabuisson.com';
 
-tabCallback = function( tabId, changeInfo, updatedTab ) {
+function tabCallback( tabId, changeInfo, updatedTab ) {
   // callback url has been loaded
   if (changeInfo.status == 'complete' && updatedTab.url.indexOf(redirectIntermediate) === 0) {
     browser.tabs.remove( tabId );
@@ -131,7 +131,7 @@ tabCallback = function( tabId, changeInfo, updatedTab ) {
   }
 };
 
-authenticate = function() {
+function authenticate() {
   onSuccess = function( response ) {
     const requestToken = response.code;
 
@@ -148,7 +148,7 @@ authenticate = function() {
   request.send( requestParams );
 };
 
-isAuthenticated = function() {
+function isAuthenticated() {
   let promise = new Promise( function( resolve, reject ) {
     browser.storage.local.get('access_token').then( function(data) {
       if( 'access_token' in data ) {
