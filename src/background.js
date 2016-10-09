@@ -4,7 +4,6 @@ const consumerKey = '58817-addc87503598b7ed29e5bf72';
 
 // --- API REQUEST HELPER ---
 
-
 const PocketError = {
   GENERIC:      'generic',
   UNREACHABLE:  'unreachable',
@@ -98,69 +97,60 @@ function prepareRequest( url, action, successCallback, errorCallback ) {
 };
 
 
-//-- AUTHENTICATION ---
+// --- AUTHENTICATION
 
-// TODO Avoid the loading of a given page (redirectIntermediate variable)
-//      Replace by an "internal" page with its own JS
-const redirectIntermediate = 'http://oauth.pabuisson.com';
-const redirectAuthFinished = 'http://oauth.pabuisson.com';
+var Authentication = ( function() {
+  // TODO Avoid the loading of a given page (redirectIntermediate variable)
+  //      Replace by an "internal" page with its own JS
+  const redirectIntermediate = 'http://oauth.pabuisson.com';
+  const redirectAuthFinished = 'http://oauth.pabuisson.com';
 
-function tabCallback( tabId, changeInfo, updatedTab ) {
-  // callback url has been loaded
-  if (changeInfo.status == 'complete' && updatedTab.url.indexOf(redirectIntermediate) === 0) {
-    browser.tabs.remove( tabId );
+  function tabCallback( tabId, changeInfo, updatedTab ) {
+    // callback url has been loaded
+    if (changeInfo.status == 'complete' && updatedTab.url.indexOf(redirectIntermediate) === 0) {
+      browser.tabs.remove( tabId );
 
-    onSuccess = function( response ) {
-      const username = response.username;
-      const access_token = response.access_token;
+      onSuccess = function( response ) {
+        const username = response.username;
+        const access_token = response.access_token;
 
-      // Store the access_token in local storage
-      browser.storage.local.set({ access_token: access_token });
-      browser.storage.local.set({ username: username });
+        // Store the access_token in local storage
+        browser.storage.local.set({ access_token: access_token });
+        browser.storage.local.set({ username: username });
 
-      // Send a message back to the UI
-      // TODO: Display something to the user?
-      chrome.runtime.sendMessage({ action: 'authenticated' });
-    };
+        // Send a message back to the UI
+        // TODO: Display something to the user?
+        chrome.runtime.sendMessage({ action: 'authenticated' });
+      };
 
-    browser.storage.local.get( 'requestToken', function( data ) {
-      let request = prepareRequest( 'https://getpocket.com/v3/oauth/authorize', 'POST', onSuccess );
-      let requestParams = JSON.stringify({ consumer_key: consumerKey, code: data.requestToken });
-      request.send( requestParams );
-    });
+      browser.storage.local.get( 'requestToken', function( data ) {
+        let request = prepareRequest( 'https://getpocket.com/v3/oauth/authorize', 'POST', onSuccess );
+        let requestParams = JSON.stringify({ consumer_key: consumerKey, code: data.requestToken });
+        request.send( requestParams );
+      });
+    }
   }
-};
 
-function authenticate() {
-  onSuccess = function( response ) {
-    const requestToken = response.code;
+  return {
+    authenticate: function() {
+      onSuccess = function( response ) {
+        const requestToken = response.code;
 
-    browser.storage.local.set({ requestToken: requestToken });
+        browser.storage.local.set({ requestToken: requestToken });
 
-    const authorizeUrl = "https://getpocket.com/auth/authorize?request_token=" + requestToken + "&redirect_uri=" + redirectIntermediate;
-    browser.tabs.create({ 'url': authorizeUrl }, function( tab ) {
-      browser.tabs.onUpdated.addListener( tabCallback );
-    });
+        const authorizeUrl = "https://getpocket.com/auth/authorize?request_token=" + requestToken + "&redirect_uri=" + redirectIntermediate;
+        browser.tabs.create({ 'url': authorizeUrl }, function( tab ) {
+          browser.tabs.onUpdated.addListener( tabCallback );
+        });
+      };
+
+      let request = prepareRequest( 'https://getpocket.com/v3/oauth/request', 'POST', onSuccess );
+      let requestParams = JSON.stringify( { consumer_key: consumerKey, redirect_uri: redirectAuthFinished } )
+      request.send( requestParams );
+    }
   };
+})();
 
-  let request = prepareRequest( 'https://getpocket.com/v3/oauth/request', 'POST', onSuccess );
-  let requestParams = JSON.stringify( { consumer_key: consumerKey, redirect_uri: redirectAuthFinished } )
-  request.send( requestParams );
-};
-
-function isAuthenticated() {
-  let promise = new Promise( function( resolve, reject ) {
-    browser.storage.local.get('access_token').then( function(data) {
-      if( 'access_token' in data ) {
-        resolve( data.access_token );
-      } else {
-        reject();
-      }
-    });
-  });
-
-  return promise;
-};
 
 
 // --- API ACCESS ---
@@ -170,8 +160,7 @@ function retrieveItems( force ) {
   const currentTimestamp      = ( Date.now()/1000 | 0 );
 
   browser.storage.local.get([ 'items', 'last_retrieve' ], function( data ) {
-    console.log( "FXPOCKET | interval without reload:  " + intervalWithoutReload );
-    console.log( "FXPOCKET | interval since last sync: " + ( currentTimestamp - data.last_retrieve ));
+    console.log( "FXPOCKET | retrieve items timeout: " + ( currentTimestamp - data.last_retrieve ) + ' / ' + intervalWithoutReload );
 
     if ( force || !data.items || !data.last_retrieve ) {
       // If force == true, we always reload the whole list
@@ -380,7 +369,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
   switch( eventData.action ) {
     case 'authenticate':
       console.log("FXPOCKET | switch:authenticate");
-      authenticate();
+      Authentication.authenticate();
       break;
     case 'retrieve-items':
       console.log("FXPOCKET | switch:retrieve-items");
