@@ -78,7 +78,7 @@ section {
 }
 
 
-.hidden  { display: none; }
+.hidden { display: none; }
 
 .list-component .item .tick,
 .list-component .item .loader {
@@ -184,4 +184,31 @@ section {
   0%   { left: 0;     right: 100%; }
   50%  { left: 0;     right: 0;    }
   100% { left: 100%;  right: 0;    }
+}
+
+
+
+.error-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 25px;
+  line-height: 15px;
+  opacity: 1;
+
+  border-top: 1px solid red;
+  background-color: rgba( 215, 25, 25, 0.7 );
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.error-overlay.hidden {
+  /* Needed to counter the 'display:none' of the .hidden class. Without this, the overlay
+   * display goes from block to none, and it's hidden all at once */
+  display: block;
+
+  height: 0px;
+  opacity: 0;
+  transition: height 500ms ease-out, opacity 500ms ease-out;
 }

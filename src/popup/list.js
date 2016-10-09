@@ -6,13 +6,7 @@ let retrieveItemsButton  = document.querySelector( '.retrieve-items' );
 let addCurrentPageButton = document.querySelector( '.add-current' );
 let mainLoaderComponent  = document.querySelector( '.main-loader' );
 
-// FOR DEBUG ONLY
-// let resetButton = document.querySelector( '.reset-list' );
-// resetButton.addEventListener('click', function() {
-//   browser.storage.local.remove([ 'last_retrieve', 'items' ]);
-// });
 // ------------
-
 
 authenticationButton.addEventListener( 'click', function() {
   chrome.runtime.sendMessage({ action: 'authenticate' });
@@ -161,52 +155,81 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 chrome.runtime.onMessage.addListener( function( eventData ) {
-  // TODO Check if status is OK or error
-  // TODO Display a warning if there's an error
-  switch( eventData.action ) {
-    case 'authenticated':
-      console.log('FXPOCKET | switch:authenticated');
-      window.close();
-      break;
+  if( eventData.error ) {
 
-    case 'marked-as-read':
-      console.log('FXPOCKET | switch:marked-as-read');
-      browser.storage.local.get('items', function( data ) {
-        // TODO Extract to dedicated method
-        document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.toggle( 'hidden' );
-        updateBadgeCount( JSON.parse( data.items ));
-        disableMainLoader();
-      });
-      break;
+    disableMainLoader();
 
-    case 'added-item':
-      console.log('FXPOCKET | switch:added-item');
-      // TODO Just add a new item at the top of the list, and not redraw the whole list
-      browser.storage.local.get('items', function( data ) {
-        if( data.items ) {
+    let errorContainer = document.querySelector( '.error-overlay' );
+    let errorMessage = 'An error occurred: ';
+
+    switch( eventData.error ) {
+      case PocketError.UNREACHABLE:
+        errorMessage += 'could not reach the server';
+        break;
+      case PocketError.UNAUTHORIZED:
+        errorMessage += 'unauthorized, you might need to login again';
+        break;
+      case PocketError.PERMISSIONS:
+        errorMessage += 'missing permissions';
+        break;
+      case PocketError.RATE_LIMIT:
+        errorMessage += 'max number of requests reach for this hour';
+        errorMessage += ' (reset in ' + eventData.resetDelay + ')';
+        break;
+    }
+
+    errorContainer.innerHTML = errorMessage;
+    errorContainer.classList.remove( 'hidden' );
+
+    // Hide the error message after 5 seconds
+    setTimeout( function() {
+      errorContainer.classList.add( 'hidden' );
+    }, 5000 );
+
+  } else {
+
+    switch( eventData.action ) {
+      case 'authenticated':
+        console.log('FXPOCKET | switch:authenticated');
+        window.close();
+        break;
+
+      case 'marked-as-read':
+        console.log('FXPOCKET | switch:marked-as-read');
+        browser.storage.local.get('items', function( data ) {
           // TODO Extract to dedicated method
-          itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
-          drawList( itemsList );
-          updateBadgeCount( itemsList );
-        }
-        disableMainLoader();
-      });
-      break;
+          document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.toggle( 'hidden' );
+          updateBadgeCount( JSON.parse( data.items ));
+          disableMainLoader();
+        });
+        break;
 
-    case 'retrieved-items':
-      // TODO Check if status is OK or error
-      // TODO Display a warning if there's an error
-      console.log('FXPOCKET | switch:retrieved-items');
-      browser.storage.local.get('items', function( data ) {
-        if( data.items ) {
-          // TODO Extract to dedicated method
-          itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
-          drawList( itemsList );
-          updateBadgeCount( itemsList );
-        }
-        disableMainLoader();
-      });
-      break;
+      case 'added-item':
+        console.log('FXPOCKET | switch:added-item');
+        // TODO Just add a new item at the top of the list, and not redraw the whole list
+        browser.storage.local.get('items', function( data ) {
+          if( data.items ) {
+            // TODO Extract to dedicated method
+            itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
+            drawList( itemsList );
+            updateBadgeCount( itemsList );
+          }
+          disableMainLoader();
+        });
+        break;
+
+      case 'retrieved-items':
+        console.log('FXPOCKET | switch:retrieved-items');
+        browser.storage.local.get('items', function( data ) {
+          if( data.items ) {
+            // TODO Extract to dedicated method
+            itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
+            drawList( itemsList );
+            updateBadgeCount( itemsList );
+          }
+          disableMainLoader();
+        });
+        break;
+    }
   }
-
 });
