@@ -1,8 +1,4 @@
 
-// TODO Avoid the loading of a given page (redirectIntermediate variable)
-//      Replace this by an "internal" page with its own JS
-const redirectIntermediate = 'http://oauth.pabuisson.com';
-const redirectAuthFinished = 'https://getpocket.com';
 const consumerKey = '58817-addc87503598b7ed29e5bf72';
 
 
@@ -103,6 +99,11 @@ prepareRequest = function( url, action, successCallback, errorCallback ) {
 
 
 //-- AUTHENTICATION ---
+
+// TODO Avoid the loading of a given page (redirectIntermediate variable)
+//      Replace by an "internal" page with its own JS
+const redirectIntermediate = 'http://oauth.pabuisson.com';
+const redirectAuthFinished = 'http://oauth.pabuisson.com';
 
 tabCallback = function( tabId, changeInfo, updatedTab ) {
   // callback url has been loaded
