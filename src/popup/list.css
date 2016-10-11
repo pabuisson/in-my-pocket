@@ -11,6 +11,7 @@ html, body {
 
 section {
   width: 100%;
+  position: relative;
 }
 
 .authentication {
@@ -124,21 +125,16 @@ section {
 
 
 .top-actions {
-  height: 32px;
+  display: flex;
+  flex-direction: row;
+  height: 30px;
   width: 100%;
-  padding: 4px 0;
+  padding: 5px 0;
   color: #444;
 }
 
-.top-actions .title {
-  float: right;
-  font-size: 1.5rem;
-  font-weight: normal;
-  margin-right: 20px;
-  margin-top: 6px;
-}
-
 .top-actions .icon {
+  flex: initial;
   display: inline-block;
   padding: 3px;
   cursor: pointer;
@@ -151,6 +147,11 @@ section {
 
 .top-actions .icon:hover {
   color: #f13044;
+}
+
+.top-actions .filter-items {
+  flex: 1;
+  margin: 3px 10px 3px 20px;
 }
 
 

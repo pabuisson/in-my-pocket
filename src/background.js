@@ -113,7 +113,7 @@ function prepareRequest( url, action, successCallback, errorCallback ) {
   request.onerror = function() {
     Logger.error('error while reaching the server');
 
-    errorObject.httpCode = undefined
+    errorObject.httpCode = undefined;
     errorObject.error    = PocketError.UNREACHABLE;
 
     // Instead of just logging, send an event back to the UI

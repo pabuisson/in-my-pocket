@@ -2,7 +2,8 @@
 // --- EVENTS ---
 
 let retrieveItemsButton  = document.querySelector( '.retrieve-items' );
-let addCurrentPageButton = document.querySelector( '.add-current' );
+let addCurrentPageButton = document.querySelector( '.add-current'  );
+let filterItemsInput     = document.querySelector( '.filter-items' );
 
 retrieveItemsButton.addEventListener( 'click', function() {
   MainLoader.enable();
@@ -17,6 +18,16 @@ addCurrentPageButton.addEventListener( 'click', function() {
   });
 });
 
+filterItemsInput.addEventListener( 'keyup', function() {
+  let query = this.value.toLowerCase();
+
+  if( query !== '' ) {
+    MainLoader.enable();
+  }
+
+  UI.drawList();
+  MainLoader.disable();
+});
 
 
 var MainLoader = ( function() {
@@ -34,7 +45,6 @@ var MainLoader = ( function() {
     }
   };
 })();
-
 
 var UI = ( function() {
   function formatUrl( url ) {
@@ -89,16 +99,41 @@ var UI = ( function() {
     browser.tabs.create({ url: url });
   }
 
+    function focusSearchField() {
+      setTimeout( function() {
+        filterItemsInput.focus();
+      }, 200 );
+    }
+
 
   return {
-    drawList: function( items ) {
-      let container = document.querySelector( '.list-component' );
-      container.innerHTML = '';
+    drawList: function() {
+      browser.storage.local.get('items', function( data ) {
+        let items           = data.items ? JSON.parse( data.items ) : [];
+        let sortedItems     = items.sort( function( a, b ) { return a.created_at < b.created_at; });
+        let itemsToRender   = undefined;
+        let query           = document.querySelector( '.filter-items').value;
 
-      for( let i = 0; i < items.length; i++) {
-        let itemElement = buildItemElement( items[ i ] );
-        container.appendChild( itemElement );
-      }
+        // Filter item list
+        if( query == '' || !query ) {
+          itemsToRender = sortedItems;
+        } else {
+          itemsToRender = sortedItems.filter( function( value, index ) {
+            let title = value.resolved_title || '';
+            let url   = value.resolved_url   || '';
+
+            return title.toLowerCase().includes( query ) || url.toLowerCase().includes( query );
+          });
+        }
+
+        let container = document.querySelector( '.list-component' );
+        container.innerHTML = '';
+
+        for( let i = 0; i < itemsToRender.length; i++) {
+          let itemElement = buildItemElement( itemsToRender[ i ] );
+          container.appendChild( itemElement );
+        }
+      });
 
       return;
     },
@@ -108,13 +143,11 @@ var UI = ( function() {
         document.querySelector( '.authentication' ).style.display = 'none';
         document.querySelector( '.authenticated'  ).style.display = 'block';
 
+        // Give focus to the input field
+        focusSearchField();
+
         // Display the currently available items
-        browser.storage.local.get('items', function( data ) {
-          if( data.items ) {
-            itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
-            UI.drawList( itemsList );
-          }
-        });
+        UI.drawList();
 
         // Update the list of items just in case
         chrome.runtime.sendMessage({ action: 'retrieve-items', force: false });
@@ -127,6 +160,19 @@ var UI = ( function() {
         authenticationButton.addEventListener( 'click', function() {
           chrome.runtime.sendMessage({ action: 'authenticate' });
         });
+      });
+    },
+
+    updateBadgeCount: function() {
+      chrome.browserAction.setBadgeBackgroundColor({ color: '#444' });
+
+      browser.storage.local.get('items', function( data ) {
+        if( data.items ) {
+          let itemCount = Object.keys( JSON.parse( data.items ) ).length;
+          chrome.browserAction.setBadgeText({ text: itemCount.toString() });
+        } else {
+          chrome.browserAction.setBadgeText({ text: '' });
+        }
       });
     }
   };
@@ -210,33 +256,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         case 'marked-as-read':
           // Logger.log('switch:marked-as-read');
-          browser.storage.local.get('items', function( data ) {
-            // TODO Extract to dedicated method
-            document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
-          });
+          document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
+          UI.updateBadgeCount();
           break;
 
         case 'added-item':
           // Logger.log('switch:added-item');
-          // TODO Just add a new item at the top of the list, and not redraw the whole list
-          browser.storage.local.get('items', function( data ) {
-            if( data.items ) {
-              // TODO Extract to dedicated method
-              itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
-              UI.drawList( itemsList );
-            }
-          });
+          UI.drawList();
+          UI.updateBadgeCount();
           break;
 
         case 'retrieved-items':
           // Logger.log('switch:retrieved-items');
-          browser.storage.local.get('items', function( data ) {
-            if( data.items ) {
-              // TODO Extract to dedicated method
-              itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
-              UI.drawList( itemsList );
-            }
-          });
+          UI.drawList();
+          UI.updateBadgeCount();
           break;
       }
 
