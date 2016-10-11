@@ -37,6 +37,16 @@ var MainLoader = ( function() {
 
 
 var UI = ( function() {
+  function formatUrl( url ) {
+    let replacedProtocols = [
+      'http', 'https',
+      'ftp',  'ftps'
+    ].join('|');
+    let replaceRegex = new RegExp( '(' + replacedProtocols + '):\/\/(www.){0,1}', 'gi' );
+
+    return url.replace( replaceRegex, '' );
+  }
+
   function buildItemElement( item ) {
     let liElement    = document.createElement('li');
     let titleContent = document.createElement('span');
@@ -58,7 +68,8 @@ var UI = ( function() {
 
     tickElement.appendChild( tickIconFont );
     titleContent.appendChild( document.createTextNode( item.resolved_title ) );
-    urlContent.appendChild( document.createTextNode( item.resolved_url ) );
+
+    urlContent.appendChild( document.createTextNode( formatUrl( item.resolved_url ) ) );
 
     liElement.appendChild( tickElement );
     liElement.appendChild( loadElement );
