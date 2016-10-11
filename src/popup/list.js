@@ -203,12 +203,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
       switch( eventData.action ) {
         case 'authenticated':
-          console.log('FXPOCKET | switch:authenticated');
+          // Logger.log('switch:authenticated');
           window.close();
           break;
 
         case 'marked-as-read':
-          console.log('FXPOCKET | switch:marked-as-read');
+          // Logger.log('switch:marked-as-read');
           browser.storage.local.get('items', function( data ) {
             // TODO Extract to dedicated method
             document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
           break;
 
         case 'added-item':
-          console.log('FXPOCKET | switch:added-item');
+          // Logger.log('switch:added-item');
           // TODO Just add a new item at the top of the list, and not redraw the whole list
           browser.storage.local.get('items', function( data ) {
             if( data.items ) {
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
           break;
 
         case 'retrieved-items':
-          console.log('FXPOCKET | switch:retrieved-items');
+          // Logger.log('switch:retrieved-items');
           browser.storage.local.get('items', function( data ) {
             if( data.items ) {
               // TODO Extract to dedicated method

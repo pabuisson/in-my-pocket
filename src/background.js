@@ -1,3 +1,34 @@
+const Environments = {
+  PRODUCTION:   'production',
+  DEVELOPMENT:  'development'
+};
+// const currentEnvironment = Environments.DEVELOPMENT;
+const currentEnvironment = Environments.PRODUCTION;
+
+
+
+// TODO This should be made available both in this file and list.js
+var Logger = ( function() {
+  let prefix = "INMYPOCKET | ";
+
+  return {
+    log: function( message ) {
+      if( currentEnvironment == Environments.DEVELOPMENT ) {
+        console.log( prefix + message );
+      }
+    },
+    warn: function( message ) {
+      console.warn( prefix + message );
+    },
+    error: function( message ) {
+      console.error( prefix + message );
+    }
+  }
+})();
+
+
+
+// --------------------------
 
 const consumerKey = '58817-addc87503598b7ed29e5bf72';
 
@@ -31,7 +62,7 @@ function prepareRequest( url, action, successCallback, errorCallback ) {
   request.onload = function() {
     if( this.status >= 200 && this.status < 400 ) {
 
-      console.log(JSON.parse( this.response));
+      Logger.log(JSON.parse( this.response));
       if( successCallback ) {
         successCallback( JSON.parse( this.response ));
       }
@@ -41,7 +72,7 @@ function prepareRequest( url, action, successCallback, errorCallback ) {
 
       switch( this.status ) {
         case 401:
-          console.error('FXPOCKET | 401: unauthorized');
+          Logger.error('401: unauthorized');
           errorObject.error = PocketError.UNAUTHORIZED;
           // TODO: Reset data (items, access_token, etc.)
           // TODO: Re-triggers an authentication
@@ -52,19 +83,19 @@ function prepareRequest( url, action, successCallback, errorCallback ) {
             let delayBeforeReset = this.getResponseHeader('X-Limit-User-Reset');
             errorObject.error = PocketError.RATE_LIMIT;
             errorObject.resetDelay = delayBeforeReset;
-            console.error('FXPOCKET | 403: access_denied (rate limit)');
-            console.error('FXPOCKET | 403: rate limit reset in ' + delayBeforeReset + ' seconds');
+            Logger.error('403: access_denied (rate limit)');
+            Logger.error('403: rate limit reset in ' + delayBeforeReset + ' seconds');
           } else {
-            console.error('FXPOCKET | 403: access_denied (missing permissions)');
+            Logger.error('403: access_denied (missing permissions)');
             errorObject.error = PocketError.PERMISSIONS;
           }
           break;
         case 404:
-          console.error('FXPOCKET | 404: trying to reach a non-existing URL');
+          Logger.error('404: trying to reach a non-existing URL');
           errorObject.error = PocketError.UNREACHABLE;
           break;
         default:
-          console.error('FXPOCKET | ' + this.status + ' ERROR');
+          Logger.error( this.status + ' ERROR');
           errorObject.error = PocketError.GENERIC;
           break;
       };
@@ -80,7 +111,7 @@ function prepareRequest( url, action, successCallback, errorCallback ) {
 
   // There was a connection error of some sort
   request.onerror = function() {
-    console.error('FXPOCKET | error while reaching the server');
+    Logger.error('error while reaching the server');
 
     errorObject.httpCode = undefined
     errorObject.error    = PocketError.UNREACHABLE;
@@ -160,7 +191,7 @@ function retrieveItems( force ) {
   const currentTimestamp      = ( Date.now()/1000 | 0 );
 
   browser.storage.local.get([ 'items', 'last_retrieve' ], function( data ) {
-    console.log( "FXPOCKET | retrieve items timeout: " + ( currentTimestamp - data.last_retrieve ) + ' / ' + intervalWithoutReload );
+    Logger.log( "retrieve items timeout: " + ( currentTimestamp - data.last_retrieve ) + ' / ' + intervalWithoutReload );
 
     if ( force || !data.items || !data.last_retrieve ) {
       // If force == true, we always reload the whole list
@@ -173,11 +204,11 @@ function retrieveItems( force ) {
 }
 
 function retrieveFirst() {
-  console.log('FXPOCKET | (retrieve first)');
+  Logger.log('(retrieve first)');
 
   browser.storage.local.get('access_token', function( data ) {
     onSuccess = function( response ) {
-      console.log(Object.keys( response.list ).length + ' items in the response');
+      Logger.log(Object.keys( response.list ).length + ' items in the response');
 
       let itemsList = [];
       for( let itemId in response.list ) {
@@ -213,11 +244,11 @@ function retrieveFirst() {
 };
 
 function retrieveDiff() {
-  console.log('FXPOCKET | (retrieve diff)');
+  Logger.log('(retrieve diff)');
 
   browser.storage.local.get( ['access_token', 'last_retrieve', 'items'], function( data ) {
     onSuccess = function( response ) {
-      console.log(Object.keys(response.list).length + ' items in the response');
+      Logger.log(Object.keys(response.list).length + ' items in the response');
       let allItems = JSON.parse( data.items );
 
       // TODO: Extract this into a dedicated method
@@ -228,7 +259,7 @@ function retrieveDiff() {
           case '1':
           case '2':
             // Archived or deleted: we remove it from the items list
-            console.log("FXPOCKET | NEED TO ARCHIVE: " + itemId + ' (' + item.resolved_title + ')' );
+            Logger.log("NEED TO ARCHIVE: " + itemId + ' (' + item.resolved_title + ')' );
             let removedItemIdx = allItems.findIndex( function( item ) { return item.id === itemId });
 
             if( removedItemIdx >= 0 ) {
@@ -242,7 +273,7 @@ function retrieveDiff() {
             if( itemIdx >= 0 ) {
               // Item already exists in the list (added by this current extension),
               // we just update the missing fields
-              console.log("FXPOCKET | ITEM " + itemId + "(" + item.resolved_title + ") ALREADY PRESENT, WILL BE UPDATED" );
+              Logger.log("ITEM " + itemId + "(" + item.resolved_title + ") ALREADY PRESENT, WILL BE UPDATED" );
               allItems[ itemIdx ] = Object.assign( allItems[ itemIdx ], {
                 resolved_title: item.resolved_title,
                 resolved_url:   item.resolved_url,
@@ -250,7 +281,7 @@ function retrieveDiff() {
               });
             } else {
               // Item does not exist in the item list, we just add it
-              console.log("FXPOCKET | NEED TO ADD: " + itemId + ' (' + item.resolved_title + ')' );
+              Logger.log("NEED TO ADD: " + itemId + ' (' + item.resolved_title + ')' );
               allItems.push({
                 id:             item.item_id,
                 resolved_title: item.resolved_title,
@@ -260,7 +291,7 @@ function retrieveDiff() {
             }
             break;
           default:
-            console.log('FXPOCKET | STATUS UNKNOW, DONT KNOW HOW TO DEAL WITH THIS : ' + item.status );
+            Logger.log('STATUS UNKNOW, DONT KNOW HOW TO DEAL WITH THIS : ' + item.status );
             break;
         }
       }
@@ -293,7 +324,7 @@ function retrieveDiff() {
 // TODO Be sure to url-encode the parameters you are sending. Otherwise if your url or title
 //      have characters like ? or &, they will often break the request.
 function addItem( url ) {
-  console.log('FXPOCKET | (addItem)');
+  Logger.log('(addItem)');
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
     onSuccess = function( response ) {
@@ -326,17 +357,17 @@ function addItem( url ) {
 }
 
 function markAsRead( itemId ) {
-  console.log('FXPOCKET | (markAsRead)');
-  console.log('FXPOCKET | id to archive: ' + itemId );
+  Logger.log('(markAsRead)');
+  Logger.log('id to archive: ' + itemId );
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
     onSuccess = function( response ) {
-      console.log('FXPOCKET | onload - itemId = ' + itemId );
+      Logger.log('onload - itemId = ' + itemId );
       let items = JSON.parse( data.items );
       let removedItemIdx = items.findIndex( function( item ) { return item.id === itemId });
 
       if( removedItemIdx >= 0 ) {
-        console.log('FXPOCKET | the item ' + itemId + ' has been found and removed');
+        Logger.log('the item ' + itemId + ' has been found and removed');
 
         // Remove the archived item from the list
         items.splice( removedItemIdx, 1 );
@@ -368,19 +399,19 @@ function markAsRead( itemId ) {
 chrome.runtime.onMessage.addListener( function( eventData ) {
   switch( eventData.action ) {
     case 'authenticate':
-      console.log("FXPOCKET | switch:authenticate");
+      Logger.log("switch:authenticate");
       Authentication.authenticate();
       break;
     case 'retrieve-items':
-      console.log("FXPOCKET | switch:retrieve-items");
+      Logger.log("switch:retrieve-items");
       retrieveItems( eventData.force );
       break;
     case 'add-item':
-      console.log('FXPOCKET | switch:add-item');
+      Logger.log('switch:add-item');
       addItem( eventData.url );
       break;
     case 'mark-as-read':
-      console.log('FXPOCKET | switch:mark-as-read');
+      Logger.log('switch:mark-as-read');
       markAsRead( eventData.id );
       break;
   }
