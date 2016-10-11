@@ -128,17 +128,6 @@ var UI = ( function() {
           chrome.runtime.sendMessage({ action: 'authenticate' });
         });
       });
-    },
-
-
-    updateBadgeCount: function( items ) {
-      chrome.browserAction.setBadgeBackgroundColor({ color: '#444' });
-
-      if( items ) {
-        chrome.browserAction.setBadgeText({ text: items.length.toString() });
-      } else {
-        chrome.browserAction.setBadgeText({ text: '' });
-      }
     }
   };
 })();
@@ -216,6 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'authenticated':
           // Logger.log('switch:authenticated');
           window.close();
+          chrome.runtime.sendMessage({ action: 'update-badge-count' });
           break;
 
         case 'marked-as-read':
@@ -223,7 +213,6 @@ document.addEventListener('DOMContentLoaded', function() {
           browser.storage.local.get('items', function( data ) {
             // TODO Extract to dedicated method
             document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
-            UI.updateBadgeCount( JSON.parse( data.items ));
           });
           break;
 
@@ -235,7 +224,6 @@ document.addEventListener('DOMContentLoaded', function() {
               // TODO Extract to dedicated method
               itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
               UI.drawList( itemsList );
-              UI.updateBadgeCount( itemsList );
             }
           });
           break;
@@ -247,7 +235,6 @@ document.addEventListener('DOMContentLoaded', function() {
               // TODO Extract to dedicated method
               itemsList = JSON.parse( data.items ).sort( function( a, b ) { return a.created_at < b.created_at; });
               UI.drawList( itemsList );
-              UI.updateBadgeCount( itemsList );
             }
           });
           break;
