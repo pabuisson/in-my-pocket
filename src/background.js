@@ -2,8 +2,8 @@ const Environments = {
   PRODUCTION:   'production',
   DEVELOPMENT:  'development'
 };
-// const currentEnvironment = Environments.DEVELOPMENT;
-const currentEnvironment = Environments.PRODUCTION;
+const currentEnvironment = Environments.DEVELOPMENT;
+// const currentEnvironment = Environments.PRODUCTION;
 
 
 
@@ -152,6 +152,10 @@ var Authentication = ( function() {
         // Send a message back to the UI
         // TODO: Display something to the user?
         chrome.runtime.sendMessage({ action: 'authenticated' });
+
+        // Retrieve the items and update the badge count
+        retrieveItems( true );
+        UI.updateBadgeCount( itemsList );
       };
 
       browser.storage.local.get( 'requestToken', function( data ) {
@@ -178,10 +182,55 @@ var Authentication = ( function() {
       let request = prepareRequest( 'https://getpocket.com/v3/oauth/request', 'POST', onSuccess );
       let requestParams = JSON.stringify( { consumer_key: consumerKey, redirect_uri: redirectAuthFinished } )
       request.send( requestParams );
+    },
+
+    // TODO Remove the copy of this method that I put in list.js, as soon as I can rely on
+    //      a real JS modules management system...
+    isAuthenticated: function() {
+      let promise = new Promise( function( resolve, reject ) {
+        browser.storage.local.get('access_token').then( function(data) {
+          if( 'access_token' in data ) {
+            resolve( data.access_token );
+          } else {
+            reject();
+          }
+        });
+      });
+
+      return promise;
     }
   };
 })();
 
+
+// --- UI STUFF
+
+var UI = ( function() {
+  function itemsNumbers( items ) {
+    if( items && Object.keys( items ).length > 0 ) {
+      return Object.keys( items ).length;
+    } else {
+      return '';
+    }
+  }
+
+  return {
+    updateBadgeCount: function( items ) {
+      Logger.log('(updateBadgeCount)');
+      chrome.browserAction.setBadgeBackgroundColor({ color: '#444' });
+
+      if( items ) {
+        let badgeCount = itemsNumbers( items );
+        chrome.browserAction.setBadgeText({ text: badgeCount.toString() });
+      } else {
+        browser.storage.local.get( 'items', function( data ) {
+          let badgeCount = itemsNumbers( JSON.parse( data.items ) );
+          chrome.browserAction.setBadgeText({ text: badgeCount.toString() });
+        });
+      }
+    }
+  }
+})();
 
 
 // --- API ACCESS ---
@@ -199,6 +248,9 @@ function retrieveItems( force ) {
     } else if( currentTimestamp - data.last_retrieve > intervalWithoutReload ) {
       // If we already have sync, check if intervalWithoutReload is past, then we can reload
       retrieveDiff();
+    } else {
+      // Update the badge count, in case it wasn't displayed but no items reload happened
+      UI.updateBadgeCount();
     }
   });
 }
@@ -221,8 +273,9 @@ function retrieveFirst() {
         });
       };
 
-      // Save item list in storage
+      // Save item list in storage and update badge count
       browser.storage.local.set({ items: JSON.stringify(itemsList) });
+      UI.updateBadgeCount( itemsList );
 
       // Save timestamp into database as "last_retrieve", so that next time we just update the diff
       browser.storage.local.set({ last_retrieve: response.since });
@@ -230,6 +283,7 @@ function retrieveFirst() {
       // Send a message back to the UI
       // TODO: Do this once in the "retrieveItems" method
       chrome.runtime.sendMessage({ action: 'retrieved-items' });
+
     };
 
     let request = prepareRequest( 'https://getpocket.com/v3/get', 'POST', onSuccess );
@@ -296,8 +350,9 @@ function retrieveDiff() {
         }
       }
 
-      // Save item list in storage
+      // Save item list in storage and update badge count
       browser.storage.local.set({ items: JSON.stringify( allItems ) });
+      UI.updateBadgeCount( allItems );
 
       // Update the last_retrieve timestamp in the database
       browser.storage.local.set({ last_retrieve: response.since });
@@ -337,8 +392,9 @@ function addItem( url ) {
         created_at:     ( Date.now()/1000 | 0 )
       });
 
-      // Save item list in storage
+      // Save item list in storage and update badge count
       browser.storage.local.set({ items: JSON.stringify( itemsList ) });
+      UI.updateBadgeCount( itemsList );
 
       // Send a message back to the UI
       chrome.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
@@ -372,8 +428,9 @@ function markAsRead( itemId ) {
         // Remove the archived item from the list
         items.splice( removedItemIdx, 1 );
 
-        // Save edited item list in storage
+        // Save edited item list in storage and update badge count
         browser.storage.local.set({ items: JSON.stringify( items ) });
+        UI.updateBadgeCount( items );
       }
 
       // Send a message back to the UI
@@ -414,5 +471,16 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       Logger.log('switch:mark-as-read');
       markAsRead( eventData.id );
       break;
+    case 'update-badge-count':
+      Logger.console.log('switch:update-badge-count');
+      UI.updateBadgeCount();
+      break;
   }
 });
+
+
+// --- ON LOAD ---
+
+Authentication.isAuthenticated().then( function() {
+  UI.updateBadgeCount();
+})
