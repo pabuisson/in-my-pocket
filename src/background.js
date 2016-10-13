@@ -2,8 +2,8 @@ const Environments = {
   PRODUCTION:   'production',
   DEVELOPMENT:  'development'
 };
-const currentEnvironment = Environments.DEVELOPMENT;
-// const currentEnvironment = Environments.PRODUCTION;
+// const currentEnvironment = Environments.DEVELOPMENT;
+const currentEnvironment = Environments.PRODUCTION;
 
 
 
