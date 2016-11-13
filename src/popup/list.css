@@ -14,6 +14,8 @@ section {
   position: relative;
 }
 
+.hidden { display: none; }
+
 .authentication {
   padding: 20px 0;
   text-align: center;
@@ -79,7 +81,6 @@ section {
 }
 
 
-.hidden { display: none; }
 
 .list-component .item .tick,
 .list-component .item .loader {
@@ -121,6 +122,17 @@ section {
 @keyframes rotate {
   0%    { transform: rotate( 0deg); }
   100%  { transform: rotate(360deg); }
+}
+
+.search-no-results {
+  width: 100%;
+  height: 357px;
+  margin: 0;
+  padding-top: 2rem;
+  text-align: center;
+
+  font-size: 1.15rem;
+  font-weight: bold;
 }
 
 
