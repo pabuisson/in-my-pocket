@@ -4,6 +4,8 @@
 let retrieveItemsButton  = document.querySelector( '.retrieve-items' );
 let addCurrentPageButton = document.querySelector( '.add-current'  );
 let filterItemsInput     = document.querySelector( '.filter-items' );
+let placeholderNoResults = document.querySelector( '.search-no-results' );
+let listComponent        = document.querySelector( '.list-component' );
 
 retrieveItemsButton.addEventListener( 'click', function() {
   MainLoader.enable();
@@ -26,7 +28,7 @@ filterItemsInput.addEventListener( 'keyup', function() {
   }
 
   UI.drawList();
-  MainLoader.disable();
+  MainLoader.disable( true );
 });
 
 
@@ -38,10 +40,11 @@ var MainLoader = ( function() {
       mainLoaderComponent.classList.add('loading');
     },
 
-    disable: function() {
+    disable: function( instantly = true ) {
+      let timeoutDuration = ( instantly ? 0 : 1000 );
       setTimeout( function() {
         mainLoaderComponent.classList.remove('loading');
-      }, 2000);
+      }, timeoutDuration );
     }
   };
 })();
@@ -117,6 +120,9 @@ var UI = ( function() {
         // Filter item list
         if( query == '' || !query ) {
           itemsToRender = sortedItems;
+          // In case, hides the "no item matching query" div, and display the list
+          listComponent.classList.remove( 'hidden' );
+          placeholderNoResults.classList.add( 'hidden' );
         } else {
           itemsToRender = sortedItems.filter( function( value, index ) {
             let title = value.resolved_title || '';
@@ -124,6 +130,15 @@ var UI = ( function() {
 
             return title.toLowerCase().includes( query ) || url.toLowerCase().includes( query );
           });
+
+          // Display the "no results" message or hide it
+          if ( itemsToRender.length == 0 ) {
+            listComponent.classList.add( 'hidden' );
+            placeholderNoResults.classList.remove( 'hidden' );
+          } else {
+            listComponent.classList.remove( 'hidden' );
+            placeholderNoResults.classList.add( 'hidden' );
+          }
         }
 
         let container = document.querySelector( '.list-component' );
