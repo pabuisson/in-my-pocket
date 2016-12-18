@@ -1,3 +1,8 @@
+"use strict";
+
+import Logger from '../modules/logger.js';
+import Badge from '../modules/badge.js';
+
 
 // --- EVENTS ---
 
@@ -22,7 +27,6 @@ addCurrentPageButton.addEventListener( 'click', function() {
 
 filterItemsInput.addEventListener( 'keyup', function() {
   let query = this.value.toLowerCase();
-
   if( query !== '' ) {
     MainLoader.enable();
   }
@@ -176,19 +180,6 @@ var UI = ( function() {
           chrome.runtime.sendMessage({ action: 'authenticate' });
         });
       });
-    },
-
-    updateBadgeCount: function() {
-      chrome.browserAction.setBadgeBackgroundColor({ color: '#444' });
-
-      browser.storage.local.get('items', function( data ) {
-        if( data.items ) {
-          let itemCount = Object.keys( JSON.parse( data.items ) ).length;
-          chrome.browserAction.setBadgeText({ text: itemCount.toString() });
-        } else {
-          chrome.browserAction.setBadgeText({ text: '' });
-        }
-      });
     }
   };
 })();
@@ -264,27 +255,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
       switch( eventData.action ) {
         case 'authenticated':
-          // Logger.log('switch:authenticated');
+          Logger.log('list | switch:authenticated');
           window.close();
           chrome.runtime.sendMessage({ action: 'update-badge-count' });
           break;
 
         case 'marked-as-read':
-          // Logger.log('switch:marked-as-read');
+          Logger.log('list | switch:marked-as-read');
           document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
-          UI.updateBadgeCount();
+          Badge.updateCount();
           break;
 
         case 'added-item':
-          // Logger.log('switch:added-item');
+          Logger.log('list | switch:added-item');
           UI.drawList();
-          UI.updateBadgeCount();
+          Badge.updateCount();
           break;
 
         case 'retrieved-items':
-          // Logger.log('switch:retrieved-items');
+          Logger.log('list | switch:retrieved-items');
           UI.drawList();
-          UI.updateBadgeCount();
+          Badge.updateCount();
           break;
       }
 

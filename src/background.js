@@ -1,32 +1,8 @@
-const Environments = {
-  PRODUCTION:   'production',
-  DEVELOPMENT:  'development'
-};
-// const currentEnvironment = Environments.DEVELOPMENT;
-const currentEnvironment = Environments.PRODUCTION;
+"use strict";
 
-
-
-// TODO This should be made available both in this file and list.js
-var Logger = ( function() {
-  let prefix = "INMYPOCKET | ";
-
-  return {
-    log: function( message ) {
-      if( currentEnvironment == Environments.DEVELOPMENT ) {
-        console.log( prefix + message );
-      }
-    },
-    warn: function( message ) {
-      console.warn( prefix + message );
-    },
-    error: function( message ) {
-      console.error( prefix + message );
-    }
-  }
-})();
-
-
+import Logger from './modules/logger.js';
+import Settings from './modules/settings.js';
+import Badge from './modules/badge.js';
 
 // --------------------------
 
@@ -141,7 +117,7 @@ var Authentication = ( function() {
     if (changeInfo.status == 'complete' && updatedTab.url.indexOf(redirectIntermediate) === 0) {
       browser.tabs.remove( tabId );
 
-      onSuccess = function( response ) {
+      let onSuccess = function( response ) {
         const username = response.username;
         const access_token = response.access_token;
 
@@ -155,7 +131,7 @@ var Authentication = ( function() {
 
         // Retrieve the items and update the badge count
         retrieveItems( true );
-        UI.updateBadgeCount( itemsList );
+        Badge.updateCount( itemsList );
       };
 
       browser.storage.local.get( 'requestToken', function( data ) {
@@ -168,7 +144,7 @@ var Authentication = ( function() {
 
   return {
     authenticate: function() {
-      onSuccess = function( response ) {
+      let onSuccess = function( response ) {
         const requestToken = response.code;
 
         browser.storage.local.set({ requestToken: requestToken });
@@ -203,35 +179,6 @@ var Authentication = ( function() {
 })();
 
 
-// --- UI STUFF
-
-var UI = ( function() {
-  function itemsNumbers( items ) {
-    if( items && Object.keys( items ).length > 0 ) {
-      return Object.keys( items ).length;
-    } else {
-      return '';
-    }
-  }
-
-  return {
-    updateBadgeCount: function( items ) {
-      Logger.log('(updateBadgeCount)');
-      chrome.browserAction.setBadgeBackgroundColor({ color: '#444' });
-
-      if( items ) {
-        let badgeCount = itemsNumbers( items );
-        chrome.browserAction.setBadgeText({ text: badgeCount.toString() });
-      } else {
-        browser.storage.local.get( 'items', function( data ) {
-          let badgeCount = itemsNumbers( JSON.parse( data.items ) );
-          chrome.browserAction.setBadgeText({ text: badgeCount.toString() });
-        });
-      }
-    }
-  }
-})();
-
 
 // --- API ACCESS ---
 
@@ -250,16 +197,17 @@ function retrieveItems( force ) {
       retrieveDiff();
     } else {
       // Update the badge count, in case it wasn't displayed but no items reload happened
-      UI.updateBadgeCount();
+      Badge.updateCount();
     }
   });
 }
+
 
 function retrieveFirst() {
   Logger.log('(retrieve first)');
 
   browser.storage.local.get('access_token', function( data ) {
-    onSuccess = function( response ) {
+    let onSuccess = function( response ) {
       Logger.log(Object.keys( response.list ).length + ' items in the response');
 
       let itemsList = [];
@@ -275,7 +223,7 @@ function retrieveFirst() {
 
       // Save item list in storage and update badge count
       browser.storage.local.set({ items: JSON.stringify(itemsList) });
-      UI.updateBadgeCount( itemsList );
+      Badge.updateCount( itemsList );
 
       // Save timestamp into database as "last_retrieve", so that next time we just update the diff
       browser.storage.local.set({ last_retrieve: response.since });
@@ -297,11 +245,12 @@ function retrieveFirst() {
   });
 };
 
+
 function retrieveDiff() {
   Logger.log('(retrieve diff)');
 
   browser.storage.local.get( ['access_token', 'last_retrieve', 'items'], function( data ) {
-    onSuccess = function( response ) {
+    let onSuccess = function( response ) {
       Logger.log(Object.keys(response.list).length + ' items in the response');
       let allItems = JSON.parse( data.items );
 
@@ -352,7 +301,7 @@ function retrieveDiff() {
 
       // Save item list in storage and update badge count
       browser.storage.local.set({ items: JSON.stringify( allItems ) });
-      UI.updateBadgeCount( allItems );
+      Badge.updateCount( allItems );
 
       // Update the last_retrieve timestamp in the database
       browser.storage.local.set({ last_retrieve: response.since });
@@ -382,7 +331,7 @@ function addItem( url ) {
   Logger.log('(addItem)');
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
-    onSuccess = function( response ) {
+    let onSuccess = function( response ) {
       let itemsList = JSON.parse( data.items );
       let newItem   = response.item;
       itemsList.push({
@@ -394,7 +343,7 @@ function addItem( url ) {
 
       // Save item list in storage and update badge count
       browser.storage.local.set({ items: JSON.stringify( itemsList ) });
-      UI.updateBadgeCount( itemsList );
+      Badge.updateCount( itemsList );
 
       // Send a message back to the UI
       chrome.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
@@ -412,12 +361,13 @@ function addItem( url ) {
 
 }
 
+
 function markAsRead( itemId ) {
   Logger.log('(markAsRead)');
   Logger.log('id to archive: ' + itemId );
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
-    onSuccess = function( response ) {
+    let onSuccess = function( response ) {
       Logger.log('onload - itemId = ' + itemId );
       let items = JSON.parse( data.items );
       let removedItemIdx = items.findIndex( function( item ) { return item.id === itemId });
@@ -430,7 +380,7 @@ function markAsRead( itemId ) {
 
         // Save edited item list in storage and update badge count
         browser.storage.local.set({ items: JSON.stringify( items ) });
-        UI.updateBadgeCount( items );
+        Badge.updateCount( items );
       }
 
       // Send a message back to the UI
@@ -472,8 +422,8 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       markAsRead( eventData.id );
       break;
     case 'update-badge-count':
-      Logger.console.log('switch:update-badge-count');
-      UI.updateBadgeCount();
+      Logger.log('switch:update-badge-count');
+      Badge.updateCount();
       break;
   }
 });
@@ -482,5 +432,5 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
 // --- ON LOAD ---
 
 Authentication.isAuthenticated().then( function() {
-  UI.updateBadgeCount();
+  Badge.updateCount();
 })

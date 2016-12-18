@@ -1,0 +1,34 @@
+body {
+  color: #444;
+  font-size: 87%;
+}
+
+.row {
+  margin: 0px;
+  margin-left: -5px;
+  padding: 8px 0px 8px 4px;
+  height: 20px;
+  line-height: 20px;
+  border-bottom: 1px solid #c1c1c1;
+}
+
+.row:last-of-type {
+  border-bottom: 0px none;
+}
+
+label {
+  display: inline-block;
+  width: 25%;
+  min-width: 200px;
+}
+
+a {
+  color: #0095dd;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
