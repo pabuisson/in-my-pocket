@@ -9,11 +9,11 @@ body {
   padding: 8px 0px 8px 4px;
   height: 20px;
   line-height: 20px;
-  border-bottom: 1px solid #c1c1c1;
+  border-top: 1px solid #c1c1c1;
 }
 
-.row:last-of-type {
-  border-bottom: 0px none;
+.row:first-of-type {
+  border-top: 0px none;
 }
 
 label {

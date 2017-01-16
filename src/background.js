@@ -3,6 +3,7 @@
 import Logger from './modules/logger.js';
 import Settings from './modules/settings.js';
 import Badge from './modules/badge.js';
+import Authentication from './modules/authentication.js';
 
 // --------------------------
 
@@ -106,7 +107,9 @@ function prepareRequest( url, action, successCallback, errorCallback ) {
 
 // --- AUTHENTICATION
 
-var Authentication = ( function() {
+// TODO After the opening of the callback tab, reactivate the tab where the
+//      user was before for a less disturbing behaviour
+var AuthenticationProcess = ( function() {
   // TODO Avoid the loading of a given page (redirectIntermediate variable)
   //      Replace by an "internal" page with its own JS
   const redirectIntermediate = 'http://oauth.pabuisson.com';
@@ -158,22 +161,6 @@ var Authentication = ( function() {
       let request = prepareRequest( 'https://getpocket.com/v3/oauth/request', 'POST', onSuccess );
       let requestParams = JSON.stringify( { consumer_key: consumerKey, redirect_uri: redirectAuthFinished } )
       request.send( requestParams );
-    },
-
-    // TODO Remove the copy of this method that I put in list.js, as soon as I can rely on
-    //      a real JS modules management system...
-    isAuthenticated: function() {
-      let promise = new Promise( function( resolve, reject ) {
-        browser.storage.local.get('access_token').then( function(data) {
-          if( 'access_token' in data ) {
-            resolve( data.access_token );
-          } else {
-            reject();
-          }
-        });
-      });
-
-      return promise;
     }
   };
 })();
@@ -407,7 +394,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
   switch( eventData.action ) {
     case 'authenticate':
       Logger.log("switch:authenticate");
-      Authentication.authenticate();
+      AuthenticationProcess.authenticate();
       break;
     case 'retrieve-items':
       Logger.log("switch:retrieve-items");
