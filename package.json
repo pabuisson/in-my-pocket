@@ -1,0 +1,28 @@
+{
+  "name": "firefox-pocket",
+  "description": "For all those who are missing the old Pocket addon for Firefox, here's an unofficial client for the [Pocket](http://getpocket.com/) webservice. I'm not in any way affiliated to Pocket and only does this for my fellow Firefox users looking for an easy to use Pocket extension for their favorite browser.",
+  "main": "index.js",
+  "dependencies": {
+    "webpack": "^1.14.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.17.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.16.0",
+    "webpack": "^1.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/pabuisson/in-my-pocket.git"
+  },
+  "keywords": [
+    "firefox",
+    "plugin"
+  ],
+  "author": "Pierre-Adrien Buisson",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/pabuisson/in-my-pocket#readme"
+}

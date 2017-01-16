@@ -26,11 +26,16 @@
   ],
 
   "background": {
-    "scripts": [ "src/background.js" ]
+    "scripts": [ "build/background.js" ]
+  },
+
+  "options_ui": {
+    "page": "src/options/options.html"
   },
 
   "browser_action": {
     "default_icon": "icons/inmypocket.svg",
-    "default_popup": "src/popup/list.html"
+    "default_popup": "src/popup/list.html",
+    "browser_style": false
   }
 }
