@@ -2,6 +2,7 @@
 
 import Logger from '../modules/logger.js';
 import Badge from '../modules/badge.js';
+import Authentication from '../modules/authentication.js';
 
 
 // --- EVENTS ---
@@ -158,7 +159,7 @@ var UI = ( function() {
     },
 
     setup: function() {
-      isAuthenticated().then( function( access_token ) {
+      Authentication.isAuthenticated().then( function( access_token ) {
         document.querySelector( '.authentication' ).style.display = 'none';
         document.querySelector( '.authenticated'  ).style.display = 'block';
 
@@ -191,26 +192,6 @@ function markAsRead( itemId ) {
   document.querySelector( ".item[data-id='" + itemId + "'] .loader" ).classList.remove( 'hidden' );
 
   chrome.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
-}
-
-
-// TODO This should be part of my Authentication module, but as of now, I can't find a way to
-//      properly organize everything. If I use a separate file for Authentication, I don't know
-//      how to require it from background.js, and if I put everything in background.js, then I need
-//      to import it in my popup.html, and then the onMessage event listener gets triggered twice
-//      for every message sent...
-function isAuthenticated() {
-  let promise = new Promise( function( resolve, reject ) {
-    browser.storage.local.get('access_token').then( function(data) {
-      if( 'access_token' in data ) {
-        resolve( data.access_token );
-      } else {
-        reject();
-      }
-    });
-  });
-
-  return promise;
 }
 
 

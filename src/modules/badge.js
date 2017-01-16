@@ -16,6 +16,10 @@ var Badge = ( function() {
   }
 
   return {
+    hide: function() {
+      chrome.browserAction.setBadgeText({ text: '' });
+    },
+
     updateCount: function( items ) {
       Settings.init().then( function() {
         let showBadge = Settings.get( 'showBadge' );
@@ -27,13 +31,14 @@ var Badge = ( function() {
             chrome.browserAction.setBadgeText({ text: itemsCount.toString() });
           } else {
             browser.storage.local.get( 'items', function( data ) {
-              let itemsCount = itemsNumbers( JSON.parse( data.items ) );
+              let itemsCollection = data.items ? JSON.parse( data.items ) : {};
+              let itemsCount = itemsNumbers( itemsCollection );
               chrome.browserAction.setBadgeText({ text: itemsCount.toString() });
             });
           }
         } else {
           // If showBadge != true, we hide the count badge
-          chrome.browserAction.setBadgeText({ text: '' });
+          Badge.hide();
         }
       });
     }
