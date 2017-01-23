@@ -200,10 +200,13 @@ function retrieveFirst() {
       let itemsList = [];
       for( let itemId in response.list ) {
         let item = response.list[ itemId ];
+
+        // NOTE: in some cases, resolved_title/resolved_url do not exist so I then
+        //       fallback to given_url (there's no given_url equivalent for the title)
         itemsList.push({
           id:             item.item_id,
           resolved_title: item.resolved_title,
-          resolved_url:   item.resolved_url,
+          resolved_url:   item.resolved_url || item.given_url,
           created_at:     item.time_added
         });
       };
