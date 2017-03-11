@@ -424,3 +424,19 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
 Authentication.isAuthenticated().then( function() {
   Badge.updateCount();
 })
+
+
+// Feature: add link to Pocket from righ-click context menu
+const addLinkId = 'add-link-to-pocket';
+
+chrome.contextMenus.create({
+  id: addLinkId,
+  title: 'Add to Pocket',
+  contexts: ['link']
+});
+
+browser.contextMenus.onClicked.addListener( function( link ) {
+  if ( link.menuItemId == addLinkId ) {
+    addItem( link.linkUrl );
+  }
+});
