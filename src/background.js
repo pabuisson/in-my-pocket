@@ -432,11 +432,12 @@ const addLinkId = 'add-link-to-pocket';
 chrome.contextMenus.create({
   id: addLinkId,
   title: 'Add to Pocket',
-  contexts: ['link']
+  contexts: ['link', 'page']
 });
 
 browser.contextMenus.onClicked.addListener( function( link ) {
   if ( link.menuItemId == addLinkId ) {
-    addItem( link.linkUrl );
+    const url = link.linkUrl || link.pageUrl;
+    addItem( url );
   }
 });
