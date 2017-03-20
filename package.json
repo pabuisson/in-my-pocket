@@ -12,6 +12,7 @@
     "webpack": "^1.14.0"
   },
   "scripts": {
+    "build": "./node_modules/.bin/webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
