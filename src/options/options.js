@@ -1,5 +1,8 @@
 "use strict";
 
+require( "file-loader?name=[path][name].[ext]!./options.html" );
+import './options.scss';
+
 import Logger from '../modules/logger.js';
 import Settings from '../modules/settings.js';
 import Badge from '../modules/badge.js';

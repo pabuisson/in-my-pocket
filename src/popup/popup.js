@@ -1,5 +1,8 @@
 "use strict";
 
+require( "file-loader?name=[path][name].[ext]!./popup.html" );
+import'./popup.scss';
+
 import Logger from '../modules/logger.js';
 import Badge from '../modules/badge.js';
 import Authentication from '../modules/authentication.js';
