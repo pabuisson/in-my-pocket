@@ -333,10 +333,20 @@ function addItem( url ) {
 
       // Save item list in storage and update badge count
       browser.storage.local.set({ items: JSON.stringify( itemsList ) });
-      Badge.updateCount( itemsList );
 
-      // Send a message back to the UI
-      chrome.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
+      // Display an indicator on the badge that everything went well
+      // TODO: This may be moved to the Badge module
+      browser.browserAction.setBadgeText({ text: '✓' });
+      browser.browserAction.setBadgeBackgroundColor({ color: '#50bcb6' });
+
+      // Then restore the badge count according to settings and send message back to the UI
+      setTimeout( function() {
+        // Update the badge if needed
+        Badge.updateCount( itemsList );
+
+        // Send a message back to the UI
+        chrome.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
+      }, 2500);
     };
 
     let request = prepareRequest( 'https://getpocket.com/v3/add', 'POST', onSuccess );
