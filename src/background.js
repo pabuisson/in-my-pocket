@@ -1,5 +1,7 @@
 "use strict";
 
+require( "file-loader?name=[name].[ext]!./manifest.json" );
+
 import Logger from './modules/logger.js';
 import Settings from './modules/settings.js';
 import Badge from './modules/badge.js';

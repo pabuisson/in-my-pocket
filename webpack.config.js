@@ -1,23 +1,43 @@
+const webpack = require( 'webpack' )
+const path    = require( 'path' )
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
+  context: path.resolve(__dirname, 'src'),
   entry: {
-    'build/popup'      : './src/popup/list.js',       // will be  ./build/application/bundle.js,
-    'build/options'    : './src/options/options.js',  // will be  ./build/library/bundle.js
-    'build/background' : './src/background.js'        // will be  ./build/library/bundle.js
+    'popup/popup'     : './popup/popup.js',      // will be  ./build/popup/popup.js,
+    'options/options' : './options/options.js',  // will be  ./build/options/options.js
+    'background'      : './background.js'        // will be  ./build/background.js
   },
   output: {
-    path: './',
+    path: path.resolve(__dirname, 'build'),
     filename: '[name].js'
   },
   module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
-        loader: 'babel', // 'babel-loader' is also a valid name to reference
-        query: {
-          presets: [ 'es2015' ]
+    rules: [{
+      test: /\.js$/,
+      // include: path.resolve(__dirname, 'src'),
+      exclude: /(node_modules|bower_components)/,
+      use: [{
+        loader: 'babel-loader',
+        options: {
+          presets: [
+            ['es2015', { modules: false }]
+          ]
         }
-      }
-    ]
-  }
-};
+      }]
+    },{
+      test: /\.scss$/,
+      use: ExtractTextPlugin.extract({
+        fallback: 'style-loader',
+        use: [ 'css-loader', 'sass-loader' ]
+      })
+    }]
+  },
+  plugins: [
+    new ExtractTextPlugin('[name].css'),
+    new CopyWebpackPlugin([ { from: 'assets/', to: 'assets/' } ])
+  ]
+}
+

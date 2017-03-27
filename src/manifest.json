@@ -6,8 +6,8 @@
   "description": "For all those who are missing the old Firefox Pocket addon, here is an unofficial client for the excellent Pocket service. Enjoy!",
   "homepage_url": "https://bitbucket.org/pabuisson/in-my-pocket",
   "icons": {
-    "48": "icons/inmypocket-48.png",
-    "96": "icons/inmypocket-96.png"
+    "48": "assets/icons/inmypocket-48.png",
+    "96": "assets/icons/inmypocket-96.png"
   },
 
   "applications": {
@@ -27,16 +27,16 @@
   ],
 
   "background": {
-    "scripts": [ "build/background.js" ]
+    "scripts": [ "./background.js" ]
   },
 
   "options_ui": {
-    "page": "src/options/options.html"
+    "page": "./options/options.html"
   },
 
   "browser_action": {
-    "default_icon": "icons/inmypocket.svg",
-    "default_popup": "src/popup/list.html",
+    "default_icon": "assets/icons/inmypocket.svg",
+    "default_popup": "./popup/list.html",
     "browser_style": false
   }
 }
