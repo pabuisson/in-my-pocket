@@ -6,6 +6,7 @@ import Logger from './modules/logger.js';
 import Settings from './modules/settings.js';
 import Badge from './modules/badge.js';
 import Authentication from './modules/authentication.js';
+import { PocketError, PocketNotice } from './modules/constants.js';
 
 // --------------------------
 
@@ -13,15 +14,6 @@ const consumerKey = '58817-addc87503598b7ed29e5bf72';
 
 
 // --- API REQUEST HELPER ---
-
-const PocketError = {
-  GENERIC:      'generic',
-  UNREACHABLE:  'unreachable',
-  UNAUTHORIZED: 'unauthorized',
-  PERMISSIONS:  'missing_permissions',
-  RATE_LIMIT:   'user_rate_limit_reached'
-};
-
 
 function prepareRequest( url, action, successCallback, errorCallback ) {
   let request = new XMLHttpRequest();
@@ -326,6 +318,7 @@ function addItem( url ) {
     let onSuccess = function( response ) {
       let itemsList = JSON.parse( data.items );
       let newItem   = response.item;
+
       itemsList.push({
         id:             newItem.item_id,
         resolved_title: newItem.title,
@@ -351,14 +344,25 @@ function addItem( url ) {
       }, 2500);
     };
 
-    let request = prepareRequest( 'https://getpocket.com/v3/add', 'POST', onSuccess );
-    let requestParams = JSON.stringify({
-      consumer_key: consumerKey,
-      access_token: data.access_token,
-      url: url
+
+    let itemsList = JSON.parse( data.items );
+    let alreadyContainsItem = itemsList.some( function( item, index, array ) {
+      return item.resolved_url == url;
     });
 
-    request.send( requestParams );
+    if( alreadyContainsItem === true ) {
+      // Instead of just logging, send an event back to the UI
+      chrome.runtime.sendMessage( { notice: PocketNotice.ALREADY_IN_LIST } );
+    } else if ( alreadyContainsItem === false ) {
+      let request = prepareRequest( 'https://getpocket.com/v3/add', 'POST', onSuccess );
+      let requestParams = JSON.stringify({
+        consumer_key: consumerKey,
+        access_token: data.access_token,
+        url: url
+      });
+
+      request.send( requestParams );
+    }
   });
 
 }

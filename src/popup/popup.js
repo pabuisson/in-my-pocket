@@ -6,6 +6,7 @@ import'./popup.scss';
 import Logger from '../modules/logger.js';
 import Badge from '../modules/badge.js';
 import Authentication from '../modules/authentication.js';
+import { PocketError, PocketNotice } from '../modules/constants.js';
 
 
 // --- EVENTS ---
@@ -205,34 +206,50 @@ document.addEventListener('DOMContentLoaded', function() {
   UI.setup();
 
   chrome.runtime.onMessage.addListener( function( eventData ) {
-    if( eventData.error ) {
+    if( eventData.error || eventData.notice ) {
       MainLoader.disable();
 
-      let errorContainer = document.querySelector( '.error-overlay' );
-      let errorMessage = 'An error occurred: ';
+      let flashContainer = document.querySelector( '.flash-overlay' );
+      let flashMessage   = '';
+      let errorClass     = 'error';
+      let noticeClass    = 'notice';
 
-      switch( eventData.error ) {
-        case PocketError.UNREACHABLE:
-          errorMessage += 'could not reach the server';
-          break;
-        case PocketError.UNAUTHORIZED:
-          errorMessage += 'unauthorized, you might need to login again';
-          break;
-        case PocketError.PERMISSIONS:
-          errorMessage += 'missing permissions';
-          break;
-        case PocketError.RATE_LIMIT:
-          errorMessage += 'max number of requests reach for this hour';
-          errorMessage += ' (reset in ' + eventData.resetDelay + ')';
-          break;
+      if( eventData.error ) {
+        flashContainer.classList.add( errorClass );
+        flashMessage = 'An error occurred: ';
+
+        switch( eventData.error ) {
+          case PocketError.UNREACHABLE:
+            flashMessage += 'could not reach the server';
+            break;
+          case PocketError.UNAUTHORIZED:
+            flashMessage += 'unauthorized, you might need to login again';
+            break;
+          case PocketError.PERMISSIONS:
+            flashMessage += 'missing permissions';
+            break;
+          case PocketError.RATE_LIMIT:
+            flashMessage += 'max number of requests reach for this hour';
+            flashMessage += ' (reset in ' + eventData.resetDelay + ')';
+            break;
+        }
+      } else if( eventData.notice ) {
+        flashContainer.classList.add( noticeClass );
+
+        switch( eventData.notice ) {
+          case PocketNotice.ALREADY_IN_LIST:
+            flashMessage = 'This page is already in your Pocket :)';
+            break;
+        }
       }
 
-      errorContainer.innerHTML = errorMessage;
-      errorContainer.classList.remove( 'hidden' );
+      flashContainer.innerHTML = flashMessage;
+      flashContainer.classList.remove( 'hidden' );
 
-      // Hide the error message after 5 seconds
+      // Hide the error message after 5 seconds and reset the class list
       setTimeout( function() {
-        errorContainer.classList.add( 'hidden' );
+        flashContainer.classList.add( 'hidden' );
+        flashContainer.classList.remove( errorClass, noticeClass );
       }, 5000 );
 
     } else {
