@@ -3,6 +3,10 @@
 
 ## [unreleased]
 
+* FEATURE: Add a page by right-click menu: add the current page if you click in the background,
+  add the "target" page if you right-click on a link
+* FEATURE: Highlight badge count when adding a new item
+* FIX: Prevent from adding same page several times (notice message)
 * UPDATE: Higher and larger popup
 
 
