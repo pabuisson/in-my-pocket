@@ -80,6 +80,8 @@ var UI = ( function() {
     let liElement    = document.createElement('li');
     let titleContent = document.createElement('span');
     let urlContent   = document.createElement('span');
+    let actionContainer = document.createElement('div');
+    let tickAction = document.createElement('div');
     let tickElement  = document.createElement('div');
     let tickIconFont = document.createElement('i');
     let loadElement  = document.createElement('div');
@@ -87,6 +89,8 @@ var UI = ( function() {
     liElement.className    = 'item';
     titleContent.className = 'title';
     urlContent.className   = 'url';
+    actionContainer.className = 'actions-container';
+    tickAction.className = 'tick-action';
     tickIconFont.classList.add( 'icon', 'icon-ok');
     tickElement.className  = 'tick';
     loadElement.classList.add( 'loader', 'hidden' );
@@ -100,8 +104,11 @@ var UI = ( function() {
 
     urlContent.appendChild( document.createTextNode( formatUrl( item.resolved_url ) ) );
 
-    liElement.appendChild( tickElement );
-    liElement.appendChild( loadElement );
+    tickAction.appendChild( tickElement );
+    tickAction.appendChild( loadElement );
+    actionContainer.appendChild( tickAction );
+
+    liElement.appendChild( actionContainer );
     liElement.appendChild( titleContent );
     liElement.appendChild( document.createElement('br') );
     liElement.appendChild( urlContent );

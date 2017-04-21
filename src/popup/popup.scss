@@ -1,3 +1,9 @@
+$background: #fafafa;
+$pocket-aqua: #50bcb6;
+$pocket-red: #f13044;
+
+
+
 html, body {
   width: 450px;
   height: 550px;
@@ -6,7 +12,7 @@ html, body {
   margin: 0px;
   overflow: hidden;
   font-family: sans-serif;
-  background-color: #fafafa;
+  background-color: $background;
 }
 
 section {
@@ -48,8 +54,8 @@ section {
     /* TODO: Flexbox for span + tick sizing */
     span {
       display: inline-block;
-      width: 90%;
-      margin-left: 36px;
+      width: 95%;
+      margin-left: 6px;
       height: 16px;
       line-height: 12px;
       white-space: nowrap;
@@ -58,13 +64,13 @@ section {
     }
 
     .title {
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: bold;
       color: #555;
     }
 
     &:hover .title {
-      color: #50bcb6;
+      color: $pocket-aqua;
     }
 
     .url {
@@ -75,40 +81,69 @@ section {
       color: #aaa;
     }
 
-    .tick, .loader {
-      position: absolute;
-      top: 14px;
-      left: 6px;
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-    }
 
-    .tick {
-      color: white;
-      font-size: 1.1rem;
-      text-align: center;
-      background-color: #aaa;
-      border-radius: 20px;
-      opacity: 0.4;
-
-      &:hover {
-        background-color: #f13044;
-        opacity: 1;
-      }
+    &:hover .actions-container {
+      opacity: 1;
+      transition: opacity 200ms ease-out;
     }
 
     &:hover .tick {
       opacity: 0.7;
     }
 
-    .loader {
-      height: 12px;
-      width: 12px;
-      animation: rotate 0.8s infinite linear;
-      border: 4px solid #f15d6c;
-      border-right-color: transparent;
-      border-radius: 50%;
+    .actions-container {
+      opacity: 0;
+      transition: opacity 200ms ease-out;
+      z-index: 1;
+
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      width: 60px;
+      height: 100%;
+      background-color: transparentize( $background, 0.1 );
+      border-left: 1px solid #ddd;
+
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+
+      .tick-action {
+        width: 100%;
+
+        .tick, .loader {
+          position: relative;
+          top: 12px;
+          margin: auto;
+
+          width: 24px;
+          height: 24px;
+          line-height: 24px;
+        }
+
+        .tick {
+          color: white;
+          font-size: 1.1rem;
+          text-align: center;
+          background-color: #aaa;
+          border-radius: 20px;
+          opacity: 0.5;
+
+          &:hover {
+            background-color: $pocket-red;
+            opacity: 1;
+          }
+        }
+
+        .loader {
+          height: 12px;
+          width: 12px;
+          animation: rotate 0.8s infinite linear;
+          border: 4px solid #f15d6c;
+          border-right-color: transparent;
+          border-radius: 50%;
+        }
+      }
     }
   }
 }
@@ -137,10 +172,12 @@ section {
 .top-actions {
   display: flex;
   flex-direction: row;
+
   height: 30px;
   width: 100%;
   padding: 5px 0;
-  color: #444;
+
+  background-color: $pocket-aqua;
 
   .icon {
     flex: initial;
@@ -148,19 +185,35 @@ section {
     padding: 3px;
     cursor: pointer;
     font-size: 2rem;
+    color: white;
+
+    opacity: 0.6;
+    transition: opacity 100ms ease-out;
 
     &:first-child {
       padding-left: 0px;
     }
 
     &:hover {
-      color: #f13044;
+      opacity: 1;
+      transition: opacity 100ms ease-out;
+    }
+
+    &.random-item {
+      font-weight: bold;
     }
   }
 
   .filter-items {
     flex: 1;
-    margin: 3px 10px 3px 20px;
+    margin: 3px 10px 3px 60px;
+    padding-left: 10px;
+
+    background-color: transparentize( white, 0.5 );
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    color: #555;
+    font-size: 1.2rem;
   }
 }
 
@@ -172,7 +225,7 @@ section {
   position: relative;
   width: 100%;
   height: 2px;
-  background-color: #666;
+  background-color: white;
 
   &.loading {
     background-color: transparent;
@@ -183,7 +236,7 @@ section {
     position: absolute;
     display: block;
     height: 100%;
-    background-color: #50bcb6;
+    background-color: $pocket-red;
     left: 0%;
     right: 100%;
 
