@@ -13,6 +13,8 @@ import Authentication from '../modules/authentication.js';
 let displayBadgeCountCheckbox = document.querySelector( '.display-badge-count' );
 let disconnectAccountAction   = document.querySelector( '.disconnect-account' );
 let disconnectAccountRow      = document.querySelector( '.disconnect-account-row' );
+let openRandomItemCheckbox    = document.querySelector( '.open-random-after-read' );
+let newTabCheckbox            = document.querySelector( '.new-tab' );
 
 
 
@@ -22,12 +24,14 @@ var UI = ( function() {
       // If user is not connected, we hide the "disconnect" link
       Authentication.isAuthenticated().catch( function() {
         disconnectAccountRow.style.display = 'none';
-      });
+        });
 
       // Load the other settings values
       Settings.init().then( function() {
         let settings = Settings.get();
         displayBadgeCountCheckbox.checked = settings[ 'showBadge' ];
+        openRandomItemCheckbox.checked = settings[ 'openRandomAfterRead' ];
+		newTabCheckbox.checked = settings.newTab;
       });
 
       // Event : "Display count badge" checkbox
@@ -58,6 +62,18 @@ var UI = ( function() {
             disconnectAccountRow.style.display = 'none';
           });
         }
+      });
+
+      // Event : "Open random item" checkbox
+      openRandomItemCheckbox.addEventListener( 'change', function() {
+        Settings.set( 'openRandomAfterRead', this.checked );
+        Settings.save();
+      });
+
+      // Event : "Open in new tab" checkbox
+      newTabCheckbox.addEventListener( 'change', function() {
+        Settings.set( 'newTab', this.checked );
+        Settings.save();
       });
     }
   };

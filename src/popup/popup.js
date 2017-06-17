@@ -13,6 +13,7 @@ import { PocketError, PocketNotice } from '../modules/constants.js';
 
 let retrieveItemsButton  = document.querySelector( '.retrieve-items' );
 let addCurrentPageButton = document.querySelector( '.add-current'  );
+let readRandomItemButton = document.querySelector( '.random-item' );
 let filterItemsInput     = document.querySelector( '.filter-items' );
 let placeholderNoResults = document.querySelector( '.search-no-results' );
 let listComponent        = document.querySelector( '.list-component' );
@@ -26,8 +27,14 @@ addCurrentPageButton.addEventListener( 'click', function() {
   MainLoader.enable();
   chrome.tabs.query({ active: true, currentWindow: true }, function ( tabs ) {
     let currentUrl = tabs[ 0 ].url;
-    chrome.runtime.sendMessage({ action: 'add-item', url: currentUrl });
+    let currentTitle = tabs[ 0 ].title;
+    chrome.runtime.sendMessage({ action: 'add-item', url: currentUrl, title: currentTitle });
   });
+});
+
+readRandomItemButton.addEventListener( 'click', function() {
+  browser.runtime.sendMessage({action: 'random-item'});
+  // window.close();
 });
 
 filterItemsInput.addEventListener( 'keyup', function() {
@@ -108,7 +115,7 @@ var UI = ( function() {
   }
 
   function openLink( url ) {
-    browser.tabs.create({ url: url });
+    browser.runtime.sendMessage({action: 'read-item', url});
   }
 
     function focusSearchField() {
