@@ -127,9 +127,9 @@ var UI = ( function() {
 
   return {
     drawList: function() {
-      browser.storage.local.get('items', function( data ) {
-        let items           = data.items ? JSON.parse( data.items ) : [];
-        let sortedItems     = items.sort( function( a, b ) { return a.created_at < b.created_at; });
+      browser.storage.local.get('items', function( { items } ) {
+        let parsedItems     = items ? JSON.parse( items ) : [];
+        let sortedItems     = parsedItems.sort( function( a, b ) { return a.created_at < b.created_at; });
         let itemsToRender   = undefined;
         let query           = document.querySelector( '.filter-items').value;
 

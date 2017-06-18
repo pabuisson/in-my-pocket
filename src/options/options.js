@@ -11,7 +11,6 @@ import Authentication from '../modules/authentication.js';
 // -------------
 
 let displayBadgeCountCheckbox = document.querySelector( '.display-badge-count' );
-let openRandomItemCheckbox    = document.querySelector( '.open-random-after-read' );
 let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
 let disconnectAccountAction   = document.querySelector( '.disconnect-account' );
 let disconnectAccountRow      = document.querySelector( '.disconnect-account-row' );
@@ -30,7 +29,6 @@ var UI = ( function() {
       Settings.init().then( function() {
         let settings = Settings.get();
         displayBadgeCountCheckbox.checked = settings[ 'showBadge' ];
-        openRandomItemCheckbox.checked    = settings[ 'openRandomAfterRead' ];
         openInNewTabCheckbox.checked      = settings[ 'openInNewTab' ];
       });
 
@@ -39,12 +37,6 @@ var UI = ( function() {
         Settings.set( 'showBadge', this.checked );
         Settings.save();
         Badge.updateCount();
-      });
-
-      // Event: "Open random item" checkbox
-      openRandomItemCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'openRandomAfterRead', this.checked );
-        Settings.save();
       });
 
       // Event: "Open in new tab" checkbox
