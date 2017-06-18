@@ -344,9 +344,9 @@ function addItem( url, title ) {
 
       }, 2500);
 
-      browser.tabs.query({url: url}).then(tabs => {
-        for (const tab of tabs) {
-          redrawPageAction(tab.id, tab.url);
+      browser.tabs.query( { url: url } ).then( function( tabs ) {
+        for( const tab of tabs ) {
+          redrawPageAction( tab.id, tab.url );
         }
       });
     };
@@ -384,7 +384,7 @@ function markAsRead( itemId ) {
       Logger.log('onload - itemId = ' + itemId );
       let items = JSON.parse( data.items );
       let removedItemIdx = items.findIndex( function( item ) { return item.id === itemId });
-      let removedItem = items[removedItemIdx];
+      let removedItem = items[ removedItemIdx ];
 
       if( removedItemIdx >= 0 ) {
         Logger.log('the item ' + itemId + ' has been found and removed');
@@ -401,10 +401,10 @@ function markAsRead( itemId ) {
       chrome.runtime.sendMessage({ action: 'marked-as-read', id: itemId });
 
       // Redraw page action
-      if (removedItem) {
-        browser.tabs.query({url: removedItem.resolved_url}).then(tabs => {
-          for (const tab of tabs) {
-            redrawPageAction(tab.id, tab.url);
+      if( removedItem ) {
+        browser.tabs.query( { url: removedItem.resolved_url } ).then( function( tabs ) {
+          for( const tab of tabs ) {
+            redrawPageAction( tab.id, tab.url );
           }
         });
       }
@@ -425,22 +425,25 @@ function markAsRead( itemId ) {
 
 function openRandomItem( opt = {} ) {
   browser.storage.local.get( 'items' ).then( function( { items } ) {
-    items = items ? JSON.parse( items ) : [];
-    const item = items[ Math.floor( Math.random() * items.length ) ];
+    const parsedItems = items ? JSON.parse( items ) : [];
+    const item = items[ Math.floor( Math.random() * parsedItems.length ) ];
     opt.url = item.resolved_url;
+
     openItem( opt );
   });
 }
 
+// TODO understand ?
 function openItem( { newTab, url } ) {
   let pending;
   if( newTab == null ) {
     pending = Settings.init().then( function() {
-      newTab = Settings.get( 'newTab' );
+      newTab = Settings.get( 'openInNewTab' );
     });
   } else {
     pending = Promise.resolve();
   }
+
   pending.then( function() {
     if( newTab ) {
       browser.tabs.create( { url } );
@@ -478,7 +481,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       openItem( {url: eventData.url} );
       break;
     default:
-      Logger.log( `switch:unknown action:${eventData.action}` );
+      Logger.log( `Unknown action:${eventData.action}` );
   }
 });
 
@@ -534,8 +537,8 @@ browser.pageAction.onClicked.addListener( function( tab ) {
 
 function redrawPageAction( tabId, url ) {
   browser.storage.local.get( "items" ).then( function( { items } ) {
-    items = JSON.parse( items );
-    if( items.some( i => i.resolved_url == url ) ) {
+    const parsedItems = JSON.parse( items );
+    if( parsedItems.some( i => i.resolved_url == url ) ) {
       // in pocket
       browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-48.png" });
       browser.pageAction.setTitle({ tabId, title: "Mark as read" });
@@ -553,8 +556,8 @@ function showPageAction( tabId ) {
 
 function togglePageAction( tab ) {
   browser.storage.local.get( "items" ).then( function( { items } ) {
-    const items = JSON.parse( items );
-    const item = items.find( i => i.resolved_url == tab.url );
+    const parsedItems = JSON.parse( items );
+    const item = parsedItems.find( i => i.resolved_url == tab.url );
     if( item ) {
       // in pocket
       markAsRead( item.i );
