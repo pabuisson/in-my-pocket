@@ -5,8 +5,8 @@ var Settings = ( function() {
   let settings = {};
   let defaultSettings = {
     showBadge: true,
-	openRandomAfterRead: false,
-	newTab: true
+    openRandomAfterRead: false,
+    openInNewTab: true
   };
 
   function load() {

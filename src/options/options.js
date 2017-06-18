@@ -11,10 +11,10 @@ import Authentication from '../modules/authentication.js';
 // -------------
 
 let displayBadgeCountCheckbox = document.querySelector( '.display-badge-count' );
+let openRandomItemCheckbox    = document.querySelector( '.open-random-after-read' );
+let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
 let disconnectAccountAction   = document.querySelector( '.disconnect-account' );
 let disconnectAccountRow      = document.querySelector( '.disconnect-account-row' );
-let openRandomItemCheckbox    = document.querySelector( '.open-random-after-read' );
-let newTabCheckbox            = document.querySelector( '.new-tab' );
 
 
 
@@ -24,34 +24,45 @@ var UI = ( function() {
       // If user is not connected, we hide the "disconnect" link
       Authentication.isAuthenticated().catch( function() {
         disconnectAccountRow.style.display = 'none';
-        });
+      });
 
       // Load the other settings values
       Settings.init().then( function() {
         let settings = Settings.get();
         displayBadgeCountCheckbox.checked = settings[ 'showBadge' ];
-        openRandomItemCheckbox.checked = settings[ 'openRandomAfterRead' ];
-		newTabCheckbox.checked = settings.newTab;
+        openRandomItemCheckbox.checked    = settings[ 'openRandomAfterRead' ];
+        openInNewTabCheckbox.checked      = settings[ 'openInNewTab' ];
       });
 
-      // Event : "Display count badge" checkbox
+      // Event: "Display count badge" checkbox
       displayBadgeCountCheckbox.addEventListener( 'change', function() {
         Settings.set( 'showBadge', this.checked );
         Settings.save();
         Badge.updateCount();
       });
 
+      // Event: "Open random item" checkbox
+      openRandomItemCheckbox.addEventListener( 'change', function() {
+        Settings.set( 'openRandomAfterRead', this.checked );
+        Settings.save();
+      });
+
+      // Event: "Open in new tab" checkbox
+      openInNewTabCheckbox.addEventListener( 'change', function() {
+        Settings.set( 'openInNewTab', this.checked );
+        Settings.save();
+      });
 
       // Event : "Disconnect" from the Pocket account click
       disconnectAccountAction.addEventListener( 'click', function() {
-        // TODO Use a better UI for confirmation (maybe inline button that appear
-        //      and update the UI once disconnected)
-        let mustDisconnect = confirm("You're about to disconnect from your pocket account. Are you sure ?");
+        // TODO Enhance UI for confirmation (maybe inline button that appear and update the UI
+        //      once disconnected)
+        let mustDisconnect = confirm("You're about to disconnect from your pocket account. Go on?");
         if( mustDisconnect ) {
           browser.storage.local.get().then( function( data ) {
             let keysToPersist = [ 'settings' ];
             let keysToRemove = Object.keys( data ).filter( function( key ) {
-              // Filter out the keys that are listed in keysToPersist, and keeps
+              // Filter out keys listed in keysToPersist, and keeps
               // all the other storage keys -> those will be removed
               return keysToPersist.indexOf( key ) < 0;
             });
@@ -62,18 +73,6 @@ var UI = ( function() {
             disconnectAccountRow.style.display = 'none';
           });
         }
-      });
-
-      // Event : "Open random item" checkbox
-      openRandomItemCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'openRandomAfterRead', this.checked );
-        Settings.save();
-      });
-
-      // Event : "Open in new tab" checkbox
-      newTabCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'newTab', this.checked );
-        Settings.save();
       });
     }
   };
