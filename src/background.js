@@ -128,12 +128,11 @@ var AuthenticationProcess = ( function() {
 
         // Retrieve the items and update the badge count
         retrieveItems( true );
-        Badge.updateCount( itemsList );
       };
 
-      browser.storage.local.get( 'requestToken', function( data ) {
+      browser.storage.local.get( 'requestToken', function( { requestToken } ) {
         let request = prepareRequest( 'https://getpocket.com/v3/oauth/authorize', 'POST', onSuccess );
-        let requestParams = JSON.stringify({ consumer_key: consumerKey, code: data.requestToken });
+        let requestParams = JSON.stringify({ consumer_key: consumerKey, code: requestToken });
         request.send( requestParams );
       });
     }
@@ -167,13 +166,13 @@ function retrieveItems( force ) {
   const intervalWithoutReload = 15*60;
   const currentTimestamp      = ( Date.now()/1000 | 0 );
 
-  browser.storage.local.get([ 'items', 'last_retrieve' ], function( data ) {
-    Logger.log( "retrieve items timeout: " + ( currentTimestamp - data.last_retrieve ) + ' / ' + intervalWithoutReload );
+  browser.storage.local.get([ 'items', 'last_retrieve' ], function( { items, last_retrieve } ) {
+    Logger.log( "retrieve items timeout: " + ( currentTimestamp - last_retrieve ) + ' / ' + intervalWithoutReload );
 
-    if ( force || !data.items || !data.last_retrieve ) {
+    if ( force || !items || !last_retrieve ) {
       // If force == true, we always reload the whole list
       retrieveFirst();
-    } else if( currentTimestamp - data.last_retrieve > intervalWithoutReload ) {
+    } else if( currentTimestamp - last_retrieve > intervalWithoutReload ) {
       // If we already have sync, check if intervalWithoutReload is past, then we can reload
       retrieveDiff();
     } else {
@@ -187,7 +186,7 @@ function retrieveItems( force ) {
 function retrieveFirst() {
   Logger.log('(retrieve first)');
 
-  browser.storage.local.get('access_token', function( data ) {
+  browser.storage.local.get('access_token', function( { access_token } ) {
     let onSuccess = function( response ) {
       Logger.log(Object.keys( response.list ).length + ' items in the response');
 
@@ -221,7 +220,7 @@ function retrieveFirst() {
     let request = prepareRequest( 'https://getpocket.com/v3/get', 'POST', onSuccess );
     let requestParams = JSON.stringify( {
       consumer_key: consumerKey,
-      access_token: data.access_token,
+      access_token: access_token,
       detailType: 'simple',
     });
 
@@ -233,10 +232,10 @@ function retrieveFirst() {
 function retrieveDiff() {
   Logger.log('(retrieve diff)');
 
-  browser.storage.local.get( ['access_token', 'last_retrieve', 'items'], function( data ) {
+  browser.storage.local.get( ['access_token', 'last_retrieve', 'items'], function( { access_token, last_retrieve, items } ) {
     let onSuccess = function( response ) {
       Logger.log(Object.keys(response.list).length + ' items in the response');
-      let allItems = JSON.parse( data.items );
+      let allItems = JSON.parse( items );
 
       // TODO: Extract this into a dedicated method
       for( let itemId in response.list ) {
@@ -298,10 +297,10 @@ function retrieveDiff() {
     let request = prepareRequest( 'https://getpocket.com/v3/get', 'POST', onSuccess );
     let requestParams = JSON.stringify({
       consumer_key: consumerKey,
-      access_token: data.access_token,
+      access_token: access_token,
       detailType: 'simple',
       state: 'all',
-      since: data.last_retrieve
+      since: last_retrieve
     });
 
     request.send( requestParams );
@@ -423,6 +422,7 @@ function markAsRead( itemId ) {
   });
 }
 
+
 function openRandomItem( opt = {} ) {
   browser.storage.local.get( 'items' ).then( function( { items } ) {
     const parsedItems = items ? JSON.parse( items ) : [];
@@ -433,7 +433,7 @@ function openRandomItem( opt = {} ) {
   });
 }
 
-// TODO understand ?
+
 function openItem( { newTab, url } ) {
   let pending;
   if( newTab == null ) {
@@ -493,7 +493,9 @@ Authentication.isAuthenticated().then( function() {
 })
 
 
+//
 // Feature: add link to Pocket from righ-click context menu
+//
 const addLinkId = 'add-link-to-pocket';
 
 chrome.contextMenus.create({
@@ -515,8 +517,9 @@ browser.contextMenus.onClicked.addListener( function( link, tab ) {
 });
 
 
+//
 // Feature: add "in-pocket" indicator
-
+//
 browser.tabs.query( {} ).then( function( tabs ) {
   for( const tab of tabs ) {
     if( tab.url ) {
@@ -560,7 +563,7 @@ function togglePageAction( tab ) {
     const item = parsedItems.find( i => i.resolved_url == tab.url );
     if( item ) {
       // in pocket
-      markAsRead( item.i );
+      markAsRead( item.id );
     } else {
       addItem( tab.url, tab.title );
     }

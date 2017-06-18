@@ -30,8 +30,8 @@ var Badge = ( function() {
             let itemsCount = itemsNumbers( items );
             chrome.browserAction.setBadgeText({ text: itemsCount.toString() });
           } else {
-            browser.storage.local.get( 'items', function( data ) {
-              let itemsCollection = data.items ? JSON.parse( data.items ) : {};
+            browser.storage.local.get( 'items', function( { items } ) {
+                let itemsCollection = items ? JSON.parse( items ) : [];
               let itemsCount = itemsNumbers( itemsCollection );
               chrome.browserAction.setBadgeText({ text: itemsCount.toString() });
             });
