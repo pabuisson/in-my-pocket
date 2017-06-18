@@ -15,13 +15,21 @@
   <section class='authenticated'>
     <header class='top-actions'>
       <!-- TODO Add a popover to tell what the icon does -->
-      <div class='icon add-current'><i class='icon-plus-circled'></i></div>
+      <div class='icon add-current'>
+        <i class='icon-plus-circled' title="Add current page to list"></i>
+      </div>
+
       <!-- TODO Add a popover to tell what the icon does -->
-      <div class='icon retrieve-items'><i class='icon-ccw'></i></div>
+      <div class='icon retrieve-items'>
+        <i class='icon-ccw' title="Refresh items list"></i>
+      </div>
 
-      <div class='icon random-item'>R</div>
+      <div class='icon random-item'>
+        &nbsp;
+        <span title="Open a random page">R</span>
+      </div>
 
-      <input class='filter-items' type='text' />
+      <input class='filter-items' type='text' placeholder='Find...' />
     </header>
 
     <div class='main-loader'></div>
