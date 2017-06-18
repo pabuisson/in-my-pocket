@@ -423,29 +423,29 @@ function markAsRead( itemId ) {
   });
 }
 
-function openRandomItem(opt = {}) {
-  browser.storage.local.get('items').then(({items}) => {
-    items = items ? JSON.parse(items) : [];
-    const item = items[Math.floor(Math.random() * items.length)];
+function openRandomItem( opt = {} ) {
+  browser.storage.local.get( 'items' ).then( function( { items } ) {
+    items = items ? JSON.parse( items ) : [];
+    const item = items[ Math.floor( Math.random() * items.length ) ];
     opt.url = item.resolved_url;
-    openItem(opt);
+    openItem( opt );
   });
 }
 
-function openItem({newTab, url}) {
+function openItem( { newTab, url } ) {
   let pending;
-  if (newTab == null) {
-    pending = Settings.init().then(() => {
-      newTab = Settings.get('newTab');
+  if( newTab == null ) {
+    pending = Settings.init().then( function() {
+      newTab = Settings.get( 'newTab' );
     });
   } else {
     pending = Promise.resolve();
   }
-  pending.then(() => {
-    if (newTab) {
-      browser.tabs.create({url});
+  pending.then( function() {
+    if( newTab ) {
+      browser.tabs.create( { url } );
     } else {
-      browser.tabs.update({url});
+      browser.tabs.update( { url } );
     }
   });
 }
@@ -454,7 +454,7 @@ function openItem({newTab, url}) {
 // --- MESSAGES ---
 
 chrome.runtime.onMessage.addListener( function( eventData ) {
-  Logger.log(`eventData.action:${eventData.action}`);
+  Logger.log( `eventData.action:${eventData.action}` );
   switch( eventData.action ) {
     case 'authenticate':
       AuthenticationProcess.authenticate();
@@ -475,10 +475,10 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       openRandomItem();
       break;
     case 'read-item':
-      openItem({url: eventData.url});
+      openItem( {url: eventData.url} );
       break;
     default:
-      Logger.log(`switch:unknown action:${eventData.action}`);
+      Logger.log( `switch:unknown action:${eventData.action}` );
   }
 });
 
@@ -499,10 +499,11 @@ chrome.contextMenus.create({
   contexts: ['link', 'page']
 });
 
+
 browser.contextMenus.onClicked.addListener( function( link, tab ) {
-  if ( link.menuItemId == addLinkId ) {
+  if( link.menuItemId == addLinkId ) {
     // const url = link.linkUrl || link.pageUrl;
-    if ( link.linkUrl ) {
+    if( link.linkUrl ) {
       addItem( url );
     } else {
       addItem( link.pageUrl, tab.title );
@@ -513,64 +514,52 @@ browser.contextMenus.onClicked.addListener( function( link, tab ) {
 
 // Feature: add "in-pocket" indicator
 
-browser.tabs.query({}).then(tabs => {
-  for (const tab of tabs) {
-    if (tab.url) {
-      redrawPageAction(tab.id, tab.url);
+browser.tabs.query( {} ).then( function( tabs ) {
+  for( const tab of tabs ) {
+    if( tab.url ) {
+      redrawPageAction( tab.id, tab.url );
     }
   }
 });
 
-browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
-  if (changeInfo.url) {
-    redrawPageAction(tabId, changeInfo.url);
+browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
+  if( changeInfo.url ) {
+    redrawPageAction( tabId, changeInfo.url );
   }
 });
 
-browser.pageAction.onClicked.addListener(tab => {
-  togglePageAction(tab);
+browser.pageAction.onClicked.addListener( function( tab ) {
+  togglePageAction( tab );
 });
 
-function redrawPageAction(tabId, url) {
-  browser.storage.local.get("items").then(({items}) => {
-    items = JSON.parse(items);
-    if (items.some(i => i.resolved_url == url)) {
+function redrawPageAction( tabId, url ) {
+  browser.storage.local.get( "items" ).then( function( { items } ) {
+    items = JSON.parse( items );
+    if( items.some( i => i.resolved_url == url ) ) {
       // in pocket
-      browser.pageAction.setIcon({
-        tabId,
-        path: "assets/icons/inmypocket-48.png"
-      });
-      browser.pageAction.setTitle({
-        tabId,
-        title: "Mark as read"
-      });
+      browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-48.png" });
+      browser.pageAction.setTitle({ tabId, title: "Mark as read" });
     } else {
-      browser.pageAction.setIcon({
-        tabId,
-        path: "assets/icons/inmypocket-hollow-48.png"
-      });
-      browser.pageAction.setTitle({
-        tabId,
-        title: "Add to pocket"
-      });
+      browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-hollow-48.png" });
+      browser.pageAction.setTitle({ tabId, title: "Add to pocket" });
     }
     showPageAction(tabId);
   });
 }
 
-function showPageAction(tabId) {
-  browser.pageAction.show(tabId);
+function showPageAction( tabId ) {
+  browser.pageAction.show( tabId );
 }
 
-function togglePageAction(tab) {
-  browser.storage.local.get("items").then(({items}) => {
-    items = JSON.parse(items);
-    const item = items.find(i => i.resolved_url == tab.url);
-    if (item) {
+function togglePageAction( tab ) {
+  browser.storage.local.get( "items" ).then( function( { items } ) {
+    const items = JSON.parse( items );
+    const item = items.find( i => i.resolved_url == tab.url );
+    if( item ) {
       // in pocket
       markAsRead( item.i );
     } else {
-      addItem(tab.url, tab.title);
+      addItem( tab.url, tab.title );
     }
   });
 }
