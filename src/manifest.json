@@ -41,9 +41,7 @@
   },
 
   "page_action": {
-    "default_icon": {
-      "48": "assets/icons/inmypocket-hollow-48.png"
-    },
+    "default_icon": "assets/icons/inmypocket-flat-grey.svg",
     "default_title": "Add to pocket"
   }
 }

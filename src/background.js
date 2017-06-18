@@ -542,11 +542,11 @@ function redrawPageAction( tabId, url ) {
   browser.storage.local.get( "items" ).then( function( { items } ) {
     const parsedItems = JSON.parse( items );
     if( parsedItems.some( i => i.resolved_url == url ) ) {
-      // in pocket
-      browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-48.png" });
+      // item is in pocket
+      browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-blue.svg" });
       browser.pageAction.setTitle({ tabId, title: "Mark as read" });
     } else {
-      browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-hollow-48.png" });
+      browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-grey.svg" });
       browser.pageAction.setTitle({ tabId, title: "Add to pocket" });
     }
     showPageAction(tabId);
