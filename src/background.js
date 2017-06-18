@@ -568,12 +568,7 @@ function togglePageAction(tab) {
     const item = items.find(i => i.resolved_url == tab.url);
     if (item) {
       // in pocket
-      markAsRead(item.id);
-      Settings.init().then(() => {
-        if (Settings.get( 'openRandomAfterRead' )) {
-          openRandomItem({newTab: false});
-        }
-      });
+      markAsRead( item.i );
     } else {
       addItem(tab.url, tab.title);
     }
