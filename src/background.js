@@ -215,6 +215,8 @@ function retrieveFirst() {
       // TODO: Do this once in the "retrieveItems" method
       chrome.runtime.sendMessage({ action: 'retrieved-items' });
 
+      // Updates the tabs page actions
+      redrawPageActionAllTabs();
     };
 
     let request = prepareRequest( 'https://getpocket.com/v3/get', 'POST', onSuccess );
@@ -292,6 +294,10 @@ function retrieveDiff() {
       // Send a message back to the UI
       // TODO: Do this once in the "retrieveItems" method
       chrome.runtime.sendMessage({ action: 'retrieved-items' });
+
+
+      // Updates the tabs page actions
+      redrawPageActionAllTabs();
     };
 
     let request = prepareRequest( 'https://getpocket.com/v3/get', 'POST', onSuccess );
@@ -520,13 +526,6 @@ browser.contextMenus.onClicked.addListener( function( link, tab ) {
 //
 // Feature: add "in-pocket" indicator
 //
-browser.tabs.query( {} ).then( function( tabs ) {
-  for( const tab of tabs ) {
-    if( tab.url ) {
-      redrawPageAction( tab.id, tab.url );
-    }
-  }
-});
 
 browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
   if( changeInfo.url ) {
@@ -550,6 +549,16 @@ function redrawPageAction( tabId, url ) {
       browser.pageAction.setTitle({ tabId, title: "Add to pocket" });
     }
     showPageAction(tabId);
+  });
+}
+
+function redrawPageActionAllTabs() {
+  browser.tabs.query( {} ).then( function( tabs ) {
+    for( const tab of tabs ) {
+      if( tab.url ) {
+        redrawPageAction( tab.id, tab.url );
+      }
+    }
   });
 }
 
