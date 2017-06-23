@@ -1,10 +1,18 @@
 # Changelog
 
 
+## 0.4.0 - June 2017
+
+* FEATURE: Open a random page from your the pocket list ([contribution from eight04](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/35/page-action-and-some-other-fixes), thanks a lot!)
+* FEATURE: Clickable indicator in the address bar, showing if the current page is already in your Pocket list or not ([contribution from eight04](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/35/page-action-and-some-other-fixes), thanks a lot!)
+* SETTING: You can now choose if clicked items are opened in the current tab or in a new one ([contribution from eight04](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/35/page-action-and-some-other-fixes), thanks a lot!)
+* UPDATE: Design update for the items list, preparing for upcoming features
+* FIX: Add the same page more than once now shows a notification message instead of adding the page several times
+
+
 ## 0.3.0 - April 2017
 
-* FEATURE: Add a page by right-click menu: add the current page if you click in the background,
-  add the "target" page if you right-click on a link
+* FEATURE: Add a page by right-click menu: add the current page if you click in the background, add the "target" page if you right-click on a link ([contribution from adambro](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/27/add-to-pocket-from-link-context-menu), thanks a lot !)
 * FIX: Prevent from adding same page several times (notice message)
 * FIX: Default value of "show badge" options was not taken into account right after addon install
 * UPDATE: Highlight badge when adding a new item
