@@ -1,8 +1,13 @@
 # Changelog
 
 
-## [unreleased]
+## 0.3.0 - April 2017
 
+* FEATURE: Add a page by right-click menu: add the current page if you click in the background,
+  add the "target" page if you right-click on a link
+* FIX: Prevent from adding same page several times (notice message)
+* FIX: Default value of "show badge" options was not taken into account right after addon install
+* UPDATE: Highlight badge when adding a new item
 * UPDATE: Higher and larger popup
 
 

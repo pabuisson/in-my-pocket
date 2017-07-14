@@ -7,14 +7,18 @@ body {
   margin: 0px;
   margin-left: -5px;
   padding: 8px 0px 8px 4px;
-  height: 20px;
   line-height: 20px;
   border-top: 1px solid #c1c1c1;
+
+  input {
+    display: inline-block;
+  }
+
+  &:first-of-type {
+    border-top: 0px none;
+  }
 }
 
-.row:first-of-type {
-  border-top: 0px none;
-}
 
 label {
   display: inline-block;
@@ -25,10 +29,9 @@ label {
 a {
   color: #0095dd;
   text-decoration: none;
-}
 
-a:hover {
-  text-decoration: underline;
+  &:hover {
+    text-decoration: underline;
+  }
 }
-
 

@@ -4,14 +4,20 @@ var Settings = ( function() {
   let _loaded  = false;
   let settings = {};
   let defaultSettings = {
-    showBadge: true
+    showBadge: true,
+    openInNewTab: true
   };
 
   function load() {
     let promise = new Promise( function( resolve, reject ) {
       browser.storage.local.get( 'settings', function( data ) {
         _loaded  = true;
-        settings = Object.assign( settings, defaultSettings, JSON.parse( data.settings ) );
+
+        settings = Object.assign( settings, defaultSettings );
+        if( data.settings ) {
+          settings = Object.assign( settings, JSON.parse( data.settings ) );
+        }
+
         resolve();
       });
     });

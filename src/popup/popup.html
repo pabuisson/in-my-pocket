@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="./popup.css"/>
+  <link rel="stylesheet" href="../assets/font/fontello.css"/>
+</head>
+
+<body>
+  <section class='authentication'>
+    <button>Authenticate with Pocket</button>
+  </section>
+
+
+  <section class='authenticated'>
+    <header class='top-actions'>
+      <!-- TODO Add a popover to tell what the icon does -->
+      <div class='icon add-current'>
+        <i class='icon-plus-circled' title="Add current page to list"></i>
+      </div>
+
+      <!-- TODO Add a popover to tell what the icon does -->
+      <div class='icon retrieve-items'>
+        <i class='icon-ccw' title="Refresh items list"></i>
+      </div>
+
+      <div class='icon random-item'>
+        &nbsp;
+        <span title="Open a random page">R</span>
+      </div>
+
+      <input class='filter-items' type='text' placeholder='Find...' />
+    </header>
+
+    <div class='main-loader'></div>
+
+    <ul class='list-component'> </ul>
+    <div class='search-no-results hidden'>
+      <i class='icon-emo-surprised'></i>
+      Oh my! Nothing matches this search.
+    </div>
+    <footer class='flash-overlay hidden'>A message</footer>
+  </section>
+
+
+  <script src="./popup.js"></script>
+</body>
+</html>
