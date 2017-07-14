@@ -513,9 +513,8 @@ chrome.contextMenus.create({
 
 browser.contextMenus.onClicked.addListener( function( link, tab ) {
   if( link.menuItemId == addLinkId ) {
-    // const url = link.linkUrl || link.pageUrl;
     if( link.linkUrl ) {
-      addItem( url );
+      addItem( link.linkUrl );
     } else {
       addItem( link.pageUrl, tab.title );
     }
