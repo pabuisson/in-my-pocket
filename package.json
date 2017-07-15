@@ -19,7 +19,7 @@
   "scripts": {
     "watch": "./node_modules/.bin/webpack -w",
     "build": "./node_modules/.bin/webpack",
-    "build-ext": "npm run build && web-ext build --source-dir=build/",
+    "build-ext": "npm run build && web-ext build --source-dir=build/ --overwrite-dest",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "web-ext run -s build"
   },
