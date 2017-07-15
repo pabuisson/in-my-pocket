@@ -78,36 +78,61 @@ var UI = ( function() {
   }
 
   function buildItemElement( item ) {
-    let liElement    = document.createElement('li');
-    let titleContent = document.createElement('span');
-    let urlContent   = document.createElement('span');
-    let actionContainer = document.createElement('div');
-    let tickAction = document.createElement('div');
-    let tickElement  = document.createElement('div');
-    let tickIconFont = document.createElement('i');
-    let loadElement  = document.createElement('div');
+    let liElement        = document.createElement('li');
+    let titleContent     = document.createElement('span');
+    let urlContent       = document.createElement('span');
+
+    let actionContainer  = document.createElement('div');
+
+    let tickAction       = document.createElement('div');
+    let tickElement      = document.createElement('div');
+    let tickIconFont     = document.createElement('i');
+    let tickLoadElement  = document.createElement('div');
+
+    let deleteAction     = document.createElement('div');
+    let trashElement     = document.createElement('div');
+    let trashIconFont    = document.createElement('i');
+    let trashLoadElement = document.createElement('div');
 
     liElement.className    = 'item';
     titleContent.className = 'title';
     urlContent.className   = 'url';
+
     actionContainer.className = 'actions-container';
+
     tickAction.className = 'tick-action';
-    tickIconFont.classList.add( 'icon', 'icon-ok');
+    tickIconFont.classList.add( 'icon', 'icon-ok' );
     tickElement.className  = 'tick';
-    loadElement.classList.add( 'loader', 'hidden' );
+    tickLoadElement.classList.add( 'loader', 'hidden' );
+
+    deleteAction.className = 'delete-action';
+    trashIconFont.classList.add( 'icon', 'icon-trash' );
+    trashElement.className = 'trash';
+    trashLoadElement.classList.add( 'loader', 'hidden' );
 
     tickElement.addEventListener( 'click', function() {
       markAsRead( item.id );
     });
 
+    trashElement.addEventListener( 'click', function() {
+      deleteItem( item.id );
+    });
+
     tickElement.appendChild( tickIconFont );
+    trashElement.appendChild( trashIconFont );
+
     titleContent.appendChild( document.createTextNode( item.resolved_title ) );
 
     urlContent.appendChild( document.createTextNode( formatUrl( item.resolved_url ) ) );
 
     tickAction.appendChild( tickElement );
-    tickAction.appendChild( loadElement );
+    tickAction.appendChild( tickLoadElement );
+
+    deleteAction.appendChild( trashElement );
+    deleteAction.appendChild( trashLoadElement );
+
     actionContainer.appendChild( tickAction );
+    actionContainer.appendChild( deleteAction );
 
     liElement.appendChild( actionContainer );
     liElement.appendChild( titleContent );
@@ -217,10 +242,17 @@ var UI = ( function() {
 
 
 function markAsRead( itemId ) {
-  document.querySelector( ".item[data-id='" + itemId + "'] .tick"   ).classList.add( 'hidden' );
-  document.querySelector( ".item[data-id='" + itemId + "'] .loader" ).classList.remove( 'hidden' );
+  document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .tick"   ).classList.add( 'hidden' );
+  document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .loader" ).classList.remove( 'hidden' );
 
   chrome.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
+}
+
+function deleteItem( itemId ) {
+  document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .trash"  ).classList.add( 'hidden' );
+  document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .loader" ).classList.remove( 'hidden' );
+
+  chrome.runtime.sendMessage( { action: 'delete-item', id: itemId } );
 }
 
 
@@ -288,6 +320,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         case 'marked-as-read':
           Logger.log('list | switch:marked-as-read');
+          document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
+          Badge.updateCount();
+          break;
+
+        case 'deleted':
+          Logger.log('list | switch:deleted');
           document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
           Badge.updateCount();
           break;

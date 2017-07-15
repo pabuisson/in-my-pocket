@@ -46,7 +46,7 @@ section {
     padding: 0.5rem 0.1rem 0.2rem 0.1rem;
     border-bottom: 1px solid #eee;
 
-    span, .tick {
+    span, .tick, .trash {
       cursor: pointer;
     }
 
@@ -65,11 +65,11 @@ section {
       height: 1.5rem;
       font-size: 1.2rem;
       font-weight: bold;
-      color: #555;
+      color: #666;
     }
 
     &:hover .title {
-      color: $pocket-aqua;
+      color: #444;
     }
 
     .url {
@@ -99,7 +99,8 @@ section {
       position: absolute;
       top: 0;
       right: 0;
-      width: 5rem;
+      width: 6.5rem;
+      padding-right: 0.5rem;
       height: 100%;
       background-color: transparentize( $background, 0.1 );
       border-left: 1px solid #ddd;
@@ -108,21 +109,21 @@ section {
       flex-direction: row;
       justify-content: flex-end;
 
-      .tick-action {
-        width: 100%;
+      .tick-action, .delete-action {
+        width: 50%;
 
         // So that tick/loader are automatically centered
         display: flex;
         justify-content: center;
         align-items: center;
 
-        .tick, .loader {
+        .tick, .trash, .loader {
           width: 2rem;
           height: 2rem;
           line-height: 2rem;
         }
 
-        .tick {
+        .tick, .trash {
           color: white;
           font-size: 1.1rem;
           text-align: center;
@@ -131,19 +132,34 @@ section {
           opacity: 0.5;
 
           &:hover {
-            background-color: $pocket-red;
             opacity: 1;
           }
+        }
+
+        .tick:hover {
+          background-color: $pocket-aqua;
+        }
+
+        .trash:hover {
+          background-color: $pocket-red;
         }
 
         .loader {
           height: 1.2rem;
           width: 1.2rem;
           animation: rotate 0.8s infinite linear;
-          border: 0.4rem solid #f15d6c;
-          border-right-color: transparent;
           border-radius: 50%;
         }
+      }
+
+      .tick-action .loader {
+        border: 0.4rem solid $pocket-aqua;
+        border-right-color: transparent;
+      }
+
+      .delete-action .loader {
+        border: 0.4rem solid $pocket-red;
+        border-right-color: transparent;
       }
     }
   }
