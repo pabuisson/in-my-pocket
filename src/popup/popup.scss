@@ -3,13 +3,12 @@ $pocket-aqua: #50bcb6;
 $pocket-red: #f13044;
 
 
-
 html, body {
   width: 450px;
   height: 550px;
-  font-size: 65%;
-  padding: 0px;
-  margin: 0px;
+  font-size: 12px;
+  padding: 0;
+  margin: 0;
   overflow: hidden;
   font-family: sans-serif;
   background-color: $background;
@@ -44,7 +43,7 @@ section {
   .item {
     margin: 0;
     position: relative;
-    padding: 8px 1px 2px 1px;
+    padding: 0.5rem 0.1rem 0.2rem 0.1rem;
     border-bottom: 1px solid #eee;
 
     span, .tick {
@@ -55,16 +54,16 @@ section {
     span {
       display: inline-block;
       width: 95%;
-      margin-left: 6px;
-      height: 16px;
-      line-height: 12px;
+      margin-left: 0.5rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      line-height: 1.1;
     }
 
     .title {
-      font-size: 1.25rem;
+      height: 1.5rem;
+      font-size: 1.2rem;
       font-weight: bold;
       color: #555;
     }
@@ -74,10 +73,11 @@ section {
     }
 
     .url {
+      height: 1.1rem;
       position: relative;
-      top: -4px;
+      top: -2px;
 
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #aaa;
     }
 
@@ -97,9 +97,9 @@ section {
       z-index: 1;
 
       position: absolute;
-      top: 0px;
-      right: 0px;
-      width: 60px;
+      top: 0;
+      right: 0;
+      width: 5rem;
       height: 100%;
       background-color: transparentize( $background, 0.1 );
       border-left: 1px solid #ddd;
@@ -111,14 +111,15 @@ section {
       .tick-action {
         width: 100%;
 
-        .tick, .loader {
-          position: relative;
-          top: 12px;
-          margin: auto;
+        // So that tick/loader are automatically centered
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-          width: 24px;
-          height: 24px;
-          line-height: 24px;
+        .tick, .loader {
+          width: 2rem;
+          height: 2rem;
+          line-height: 2rem;
         }
 
         .tick {
@@ -126,7 +127,7 @@ section {
           font-size: 1.1rem;
           text-align: center;
           background-color: #aaa;
-          border-radius: 20px;
+          border-radius: 2rem;
           opacity: 0.5;
 
           &:hover {
@@ -136,10 +137,10 @@ section {
         }
 
         .loader {
-          height: 12px;
-          width: 12px;
+          height: 1.2rem;
+          width: 1.2rem;
           animation: rotate 0.8s infinite linear;
-          border: 4px solid #f15d6c;
+          border: 0.4rem solid #f15d6c;
           border-right-color: transparent;
           border-radius: 50%;
         }
@@ -147,7 +148,6 @@ section {
     }
   }
 }
-
 
 
 
@@ -172,26 +172,26 @@ section {
 .top-actions {
   display: flex;
   flex-direction: row;
+  align-items: center;
 
-  height: 30px;
+  height: 2.5rem;
   width: 100%;
-  padding: 5px 0;
+  padding: 0.5rem 0;
 
   background-color: $pocket-aqua;
 
   .icon {
     flex: initial;
     display: inline-block;
-    padding: 3px;
     cursor: pointer;
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: white;
 
     opacity: 0.8;
     transition: opacity 100ms ease-out;
 
     &:first-child {
-      padding-left: 0px;
+      padding-left: 0;
     }
 
     &:hover {
@@ -206,14 +206,15 @@ section {
 
   .filter-items {
     flex: 1;
-    margin: 3px 10px 3px 60px;
-    padding-left: 10px;
+    margin-left: 3rem;
+    margin-right: 1rem;
+    padding: 0.4rem 1rem;
 
     background-color: transparentize( white, 0.5 );
-    border-radius: 20px;
+    border-radius: 2rem;
     border: 1px solid #ddd;
     color: #555;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 }
 
@@ -257,12 +258,12 @@ section {
   position: absolute;
   bottom: 0;
   width: 100%;
-  min-height: 32px;
+  min-height: 2.5rem;
   opacity: 1;
 
   font-size: 1.2rem;
   font-weight: bold;
-  line-height: 25px;
+  line-height: 2;
   text-align: center;
 
   &.error {

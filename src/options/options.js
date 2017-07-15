@@ -14,6 +14,7 @@ let displayBadgeCountCheckbox = document.querySelector( '.display-badge-count' )
 let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
 let disconnectAccountAction   = document.querySelector( '.disconnect-account' );
 let disconnectAccountRow      = document.querySelector( '.disconnect-account-row' );
+let zoomLevelSelector         = document.querySelector( '.zoom-level' );
 
 
 
@@ -28,8 +29,10 @@ var UI = ( function() {
       // Load the other settings values
       Settings.init().then( function() {
         let settings = Settings.get();
+
         displayBadgeCountCheckbox.checked = settings[ 'showBadge' ];
         openInNewTabCheckbox.checked      = settings[ 'openInNewTab' ];
+        zoomLevelSelector.value           = settings[ 'zoomLevel' ];
       });
 
       // Event: "Display count badge" checkbox
@@ -42,6 +45,12 @@ var UI = ( function() {
       // Event: "Open in new tab" checkbox
       openInNewTabCheckbox.addEventListener( 'change', function() {
         Settings.set( 'openInNewTab', this.checked );
+        Settings.save();
+      });
+
+      // Event: "Zoom level" selector
+      zoomLevelSelector.addEventListener( 'change', function() {
+        Settings.set( 'zoomLevel', this.value );
         Settings.save();
       });
 

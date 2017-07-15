@@ -6,6 +6,7 @@ import'./popup.scss';
 import Logger from '../modules/logger.js';
 import Badge from '../modules/badge.js';
 import Authentication from '../modules/authentication.js';
+import Settings from '../modules/settings.js';
 import { PocketError, PocketNotice } from '../modules/constants.js';
 
 
@@ -125,11 +126,18 @@ var UI = ( function() {
     browser.runtime.sendMessage({action: 'read-item', url});
   }
 
-    function focusSearchField() {
-      setTimeout( function() {
-        filterItemsInput.focus();
-      }, 200 );
-    }
+  function focusSearchField() {
+    setTimeout( function() {
+      filterItemsInput.focus();
+    }, 200 );
+  }
+
+  function setZoomLevel() {
+    Settings.init().then( function() {
+      let zoomLevel = Settings.get( 'zoomLevel' );
+      document.documentElement.style.fontSize = zoomLevel;
+    });
+  }
 
 
   return {
@@ -177,6 +185,9 @@ var UI = ( function() {
     },
 
     setup: function() {
+      // Set default zoom level based on Settings
+      setZoomLevel();
+
       Authentication.isAuthenticated().then( function( access_token ) {
         document.querySelector( '.authentication' ).style.display = 'none';
         document.querySelector( '.authenticated'  ).style.display = 'block';

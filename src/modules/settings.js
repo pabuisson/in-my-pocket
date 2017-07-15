@@ -4,8 +4,9 @@ var Settings = ( function() {
   let _loaded  = false;
   let settings = {};
   let defaultSettings = {
-    showBadge: true,
-    openInNewTab: true
+    showBadge:    true,
+    openInNewTab: true,
+    zoomLevel:    '12px'
   };
 
   function load() {
