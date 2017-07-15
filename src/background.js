@@ -380,6 +380,7 @@ function addItem( url, title ) {
 }
 
 
+// NOTE: lots of code duplicate with "deleteItem" method
 function markAsRead( itemId ) {
   Logger.log('(markAsRead)');
   Logger.log('id to archive: ' + itemId );
@@ -421,6 +422,56 @@ function markAsRead( itemId ) {
       access_token: data.access_token,
       actions: [
         { action: 'archive', item_id: itemId }
+      ]
+    });
+
+    request.send( requestParams );
+  });
+}
+
+
+// NOTE: lots of code duplicate with "markAsRead" method
+function deleteItem( itemId ) {
+  Logger.log('(deleteItem)');
+  Logger.log('id to remove: ' + itemId );
+
+  browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
+    let onSuccess = function( response ) {
+      Logger.log('onload - itemId = ' + itemId );
+      let items = JSON.parse( data.items );
+      let removedItemIdx = items.findIndex( ( item ) => { return item.id === itemId } );
+      let removedItem = items[ removedItemIdx ];
+
+      if( removedItemIdx >= 0 ) {
+        Logger.log('the item ' + itemId + ' has been found and removed');
+
+        // Remove the archived item from the list
+        items.splice( removedItemIdx, 1 );
+
+        // Save edited item list in storage and update badge count
+        browser.storage.local.set({ items: JSON.stringify( items ) });
+        Badge.updateCount( items );
+      }
+
+      // Send a message back to the UI
+      chrome.runtime.sendMessage({ action: 'deleted', id: itemId });
+
+      // Redraw page action
+      if( removedItem ) {
+        browser.tabs.query( { url: removedItem.resolved_url } ).then( function( tabs ) {
+          for( const tab of tabs ) {
+            redrawPageAction( tab.id, tab.url );
+          }
+        });
+      }
+    };
+
+    let request = prepareRequest( 'https://getpocket.com/v3/send', 'POST', onSuccess );
+    let requestParams = JSON.stringify({
+      consumer_key: consumerKey,
+      access_token: data.access_token,
+      actions: [
+        { action: 'delete', item_id: itemId }
       ]
     });
 
@@ -476,6 +527,9 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       break;
     case 'mark-as-read':
       markAsRead( eventData.id );
+      break;
+    case 'delete-item':
+      deleteItem( eventData.id );
       break;
     case 'update-badge-count':
       Badge.updateCount();
