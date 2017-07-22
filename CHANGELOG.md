@@ -1,6 +1,15 @@
 # Changelog
 
 
+## 0.5.0 - July 2017
+
+* FEATURE: Delete an item from your pocket list. Definitely.
+* FEATURE: Open a random page now takes filter into account. If you've filtered your list of items and hit "open random page", only pages matching your search can be opened.
+* FEATURE:
+    * SETTINGS: you find the pocket list font size too small or too big? Now you can select the default zoom level that suits you!
+* FIX: Adding a page through context menu was broken ([contribution from adambro](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/40/fix-add-to-pocket-in-context-menu-right/diff), thanks a lot!)
+
+
 ## 0.4.0 - June 2017
 
 * FEATURE: Open a random page from your the pocket list ([contribution from eight04](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/35/page-action-and-some-other-fixes), thanks a lot!)
