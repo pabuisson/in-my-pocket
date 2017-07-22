@@ -6,6 +6,7 @@ import Logger from './modules/logger.js';
 import Settings from './modules/settings.js';
 import Badge from './modules/badge.js';
 import Authentication from './modules/authentication.js';
+import Items from './modules/items.js';
 import { PocketError, PocketNotice } from './modules/constants.js';
 
 // --------------------------
@@ -480,13 +481,17 @@ function deleteItem( itemId ) {
 }
 
 
-function openRandomItem( opt = {} ) {
+function openRandomItem( query, opt = {} ) {
   browser.storage.local.get( 'items' ).then( function( { items } ) {
-    const parsedItems = items ? JSON.parse( items ) : [];
-    const item = items[ Math.floor( Math.random() * parsedItems.length ) ];
-    opt.url = item.resolved_url;
+    const parsedItems   = items ? JSON.parse( items ) : [];
+    const filteredItems = Items.filter( parsedItems, query );
 
-    openItem( opt );
+    if( filteredItems.length > 0 ) {
+      const item = filteredItems[ Math.floor( Math.random() * filteredItems.length ) ];
+
+      opt.url = item.resolved_url;
+      openItem( opt );
+    }
   });
 }
 
@@ -511,51 +516,9 @@ function openItem( { newTab, url } ) {
 }
 
 
-// --- MESSAGES ---
 
-chrome.runtime.onMessage.addListener( function( eventData ) {
-  Logger.log( `eventData.action:${eventData.action}` );
-  switch( eventData.action ) {
-    case 'authenticate':
-      AuthenticationProcess.authenticate();
-      break;
-    case 'retrieve-items':
-      retrieveItems( eventData.force );
-      break;
-    case 'add-item':
-      addItem( eventData.url, eventData.title );
-      break;
-    case 'mark-as-read':
-      markAsRead( eventData.id );
-      break;
-    case 'delete-item':
-      deleteItem( eventData.id );
-      break;
-    case 'update-badge-count':
-      Badge.updateCount();
-      break;
-    case 'random-item':
-      openRandomItem();
-      break;
-    case 'read-item':
-      openItem( {url: eventData.url} );
-      break;
-    default:
-      Logger.log( `Unknown action:${eventData.action}` );
-  }
-});
+// - - - FEATURE : CONTEXT MENU - - -
 
-
-// --- ON LOAD ---
-
-Authentication.isAuthenticated().then( function() {
-  Badge.updateCount();
-})
-
-
-//
-// Feature: add link to Pocket from righ-click context menu
-//
 const addLinkId = 'add-link-to-pocket';
 
 chrome.contextMenus.create({
@@ -576,9 +539,7 @@ browser.contextMenus.onClicked.addListener( function( link, tab ) {
 });
 
 
-//
-// Feature: add "in-pocket" indicator
-//
+// - - - FEATURE : PAGE ACTION - - -
 
 browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
   if( changeInfo.url ) {
@@ -589,6 +550,8 @@ browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
 browser.pageAction.onClicked.addListener( function( tab ) {
   togglePageAction( tab );
 });
+
+
 
 function redrawPageAction( tabId, url ) {
   browser.storage.local.get( "items" ).then( function( { items } ) {
@@ -631,3 +594,47 @@ function togglePageAction( tab ) {
     }
   });
 }
+
+
+
+// --- MESSAGES ---
+
+chrome.runtime.onMessage.addListener( function( eventData ) {
+  Logger.log( `eventData.action:${eventData.action}` );
+  switch( eventData.action ) {
+    case 'authenticate':
+      AuthenticationProcess.authenticate();
+      break;
+    case 'retrieve-items':
+      retrieveItems( eventData.force );
+      break;
+    case 'add-item':
+      addItem( eventData.url, eventData.title );
+      break;
+    case 'mark-as-read':
+      markAsRead( eventData.id );
+      break;
+    case 'delete-item':
+      deleteItem( eventData.id );
+      break;
+    case 'update-badge-count':
+      Badge.updateCount();
+      break;
+    case 'random-item':
+      openRandomItem( eventData.query );
+      break;
+    case 'read-item':
+      openItem({ url: eventData.url });
+      break;
+    default:
+      Logger.log( `Unknown action:${eventData.action}` );
+  }
+});
+
+
+// --- ON LOAD ---
+
+Authentication.isAuthenticated().then( function() {
+  Badge.updateCount();
+})
+

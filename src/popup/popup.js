@@ -7,6 +7,7 @@ import Logger from '../modules/logger.js';
 import Badge from '../modules/badge.js';
 import Authentication from '../modules/authentication.js';
 import Settings from '../modules/settings.js';
+import Items from '../modules/items.js';
 import { PocketError, PocketNotice } from '../modules/constants.js';
 
 
@@ -18,6 +19,9 @@ let readRandomItemButton = document.querySelector( '.random-item' );
 let filterItemsInput     = document.querySelector( '.filter-items' );
 let placeholderNoResults = document.querySelector( '.search-no-results' );
 let listComponent        = document.querySelector( '.list-component' );
+
+
+// - - - EVENT LISTENERS - - -
 
 retrieveItemsButton.addEventListener( 'click', function() {
   MainLoader.enable();
@@ -34,10 +38,13 @@ addCurrentPageButton.addEventListener( 'click', function() {
 });
 
 readRandomItemButton.addEventListener( 'click', function() {
-  browser.runtime.sendMessage({action: 'random-item'});
-  // window.close();
+  browser.runtime.sendMessage({
+    action: 'random-item',
+    query: filterItemsInput.value
+  });
 });
 
+// TODO: debounce
 filterItemsInput.addEventListener( 'keyup', function() {
   let query = this.value.toLowerCase();
   if( query !== '' ) {
@@ -48,6 +55,8 @@ filterItemsInput.addEventListener( 'keyup', function() {
   MainLoader.disable( true );
 });
 
+
+// - - - OTHER MODULES - - -
 
 var MainLoader = ( function() {
   let mainLoaderComponent = document.querySelector( '.main-loader' );
@@ -66,6 +75,7 @@ var MainLoader = ( function() {
   };
 })();
 
+
 var UI = ( function() {
   function formatUrl( url ) {
     let replacedProtocols = [
@@ -77,6 +87,7 @@ var UI = ( function() {
     return url.replace( replaceRegex, '' );
   }
 
+  // TODO: replace this with another mechanism (React ?)
   function buildItemElement( item ) {
     let liElement        = document.createElement('li');
     let titleContent     = document.createElement('span');
@@ -168,33 +179,17 @@ var UI = ( function() {
   return {
     drawList: function() {
       browser.storage.local.get('items', function( { items } ) {
-        let parsedItems     = items ? JSON.parse( items ) : [];
-        let sortedItems     = parsedItems.sort( function( a, b ) { return a.created_at < b.created_at; });
-        let itemsToRender   = undefined;
-        let query           = document.querySelector( '.filter-items').value;
+        const query       = filterItemsInput.value;
+        let parsedItems   = items ? JSON.parse( items ) : [];
+        let itemsToRender = Items.filter( parsedItems, query );
 
-        // Filter item list
-        if( query == '' || !query ) {
-          itemsToRender = sortedItems;
-          // In case, hides the "no item matching query" div, and display the list
+        // Display the "no results" message or hide it
+        if( query == '' || !query || itemsToRender.length > 0 ) {
           listComponent.classList.remove( 'hidden' );
           placeholderNoResults.classList.add( 'hidden' );
         } else {
-          itemsToRender = sortedItems.filter( function( value, index ) {
-            let title = value.resolved_title || '';
-            let url   = value.resolved_url   || '';
-
-            return title.toLowerCase().includes( query ) || url.toLowerCase().includes( query );
-          });
-
-          // Display the "no results" message or hide it
-          if ( itemsToRender.length == 0 ) {
-            listComponent.classList.add( 'hidden' );
-            placeholderNoResults.classList.remove( 'hidden' );
-          } else {
-            listComponent.classList.remove( 'hidden' );
-            placeholderNoResults.classList.add( 'hidden' );
-          }
+          listComponent.classList.add( 'hidden' );
+          placeholderNoResults.classList.remove( 'hidden' );
         }
 
         let container = document.querySelector( '.list-component' );
@@ -256,8 +251,7 @@ function deleteItem( itemId ) {
 }
 
 
-// --------------------
-
+// - - - MAIN LOGIC LOOP - - -
 
 document.addEventListener('DOMContentLoaded', function() {
   UI.setup();
@@ -310,34 +304,30 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 5000 );
 
     } else {
+      Logger.log( 'list | switch:' + eventData.action );
 
       switch( eventData.action ) {
         case 'authenticated':
-          Logger.log('list | switch:authenticated');
           window.close();
           chrome.runtime.sendMessage({ action: 'update-badge-count' });
           break;
 
         case 'marked-as-read':
-          Logger.log('list | switch:marked-as-read');
           document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
           Badge.updateCount();
           break;
 
         case 'deleted':
-          Logger.log('list | switch:deleted');
           document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
           Badge.updateCount();
           break;
 
         case 'added-item':
-          Logger.log('list | switch:added-item');
           UI.drawList();
           Badge.updateCount();
           break;
 
         case 'retrieved-items':
-          Logger.log('list | switch:retrieved-items');
           UI.drawList();
           Badge.updateCount();
           break;
@@ -346,5 +336,4 @@ document.addEventListener('DOMContentLoaded', function() {
       MainLoader.disable();
     }
   });
-
 });
