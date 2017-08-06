@@ -16,6 +16,7 @@ import { PocketError, PocketNotice } from '../modules/constants.js';
 let retrieveItemsButton  = document.querySelector( '.retrieve-items' );
 let addCurrentPageButton = document.querySelector( '.add-current'  );
 let readRandomItemButton = document.querySelector( '.random-item' );
+let openSettingsButton   = document.querySelector( '.open-settings' );
 let filterItemsInput     = document.querySelector( '.filter-items' );
 let placeholderNoResults = document.querySelector( '.search-no-results' );
 let listComponent        = document.querySelector( '.list-component' );
@@ -37,11 +38,19 @@ addCurrentPageButton.addEventListener( 'click', function() {
   });
 });
 
-readRandomItemButton.addEventListener( 'click', function() {
+readRandomItemButton.addEventListener( 'click', () => {
   browser.runtime.sendMessage({
     action: 'random-item',
     query: filterItemsInput.value
   });
+});
+
+openSettingsButton.addEventListener( 'click', () => {
+  // Close the popup in a setTimeout, otherwise the "openOptionsPage" part
+  // has no valid "context" to be executed (and closing the popup in the promise
+  // feels a lot slower)
+  setTimeout( window.close, 100 );
+  browser.runtime.openOptionsPage();
 });
 
 // TODO: debounce
