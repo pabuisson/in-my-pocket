@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 0.5.1 - August 2017
+
+* FEATURE: Added a shortcut to open the settings page directly from the popup
+
+
 ## 0.5.0 - July 2017
 
 * FEATURE: Delete an item from your pocket list. Definitely.
