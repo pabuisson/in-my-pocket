@@ -37,7 +37,10 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin('[name].css'),
-    new CopyWebpackPlugin([ { from: 'assets/', to: 'assets/' } ])
+    new CopyWebpackPlugin([
+      { from: 'assets/', to: 'assets/' },
+      { from: 'manifest.json', to: 'manifest.json' }
+    ])
   ]
 }
 
