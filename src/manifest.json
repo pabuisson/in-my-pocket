@@ -37,7 +37,7 @@
   "browser_action": {
     "default_icon": "assets/icons/inmypocket.svg",
     "default_popup": "./popup/popup.html",
-    "browser_style": false
+    "browser_style": true
   },
 
   "page_action": {
