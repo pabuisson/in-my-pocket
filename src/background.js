@@ -105,8 +105,8 @@ function prepareRequest( url, action, successCallback, errorCallback ) {
 var AuthenticationProcess = ( function() {
   // TODO Avoid the loading of a given page (redirectIntermediate variable)
   //      Replace by an "internal" page with its own JS
-  const redirectIntermediate = 'http://oauth.pabuisson.com';
-  const redirectAuthFinished = 'http://oauth.pabuisson.com';
+  const redirectIntermediate = 'https://oauth.pabuisson.com';
+  const redirectAuthFinished = 'https://oauth.pabuisson.com';
 
   function tabCallback( tabId, changeInfo, updatedTab ) {
     // callback url has been loaded
