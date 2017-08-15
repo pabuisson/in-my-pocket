@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 0.5.2 - August 2017
+
+* CHORE: Update Oauth redirect URL to https
+
+
 ## 0.5.1 - August 2017
 
 * FEATURE: Added a shortcut to open the settings page directly from the popup

@@ -245,6 +245,8 @@ var UI = ( function() {
 
 
 
+// TODO: Rename - it does not reflect that this method "hides" the item from the list
+// TODO: Move to UI module
 function markAsRead( itemId ) {
   document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .tick"   ).classList.add( 'hidden' );
   document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .loader" ).classList.remove( 'hidden' );
@@ -252,6 +254,8 @@ function markAsRead( itemId ) {
   chrome.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
 }
 
+// TODO: Rename - it does not reflect that this method "hides" the item from the list
+// TODO: Move to UI module
 function deleteItem( itemId ) {
   document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .trash"  ).classList.add( 'hidden' );
   document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .loader" ).classList.remove( 'hidden' );
@@ -262,6 +266,8 @@ function deleteItem( itemId ) {
 
 // - - - MAIN LOGIC LOOP - - -
 
+// TODO: Split this in clearer components
+// TODO: Maybe one component to create the message, one component to deal with UI creation
 document.addEventListener('DOMContentLoaded', function() {
   UI.setup();
 
