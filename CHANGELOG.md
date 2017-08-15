@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 0.6.0 - August 2017
+
+* FEATURE: Keyboard shortcut to add the current page / mark it as read! It's a long awaited feature and many users asked for it: it's here!
+
+
 ## 0.5.2 - August 2017
 
 * CHORE: Update Oauth redirect URL to https

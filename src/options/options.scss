@@ -10,7 +10,22 @@ body {
   line-height: 20px;
   border-top: 1px solid #c1c1c1;
 
-  input {
+  label {
+    display: inline-block;
+    width: 25%;
+    min-width: 200px;
+  }
+
+  a {
+    color: #0095dd;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  input, pre {
     display: inline-block;
   }
 
@@ -18,20 +33,3 @@ body {
     border-top: 0px none;
   }
 }
-
-
-label {
-  display: inline-block;
-  width: 25%;
-  min-width: 200px;
-}
-
-a {
-  color: #0095dd;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
