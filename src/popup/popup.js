@@ -87,13 +87,13 @@ var MainLoader = ( function() {
 
 var UI = ( function() {
   function formatUrl( url ) {
-    let replacedProtocols = [
+    let protocolsToRemove = [
       'http', 'https',
       'ftp',  'ftps'
     ].join('|');
-    let replaceRegex = new RegExp( '(' + replacedProtocols + '):\/\/(www.){0,1}', 'gi' );
+    let removalRegex = new RegExp( '(' + protocolsToRemove + '):\/\/(www.){0,1}', 'gi' );
 
-    return url.replace( replaceRegex, '' );
+    return url.replace( removalRegex, '' );
   }
 
   // TODO: replace this with another mechanism (React ?)
@@ -131,11 +131,11 @@ var UI = ( function() {
     trashLoadElement.classList.add( 'loader', 'hidden' );
 
     tickElement.addEventListener( 'click', function() {
-      markAsRead( item.id );
+      UI.markAsRead( item.id );
     });
 
     trashElement.addEventListener( 'click', function() {
-      deleteItem( item.id );
+      UI.deleteItem( item.id );
     });
 
     tickElement.appendChild( tickIconFont );
@@ -183,7 +183,6 @@ var UI = ( function() {
       document.documentElement.style.fontSize = zoomLevel;
     });
   }
-
 
   return {
     drawList: function() {
@@ -239,29 +238,28 @@ var UI = ( function() {
           chrome.runtime.sendMessage({ action: 'authenticate' });
         });
       });
+    },
+
+
+    markAsRead: ( itemId ) => {
+      document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .tick"   ).classList.add(    'hidden' );
+      document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .loader" ).classList.remove( 'hidden' );
+
+      chrome.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
+    },
+
+
+    deleteItem: ( itemId ) => {
+      document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .trash"  ).classList.add(   'hidden' );
+      document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .loader" ).classList.remove( 'hidden' );
+
+      chrome.runtime.sendMessage( { action: 'delete-item', id: itemId } );
     }
   };
 })();
 
 
 
-// TODO: Rename - it does not reflect that this method "hides" the item from the list
-// TODO: Move to UI module
-function markAsRead( itemId ) {
-  document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .tick"   ).classList.add( 'hidden' );
-  document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .loader" ).classList.remove( 'hidden' );
-
-  chrome.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
-}
-
-// TODO: Rename - it does not reflect that this method "hides" the item from the list
-// TODO: Move to UI module
-function deleteItem( itemId ) {
-  document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .trash"  ).classList.add( 'hidden' );
-  document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .loader" ).classList.remove( 'hidden' );
-
-  chrome.runtime.sendMessage( { action: 'delete-item', id: itemId } );
-}
 
 
 // - - - MAIN LOGIC LOOP - - -
