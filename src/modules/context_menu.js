@@ -49,7 +49,7 @@ var ContextMenu = ( function() {
       chrome.contextMenus.removeAll();
     },
 
-    setMenusState: function( state ) {
+    setState: function( state ) {
       switch( state ) {
         case ContextMenu.pageAlreadyInPocket:
           disable( ContextMenu.addId );
@@ -62,8 +62,17 @@ var ContextMenu = ( function() {
           disable( ContextMenu.deleteId );
           break;
       }
-    }
+    },
 
+    // If current url is the one of the current tab, will update the available context menus
+    setCurrentPageState: function( urlToMatch, state ) {
+      browser.tabs.query( { url: urlToMatch, active: true } ).then( function( matchingTabs ) {
+        for( const tab of matchingTabs ) {
+          Logger.log('Will change current page context menu state for ' + tab.url );
+          ContextMenu.setState( state );
+        }
+      });
+    }
   }
 })();
 
