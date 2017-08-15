@@ -345,7 +345,6 @@ function addItem( url, title ) {
 
         // Send a message back to the UI
         chrome.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
-
       }, 2500);
 
       browser.tabs.query( { url: url } ).then( function( tabs ) {
@@ -377,6 +376,7 @@ function addItem( url, title ) {
     }
   });
 }
+
 
 
 // NOTE: lots of code duplicate with "deleteItem" method
@@ -550,7 +550,6 @@ browser.pageAction.onClicked.addListener( function( tab ) {
 });
 
 
-
 function redrawPageAction( tabId, url ) {
   browser.storage.local.get( "items" ).then( function( { items } ) {
     const parsedItems = JSON.parse( items );
@@ -626,6 +625,29 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       break;
     default:
       Logger.log( `Unknown action:${eventData.action}` );
+  }
+});
+
+
+// --- KEYBOARD SHORTCUTS ---
+
+browser.commands.onCommand.addListener( (command) => {
+  if ( command === "toggle-page-status" ) {
+    browser.tabs.query({ active: true }).then( ([ currentTab ]) => {
+      const currentUrl = currentTab.url;
+      const currentTitle = currentTab.title;
+
+      browser.storage.local.get( 'items', ({ items }) => {
+        const parsedItems = JSON.parse( items );
+        const matchingItem = parsedItems.find( i => i.resolved_url == currentUrl );
+
+        if( matchingItem ) {
+          markAsRead( matchingItem.id );
+        } else {
+          addItem( currentUrl, currentTitle );
+        }
+      });
+    });
   }
 });
 

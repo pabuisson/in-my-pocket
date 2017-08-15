@@ -43,5 +43,14 @@
   "page_action": {
     "default_icon": "assets/icons/inmypocket-flat-grey.svg",
     "default_title": "Add to pocket"
+  },
+
+  "commands": {
+    "toggle-page-status": {
+      "suggested_key": {
+        "default": "Alt+W"
+      },
+      "description": "Send a 'toggle-page-status' event: adds the page to the item list, or archive it if it's already there"
+    }
   }
 }
