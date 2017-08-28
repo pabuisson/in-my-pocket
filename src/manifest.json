@@ -35,7 +35,7 @@
   },
 
   "browser_action": {
-    "default_icon": "assets/icons/inmypocket.svg",
+    "default_icon": "assets/icons/inmypocket-flat-grey.svg",
     "default_popup": "./popup/popup.html",
     "browser_style": true
   },
