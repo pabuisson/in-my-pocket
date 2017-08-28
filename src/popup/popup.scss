@@ -206,8 +206,14 @@ section {
     opacity: 0.8;
     transition: opacity 100ms ease-out;
 
+    margin-right: 0.5rem;
+
     &:first-child {
       padding-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 1rem;
     }
 
     &:hover {
@@ -222,8 +228,7 @@ section {
 
   .filter-items {
     flex: 1;
-    margin-left: 3rem;
-    margin-right: 1rem;
+    margin-right: 3rem;
     padding: 0.4rem 1rem;
     height: 2rem;
 
