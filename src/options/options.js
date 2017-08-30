@@ -6,6 +6,7 @@ import './options.scss';
 import Logger from '../modules/logger.js';
 import Settings from '../modules/settings.js';
 import Badge from '../modules/badge.js';
+import ContextMenu from '../modules/context_menu.js';
 import Authentication from '../modules/authentication.js';
 
 // -------------
@@ -70,7 +71,10 @@ var UI = ( function() {
 
             browser.storage.local.remove( keysToRemove );
 
+            // Remove the badge and destroy all right-click entries
             Badge.hide();
+            ContextMenu.destroyEntries();
+
             disconnectAccountRow.style.display = 'none';
           });
         }

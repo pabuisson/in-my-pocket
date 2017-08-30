@@ -3,16 +3,17 @@
 import Logger from './modules/logger.js';
 import Settings from './modules/settings.js';
 import Badge from './modules/badge.js';
+import ContextMenu from './modules/context_menu.js';
 import Authentication from './modules/authentication.js';
 import Items from './modules/items.js';
 import { PocketError, PocketNotice } from './modules/constants.js';
 
-// --------------------------
+// - - -- - -- - -- - -- - -- - -- - -- - ---
 
 const consumerKey = '58817-addc87503598b7ed29e5bf72';
 
 
-// --- API REQUEST HELPER ---
+// - - - API REQUEST HELPER - - -
 
 function prepareRequest( url, action, successCallback, errorCallback ) {
   let request = new XMLHttpRequest();
@@ -98,7 +99,7 @@ function prepareRequest( url, action, successCallback, errorCallback ) {
 };
 
 
-// --- AUTHENTICATION
+// - - - AUTHENTICATION
 
 // TODO After the opening of the callback tab, reactivate the tab where the
 //      user was before for a less disturbing behaviour
@@ -127,6 +128,9 @@ var AuthenticationProcess = ( function() {
 
         // Retrieve the items and update the badge count
         retrieveItems( true );
+
+        // Create right click context menus
+        ContextMenu.createEntries();
       };
 
       browser.storage.local.get( 'requestToken', function( { requestToken } ) {
@@ -159,7 +163,7 @@ var AuthenticationProcess = ( function() {
 
 
 
-// --- API ACCESS ---
+// - - - API ACCESS : LIST MANAGEMENT - - -
 
 function retrieveItems( force ) {
   const intervalWithoutReload = 15*60;
@@ -313,10 +317,10 @@ function retrieveDiff() {
 };
 
 
-// TODO Be sure to url-encode the parameters you are sending. Otherwise if your url or title
-//      have characters like ? or &, they will often break the request.
+// - - - API ACCESS : ITEMS ACTIONS - - -
+
 function addItem( url, title ) {
-  Logger.log('(addItem)');
+  Logger.log( '(addItem)' );
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
     let onSuccess = function( response ) {
@@ -347,15 +351,27 @@ function addItem( url, title ) {
         chrome.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
       }, 2500);
 
+      // Redraw every page pageAction
+      Logger.log('new item has been added, we will update all matching pageActions');
       browser.tabs.query( { url: url } ).then( function( tabs ) {
         for( const tab of tabs ) {
-          redrawPageAction( tab.id, tab.url );
+          Logger.log('will draw enabled page action for ' + tab.url );
+          drawEnabledPageAction( tab.id );
+        }
+      });
+
+      Logger.log('new item has been added, we will update current page context menus, if needed');
+      browser.tabs.query( { url: url, active: true } ).then( function( tabs ) {
+        for( const tab of tabs ) {
+          Logger.log('will enable context menu for ' + tab.url );
+          ContextMenu.setMenusState( ContextMenu.pageAlreadyInPocket )
         }
       });
     };
 
 
     let itemsList = JSON.parse( data.items );
+    // TODO: Move to helper
     let alreadyContainsItem = itemsList.some( function( item, index, array ) {
       return item.resolved_url == url;
     });
@@ -376,7 +392,6 @@ function addItem( url, title ) {
     }
   });
 }
-
 
 
 // NOTE: lots of code duplicate with "deleteItem" method
@@ -405,11 +420,23 @@ function markAsRead( itemId ) {
       // Send a message back to the UI
       chrome.runtime.sendMessage({ action: 'marked-as-read', id: itemId });
 
-      // Redraw page action
+      // Redraw page actions
       if( removedItem ) {
+        Logger.log('item has been removed, we will update all matching pageActions')
         browser.tabs.query( { url: removedItem.resolved_url } ).then( function( tabs ) {
           for( const tab of tabs ) {
-            redrawPageAction( tab.id, tab.url );
+            Logger.log('will draw disabled page action for ' + tab.url );
+            drawDisabledPageAction( tab.id );
+          }
+        });
+
+        // TODO: for current tab, disable context menu
+        // WIP
+        Logger.log('item has been remove, we will disable current page context menus, if needed');
+        browser.tabs.query( { url: removedItem.resolved_url, active: true } ).then( function( tabs ) {
+          for( const tab of tabs ) {
+            Logger.log('will disable context menu for ' + tab.url );
+            ContextMenu.setMenusState( ContextMenu.pageNotInPocket );
           }
         });
       }
@@ -455,11 +482,23 @@ function deleteItem( itemId ) {
       // Send a message back to the UI
       chrome.runtime.sendMessage({ action: 'deleted', id: itemId });
 
-      // Redraw page action
+      // Redraw page actions
       if( removedItem ) {
+        Logger.log('item has been removed, we will update all matching pageActions')
         browser.tabs.query( { url: removedItem.resolved_url } ).then( function( tabs ) {
           for( const tab of tabs ) {
-            redrawPageAction( tab.id, tab.url );
+            Logger.log('will draw disabled page action for ' + tab.url );
+            drawDisabledPageAction( tab.id );
+          }
+        });
+
+        // TODO: for current tab, disable context menu
+        // WIP
+        Logger.log('item has been remove, we will disable current page context menus, if needed');
+        browser.tabs.query( { url: removedItem.resolved_url, active: true } ).then( function( tabs ) {
+          for( const tab of tabs ) {
+            Logger.log('will disable context menu for ' + tab.url );
+            ContextMenu.setMenusState( ContextMenu.pageNotInPocket );
           }
         });
       }
@@ -478,6 +517,8 @@ function deleteItem( itemId ) {
   });
 }
 
+
+// - - - OPEN ITEMS - - -
 
 function openRandomItem( query, opt = {} ) {
   browser.storage.local.get( 'items' ).then( function( { items } ) {
@@ -517,50 +558,66 @@ function openItem( { newTab, url } ) {
 
 // - - - FEATURE : CONTEXT MENU - - -
 
-const addLinkId = 'add-link-to-pocket';
-
-chrome.contextMenus.create({
-  id: addLinkId,
-  title: 'Add to Pocket',
-  contexts: ['link', 'page']
-});
-
-
 browser.contextMenus.onClicked.addListener( function( link, tab ) {
-  if( link.menuItemId == addLinkId ) {
-    if( link.linkUrl ) {
-      addItem( link.linkUrl );
-    } else {
-      addItem( link.pageUrl, tab.title );
-    }
+  switch( link.menuItemId )
+  {
+    case ContextMenu.addId:
+      if( link.linkUrl ) {
+        addItem( link.linkUrl );
+      } else {
+        addItem( link.pageUrl, tab.title );
+      }
+      break;
+
+    case ContextMenu.archiveId:
+      browser.storage.local.get( "items" ).then( function( { items } ) {
+        const parsedItems = JSON.parse( items );
+        const item = parsedItems.find( i => i.resolved_url == tab.url );
+        if( item ) {
+          markAsRead( item.id );
+        }
+      });
+      break;
+
+    case ContextMenu.deleteId:
+      browser.storage.local.get( "items" ).then( function( { items } ) {
+        const parsedItems = JSON.parse( items );
+        const item = parsedItems.find( i => i.resolved_url == tab.url );
+        if( item ) {
+          deleteItem( item.id );
+        }
+      });
+      break;
   }
 });
 
 
 // - - - FEATURE : PAGE ACTION - - -
 
-browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
-  if( changeInfo.url ) {
-    redrawPageAction( tabId, changeInfo.url );
-  }
-});
-
 browser.pageAction.onClicked.addListener( function( tab ) {
   togglePageAction( tab );
 });
 
+function drawDisabledPageAction( tabId ) {
+  browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-grey.svg" });
+  browser.pageAction.setTitle({ tabId, title: "Add to pocket" });
+}
 
+function drawEnabledPageAction( tabId ) {
+  browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-blue.svg" });
+  browser.pageAction.setTitle({ tabId, title: "Mark as read" });
+}
+
+// NOTE: should only be called by "redrawPageActionAllTabs" at this point
 function redrawPageAction( tabId, url ) {
   browser.storage.local.get( "items" ).then( function( { items } ) {
     const parsedItems = JSON.parse( items );
     if( parsedItems.some( i => i.resolved_url == url ) ) {
-      // item is in pocket
-      browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-blue.svg" });
-      browser.pageAction.setTitle({ tabId, title: "Mark as read" });
+      drawEnabledPageAction( tabId );
     } else {
-      browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-grey.svg" });
-      browser.pageAction.setTitle({ tabId, title: "Add to pocket" });
+      drawDisabledPageAction( tabId );
     }
+
     showPageAction(tabId);
   });
 }
@@ -594,7 +651,74 @@ function togglePageAction( tab ) {
 
 
 
-// --- MESSAGES ---
+// - - - HANDLE CONTEXT MENUS AND PAGE ACTION UPDATES - - -
+// - - - On navigation, and on tab switch             - - -
+
+
+// 1. When current tab url is changing
+browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
+  if( changeInfo.hasOwnProperty('url') ) {
+    browser.tabs.get( tabId ).then( ( tab ) => {
+      // TODO: Maybe I can organize promises differently, so that I only access this handler
+      //       when tab.active == true ? So I could remove one test / indentation level here
+      if( tab.active ) {
+        browser.storage.local.get( "items" ).then( ( { items } ) => {
+          const parsedItems  = JSON.parse( items );
+          const containsItem = parsedItems.some( i => i.resolved_url == tab.url );
+
+          if( containsItem ) {
+            Logger.log("current tab is loading " + changeInfo.url + " that IS in my list");
+            // Context menu
+            ContextMenu.setMenusState( ContextMenu.pageAlreadyInPocket )
+            // Page action
+            drawEnabledPageAction( tabId );
+            showPageAction( tabId );
+          } else {
+            Logger.log( "current tab is loading " + changeInfo.url + " that ISN'T in my list...yet");
+            // Context menu
+            ContextMenu.setMenusState( ContextMenu.pageNotInPocket )
+            // Page action
+            drawDisabledPageAction( tabId );
+            showPageAction( tabId );
+          }
+        });
+      }
+    });
+  }
+});
+
+// 2. When I switch to another tab, check if I need to update the state of context menus
+browser.tabs.onActivated.addListener( ({ tabId }) => {
+  browser.tabs.get( tabId ).then( function( tab ) {
+    return tab.url;
+  }).then( ( currentUrl ) => {
+    browser.storage.local.get( "items" ).then( ( { items } ) => {
+      const parsedItems  = JSON.parse( items );
+      const containsItem = parsedItems.some( i => i.resolved_url == currentUrl );
+
+      if( containsItem ) {
+        Logger.log( "switching to a tab that IS in my list");
+        // Context menu
+        ContextMenu.setMenusState( ContextMenu.pageAlreadyInPocket )
+        // Page action
+        drawEnabledPageAction( tabId );
+        showPageAction( tabId );
+      } else {
+        Logger.log( "switching to a tab that ISN'T in my list...yet !");
+        // Context menu
+        ContextMenu.setMenusState( ContextMenu.pageNotInPocket )
+        // Page action
+        drawDisabledPageAction( tabId );
+        showPageAction( tabId );
+      }
+    });
+  });
+});
+
+
+
+
+// - - - MESSAGES - - -
 
 chrome.runtime.onMessage.addListener( function( eventData ) {
   Logger.log( `eventData.action:${eventData.action}` );
@@ -629,7 +753,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
 });
 
 
-// --- KEYBOARD SHORTCUTS ---
+// - - - KEYBOARD SHORTCUTS - - -
 
 browser.commands.onCommand.addListener( (command) => {
   if ( command === "toggle-page-status" ) {
@@ -652,9 +776,10 @@ browser.commands.onCommand.addListener( (command) => {
 });
 
 
-// --- ON LOAD ---
+// - - - ON LOAD - - -
 
 Authentication.isAuthenticated().then( function() {
+  ContextMenu.createEntries();
   Badge.updateCount();
 })
 
