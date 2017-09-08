@@ -4,8 +4,8 @@ var Items = ( function() {
   let _loaded  = false;
 
   function matchQuery( item, query ) {
-    let title = item.resolved_title.toLowerCase() || '';
-    let url   = item.resolved_url.toLowerCase()   || '';
+    let title = ( item.resolved_title || '' ).toLowerCase();
+    let url   = ( item.resolved_url   || '' ).toLowerCase();
 
     return title.includes( query.toLowerCase() ) || url.includes( query.toLowerCase() );
   }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.3 - September 2017
+
+* FIX: Fixed filter item feature, was broken in case of undefined page title
+
 
 ## 0.5.2 - August 2017
 
