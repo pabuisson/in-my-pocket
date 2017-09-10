@@ -121,20 +121,20 @@ var UI = ( function() {
     actionContainer.className = 'actions-container';
 
     tickAction.className = 'tick-action';
-    tickIconFont.classList.add( 'icon', 'icon-ok' );
+    tickIconFont.classList.add( 'icon', 'ion-checkmark' );
     tickElement.className  = 'tick';
     tickLoadElement.classList.add( 'loader', 'hidden' );
 
     deleteAction.className = 'delete-action';
-    trashIconFont.classList.add( 'icon', 'icon-trash' );
+    trashIconFont.classList.add( 'icon', 'ion-trash-b' );
     trashElement.className = 'trash';
     trashLoadElement.classList.add( 'loader', 'hidden' );
 
-    tickElement.addEventListener( 'click', function() {
+    tickAction.addEventListener( 'click', function() {
       UI.markAsRead( item.id );
     });
 
-    trashElement.addEventListener( 'click', function() {
+    deleteAction.addEventListener( 'click', function() {
       UI.deleteItem( item.id );
     });
 
