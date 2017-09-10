@@ -105,6 +105,8 @@ function retrieveItems( force ) {
       // If we already have sync, check if intervalWithoutReload is past, then we can reload
       retrieveDiff();
     } else {
+      // Do this to stop the main-loader component
+      chrome.runtime.sendMessage({ action: 'retrieved-items' });
       // Update the badge count, in case it wasn't displayed but no items reload happened
       Badge.updateCount();
     }
