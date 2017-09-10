@@ -226,7 +226,8 @@ var UI = ( function() {
         // Display the currently available items
         UI.drawList();
 
-        // Update the list of items just in case
+        // Enable the loading animation and update the list of items
+        MainLoader.enable();
         chrome.runtime.sendMessage({ action: 'retrieve-items', force: false });
       }, function( error ) {
         let authenticationButton = document.querySelector( '.authentication button' );
@@ -270,9 +271,9 @@ document.addEventListener('DOMContentLoaded', function() {
   UI.setup();
 
   chrome.runtime.onMessage.addListener( function( eventData ) {
-    if( eventData.error || eventData.notice ) {
-      MainLoader.disable();
+    MainLoader.disable();
 
+    if( eventData.error || eventData.notice ) {
       let flashContainer = document.querySelector( '.flash-overlay' );
       let flashMessage   = '';
       let errorClass     = 'error';
@@ -317,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 5000 );
 
     } else {
-      Logger.log( 'list | switch:' + eventData.action );
+      Logger.log( 'popup | switch:' + eventData.action );
 
       switch( eventData.action ) {
         case 'authenticated':
@@ -345,8 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
           Badge.updateCount();
           break;
       }
-
-      MainLoader.disable();
     }
   });
 });
