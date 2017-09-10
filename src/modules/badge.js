@@ -7,6 +7,9 @@ import Settings from './settings.js';
 
 
 var Badge = ( function() {
+  let defaultBackgroundColor = '#444';
+  let successBackgroundColor = '#50bcb6';
+
   function itemsNumbers( items ) {
     if( items && Object.keys( items ).length > 0 ) {
       return Object.keys( items ).length;
@@ -24,7 +27,7 @@ var Badge = ( function() {
       Settings.init().then( function() {
         let showBadge = Settings.get( 'showBadge' );
         if( showBadge === true ) {
-          chrome.browserAction.setBadgeBackgroundColor({ color: '#444' });
+          chrome.browserAction.setBadgeBackgroundColor({ color: defaultBackgroundColor });
 
           if( items ) {
             let itemsCount = itemsNumbers( items );
@@ -40,6 +43,22 @@ var Badge = ( function() {
           // If showBadge != true, we hide the count badge
           Badge.hide();
         }
+      });
+    },
+
+    flashSuccess: function() {
+      browser.storage.local.get( 'items', ({ items }) => {
+        let parsedItems = JSON.parse( items );
+
+        browser.browserAction.setBadgeText({ text: '✓' });
+        browser.browserAction.setBadgeBackgroundColor({ color: successBackgroundColor });
+
+        setTimeout( function() {
+          // Reset the color to default
+          browser.browserAction.setBadgeBackgroundColor({ color: defaultBackgroundColor });
+          // Update the badge if needed
+          Badge.updateCount( parsedItems );
+        }, 2500);
       });
     }
   }
