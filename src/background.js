@@ -67,7 +67,7 @@ var AuthenticationProcess = ( function() {
         redirect_uri: redirectAuthFinished
       };
 
-      new Request( 'https://getpocket.com/v3/oauth/request', requestParams )
+      new Request( 'POST', 'https://getpocket.com/v3/oauth/request', requestParams )
         .fetch()
         .then( function( response ) {
           const requestToken = response.code;
