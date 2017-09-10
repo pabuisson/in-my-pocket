@@ -7,9 +7,9 @@ const Environments = {
 
 
 var Logger = ( function() {
-  let prefix = "INMYPOCKET | ";
   // const currentEnvironment = Environments.DEVELOPMENT;
   const currentEnvironment = Environments.PRODUCTION;
+  let prefix = "IMP | ";
 
   return {
     log: function( message ) {

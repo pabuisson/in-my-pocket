@@ -85,7 +85,20 @@ var MainLoader = ( function() {
 })();
 
 
-var UI = ( function() {
+var DomBuilder = ( function() {
+  const ITEMS_PER_BATCH = 50;
+  let itemsToCreate     = undefined;
+  let totalItemsCount   = undefined;
+  let createdItemsCount = undefined;
+  let itemsContainer    = document.querySelector( '.list-component' );
+
+  function areAllItemsBuilt() {
+    const isInitialized    = totalItemsCount !== undefined && createdItemsCount !== undefined;
+    const areAllItemsBuilt = createdItemsCount === totalItemsCount;
+
+    return isInitialized && areAllItemsBuilt;
+  }
+
   function formatUrl( url ) {
     let protocolsToRemove = [
       'http', 'https',
@@ -94,6 +107,14 @@ var UI = ( function() {
     let removalRegex = new RegExp( '(' + protocolsToRemove + '):\/\/(www.){0,1}', 'gi' );
 
     return url.replace( removalRegex, '' );
+  }
+
+  function openLink( url ) {
+    browser.runtime.sendMessage({action: 'read-item', url});
+  }
+
+  function resetUI() {
+    itemsContainer.innerHTML = '';
   }
 
   // TODO: replace this with another mechanism (React ?)
@@ -167,10 +188,51 @@ var UI = ( function() {
     return liElement;
   }
 
-  function openLink( url ) {
-    browser.runtime.sendMessage({action: 'read-item', url});
+  function buildBatch() {
+    Logger.log('(build a new batch of items)');
+
+    for( let i = 0; i < ITEMS_PER_BATCH; i++ ) {
+      let itemToCreate = itemsToCreate[ createdItemsCount ];
+      itemsContainer.appendChild( buildItemElement( itemToCreate ) );
+
+      createdItemsCount++;
+
+      // If we've built all items then get out of this loop
+      if( areAllItemsBuilt() == true ) {
+        Logger.log('All items are built');
+        break;
+      }
+    }
+
+    // if DOM is not all built yet, then ask for another animation frame where
+    // we can keep on building the DOM
+    if( areAllItemsBuilt() == false ) {
+      Logger.log('Will request an animation frame for another run of the buildBatch method');
+      requestAnimationFrame( buildBatch );
+    }
   }
 
+  return {
+    buildAll: function( items ) {
+      Logger.log('buildAll');
+
+      // Reset list component content
+      resetUI();
+
+      // Prepare dom building
+      itemsToCreate     = items;
+      totalItemsCount   = items.length;
+      createdItemsCount = 0;
+
+      // Build the dom
+      Logger.log('will request an animation frame for buildBatch method');
+      requestAnimationFrame( buildBatch );
+    }
+  }
+})();
+
+
+var UI = ( function() {
   function focusSearchField() {
     setTimeout( function() {
       filterItemsInput.focus();
@@ -200,13 +262,8 @@ var UI = ( function() {
           placeholderNoResults.classList.remove( 'hidden' );
         }
 
-        let container = document.querySelector( '.list-component' );
-        container.innerHTML = '';
-
-        for( let i = 0; i < itemsToRender.length; i++) {
-          let itemElement = buildItemElement( itemsToRender[ i ] );
-          container.appendChild( itemElement );
-        }
+        // Rebuild all items
+        DomBuilder.buildAll( itemsToRender );
       });
 
       return;
