@@ -101,6 +101,16 @@ var RequestBuilder = ( function() {
 
 
 class Request {
+  constructor( action, url, params ) {
+    this.action  = action;
+    this.url     = url;
+    this.params  = params;
+    this.defaultHeaders = {
+      "Content-type": "application/json; charset=UTF-8",
+      "X-Accept": "application/json"
+    };
+  }
+
   fetch() {
     // TODO: extract this to a dedicated class/module
     let errorObject = {
@@ -165,7 +175,7 @@ class Request {
 
         }).catch( error => {
           // TODO: Extract this to a separate method, to avoid this long method
-          Logger.error('error while reaching the server');
+          Logger.error('(Request.fetch) error while reaching the server');
 
           errorObject.httpCode = undefined;
           errorObject.error    = PocketError.UNREACHABLE;
@@ -179,17 +189,6 @@ class Request {
     });
 
     return fetchPromise;
-  }
-
-
-  constructor( action, url, params ) {
-    this.action  = action;
-    this.url     = url;
-    this.params  = params;
-    this.defaultHeaders = {
-      "Content-type": "application/json; charset=UTF-8",
-      "X-Accept": "application/json"
-    };
   }
 }
 
