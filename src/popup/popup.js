@@ -384,12 +384,12 @@ document.addEventListener('DOMContentLoaded', function() {
           break;
 
         case 'marked-as-read':
-          document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
+          document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'disappearing' );
           Badge.updateCount();
           break;
 
         case 'deleted':
-          document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'hidden' );
+          document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'disappearing' );
           Badge.updateCount();
           break;
 

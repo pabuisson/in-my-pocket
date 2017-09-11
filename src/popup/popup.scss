@@ -50,10 +50,7 @@ section {
     position: relative;
     padding: 0.5rem 0.1rem 0.2rem 0.1rem;
     border-bottom: 1px solid #eee;
-
-    span, .tick, .trash {
-      cursor: pointer;
-    }
+    height: 3.5rem;
 
     /* TODO: Flexbox for span + tick sizing */
     span {
@@ -68,9 +65,12 @@ section {
 
     .title {
       height: 1.5rem;
+
+      color: #666;
       font-size: 1.2rem;
       font-weight: bold;
-      color: #666;
+
+      cursor: pointer;
     }
 
     &:hover .title {
@@ -84,6 +84,23 @@ section {
 
       font-size: 0.75rem;
       color: #aaa;
+
+      cursor: pointer;
+    }
+
+
+    overflow: hidden;
+    opacity: 1;
+    // second duration is the delay after which the transition must begin
+    transition: height 500ms, padding 500ms, opacity 0s 450ms, border-bottom-width 0s 490ms;
+
+    &.disappearing {
+      // TODO: several classes with different colors, depending on the kind of disappearance?
+      //       red for delete, green for archive?
+      height: 0px;
+      padding: 0;
+      opacity: 0;
+      border-bottom-width: 0px;
     }
 
 
