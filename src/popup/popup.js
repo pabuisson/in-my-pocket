@@ -189,20 +189,22 @@ var DomBuilder = ( function() {
   }
 
   function buildBatch() {
-    Logger.log('(build a new batch of items)');
+    Logger.log('--- lets build a new batch of ' + ITEMS_PER_BATCH + ' items ---');
 
     for( let i = 0; i < ITEMS_PER_BATCH; i++ ) {
+      // If we've already built all items then get out of this loop
+      if( areAllItemsBuilt() == true ) {
+        Logger.log('All items are built -> break out of this loop, now!!!');
+        break;
+      }
+
       let itemToCreate = itemsToCreate[ createdItemsCount ];
       itemsContainer.appendChild( buildItemElement( itemToCreate ) );
 
       createdItemsCount++;
-
-      // If we've built all items then get out of this loop
-      if( areAllItemsBuilt() == true ) {
-        Logger.log('All items are built');
-        break;
-      }
     }
+
+    Logger.log("We're out of the for loop");
 
     // if DOM is not all built yet, then ask for another animation frame where
     // we can keep on building the DOM
@@ -216,6 +218,9 @@ var DomBuilder = ( function() {
     buildAll: function( items ) {
       Logger.log('buildAll');
 
+      // Remove previous "requestAnimationFrame" registered in case
+      cancelAnimationFrame( buildBatch );
+
       // Reset list component content
       resetUI();
 
@@ -225,7 +230,7 @@ var DomBuilder = ( function() {
       createdItemsCount = 0;
 
       // Build the dom
-      Logger.log('will request an animation frame for buildBatch method');
+      Logger.log('Request an animation frame for buildBatch method');
       requestAnimationFrame( buildBatch );
     }
   }
