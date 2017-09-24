@@ -1,7 +1,7 @@
 {
-  "name": "firefox-pocket",
+  "name": "firefox-in-my-pocket",
   "description": "For all those who are missing the old Pocket addon for Firefox, here's an unofficial client for the [Pocket](http://getpocket.com/) webservice. I'm not in any way affiliated to Pocket and only does this for my fellow Firefox users looking for an easy to use Pocket extension for their favorite browser.",
-  "main": "index.js",
+  "main": "src/manifest.json",
   "devDependencies": {
     "babel-core": "^6.24.0",
     "babel-loader": "^6.4.1",
@@ -17,9 +17,12 @@
     "webpack": "^2.3.1"
   },
   "scripts": {
-    "watch": "./node_modules/.bin/webpack -w",
-    "build": "./node_modules/.bin/webpack",
-    "build-ext": "npm run build && web-ext build --source-dir=build/ --overwrite-dest",
+    "clean": "rm -rf build/*",
+    "build": "npm run clean && ./node_modules/.bin/webpack",
+    "watch": "npm run clean && ./node_modules/.bin/webpack -w",
+    "zip-source": "zip -r web-ext-artifacts/source.zip CHANGELOG.md README.md package.json webpack.config.js src/",
+    "build-ext": "npm run build && web-ext build --source-dir=build/ --overwrite-dest && npm run zip-source",
+
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "web-ext run -s build"
   },
@@ -32,6 +35,6 @@
     "plugin"
   ],
   "author": "Pierre-Adrien Buisson",
-  "license": "ISC",
+  "license": "Mozilla Public License, version 2.0",
   "homepage": "https://bitbucket.org/pabuisson/in-my-pocket#readme"
 }
