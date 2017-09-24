@@ -65,4 +65,4 @@ var PageAction = ( function() {
 })();
 
 
-export default PageAction
+export default PageAction;

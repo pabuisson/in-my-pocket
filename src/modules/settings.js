@@ -1,15 +1,23 @@
 "use strict";
 
+import Logger from './logger.js';
+
+
+// --------------------------
+
+
 var Settings = ( function() {
   let _loaded  = false;
   let settings = {};
   let defaultSettings = {
     showBadge:    true,
     openInNewTab: true,
+    debugMode:    false,
     zoomLevel:    '12px'
   };
 
   function load() {
+    // TODO: I must not need to wrap this in a new promise, just use the existing promise chain
     let promise = new Promise( function( resolve, reject ) {
       browser.storage.local.get( 'settings', function( data ) {
         _loaded  = true;
@@ -67,4 +75,4 @@ var Settings = ( function() {
 })();
 
 
-export default Settings
+export default Settings;

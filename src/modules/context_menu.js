@@ -4,12 +4,14 @@ import Logger from './logger.js';
 
 var ContextMenu = ( function() {
   function enable( id ) {
+    Logger.log( '(ContextMenu.enable) enable ' + id + ' context menu');
     chrome.contextMenus.update( id, {
       enabled: true
     });
   }
 
   function disable( id ) {
+    Logger.log( '(ContextMenu.enable) disable ' + id + ' context menu');
     chrome.contextMenus.update( id, {
       enabled: false
     });
@@ -26,7 +28,7 @@ var ContextMenu = ( function() {
     pageNotInPocket:     'PAGE_NOT_IN_POCKET',
 
     createEntries: function() {
-      Logger.log("Create all right-click entries");
+      Logger.log( '(ContextMenu.createEntries) create all right-click entries' );
       chrome.contextMenus.create({
         id: ContextMenu.addId,
         title: '✚ Add to Pocket',
@@ -45,7 +47,7 @@ var ContextMenu = ( function() {
     },
 
     destroyEntries: function() {
-      Logger.log("Destroy all right-click entries");
+      Logger.log( '(ContextMenu.destroyEntries) destroy all right-click entries' );
       chrome.contextMenus.removeAll();
     },
 
@@ -68,7 +70,7 @@ var ContextMenu = ( function() {
     setCurrentPageState: function( urlToMatch, state ) {
       browser.tabs.query( { url: urlToMatch, active: true } ).then( function( matchingTabs ) {
         for( const tab of matchingTabs ) {
-          Logger.log('Will change current page context menu state for ' + tab.url );
+          Logger.log( '(ContextMenu.setCurrentPageState) change current page context menu state to ' + state + ' for ' + tab.url );
           ContextMenu.setState( state );
         }
       });

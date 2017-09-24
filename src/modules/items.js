@@ -2,10 +2,11 @@
 
 var Items = ( function() {
   function matchQuery( item, query ) {
-    let title = ( item.resolved_title || '' ).toLowerCase();
-    let url   = ( item.resolved_url   || '' ).toLowerCase();
+    const lowerQuery = query.toLowerCase()
+    const lowerTitle   = ( item.resolved_title || '' ).toLowerCase();
+    const lowerUrl     = ( item.resolved_url   || '' ).toLowerCase();
 
-    return title.includes( query.toLowerCase() ) || url.includes( query.toLowerCase() );
+    return lowerTitle.includes( lowerQuery ) || lowerUrl.includes( lowerQuery );
   }
 
 

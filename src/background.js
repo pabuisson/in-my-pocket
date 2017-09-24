@@ -164,7 +164,7 @@ function retrieveFirst() {
 
 
 function retrieveDiff() {
-  Logger.log('(retrieve diff)');
+  Logger.log('(background.retrieveDiff)');
 
   browser.storage.local.get( ['access_token', 'last_retrieve', 'items'], function( { access_token, last_retrieve, items } ) {
     let requestParams = {
@@ -190,11 +190,14 @@ function retrieveDiff() {
             case '1':
             case '2':
               // Archived or deleted: we remove it from the items list
-              Logger.log("NEED TO ARCHIVE: " + itemId + ' (' + item.resolved_title + ')' );
+              Logger.log("(background.retriveDiff) NEED TO ARCHIVE: " + itemId + ' (' + item.resolved_title + ')' );
               let removedItemIdx = allItems.findIndex( function( item ) { return item.id === itemId });
 
               if( removedItemIdx >= 0 ) {
+                Logger.log('(background.retrieveDiff) Item has been found and will be removed from the list');
                 allItems.splice( removedItemIdx, 1 );
+              } else {
+                Logger.warn('(background.retrieveDiff) Could not find the item to archive in the item lists');
               }
 
               break;
@@ -206,7 +209,7 @@ function retrieveDiff() {
               if( itemIdx >= 0 ) {
                 // Item already exists in the list (added by this current extension),
                 // we just update the missing fields
-                Logger.log("ITEM " + itemId + "(" + item.resolved_title + ") ALREADY PRESENT, WILL BE UPDATED" );
+                Logger.log("(background.retriveDiff) Item " + itemId + "(" + item.resolved_title + ") already present, will be updated" );
                 allItems[ itemIdx ] = Object.assign( allItems[ itemIdx ], {
                   resolved_title: item.given_title || item.resolved_title,
                   resolved_url:   item.given_url || item.resolved_url,
@@ -214,7 +217,7 @@ function retrieveDiff() {
                 });
               } else {
                 // Item does not exist in the item list, we just add it
-                Logger.log("NEED TO ADD: " + itemId + ' (' + item.resolved_title + ')' );
+                Logger.log("(background.retriveDiff) Add new item: " + itemId + ' (' + item.resolved_title + ')' );
                 allItems.push({
                   id:             item.item_id,
                   resolved_title: item.given_title || item.resolved_title,
@@ -225,7 +228,7 @@ function retrieveDiff() {
               break;
 
             default:
-              Logger.log('STATUS UNKNOW, DONT KNOW HOW TO DEAL WITH THIS : ' + item.status );
+              Logger.log('(background.retriveDiff) Status unknow, dont know how to deal with this : ' + item.status );
               break;
           }
         }
@@ -261,7 +264,7 @@ function retrieveDiff() {
 //    -   Request : prepare and launch a request to the API
 
 function addItem( url, title ) {
-  Logger.log( '(addItem)' );
+  Logger.log( '(background.addItem)' );
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
     let itemsList = JSON.parse( data.items );
@@ -305,10 +308,10 @@ function addItem( url, title ) {
           chrome.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
 
           // Redraw every page pageAction
-          Logger.log('new item has been added, we will update all matching pageActions');
+          Logger.log('(background.addItem) new item has been added, we will update all matching pageActions');
           browser.tabs.query( { url: url } ).then( function( tabs ) {
             for( const tab of tabs ) {
-              Logger.log('will draw enabled page action for ' + tab.url );
+              Logger.log('(background.addItem) will draw enabled page action for ' + tab.url );
               PageAction.drawEnabled( tab.id );
             }
           });
@@ -332,8 +335,7 @@ function addItem( url, title ) {
 //    - ✓ ContextMenu : if current tab is the removed item, change context menus states
 //    -   Request : prepare and launch a request to the API
 function markAsRead( itemId ) {
-  Logger.log('(markAsRead)');
-  Logger.log('id to archive: ' + itemId );
+  Logger.log('(background.markAsRead) id to archive: ' + itemId );
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
     let requestParams = {
@@ -347,13 +349,12 @@ function markAsRead( itemId ) {
     new Request( 'POST', 'https://getpocket.com/v3/send', requestParams )
       .fetch()
       .then( function( response ) {
-        Logger.log('onload - itemId = ' + itemId );
         let items = JSON.parse( data.items );
         let removedItemIdx = items.findIndex( function( item ) { return item.id === itemId });
         let removedItem = items[ removedItemIdx ];
 
         if( removedItemIdx >= 0 ) {
-          Logger.log('the item ' + itemId + ' has been found and removed');
+          Logger.log('(background.markAsRead) item ' + itemId + ' has been found and removed');
 
           // Remove the archived item from the list
           items.splice( removedItemIdx, 1 );
@@ -362,6 +363,8 @@ function markAsRead( itemId ) {
           browser.storage.local.set({ items: JSON.stringify( items ) });
           // Display an indicator on the badge that everything went well and update badge count
           Badge.flashSuccess();
+        } else {
+          Logger.warn('(background.markAsRead) item + ' + itemId + ' could not be found !');
         }
 
         // Send a message back to the UI
@@ -369,10 +372,10 @@ function markAsRead( itemId ) {
 
         // Redraw page actions
         if( removedItem ) {
-          Logger.log('item has been removed, we will update all matching pageActions')
+          Logger.log('(background.markAsRead) item has been removed, we will update all matching pageActions')
           browser.tabs.query( { url: removedItem.resolved_url } ).then( function( tabs ) {
             for( const tab of tabs ) {
-              Logger.log('will draw disabled page action for ' + tab.url );
+              Logger.log('(background.markAsRead) will draw disabled page action for ' + tab.url );
               PageAction.drawDisabled( tab.id );
             }
           });
@@ -396,8 +399,7 @@ function markAsRead( itemId ) {
 //    - ✓ ContextMenu : if current tab is the removed item, change context menus states
 //    -   Request : prepare and launch a request to the API
 function deleteItem( itemId ) {
-  Logger.log('(deleteItem)');
-  Logger.log('id to remove: ' + itemId );
+  Logger.log('(background.deleteItem) id to remove: ' + itemId );
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
     let requestParams = {
@@ -417,7 +419,7 @@ function deleteItem( itemId ) {
         let removedItem = items[ removedItemIdx ];
 
         if( removedItemIdx >= 0 ) {
-          Logger.log('the item ' + itemId + ' has been found and removed');
+          Logger.log('(background.deleteItem) item ' + itemId + ' has been found and removed');
 
           // Remove the archived item from the list
           items.splice( removedItemIdx, 1 );
@@ -426,6 +428,8 @@ function deleteItem( itemId ) {
           browser.storage.local.set({ items: JSON.stringify( items ) });
           // Display an indicator on the badge that everything went well and update badge count
           Badge.flashSuccess();
+        } else {
+          Logger.warn('background.deleteItem) item ' + itemId + ' could not be found!' );
         }
 
 
@@ -434,10 +438,10 @@ function deleteItem( itemId ) {
 
         // Redraw page actions
         if( removedItem ) {
-          Logger.log('item has been removed, we will update all matching pageActions')
+          Logger.log('(background.deleteItem) item has been removed, we will update all matching pageActions')
           browser.tabs.query( { url: removedItem.resolved_url } ).then( function( tabs ) {
             for( const tab of tabs ) {
-              Logger.log('will draw disabled page action for ' + tab.url );
+              Logger.log('(background.deleteItem) will draw disabled page action for ' + tab.url );
               PageAction.drawDisabled( tab.id );
             }
           });
@@ -547,14 +551,14 @@ browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
           const containsItem = parsedItems.some( i => i.resolved_url == tab.url );
 
           if( containsItem ) {
-            Logger.log("current tab is loading " + changeInfo.url + " that IS in my list");
+            Logger.log("(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that IS in my list");
             // Context menu
             ContextMenu.setState( ContextMenu.pageAlreadyInPocket )
             // Page action
             PageAction.drawEnabled( tabId );
             PageAction.show( tabId );
           } else {
-            Logger.log( "current tab is loading " + changeInfo.url + " that ISN'T in my list...yet");
+            Logger.log( "(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that ISN'T in my list...yet");
             // Context menu
             ContextMenu.setState( ContextMenu.pageNotInPocket )
             // Page action
@@ -577,14 +581,14 @@ browser.tabs.onActivated.addListener( ({ tabId }) => {
       const containsItem = parsedItems.some( i => i.resolved_url == currentUrl );
 
       if( containsItem ) {
-        Logger.log( "switching to a tab that IS in my list");
+        Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that IS in my list");
         // Context menu
         ContextMenu.setState( ContextMenu.pageAlreadyInPocket )
         // Page action
         PageAction.drawEnabled( tabId );
         PageAction.show( tabId );
       } else {
-        Logger.log( "switching to a tab that ISN'T in my list...yet !");
+        Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that ISN'T in my list...yet !");
         // Context menu
         ContextMenu.setState( ContextMenu.pageNotInPocket )
         // Page action
@@ -601,7 +605,7 @@ browser.tabs.onActivated.addListener( ({ tabId }) => {
 // - - - MESSAGES - - -
 
 chrome.runtime.onMessage.addListener( function( eventData ) {
-  Logger.log( `eventData.action:${eventData.action}` );
+  Logger.log( `(background.onMessage) eventData.action: ${eventData.action}` );
   switch( eventData.action ) {
     case 'authenticate':
       AuthenticationProcess.authenticate();
@@ -628,7 +632,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       openItem({ url: eventData.url });
       break;
     default:
-      Logger.log( `Unknown action:${eventData.action}` );
+      Logger.log( `Unknown action: ${eventData.action}` );
   }
 });
 

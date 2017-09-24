@@ -13,6 +13,7 @@ import Authentication from '../modules/authentication.js';
 
 let displayBadgeCountCheckbox = document.querySelector( '.display-badge-count' );
 let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
+let enableDebugModeCheckbox   = document.querySelector( '.enable-debug-mode' );
 let disconnectAccountAction   = document.querySelector( '.disconnect-account' );
 let disconnectAccountRow      = document.querySelector( '.disconnect-account-row' );
 let zoomLevelSelector         = document.querySelector( '.zoom-level' );
@@ -33,6 +34,7 @@ var UI = ( function() {
 
         displayBadgeCountCheckbox.checked = settings[ 'showBadge' ];
         openInNewTabCheckbox.checked      = settings[ 'openInNewTab' ];
+        enableDebugModeCheckbox.checked   = settings[ 'debugMode' ];
         zoomLevelSelector.value           = settings[ 'zoomLevel' ];
       });
 
@@ -46,6 +48,12 @@ var UI = ( function() {
       // Event: "Open in new tab" checkbox
       openInNewTabCheckbox.addEventListener( 'change', function() {
         Settings.set( 'openInNewTab', this.checked );
+        Settings.save();
+      });
+
+      // Event: "Enable debug mode" checkbox
+      enableDebugModeCheckbox.addEventListener( 'change', function() {
+        Settings.set( 'debugMode', this.checked );
         Settings.save();
       });
 
