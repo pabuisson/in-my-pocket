@@ -1,13 +1,18 @@
 # Changelog
 
+## 0.6.0 - October 2017
+
+* FEATURE: Keyboard shortcut (Alt-W) to add the current page / mark it as read! It's a long awaited feature and many users asked for it: it's here!
+* FEATURE: Built a debug mode so that it'll be easier to debug
+    * SETTINGS: Switch on/off debug mode
+* CHORE/PERFS: create items by batches instead of all at a time. Should allow the user interface to be immediately responsive when opening the popup, especially when there's a lot of items there.
+* UPDATE: Update action icons
+* UPDATE: Add smooth animation when removing an item from the list. Archiving items has never looked this good!
+
+
 ## 0.5.3 - September 2017
 
 * FIX: Fixed filter item feature, was broken in case of undefined page title
-
-
-## 0.6.0 - August 2017
-
-* FEATURE: Keyboard shortcut to add the current page / mark it as read! It's a long awaited feature and many users asked for it: it's here!
 
 
 ## 0.5.2 - August 2017
