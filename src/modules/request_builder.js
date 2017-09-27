@@ -12,8 +12,7 @@ import { PocketError } from './constants.js';
 var RequestBuilder = ( function() {
   return {
     build: function( url, action, successCallback, errorCallback ) {
-      Logger.warn("[warning] RequestBuilder.build has been deprecated");
-      Logger.warn("It should be replaced with the new Request class.");
+      Logger.warn("[warning] RequestBuilder.build deprecated - Replace with Request class");
 
       let request = new XMLHttpRequest();
       let errorObject = {
@@ -112,7 +111,7 @@ class Request {
   }
 
   fetch() {
-    // TODO: extract this to a dedicated class/module
+    // TODO: extract to a dedicated class/module
     let errorObject = {
       httpCode: undefined,
       error:    undefined,
@@ -126,14 +125,17 @@ class Request {
       })
         .then( response => {
           // TODO: Extract this to a separate method, to avoid this long method
-          Logger.log( [ response.ok, response.status ].join('-') );
+          Logger.log( '(Request.fetch) response for ' + this.url + ' -  ' + response.status );
+
           if( response.ok ) {
             let data = response.json();
 
+            Logger.log( 'response OK, received data : ');
             Logger.log( data );
             resolve( data );
 
           } else {
+            Logger.error( 'response is wrong');
             errorObject.httpCode = response.status;
 
             switch( response.status ) {
@@ -194,5 +196,4 @@ class Request {
 
 
 
-// export default RequestBuilder;
 export { RequestBuilder, Request }

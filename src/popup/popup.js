@@ -189,12 +189,12 @@ var DomBuilder = ( function() {
   }
 
   function buildBatch() {
-    Logger.log('--- lets build a new batch of ' + ITEMS_PER_BATCH + ' items ---');
+    Logger.log('(DomBuilder.buildBatch) build a new batch of ' + ITEMS_PER_BATCH + ' items');
 
     for( let i = 0; i < ITEMS_PER_BATCH; i++ ) {
       // If we've already built all items then get out of this loop
       if( areAllItemsBuilt() == true ) {
-        Logger.log('All items are built -> break out of this loop, now!!!');
+        Logger.log('All items are built -> break out of this loop, now!');
         break;
       }
 
@@ -203,8 +203,6 @@ var DomBuilder = ( function() {
 
       createdItemsCount++;
     }
-
-    Logger.log("We're out of the for loop");
 
     // if DOM is not all built yet, then ask for another animation frame where
     // we can keep on building the DOM
@@ -216,7 +214,7 @@ var DomBuilder = ( function() {
 
   return {
     buildAll: function( items ) {
-      Logger.log('buildAll');
+      Logger.log('(DomBuilder.buildAll)');
 
       // Remove previous "requestAnimationFrame" registered in case
       cancelAnimationFrame( buildBatch );
@@ -230,7 +228,7 @@ var DomBuilder = ( function() {
       createdItemsCount = 0;
 
       // Build the dom
-      Logger.log('Request an animation frame for buildBatch method');
+      Logger.log('(DomBuilder.buildAll) Request a 1st animation frame for buildBatch method');
       requestAnimationFrame( buildBatch );
     }
   }
@@ -336,6 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
     MainLoader.disable();
 
     if( eventData.error || eventData.notice ) {
+      Logger.warn('(popup onMessage) : ' + eventData);
+
       let flashContainer = document.querySelector( '.flash-overlay' );
       let flashMessage   = '';
       let errorClass     = 'error';
@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 5000 );
 
     } else {
-      Logger.log( 'popup | switch:' + eventData.action );
+      Logger.log('(popup onMessage) : ' + eventData.action);
 
       switch( eventData.action ) {
         case 'authenticated':

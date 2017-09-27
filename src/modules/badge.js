@@ -65,4 +65,4 @@ var Badge = ( function() {
 })();
 
 
-export default Badge
+export default Badge;
