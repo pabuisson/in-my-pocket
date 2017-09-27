@@ -9,10 +9,10 @@ If you have suggestions on how to improve this extension or encounter some bugs,
 
 * Clone this repository
 * `cd` to the directory where you clone the repository,
-* `$ npm install` : this will install the tools needed to build the addon from the source files. You'll need to have `npm` installed on your computer. For more information about this, see [npmjs.com - Get npm](https://www.npmjs.com/get-npm),
-* `$ npm run build` : this will launch webpack and store all the final files into `./build`, which can be loaded through the `about:debugging` page for development purpose,
-* `$ npm run watch` : this will launch webpack in watch mode, building the concatenated files into './build' everytime you modify the source files, which can be loaded through the `about:debugging` page for development purpose,
-* `$ npm run build-ext` : this will compile the source files and build the addon "zip" file, ready for submission :)
+* `$ npm install` : install the tools needed to build the addon from the source files. You'll need to have `npm` installed on your computer. For more information about this, see [npmjs.com - Get npm](https://www.npmjs.com/get-npm),
+* `$ npm run build` : launch webpack and store all the final files into `./build`, which can be loaded through the `about:debugging` page for development purpose,
+* `$ npm run watch` : launch webpack in watch mode, building the concatenated files into './build' everytime you modify the source files, which can be loaded through the `about:debugging` page for development purpose,
+* `$ npm run build-ext` : compile the source files and build the addon "zip" file, ready for submission :)
 
 
 ## Contribute
