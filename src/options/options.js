@@ -11,11 +11,12 @@ import Authentication from '../modules/authentication.js';
 
 // -------------
 
-let displayBadgeCountCheckbox = document.querySelector( '.display-badge-count' );
-let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
-let enableDebugModeCheckbox   = document.querySelector( '.enable-debug-mode' );
 let disconnectAccountAction   = document.querySelector( '.disconnect-account' );
 let disconnectAccountRow      = document.querySelector( '.disconnect-account-row' );
+let displayBadgeCountCheckbox = document.querySelector( '.display-badge-count' );
+let enableDebugModeCheckbox   = document.querySelector( '.enable-debug-mode' );
+let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
+let paginationPerPageSelector = document.querySelector( '.pagination-per-page' );
 let zoomLevelSelector         = document.querySelector( '.zoom-level' );
 
 
@@ -33,8 +34,9 @@ var UI = ( function() {
         let settings = Settings.get();
 
         displayBadgeCountCheckbox.checked = settings[ 'showBadge' ];
-        openInNewTabCheckbox.checked      = settings[ 'openInNewTab' ];
         enableDebugModeCheckbox.checked   = settings[ 'debugMode' ];
+        openInNewTabCheckbox.checked      = settings[ 'openInNewTab' ];
+        paginationPerPageSelector.value   = settings[ 'perPage' ] || '';
         zoomLevelSelector.value           = settings[ 'zoomLevel' ];
       });
 
@@ -54,6 +56,11 @@ var UI = ( function() {
       // Event: "Enable debug mode" checkbox
       enableDebugModeCheckbox.addEventListener( 'change', function() {
         Settings.set( 'debugMode', this.checked );
+        Settings.save();
+      });
+
+      paginationPerPageSelector.addEventListener( 'change', function() {
+        Settings.set( 'perPage', parseInt( this.value ) || null );
         Settings.save();
       });
 

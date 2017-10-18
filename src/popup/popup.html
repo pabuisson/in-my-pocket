@@ -12,7 +12,7 @@
   </section>
 
 
-  <section class='authenticated'>
+  <section class='authenticated hidden'>
     <header class='top-actions'>
       <div class='icon open-settings'>
         <i class='ion-gear-b' title="Open settings page"></i>
@@ -31,17 +31,23 @@
       <div class='icon add-current'>
         <i class='ion-android-add-circle' title="Add current page to list"></i>
       </div>
-
     </header>
 
     <div class='main-loader'></div>
 
     <ul class='list-component'> </ul>
+
     <div class='search-no-results hidden'>
-      <i class='icon-emo-surprised'></i>
+      <i class='ion-sad-outline'></i>
       Oh my! Nothing matches this search.
     </div>
     <footer class='flash-overlay hidden'>A message</footer>
+
+    <nav class='pagination'>
+      <div class='pagination-previous'>« Previous page</div>
+      <div class='pagination-current-page'></div>
+      <div class='pagination-next'>Next page »</div>
+    </nav>
   </section>
 
 

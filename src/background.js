@@ -96,7 +96,7 @@ function retrieveItems( force ) {
   const currentTimestamp      = ( Date.now()/1000 | 0 );
 
   browser.storage.local.get([ 'items', 'last_retrieve' ], function( { items, last_retrieve } ) {
-    Logger.log( "retrieve items timeout: " + ( currentTimestamp - last_retrieve ) + ' / ' + intervalWithoutReload );
+    Logger.log( "(retrieveItems) timeout: " + ( currentTimestamp - last_retrieve ) + ' / ' + intervalWithoutReload );
 
     if ( force || !items || !last_retrieve ) {
       // If force == true, we always reload the whole list
@@ -114,7 +114,6 @@ function retrieveItems( force ) {
 }
 
 
-// TODO: test with request class
 function retrieveFirst() {
   Logger.log('(retrieve first)');
 
@@ -149,6 +148,7 @@ function retrieveFirst() {
         Badge.updateCount( itemsList );
 
         // Save timestamp into database as "last_retrieve", so that next time we just update the diff
+        // FIXME: use camelCase
         browser.storage.local.set({ last_retrieve: response.since });
 
         // Send a message back to the UI
@@ -166,7 +166,13 @@ function retrieveFirst() {
 function retrieveDiff() {
   Logger.log('(background.retrieveDiff)');
 
-  browser.storage.local.get( ['access_token', 'last_retrieve', 'items'], function( { access_token, last_retrieve, items } ) {
+  const pocketApiStatus = {
+    CREATED:  '0',
+    ARCHIVED: '1',
+    DELETED:  '2'
+  };
+
+  browser.storage.local.get( ['access_token', 'last_retrieve', 'items'], ( { access_token, last_retrieve, items } ) => {
     let requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
@@ -186,9 +192,8 @@ function retrieveDiff() {
           let item = response.list[ itemId ];
 
           switch( item.status ) {
-              // TODO: Create a constant somewhere instead of using magic numbers
-            case '1':
-            case '2':
+            case pocketApiStatus.ARCHIVED:
+            case pocketApiStatus.DELETED:
               // Archived or deleted: we remove it from the items list
               Logger.log("(background.retriveDiff) NEED TO ARCHIVE: " + itemId + ' (' + item.resolved_title + ')' );
               let removedItemIdx = allItems.findIndex( function( item ) { return item.id === itemId });
@@ -202,8 +207,7 @@ function retrieveDiff() {
 
               break;
 
-              // TODO: Create a constant somewhere instead of using magic numbers
-            case '0':
+            case pocketApiStatus.CREATED:
               let itemIdx = allItems.findIndex( function( item ) { return item.id === itemId });
 
               if( itemIdx >= 0 ) {
@@ -238,6 +242,8 @@ function retrieveDiff() {
         Badge.updateCount( allItems );
 
         // Update the last_retrieve timestamp in the database
+        // TODO: if there were error, don't update the `last_retrieve` timestamp ? Would it play
+        //       nicely with the items that were correctly removed/added?
         browser.storage.local.set({ last_retrieve: response.since });
 
         // Send a message back to the UI
@@ -252,16 +258,6 @@ function retrieveDiff() {
 
 
 // - - - API ACCESS : ITEMS ACTIONS - - -
-
-// Dependencies:
-//    -   Retrieve user access_token
-//    -   Items storage : retrieve the already saved items
-//    -   UI : push an item to the list
-//    -   Items storage : add an item to all saved items
-//    - ✓ Badge : flash the badge with a green check
-//    -   PageAction : redraw the page action for tabs opened with this url
-//    - ✓ ContextMenu : if current tab is the added item, change context menus states
-//    -   Request : prepare and launch a request to the API
 
 function addItem( url, title ) {
   Logger.log( '(background.addItem)' );
@@ -325,15 +321,6 @@ function addItem( url, title ) {
 
 
 // NOTE: lots of code duplicate with "deleteItem" method
-// Dependencies:
-//    -   Retrieve user access_token
-//    -   Items storage : retrieve the already saved items
-//    - ✓ Badge : flash the badge with a green check
-//    -   UI : remove an item from the list
-//    -   Items storage : remove an item from all saved items
-//    -   PageAction : redraw the page action for tabs opened with this url
-//    - ✓ ContextMenu : if current tab is the removed item, change context menus states
-//    -   Request : prepare and launch a request to the API
 function markAsRead( itemId ) {
   Logger.log('(background.markAsRead) id to archive: ' + itemId );
 
@@ -389,15 +376,6 @@ function markAsRead( itemId ) {
 
 
 // NOTE: lots of code duplicate with "markAsRead" method
-// Dependencies:
-//    -   Retrieve user access_token
-//    -   Items storage : retrieve the already saved items
-//    - ✓ Badge : flash the badge with a green check
-//    -   UI : remove an item from the list
-//    -   Items storage : remove an item from all saved items
-//    -   PageAction : redraw the page action for tabs opened with this url
-//    - ✓ ContextMenu : if current tab is the removed item, change context menus states
-//    -   Request : prepare and launch a request to the API
 function deleteItem( itemId ) {
   Logger.log('(background.deleteItem) id to remove: ' + itemId );
 

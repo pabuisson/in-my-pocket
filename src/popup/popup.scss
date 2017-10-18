@@ -5,7 +5,8 @@ $pocket-red: #f13044;
 
 html, body {
   width: 450px;
-  height: 550px;
+  min-height: 300px;
+
   font-size: 12px;
   padding: 0;
   margin: 0;
@@ -14,27 +15,27 @@ html, body {
   background-color: $background;
 }
 
-section {
-  width: 100%;
-  position: relative;
+html, body, .authenticated, .authentication {
+  height: 100%;
 }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 .authentication {
+  height: 100%;
   padding: 20px 0;
   text-align: center;
 }
 
-/* TODO Use flexbox for this component and its content instead
- *      of hard-coded heights */
 .authenticated {
-  height: 550px;
+  display: flex;
+  flex-direction: column;
 }
 
 .list-component {
+  flex: 1;
+
   width: 100%;
-  height: 516px;
   margin: 0;
   padding: 0;
   list-style-type: none;
@@ -185,8 +186,9 @@ section {
 }
 
 .search-no-results {
+  flex: 1;
+
   width: 100%;
-  height: 357px;
   margin: 0;
   padding-top: 2rem;
   text-align: center;
@@ -198,12 +200,13 @@ section {
 
 
 .top-actions {
+  flex: initial;
+
   display: flex;
   flex-direction: row;
   align-items: center;
 
   height: 2.8rem;
-  width: 100%;
   padding: 0.5rem 0;
 
   background-color: $pocket-aqua;
@@ -255,6 +258,8 @@ section {
  * Thanks to Che for this example: http://codepen.io/code_dependant/pen/ciGLA?editors=1100
  */
 .main-loader {
+  flex: initial;
+
   position: relative;
   top: -2px;
   height: 2px;
@@ -284,11 +289,15 @@ section {
 
 
 .flash-overlay {
+  flex: initial;
+
+  z-index: 1;
   position: absolute;
   bottom: 0;
   width: 100%;
-  min-height: 2.5rem;
+  height: 2.5rem;
   opacity: 1;
+  transition: height 200ms ease-out, opacity 200ms ease-out;
 
   font-size: 1.2rem;
   font-weight: bold;
@@ -314,5 +323,41 @@ section {
     height: 0px;
     opacity: 0;
     transition: height 500ms ease-out, opacity 500ms ease-out;
+  }
+}
+
+
+
+.pagination {
+  flex: initial;
+
+  z-index: 2;
+  height: 30px;
+  line-height: 30px;
+  display: flex;
+  flex-direction: row;
+
+  font-weight: bold;
+  color: #666;
+
+  .pagination-previous, .pagination-next {
+    flex: 1;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      color: #444;
+    }
+
+    &.disabled, &.disabled:hover {
+      color: #ccc;
+    }
+  }
+
+  .pagination-current-page {
+    flex: initial;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: center;
   }
 }

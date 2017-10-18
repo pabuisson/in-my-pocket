@@ -13,13 +13,17 @@ import { PocketError, PocketNotice } from '../modules/constants.js';
 
 // --- EVENTS ---
 
-let retrieveItemsButton  = document.querySelector( '.retrieve-items' );
-let addCurrentPageButton = document.querySelector( '.add-current'  );
-let readRandomItemButton = document.querySelector( '.random-item' );
-let openSettingsButton   = document.querySelector( '.open-settings' );
-let filterItemsInput     = document.querySelector( '.filter-items' );
-let placeholderNoResults = document.querySelector( '.search-no-results' );
-let listComponent        = document.querySelector( '.list-component' );
+let retrieveItemsButton          = document.querySelector( '.retrieve-items' );
+let addCurrentPageButton         = document.querySelector( '.add-current'  );
+let readRandomItemButton         = document.querySelector( '.random-item' );
+let openSettingsButton           = document.querySelector( '.open-settings' );
+let filterItemsInput             = document.querySelector( '.filter-items' );
+let placeholderNoResults         = document.querySelector( '.search-no-results' );
+let listComponent                = document.querySelector( '.list-component' );
+let paginationContainer          = document.querySelector( '.pagination' );
+let paginationCurrentPage        = document.querySelector( '.pagination .pagination-current-page' );
+let paginationPreviousPageButton = document.querySelector( '.pagination .pagination-previous');
+let paginationNextPageButton     = document.querySelector( '.pagination .pagination-next');
 
 // prevent general.autoScroll
 document.body.onmousedown = ( e ) => {
@@ -66,9 +70,29 @@ filterItemsInput.addEventListener( 'keyup', function() {
     MainLoader.enable();
   }
 
-  UI.drawList();
+  UI.drawList({ page: 1 });
   MainLoader.disable( true );
 });
+
+
+// TODO: add some logging for paging and so forth
+function previousPageEventListener() {
+  browser.storage.local.get( 'display', ({ display }) => {
+    const currentPage = display ? display.currentPage : 1;
+    UI.drawList({ page: currentPage - 1 });
+  })
+}
+
+// TODO: add some logging for paging and so forth
+function nextPageEventListener() {
+  browser.storage.local.get( 'display', ({ display }) => {
+    const currentPage = display ? display.currentPage : 1;
+    UI.drawList({ page: currentPage + 1 });
+  })
+}
+
+paginationPreviousPageButton.addEventListener( 'click', previousPageEventListener );
+paginationNextPageButton.addEventListener( 'click', nextPageEventListener );
 
 
 // - - - OTHER MODULES - - -
@@ -90,7 +114,7 @@ var MainLoader = ( function() {
   };
 })();
 
-
+// TODO: maybe I'll remove this once I'll have a pagination working
 var DomBuilder = ( function() {
   const ITEMS_PER_BATCH = 50;
   let itemsToCreate     = undefined;
@@ -264,29 +288,113 @@ var UI = ( function() {
 
   function setZoomLevel() {
     Settings.init().then( function() {
-      let zoomLevel = Settings.get( 'zoomLevel' );
+      const zoomLevel = Settings.get( 'zoomLevel' );
       document.documentElement.style.fontSize = zoomLevel;
     });
   }
 
+  function setPaginationVisibility() {
+    Settings.init().then( function() {
+      const perPage = Settings.get( 'perPage' );
+      if( !perPage ) {
+        paginationContainer.style.display = 'none';
+      }
+    });
+  }
+
+  function updateCurrentPage( page, perPage, itemsCount ) {
+    const pagesCount = Math.ceil( itemsCount / perPage ) || 1;
+    paginationCurrentPage.innerText = `${ page } / ${ pagesCount }`;
+  }
+
+  function disablePaginationButton( element, handler ) {
+    element.classList.add( 'disabled' );
+    element.removeEventListener( 'click', handler );
+  }
+
+  function enablePaginationButton( element, handler ) {
+    element.classList.remove( 'disabled' );
+    element.addEventListener( 'click', handler );
+  }
+
+  function updatePaginationButtonsState( page, perPage, itemsCount ) {
+    const pagesCount = Math.ceil( itemsCount / perPage );
+
+    if( pagesCount == 0 || pagesCount == 1 ) {
+      Logger.log(`(UI.updatePaginationButtonsState) Only 1 page, disable "next" & "previous" links`);
+
+      disablePaginationButton( paginationPreviousPageButton, previousPageEventListener );
+      disablePaginationButton( paginationNextPageButton, nextPageEventListener );
+    } else {
+      enablePaginationButton( paginationPreviousPageButton, previousPageEventListener );
+      enablePaginationButton( paginationNextPageButton, nextPageEventListener );
+
+      if( page == 1 ) {
+        // First page
+        Logger.log(`(UI.updatePaginationButtonsState) Page 1/${ pagesCount }, disable "previous" link`);
+        disablePaginationButton( paginationPreviousPageButton, previousPageEventListener );
+      }
+
+      if( page == pagesCount ) {
+        // Last page
+        Logger.log(`(UI.updatePaginationButtonsState) Page ${ page }/${ pagesCount }, disable "next" link`);
+        disablePaginationButton( paginationNextPageButton, nextPageEventListener );
+      }
+    }
+  }
+
   return {
-    drawList: function() {
-      browser.storage.local.get('items', function( { items } ) {
-        const query       = filterItemsInput.value;
-        let parsedItems   = items ? JSON.parse( items ) : [];
-        let itemsToRender = Items.filter( parsedItems, query );
+    // TODO: extract more of the pagination logic from here
+    // TODO: add some logging for paging and so forth
+    drawList: function( opts = {} ) {
+      Settings.init().then( function() {
+        return Settings.get( 'perPage' );
+      }).then( function( perPage ) {
+        const intervalWithoutOpening = 5*60;
+        const currentTimestamp = ( Date.now() / 1000 | 0 );
 
-        // Display the "no results" message or hide it
-        if( query == '' || !query || itemsToRender.length > 0 ) {
-          listComponent.classList.remove( 'hidden' );
-          placeholderNoResults.classList.add( 'hidden' );
-        } else {
-          listComponent.classList.add( 'hidden' );
-          placeholderNoResults.classList.remove( 'hidden' );
-        }
+        browser.storage.local.get( [ 'items', 'display' ], function( { items, display } ) {
+          const query       = filterItemsInput.value;
+          const lastDisplay = display ? display.displayedAt : null;
 
-        // Rebuild all items
-        DomBuilder.buildAll( itemsToRender );
+          // If the interval without opening is not over, then we reload the current page
+          // of previous save. Otherwise, display page 1
+          // TODO: ugly code, refactor
+          let pageToDisplay = 1;
+          if( opts.page ) {
+            pageToDisplay = opts.page;
+          } else if( lastDisplay && currentTimestamp - lastDisplay < intervalWithoutOpening ) {
+            pageToDisplay = display.currentPage;
+          }
+
+          let parsedItems   = items ? JSON.parse( items ) : [];
+          let filteredItems = Items.filter( parsedItems, query );
+          let itemsToRender = Items.paginate( filteredItems, pageToDisplay, perPage );
+
+          // Display the "no results" message or hide it
+          if( query == '' || !query || itemsToRender.length > 0 ) {
+            listComponent.classList.remove( 'hidden' );
+            placeholderNoResults.classList.add( 'hidden' );
+          } else {
+            listComponent.classList.add( 'hidden' );
+            placeholderNoResults.classList.remove( 'hidden' );
+          }
+
+          // Rebuild all items
+          DomBuilder.buildAll( itemsToRender );
+
+          // Record display parameters
+          // Date.now returns milliseconds timestamp, but the other timestamp we store (last_retrieve)
+          // coming from Pocket API uses seconds timestamp, so we'll keep the same format here
+          const displayOptions = { currentPage: pageToDisplay, displayedAt: currentTimestamp };
+          browser.storage.local.set({ display: displayOptions });
+
+          // Updates the UI with the current page number
+          updateCurrentPage( pageToDisplay, perPage, filteredItems.length );
+
+          // Disables the navigation buttons if need be
+          updatePaginationButtonsState( pageToDisplay, perPage, filteredItems.length );
+        });
       });
 
       return;
@@ -296,9 +404,12 @@ var UI = ( function() {
       // Set default zoom level based on Settings
       setZoomLevel();
 
+      // Show pagination if setting is enabled
+      setPaginationVisibility();
+
       Authentication.isAuthenticated().then( function( access_token ) {
-        document.querySelector( '.authentication' ).style.display = 'none';
-        document.querySelector( '.authenticated'  ).style.display = 'block';
+        document.querySelector( '.authentication' ).classList.add( 'hidden' );
+        document.querySelector( '.authenticated'  ).classList.remove( 'hidden' );
 
         // Give focus to the input field
         focusSearchField();
@@ -312,8 +423,8 @@ var UI = ( function() {
       }, function( error ) {
         let authenticationButton = document.querySelector( '.authentication button' );
 
-        document.querySelector( '.authentication' ).style.display = 'block';
-        document.querySelector( '.authenticated'  ).style.display = 'none';
+        document.querySelector( '.authentication' ).classList.remove( 'hidden' );
+        document.querySelector( '.authenticated'  ).classList.add( 'hidden' );
 
         authenticationButton.addEventListener( 'click', function() {
           chrome.runtime.sendMessage({ action: 'authenticate' });
@@ -321,20 +432,20 @@ var UI = ( function() {
       });
     },
 
-
     markAsRead: ( itemId ) => {
       document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .tick"   ).classList.add(    'hidden' );
       document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .loader" ).classList.remove( 'hidden' );
-
       chrome.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
     },
-
 
     deleteItem: ( itemId ) => {
       document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .trash"  ).classList.add(   'hidden' );
       document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .loader" ).classList.remove( 'hidden' );
-
       chrome.runtime.sendMessage( { action: 'delete-item', id: itemId } );
+    },
+
+    fadeOutItem: ( itemId ) => {
+      document.querySelector( ".item[data-id='" + itemId + "']" ).classList.add( 'disappearing' );
     }
   };
 })();
@@ -409,12 +520,8 @@ document.addEventListener('DOMContentLoaded', function() {
           break;
 
         case 'marked-as-read':
-          document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'disappearing' );
-          Badge.updateCount();
-          break;
-
         case 'deleted':
-          document.querySelector( ".item[data-id='" + eventData.id + "']" ).classList.add( 'disappearing' );
+          UI.fadeOutItem( eventData.id );
           Badge.updateCount();
           break;
 

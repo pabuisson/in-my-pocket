@@ -10,9 +10,10 @@ var Settings = ( function() {
   let _loaded  = false;
   let settings = {};
   let defaultSettings = {
-    showBadge:    true,
-    openInNewTab: true,
     debugMode:    false,
+    openInNewTab: true,
+    perPage:      null,
+    showBadge:    true,
     zoomLevel:    '12px'
   };
 
