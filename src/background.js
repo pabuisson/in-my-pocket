@@ -471,18 +471,19 @@ function openRandomItem( query, opt = {} ) {
 }
 
 
-function openItem( { newTab, url } ) {
+function openItem( { url, openInNewTab } ) {
   let pending;
-  if( newTab == null ) {
-    pending = Settings.init().then( function() {
-      newTab = Settings.get( 'openInNewTab' );
+
+  if( !openInNewTab ) {
+    pending = Settings.init().then( () => {
+      openInNewTab = Settings.get( 'openInNewTab' );
     });
   } else {
     pending = Promise.resolve();
   }
 
-  pending.then( function() {
-    if( newTab ) {
+  pending.then( () => {
+    if( openInNewTab ) {
       browser.tabs.create( { url } );
     } else {
       browser.tabs.update( { url } );
@@ -629,7 +630,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       openRandomItem( eventData.query );
       break;
     case 'read-item':
-      openItem({ url: eventData.url, newTab: eventData.newTab });
+      openItem({ url: eventData.url, openInNewTab: eventData.openInNewTab });
       break;
     default:
       Logger.log( `Unknown action: ${eventData.action}` );

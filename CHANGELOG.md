@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 0.7.0 - November 2017
+
+* FEATURE: middle-click on an item always open it in a new tab, no matter the "open in a new tab" setting ([contribution from bobi32](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/64/middle-click-on-item-opens-it-in-a-new-tab/diff), thanks a lot!)
+
+
 ## 0.6.1 - September 2017
 
 * FEATURE: Built a debug mode so that it'll be easier to debug
