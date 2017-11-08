@@ -22,7 +22,10 @@ let placeholderNoResults = document.querySelector( '.search-no-results' );
 let listComponent        = document.querySelector( '.list-component' );
 
 // prevent general.autoScroll
-document.body.onmousedown = function(e) { if (e.button === 1) return false; }
+document.body.onmousedown = ( e ) => {
+  if (e.button === 1 )
+    return false;
+}
 
 
 // - - - EVENT LISTENERS - - -
@@ -112,8 +115,8 @@ var DomBuilder = ( function() {
     return url.replace( removalRegex, '' );
   }
 
-  function openLink( url, newTab ) {
-    browser.runtime.sendMessage({action: 'read-item', url, newTab});
+  function openLink( url, openInNewTab = false ) {
+    browser.runtime.sendMessage({ action: 'read-item', url: url, openInNewTab: openInNewTab });
   }
 
   function resetUI() {
@@ -185,17 +188,21 @@ var DomBuilder = ( function() {
 
     liElement.dataset.id = item.id;
 
-    titleContent.addEventListener( 'click', function() { openLink( item.resolved_url ); });
-    titleContent.addEventListener( 'auxclick', function(event) {
-        if(event.button == 1) {
-            openLink( item.resolved_url, true );
-        }
+    titleContent.addEventListener( 'click',   () => { openLink( item.resolved_url ); });
+    titleContent.addEventListener( 'mouseup', ( event ) => {
+      const openInNewTab = true;
+      if( event.button == 1 ) {
+        event.preventDefault();
+        openLink( item.resolved_url, openInNewTab );
+      }
     });
-    urlContent.addEventListener(   'click', function() { openLink( item.resolved_url ); });
-    urlContent.addEventListener(   'auxclick', function(event) {
-        if(event.button == 1) {
-            openLink( item.resolved_url, true );
-        }
+    urlContent.addEventListener( 'click',    () => { openLink( item.resolved_url ); });
+    urlContent.addEventListener( 'auxclick', ( event ) => {
+      const openInNewTab = true;
+      if( event.button == 1 ) {
+        event.preventDefault();
+        openLink( item.resolved_url, openInNewTab );
+      }
     });
 
     return liElement;
