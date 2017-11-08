@@ -629,7 +629,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       openRandomItem( eventData.query );
       break;
     case 'read-item':
-      openItem({ url: eventData.url });
+      openItem({ url: eventData.url, newTab: eventData.newTab });
       break;
     default:
       Logger.log( `Unknown action: ${eventData.action}` );

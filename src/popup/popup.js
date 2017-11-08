@@ -21,6 +21,9 @@ let filterItemsInput     = document.querySelector( '.filter-items' );
 let placeholderNoResults = document.querySelector( '.search-no-results' );
 let listComponent        = document.querySelector( '.list-component' );
 
+// prevent general.autoScroll
+document.body.onmousedown = function(e) { if (e.button === 1) return false; }
+
 
 // - - - EVENT LISTENERS - - -
 
@@ -109,8 +112,8 @@ var DomBuilder = ( function() {
     return url.replace( removalRegex, '' );
   }
 
-  function openLink( url ) {
-    browser.runtime.sendMessage({action: 'read-item', url});
+  function openLink( url, newTab ) {
+    browser.runtime.sendMessage({action: 'read-item', url, newTab});
   }
 
   function resetUI() {
@@ -183,7 +186,17 @@ var DomBuilder = ( function() {
     liElement.dataset.id = item.id;
 
     titleContent.addEventListener( 'click', function() { openLink( item.resolved_url ); });
+    titleContent.addEventListener( 'auxclick', function(event) {
+        if(event.button == 1) {
+            openLink( item.resolved_url, true );
+        }
+    });
     urlContent.addEventListener(   'click', function() { openLink( item.resolved_url ); });
+    urlContent.addEventListener(   'auxclick', function(event) {
+        if(event.button == 1) {
+            openLink( item.resolved_url, true );
+        }
+    });
 
     return liElement;
   }
