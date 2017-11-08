@@ -31,11 +31,13 @@ var PageAction = ( function() {
       });
     },
 
+    // TODO: give a list of arguments : tabs ou tabIds and iterate here instead of in backgroundjs
     drawEnabled: function( tabId ) {
       browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-blue.svg" });
       browser.pageAction.setTitle({ tabId, title: "Mark as read" });
     },
 
+    // TODO: give a list of arguments : tabs ou tabIds and iterate here instead of in backgroundjs
     drawDisabled: function( tabId ) {
       browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-grey.svg" });
       browser.pageAction.setTitle({ tabId, title: "Add to pocket" });
