@@ -1,0 +1,40 @@
+// Shared variables
+
+$background: #fcfcfc;
+$pocket-aqua: #50bcb6;
+$pocket-red: #f13044;
+
+$notice-blue: #58addd;
+
+// http://design.firefox.com/photon/visuals/color.html
+$ff-primary-text: #0c0c0d;
+$ff-secondary-text: #737373;
+$ff-grey-10: #f9f9fa;
+$ff-grey-20: #ededf0;
+$ff-grey-70: #38383d;
+$ff-grey-80: #2a2a2e;
+$ff-grey-90: #0c0c0d;
+$ff-red-50: #ff0039;
+$ff-yellow-50: #ffe900;
+$ff-blue-50: #0a84ff;
+$ff-blue-60: #0060df;
+$ff-blue-70: #003eaa;
+
+$loader-size: 1.7rem;
+
+// Shared animations
+
+@keyframes linear-loading {
+  0%   { left: 0;     right: 100%; }
+  50%  { left: 0;     right: 0;    }
+  100% { left: 100%;  right: 0;    }
+}
+
+@keyframes rotate {
+  0%    { transform: rotate( 0deg); }
+  100%  { transform: rotate(360deg); }
+}
+
+// Shared styles
+
+.hidden { display: none !important; }
