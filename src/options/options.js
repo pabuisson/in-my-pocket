@@ -71,12 +71,13 @@ var UI = ( function() {
       });
 
       // Event : "Disconnect" from the Pocket account click
-      disconnectAccountAction.addEventListener( 'click', function() {
+      disconnectAccountAction.addEventListener( 'click', function(ev) {
+        ev.preventDefault();
+
         // TODO: Enhance UI for confirmation (maybe inline button that appear and update the UI
-        //       once disconnected)
+        //      once disconnected)
         let mustDisconnect = confirm("You're about to disconnect from your pocket account. Go on?");
         if( mustDisconnect ) {
-          // FIXME:
           browser.storage.local.get().then( ( data ) => {
             let keysToPersist = [ 'settings' ];
             let keysToRemove = Object.keys( data ).filter( ( key ) => {
