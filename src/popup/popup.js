@@ -472,6 +472,9 @@ document.addEventListener('DOMContentLoaded', function() {
       let errorClass     = 'error';
       let noticeClass    = 'notice';
 
+      flashContainer.classList.remove( errorClass  );
+      flashContainer.classList.remove( noticeClass );
+
       if( eventData.error ) {
         flashContainer.classList.add( errorClass );
         flashMessage = 'An error occurred: ';
@@ -505,10 +508,9 @@ document.addEventListener('DOMContentLoaded', function() {
       flashContainer.classList.remove( 'hidden' );
 
       // Hide the error message after 5 seconds and reset the class list
-      setTimeout( function() {
+      setTimeout( () => {
         flashContainer.classList.add( 'hidden' );
-        flashContainer.classList.remove( errorClass, noticeClass );
-      }, 5000 );
+      }, 2000 );
 
     } else {
       Logger.log('(popup onMessage) : ' + eventData.action);

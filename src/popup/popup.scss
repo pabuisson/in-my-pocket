@@ -1,7 +1,4 @@
-$background: #fcfcfc;
-$pocket-aqua: #50bcb6;
-$pocket-red: #f13044;
-
+@import "../assets/shared";
 
 html, body {
   width: 450px;
@@ -12,19 +9,35 @@ html, body {
   margin: 0;
   overflow: hidden;
   font-family: sans-serif;
-  background-color: $background;
+  background-color: $ff-grey-10;
 }
 
 html, body, .authenticated, .authentication {
   height: 100%;
 }
 
-.hidden { display: none !important; }
-
 .authentication {
   height: 100%;
   padding: 20px 0;
   text-align: center;
+
+  button {
+    padding: 1rem 2rem;
+    background-color: $ff-blue-50;
+    border: 1px solid;
+    border-radius: 4px;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $ff-blue-60;
+    }
+
+    &:active {
+      background-color: $ff-blue-70;
+    }
+  }
 }
 
 .authenticated {
@@ -67,15 +80,11 @@ html, body, .authenticated, .authentication {
     .title {
       height: 1.5rem;
 
-      color: #666;
+      color: $ff-grey-70;
       font-size: 1.2rem;
       font-weight: bold;
 
       cursor: pointer;
-    }
-
-    &:hover .title {
-      color: #444;
     }
 
     .url {
@@ -84,16 +93,20 @@ html, body, .authenticated, .authentication {
       top: -2px;
 
       font-size: 0.75rem;
-      color: #aaa;
+      color: $ff-secondary-text;
 
       cursor: pointer;
     }
 
 
+    &:hover .title {
+      color: $ff-grey-90;
+    }
+
     overflow: hidden;
     opacity: 1;
     // second duration is the delay after which the transition must begin
-    transition: height 500ms, padding 500ms, opacity 0s 450ms, border-bottom-width 0s 490ms;
+    transition: height 250ms, padding 250ms, opacity 0s 200ms, border-bottom-width 0s 240ms;
 
     &.disappearing {
       // TODO: several classes with different colors, depending on the kind of disappearance?
@@ -104,23 +117,22 @@ html, body, .authenticated, .authentication {
       border-bottom-width: 0px;
     }
 
-
     &:hover .actions-container {
       opacity: 1;
-      transition: opacity 250ms ease-out;
+      transition: opacity 300ms ease-out;
     }
 
     .actions-container {
       opacity: 0;
-      transition: opacity 250ms ease-out;
+      transition: opacity 300ms ease-out;
       z-index: 1;
 
       position: absolute;
       top: 0;
       right: 0;
-      width: 8rem;
+      width: 7rem;
       height: 100%;
-      background-color: transparentize( $background, 0.1 );
+      background-color: transparentize( $ff-grey-20, 0.2 );
       border-left: 1px solid #ddd;
 
       display: flex;
@@ -128,7 +140,7 @@ html, body, .authenticated, .authentication {
 
       .tick-action, .delete-action {
         cursor: pointer;
-        flex: 1 0 0;
+        flex: 1;
         opacity: 0.8;
 
         // So that tick/loader are automatically centered
@@ -141,13 +153,13 @@ html, body, .authenticated, .authentication {
         }
 
         .icon {
-          color: #444;
+          color: $ff-primary-text;
           font-size: 1.5rem;
         }
 
         .loader {
-          height: 1.8rem;
-          width: 1.8rem;
+          height: $loader-size;
+          width: $loader-size;
           animation: rotate 0.8s infinite linear;
           border-radius: 50%;
         }
@@ -155,7 +167,7 @@ html, body, .authenticated, .authentication {
 
       .tick-action {
         &:hover {
-          background-color: transparentize( $pocket-aqua, 0.5 );
+          background-color: transparentize( $pocket-aqua, 0.4 );
         }
 
         .loader {
@@ -166,7 +178,7 @@ html, body, .authenticated, .authentication {
 
       .delete-action {
         &:hover {
-          background-color: transparentize( $pocket-red, 0.5 );
+          background-color: transparentize( $pocket-red, 0.4 );
         }
 
         .loader {
@@ -179,12 +191,6 @@ html, body, .authenticated, .authentication {
 }
 
 
-
-@keyframes rotate {
-  0%    { transform: rotate( 0deg); }
-  100%  { transform: rotate(360deg); }
-}
-
 .search-no-results {
   flex: 1;
 
@@ -195,7 +201,7 @@ html, body, .authenticated, .authentication {
 
   font-size: 1.5rem;
   font-weight: bold;
-  color: #444;
+  color: $ff-grey-80;
 }
 
 
@@ -219,7 +225,7 @@ html, body, .authenticated, .authentication {
     color: white;
 
     opacity: 0.8;
-    transition: opacity 100ms ease-out;
+    transition: opacity 200ms ease-out;
 
     width: 2rem;
     margin-right: 0.5rem;
@@ -230,7 +236,7 @@ html, body, .authenticated, .authentication {
 
     &:hover {
       opacity: 1;
-      transition: opacity 100ms ease-out;
+      transition: opacity 200ms ease-out;
     }
 
     &.random-item {
@@ -247,8 +253,8 @@ html, body, .authenticated, .authentication {
 
     background-color: transparentize( white, 0.5 );
     border-radius: 2rem;
-    border: 1px solid #ddd;
-    color: #555;
+    border: 0px transparent;
+    color: $ff-grey-80;
     font-size: 1.1rem;
   }
 }
@@ -275,54 +281,44 @@ html, body, .authenticated, .authentication {
     left: 0%;
     right: 100%;
 
-    animation: loading 1.2s ease infinite;
+    animation: linear-loading 1.2s ease infinite;
   }
 }
-
-
-@keyframes loading {
-  0%   { left: 0;     right: 100%; }
-  50%  { left: 0;     right: 0;    }
-  100% { left: 100%;  right: 0;    }
-}
-
-
 
 .flash-overlay {
   flex: initial;
 
-  z-index: 1;
+  z-index: 3;
+  display: block !important;
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 2.5rem;
+  height: 3rem;
+  line-height: 3rem;
   opacity: 1;
   transition: height 200ms ease-out, opacity 200ms ease-out;
 
   font-size: 1.2rem;
   font-weight: bold;
-  line-height: 2;
   text-align: center;
 
   &.error {
-    border-top: 1px solid red;
-    background-color: rgba( 215, 25, 25, 0.7 );
+    background-color: transparentize($ff-red-50, 0.2);
     color: white;
   }
   &.notice {
-    border-top: 1px solid #58addd;
-    background-color: rgba( 88, 175, 220, 0.8 );
-    color: white;
+    background-color: transparentize($notice-blue, 0.2);
+    color: $ff-grey-80;
   }
 
   &.hidden {
     /* Needed to counter the 'display:none' of the .hidden class. Without this, the overlay
-     * display goes from block to none, and it's hidden all at once */
-    display: block;
+     * display goes from block to none, and is hidden all at once */
+    display: block !important;
 
     height: 0px;
     opacity: 0;
-    transition: height 500ms ease-out, opacity 500ms ease-out;
+    transition: height 250ms ease-out, opacity 0 250ms ease-out;
   }
 }
 
@@ -338,7 +334,7 @@ html, body, .authenticated, .authentication {
   flex-direction: row;
 
   font-weight: bold;
-  color: #666;
+  color: $ff-grey-80;
 
   .pagination-previous, .pagination-next {
     flex: 1;
@@ -346,11 +342,11 @@ html, body, .authenticated, .authentication {
     cursor: pointer;
 
     &:hover {
-      color: #444;
+      background-color: $ff-grey-20;
     }
 
     &.disabled, &.disabled:hover {
-      color: #ccc;
+      opacity: 0.4;
     }
   }
 

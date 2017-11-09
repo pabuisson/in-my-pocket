@@ -72,13 +72,14 @@ var UI = ( function() {
 
       // Event : "Disconnect" from the Pocket account click
       disconnectAccountAction.addEventListener( 'click', function() {
-        // TODO Enhance UI for confirmation (maybe inline button that appear and update the UI
-        //      once disconnected)
+        // TODO: Enhance UI for confirmation (maybe inline button that appear and update the UI
+        //       once disconnected)
         let mustDisconnect = confirm("You're about to disconnect from your pocket account. Go on?");
         if( mustDisconnect ) {
-          browser.storage.local.get().then( function( data ) {
+          // FIXME:
+          browser.storage.local.get().then( ( data ) => {
             let keysToPersist = [ 'settings' ];
-            let keysToRemove = Object.keys( data ).filter( function( key ) {
+            let keysToRemove = Object.keys( data ).filter( ( key ) => {
               // Filter out keys listed in keysToPersist, and keeps
               // all the other storage keys -> those will be removed
               return keysToPersist.indexOf( key ) < 0;
@@ -90,7 +91,7 @@ var UI = ( function() {
             Badge.hide();
             ContextMenu.destroyEntries();
 
-            disconnectAccountRow.style.display = 'none';
+            disconnectAccountRow.classList.add( 'hidden' );
           });
         }
       });
