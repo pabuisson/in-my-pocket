@@ -221,7 +221,7 @@ var DomBuilder = ( function() {
       }
     });
     urlContent.addEventListener( 'click',    () => { openLink( item.resolved_url ); });
-    urlContent.addEventListener( 'auxclick', ( event ) => {
+    urlContent.addEventListener( 'mouseup', ( event ) => {
       const openInNewTab = true;
       if( event.button == 1 ) {
         event.preventDefault();
