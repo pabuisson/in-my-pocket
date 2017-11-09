@@ -1,5 +1,7 @@
+@import "../assets/shared";
+
 body {
-  color: #444;
+  color: $ff-grey-80;
   font-size: 87%;
 }
 
@@ -17,7 +19,7 @@ body {
   }
 
   a {
-    color: #0095dd;
+    color: $ff-blue-50;
     text-decoration: none;
 
     &:hover {
