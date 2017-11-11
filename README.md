@@ -14,12 +14,21 @@ If you have suggestions on how to improve this extension or encounter some bugs,
 * `$ npm run watch` : launch webpack in watch mode, building the concatenated files into './build' everytime you modify the source files, which can be loaded through the `about:debugging` page for development purpose,
 * `$ npm run build-ext` : compile the source files and build the addon "zip" file, ready for submission :)
 
+If you want to, `eslint` is configured and can help you in the development process. You need to set it up with `npm install -g eslint` and then setup your text editor of choice so that it's able to display the linter warnings.
+
 
 ## Contribute
 
-Before submitting a pull request, please always make sure that it starts from the latest `origin/master` available. If it's not the case, please do not forget to rebase your branch on `master` first.
+Before submitting a pull request, please always make sure that it starts from the latest `origin/master` available (if you've fetched the project long ago, you might not have the latest version). If it's not the case, please do not forget to rebase your branch on `master` first.
 
 
 ## Thanks
 
-Thanks for everyone who contributed to this project, be that by sending pull requests, help debugging, offering suggestions and idea, or simply by using it. As a fellow Pocket user, I'm glad that this addon is useful to you, and I thank you all for your contribution to this project :)
+Thanks for everyone who contributed to this project, be that by sending pull requests, help with debugging, offering suggestions and idea, or simply by using it. As a fellow Pocket user, I'm glad that this addon is useful to you, and I thank you all for your contribution to this project :)
+
+Special thanks to the developers who helped me and contributed to the project:
+
+* [adambro](https://bitbucket.org/adambro/)
+* [eight04](https://bitbucket.org/eight04/)
+* [bobi32](https://bitbucket.org/bobi32/)
+
