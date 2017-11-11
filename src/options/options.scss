@@ -2,7 +2,10 @@
 
 body {
   color: $ff-grey-80;
-  font-size: 87%;
+}
+
+h2 {
+  font-weight: normal;
 }
 
 .row {
@@ -14,7 +17,7 @@ body {
 
   label {
     display: inline-block;
-    width: 25%;
+    width: 30%;
     min-width: 200px;
   }
 
@@ -27,8 +30,18 @@ body {
     }
   }
 
+  img {
+    border: 1px $ff-grey-20 solid;
+    vertical-align: middle;
+    margin-left: 2rem;
+  }
+
   input, pre {
     display: inline-block;
+  }
+
+  select {
+    width: 10rem;
   }
 
   &:first-of-type {
