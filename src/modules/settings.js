@@ -10,11 +10,12 @@ var Settings = ( function() {
   let _loaded  = false;
   let settings = {};
   let defaultSettings = {
-    debugMode:    false,
-    openInNewTab: true,
-    perPage:      null,
-    showBadge:    true,
-    zoomLevel:    '12px'
+    debugMode:      false,
+    openInNewTab:   true,
+    perPage:        null,
+    showBadge:      true,
+    showPageAction: true,
+    zoomLevel:      '12px'
   };
 
   function load() {

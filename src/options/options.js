@@ -3,17 +3,19 @@
 require( "file-loader?name=[path][name].[ext]!./options.html" );
 import './options.scss';
 
-import Logger from '../modules/logger.js';
-import Settings from '../modules/settings.js';
+import Authentication from '../modules/authentication.js';
 import Badge from '../modules/badge.js';
 import ContextMenu from '../modules/context_menu.js';
-import Authentication from '../modules/authentication.js';
+import Logger from '../modules/logger.js';
+import PageAction from '../modules/page_action.js';
+import Settings from '../modules/settings.js';
 
 // -------------
 
 let disconnectAccountAction   = document.querySelector( '.disconnect-account' );
 let disconnectAccountRow      = document.querySelector( '.disconnect-account-row' );
 let displayBadgeCountCheckbox = document.querySelector( '.display-badge-count' );
+let displayPageActionCheckbox = document.querySelector( '.display-page-action' );
 let enableDebugModeCheckbox   = document.querySelector( '.enable-debug-mode' );
 let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
 let paginationPerPageSelector = document.querySelector( '.pagination-per-page' );
@@ -34,6 +36,7 @@ var UI = ( function() {
         let settings = Settings.get();
 
         displayBadgeCountCheckbox.checked = settings[ 'showBadge' ];
+        displayPageActionCheckbox.checked = settings[ 'showPageAction' ];
         enableDebugModeCheckbox.checked   = settings[ 'debugMode' ];
         openInNewTabCheckbox.checked      = settings[ 'openInNewTab' ];
         paginationPerPageSelector.value   = settings[ 'perPage' ] || '';
@@ -45,6 +48,18 @@ var UI = ( function() {
         Settings.set( 'showBadge', this.checked );
         Settings.save();
         Badge.updateCount();
+      });
+
+      // Event: "Display add-to-pocket icon in address bar" checkbox
+      displayPageActionCheckbox.addEventListener( 'change', function() {
+        Settings.set( 'showPageAction', this.checked );
+        Settings.save();
+
+        if( this.checked ) {
+          PageAction.redrawAllTabs();
+        } else {
+          PageAction.hideAllTabs();
+        }
       });
 
       // Event: "Open in new tab" checkbox
