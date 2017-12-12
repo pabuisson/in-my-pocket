@@ -9,6 +9,7 @@ import Authentication from './modules/authentication.js';
 import Items from './modules/items.js';
 import PageAction from './modules/page_action.js';
 import { PocketNotice } from './modules/constants.js';
+import Utility from './modules/utility.js';
 
 // - - -- - -- - -- - -- - -- - -- - -- - ---
 
@@ -185,7 +186,7 @@ function retrieveDiff() {
       .fetch()
       .then( function( response ) {
         Logger.log(Object.keys(response.list).length + ' items in the response');
-        let allItems = JSON.parse( items );
+        let allItems = Utility.parseJson( items ) || [];
 
         // TODO: Extract this into a dedicated method
         for( let itemId in response.list ) {
@@ -263,7 +264,7 @@ function addItem( url, title ) {
   Logger.log( '(background.addItem)' );
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
-    let itemsList = JSON.parse( data.items );
+    let itemsList = Utility.parseJson( data.items ) || [];
     // TODO: Move to helper
     let alreadyContainsItem = itemsList.some( function( item, index, array ) {
       return item.resolved_url == url;
@@ -284,7 +285,7 @@ function addItem( url, title ) {
       new Request( 'POST', 'https://getpocket.com/v3/add',  requestParams )
         .fetch()
         .then( function( response ) {
-          let itemsList = JSON.parse( data.items );
+          let itemsList = Utility.parseJson( data.items ) || [];
           let newItem   = response.item;
 
           itemsList.push({
@@ -336,7 +337,7 @@ function markAsRead( itemId ) {
     new Request( 'POST', 'https://getpocket.com/v3/send', requestParams )
       .fetch()
       .then( function( response ) {
-        let items = JSON.parse( data.items );
+        let items = Utility.parseJson( data.items ) || [];
         let removedItemIdx = items.findIndex( function( item ) { return item.id === itemId });
         let removedItem = items[ removedItemIdx ];
 
@@ -392,7 +393,7 @@ function deleteItem( itemId ) {
       .fetch()
       .then( function( response ) {
         Logger.log('onload - itemId = ' + itemId );
-        let items = JSON.parse( data.items );
+        let items = Utility.parseJson( data.items ) || [];
         let removedItemIdx = items.findIndex( ( item ) => { return item.id === itemId } );
         let removedItem = items[ removedItemIdx ];
 
@@ -436,7 +437,7 @@ function deleteItem( itemId ) {
 
 function openRandomItem( query, opt = {} ) {
   browser.storage.local.get( 'items' ).then( function( { items } ) {
-    const parsedItems   = items ? JSON.parse( items ) : [];
+    const parsedItems   = Utility.parseJson( items ) || [];
     const filteredItems = Items.filter( parsedItems, query );
 
     if( filteredItems.length > 0 ) {
@@ -486,7 +487,7 @@ browser.contextMenus.onClicked.addListener( function( link, tab ) {
 
     case ContextMenu.archiveId:
       browser.storage.local.get( "items" ).then( function( { items } ) {
-        const parsedItems = JSON.parse( items );
+        const parsedItems = Utility.parseJson( items ) || [];
         const item = parsedItems.find( i => i.resolved_url == tab.url );
         if( item ) {
           markAsRead( item.id );
@@ -496,7 +497,7 @@ browser.contextMenus.onClicked.addListener( function( link, tab ) {
 
     case ContextMenu.deleteId:
       browser.storage.local.get( "items" ).then( function( { items } ) {
-        const parsedItems = JSON.parse( items );
+        const parsedItems = Utility.parseJson( items ) || [];
         const item = parsedItems.find( i => i.resolved_url == tab.url );
         if( item ) {
           deleteItem( item.id );
@@ -526,7 +527,7 @@ browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
       //       when tab.active == true ? So I could remove one test / indentation level here
       if( tab.active ) {
         browser.storage.local.get( "items" ).then( ( { items } ) => {
-          const parsedItems  = JSON.parse( items );
+          const parsedItems  = Utility.parseJson( items ) || [];
           const containsItem = parsedItems.some( i => i.resolved_url == tab.url );
 
           if( containsItem ) {
@@ -556,7 +557,7 @@ browser.tabs.onActivated.addListener( ({ tabId }) => {
     return tab.url;
   }).then( ( currentUrl ) => {
     browser.storage.local.get( "items" ).then( ( { items } ) => {
-      const parsedItems  = JSON.parse( items );
+      const parsedItems  = Utility.parseJson( items ) || [];
       const containsItem = parsedItems.some( i => i.resolved_url == currentUrl );
 
       if( containsItem ) {
@@ -625,7 +626,7 @@ browser.commands.onCommand.addListener( (command) => {
       const currentTitle = currentTab.title;
 
       browser.storage.local.get( 'items', ({ items }) => {
-        const parsedItems = JSON.parse( items );
+        const parsedItems = Utility.parseJson( items ) || [];
         const matchingItem = parsedItems.find( i => i.resolved_url == currentUrl );
 
         if( matchingItem ) {

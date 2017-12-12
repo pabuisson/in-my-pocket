@@ -6,7 +6,6 @@ import './options.scss';
 import Authentication from '../modules/authentication.js';
 import Badge from '../modules/badge.js';
 import ContextMenu from '../modules/context_menu.js';
-import Logger from '../modules/logger.js';
 import PageAction from '../modules/page_action.js';
 import Settings from '../modules/settings.js';
 
@@ -77,6 +76,11 @@ var UI = ( function() {
       paginationPerPageSelector.addEventListener( 'change', function() {
         Settings.set( 'perPage', parseInt( this.value ) || null );
         Settings.save();
+
+        // Reset the display options (no need to read it from local storage
+        // since we just reset it)
+        const displayOptions = { currentPage: 1, displayedAt: null };
+        browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
       });
 
       // Event: "Zoom level" selector
