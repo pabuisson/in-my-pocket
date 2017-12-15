@@ -9,6 +9,7 @@ import Authentication from '../modules/authentication.js';
 import Settings from '../modules/settings.js';
 import Items from '../modules/items.js';
 import { PocketError, PocketNotice } from '../modules/constants.js';
+import Utility from '../modules/utility.js';
 
 
 // --- EVENTS ---
@@ -29,7 +30,7 @@ let paginationNextPageButton     = document.querySelector( '.pagination .paginat
 document.body.onmousedown = ( e ) => {
   if (e.button === 1 )
     return false;
-}
+};
 
 
 // - - - EVENT LISTENERS - - -
@@ -63,32 +64,45 @@ openSettingsButton.addEventListener( 'click', () => {
   browser.runtime.openOptionsPage();
 });
 
-// TODO: debounce
-filterItemsInput.addEventListener( 'keyup', function() {
+
+let debouncedFilterEventHandler = Utility.debounce( function() {
   let query = this.value.toLowerCase();
   if( query !== '' ) {
     MainLoader.enable();
   }
 
-  UI.drawList({ page: 1 });
+  // Save query to localStorage 'display' variable
+  browser.storage.local.get( 'display', ({ display }) => {
+    const parsedDisplay  = Utility.parseJson( display ) || {};
+    const displayOptions = Object.assign( {}, parsedDisplay, { query: query });
+    browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
+  });
+
+  // Draw the items lists
+  UI.drawList({ page: 1, query: query });
   MainLoader.disable( true );
-});
+}, 200 );
+
+filterItemsInput.addEventListener( 'keyup', debouncedFilterEventHandler );
 
 
 // TODO: add some logging for paging and so forth
 function previousPageEventListener() {
   browser.storage.local.get( 'display', ({ display }) => {
-    const currentPage = display ? display.currentPage : 1;
+    const parsedDisplay  = Utility.parseJson( display ) || {};
+    const currentPage = display ? parsedDisplay.currentPage : 1;
+
     UI.drawList({ page: currentPage - 1 });
-  })
+  });
 }
 
 // TODO: add some logging for paging and so forth
 function nextPageEventListener() {
   browser.storage.local.get( 'display', ({ display }) => {
-    const currentPage = display ? display.currentPage : 1;
+    const parsedDisplay  = Utility.parseJson( display ) || {};
+    const currentPage = display ? parsedDisplay.currentPage : 1;
     UI.drawList({ page: currentPage + 1 });
-  })
+  });
 }
 
 paginationPreviousPageButton.addEventListener( 'click', previousPageEventListener );
@@ -275,7 +289,7 @@ var DomBuilder = ( function() {
       Logger.log('(DomBuilder.buildAll) Request a 1st animation frame for buildBatch method');
       requestAnimationFrame( buildBatch );
     }
-  }
+  };
 })();
 
 
@@ -284,6 +298,10 @@ var UI = ( function() {
     setTimeout( function() {
       filterItemsInput.focus();
     }, 200 );
+  }
+
+  function setSearchFieldValue( query ) {
+    filterItemsInput.value = query || '';
   }
 
   function setZoomLevel() {
@@ -354,20 +372,25 @@ var UI = ( function() {
         const currentTimestamp = ( Date.now() / 1000 | 0 );
 
         browser.storage.local.get( [ 'items', 'display' ], function( { items, display } ) {
-          const query       = filterItemsInput.value;
-          const lastDisplay = display ? display.displayedAt : null;
+          const parsedDisplay = Utility.parseJson( display ) || {};
+          const lastDisplay   = display ? parsedDisplay.displayedAt : null;
+          let query           = opts.query || ( display ? parsedDisplay.query : '' );
+          let pageToDisplay   = opts.page  || ( display ? parsedDisplay.currentPage : 1 );
 
-          // If the interval without opening is not over, then we reload the current page
-          // of previous save. Otherwise, display page 1
-          // TODO: ugly code, refactor
-          let pageToDisplay = 1;
-          if( opts.page ) {
-            pageToDisplay = opts.page;
-          } else if( lastDisplay && currentTimestamp - lastDisplay < intervalWithoutOpening ) {
-            pageToDisplay = display.currentPage;
+          // Reset query and currentPage if more than `intervalWithoutOpening` since last opening
+          if( lastDisplay && currentTimestamp - lastDisplay > intervalWithoutOpening ) {
+            Logger.log( "(UI.drawList) reset page:1 and filter:''" );
+            pageToDisplay = 1;
+            query         = '';
           }
 
-          let parsedItems   = items ? JSON.parse( items ) : [];
+          // Set initial filter value in the UI
+          // TODO: this would make more sense in "setup" but I'd need to deal with intervalWithoutOpening
+          //       there as well... so I do this from here for the moment
+          setSearchFieldValue( query );
+
+          // Parse and filter the item list
+          let parsedItems   = Utility.parseJson( items ) || [];
           let filteredItems = Items.filter( parsedItems, query );
           let itemsToRender = Items.paginate( filteredItems, pageToDisplay, perPage );
 
@@ -386,8 +409,8 @@ var UI = ( function() {
           // Record display parameters
           // Date.now returns milliseconds timestamp, but the other timestamp we store (last_retrieve)
           // coming from Pocket API uses seconds timestamp, so we'll keep the same format here
-          const displayOptions = { currentPage: pageToDisplay, displayedAt: currentTimestamp };
-          browser.storage.local.set({ display: displayOptions });
+          const displayOptions = { currentPage: pageToDisplay, displayedAt: currentTimestamp, query: query };
+          browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
 
           // Updates the UI with the current page number
           updateCurrentPage( pageToDisplay, perPage, filteredItems.length );
