@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1 - December 2017
+
+* FIX: on popup opening, the construction of the item list was triggered more than once. It was causing performance issues, and might be the cause of several user-interface-related bugs.
+
 
 ## 0.7.0 - November 2017
 
