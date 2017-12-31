@@ -3,6 +3,8 @@
 ## 0.7.1 - December 2017
 
 * FIX: on popup opening, the construction of the item list was triggered more than once. It was causing performance issues, and might be the cause of several user-interface-related bugs.
+* CHORE: rewrite the way pagination settings are loaded and updated.
+* FIX: hopefully, this should be fixing an issue when user opened the popup and immediately updated the filter. Sometimes, depending on the duration it took to reach Pocket API, it could end up with weird behaviours (seeing the saved search, changing it and having it back to the original value once the Pocket API responded)
 
 
 ## 0.7.0 - November 2017
