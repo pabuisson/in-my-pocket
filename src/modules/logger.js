@@ -39,8 +39,8 @@ var Logger = ( function() {
     error: function( message ) {
       console.error( prefix + message );
     }
-  }
+  };
 })();
 
 
-export default Logger
+export default Logger;

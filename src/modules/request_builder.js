@@ -188,7 +188,7 @@ class Request {
           // Instead of just logging, send an event back to the UI
           // TODO: since I have the error object returned in the promise,
           //       I might not need this "send message" anymore
-          chrome.runtime.sendMessage( errorObject )
+          chrome.runtime.sendMessage( errorObject );
           reject( errorObject );
         });
     });
@@ -198,5 +198,4 @@ class Request {
 }
 
 
-
-export { RequestBuilder, Request }
+export { RequestBuilder, Request };

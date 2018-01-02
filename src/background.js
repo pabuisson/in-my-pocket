@@ -136,13 +136,13 @@ function retrieveFirst() {
 
           // https://getpocket.com/developer/docs/v3/retrieve
           // given_url should be used if the user wants to view the item.
-            itemsList.push({
-              id:             item.item_id,
-              resolved_title: item.given_title || item.resolved_title,
-              resolved_url:   item.given_url || item.resolved_url,
-              created_at:     item.time_added
-            });
-        };
+          itemsList.push({
+            id:             item.item_id,
+            resolved_title: item.given_title || item.resolved_title,
+            resolved_url:   item.given_url || item.resolved_url,
+            created_at:     item.time_added
+          });
+        }
 
         // Save item list in storage and update badge count
         browser.storage.local.set({ items: JSON.stringify( itemsList ) });
@@ -159,9 +159,8 @@ function retrieveFirst() {
         // Updates the tabs page actions
         PageAction.redrawAllTabs();
       });
-
   });
-};
+}
 
 
 function retrieveDiff() {
@@ -209,7 +208,7 @@ function retrieveDiff() {
               break;
 
             case pocketApiStatus.CREATED:
-              let itemIdx = allItems.findIndex( function( item ) { return item.id === itemId });
+              let itemIdx = allItems.findIndex( function( item ) { return item.id === itemId; });
 
               if( itemIdx >= 0 ) {
                 // Item already exists in the list (added by this current extension),
@@ -247,15 +246,23 @@ function retrieveDiff() {
         //       nicely with the items that were correctly removed/added?
         browser.storage.local.set({ last_retrieve: response.since });
 
-        // Send a message back to the UI
+        // Send a message back to the UI and updates the tabs page actions
         // TODO: Do this once in the "retrieveItems" method
         chrome.runtime.sendMessage({ action: 'retrieved-items' });
+        PageAction.redrawAllTabs();
+      })
+      .catch( error => {
+        // Even if something went wrong while retrieving diff, we still can display the current
+        // items, so we send the `retrieved-items` event back to popup to build the item list
+        Logger.warn('(background.retrieveDiff) something went wrong...');
 
-        // Updates the tabs page actions
+        // Send a message back to the UI and updates the tabs page actions
+        // TODO: Do this once in the "retrieveItems" method
+        chrome.runtime.sendMessage({ action: 'retrieved-items' });
         PageAction.redrawAllTabs();
       });
   });
-};
+}
 
 
 // - - - API ACCESS : ITEMS ACTIONS - - -

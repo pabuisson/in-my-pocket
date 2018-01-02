@@ -79,6 +79,7 @@ let debouncedFilterEventHandler = Utility.debounce( function() {
   });
 
   // Draw the items lists
+  Logger.log('(debouncedFilterEventHandler) will draw list with query=' + query);
   UI.drawList({ page: 1, query: query });
   MainLoader.disable( true );
 }, 200 );
@@ -301,6 +302,7 @@ var UI = ( function() {
   }
 
   function setSearchFieldValue( query ) {
+    Logger.log('(UI.setSearchFieldValue) set search query to ' + query);
     filterItemsInput.value = query || '';
   }
 
@@ -436,9 +438,6 @@ var UI = ( function() {
 
         // Give focus to the input field
         focusSearchField();
-
-        // Display the currently available items
-        UI.drawList();
 
         // Enable the loading animation and update the list of items
         MainLoader.enable();
