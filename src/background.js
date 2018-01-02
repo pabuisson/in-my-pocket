@@ -540,14 +540,14 @@ browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
           if( containsItem ) {
             Logger.log("(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that IS in my list");
             // Context menu
-            ContextMenu.setState( ContextMenu.pageAlreadyInPocket )
+            ContextMenu.setState( ContextMenu.pageAlreadyInPocket );
             // Page action
             PageAction.drawEnabled( tabId );
             PageAction.show( tabId );
           } else {
             Logger.log( "(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that ISN'T in my list...yet");
             // Context menu
-            ContextMenu.setState( ContextMenu.pageNotInPocket )
+            ContextMenu.setState( ContextMenu.pageNotInPocket );
             // Page action
             PageAction.drawDisabled( tabId );
             PageAction.show( tabId );
@@ -570,14 +570,14 @@ browser.tabs.onActivated.addListener( ({ tabId }) => {
       if( containsItem ) {
         Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that IS in my list");
         // Context menu
-        ContextMenu.setState( ContextMenu.pageAlreadyInPocket )
+        ContextMenu.setState( ContextMenu.pageAlreadyInPocket );
         // Page action
         PageAction.drawEnabled( tabId );
         PageAction.show( tabId );
       } else {
         Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that ISN'T in my list...yet !");
         // Context menu
-        ContextMenu.setState( ContextMenu.pageNotInPocket )
+        ContextMenu.setState( ContextMenu.pageNotInPocket );
         // Page action
         PageAction.drawDisabled( tabId );
         PageAction.show( tabId );
@@ -652,4 +652,4 @@ browser.commands.onCommand.addListener( (command) => {
 Authentication.isAuthenticated().then( function() {
   ContextMenu.createEntries();
   Badge.updateCount();
-})
+});

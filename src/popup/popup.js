@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Hide the error message after 5 seconds and reset the class list
       setTimeout( () => {
         flashContainer.classList.add( 'hidden' );
-      }, 2000 );
+      }, 5000 );
 
     } else {
       Logger.log('(popup onMessage) : ' + eventData.action);
@@ -556,12 +556,10 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'marked-as-read':
         case 'deleted':
           UI.fadeOutItem( eventData.id );
-          Badge.updateCount();
           break;
 
         case 'added-item':
           UI.drawList();
-          Badge.updateCount();
           break;
 
         case 'retrieved-items':
