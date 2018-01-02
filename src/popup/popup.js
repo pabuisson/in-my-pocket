@@ -295,6 +295,9 @@ var DomBuilder = ( function() {
 
 
 var UI = ( function() {
+  const intervalWithoutOpening = 5*60;
+  const defaultDisplaySetting  = { currentPage: 1, query: '' };
+
   function focusSearchField() {
     setTimeout( function() {
       filterItemsInput.focus();
@@ -364,32 +367,67 @@ var UI = ( function() {
   }
 
   return {
+    setup: function() {
+      // Set default zoom level based on Settings
+      setZoomLevel();
+
+      // Show pagination if setting is enabled
+      setPaginationVisibility();
+
+      Authentication.isAuthenticated().then( function( access_token ) {
+        document.querySelector( '.authentication' ).classList.add( 'hidden' );
+        document.querySelector( '.authenticated'  ).classList.remove( 'hidden' );
+
+        browser.storage.local.get( 'display', function( { display } ) {
+          const currentTimestamp = ( Date.now() / 1000 | 0 );
+          const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
+          const lastDisplay   = parsedDisplay.displayedAt;
+          let query           = parsedDisplay.query;
+
+          let displayOptions  = Object.assign( {}, parsedDisplay );
+
+          // Reset query and currentPage if more than `intervalWithoutOpening` since last opening
+          if( lastDisplay && currentTimestamp - lastDisplay > intervalWithoutOpening ) {
+            Logger.log( "(UI.setup) reset page to 1 and filter to ''" );
+            Object.assign( displayOptions, defaultDisplaySetting );
+          }
+
+          // Set initial filter value in the UI and focus the field
+          setSearchFieldValue( query );
+          focusSearchField();
+
+          // Updates display.displayedAt and page + query if they have been reset
+          Object.assign( displayOptions, { displayedAt: currentTimestamp });
+          Logger.log( "(UI.setup) Save display variable to local storage: " + displayOptions );
+          browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
+        });
+
+        // Enable the loading animation and update the list of items
+        MainLoader.enable();
+        chrome.runtime.sendMessage({ action: 'retrieve-items', force: false });
+      }, function( error ) {
+        let authenticationButton = document.querySelector( '.authentication button' );
+
+        document.querySelector( '.authentication' ).classList.remove( 'hidden' );
+        document.querySelector( '.authenticated'  ).classList.add( 'hidden' );
+
+        authenticationButton.addEventListener( 'click', function() {
+          chrome.runtime.sendMessage({ action: 'authenticate' });
+        });
+      });
+    },
+
+
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth
     drawList: function( opts = {} ) {
       Settings.init().then( function() {
         return Settings.get( 'perPage' );
       }).then( function( perPage ) {
-        const intervalWithoutOpening = 5*60;
-        const currentTimestamp = ( Date.now() / 1000 | 0 );
-
         browser.storage.local.get( [ 'items', 'display' ], function( { items, display } ) {
-          const parsedDisplay = Utility.parseJson( display ) || {};
-          const lastDisplay   = display ? parsedDisplay.displayedAt : null;
-          let query           = opts.query || ( display ? parsedDisplay.query : '' );
-          let pageToDisplay   = opts.page  || ( display ? parsedDisplay.currentPage : 1 );
-
-          // Reset query and currentPage if more than `intervalWithoutOpening` since last opening
-          if( lastDisplay && currentTimestamp - lastDisplay > intervalWithoutOpening ) {
-            Logger.log( "(UI.drawList) reset page:1 and filter:''" );
-            pageToDisplay = 1;
-            query         = '';
-          }
-
-          // Set initial filter value in the UI
-          // TODO: this would make more sense in "setup" but I'd need to deal with intervalWithoutOpening
-          //       there as well... so I do this from here for the moment
-          setSearchFieldValue( query );
+          const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
+          let query           = opts.query || parsedDisplay.query;
+          let pageToDisplay   = opts.page  || parsedDisplay.currentPage;
 
           // Parse and filter the item list
           let parsedItems   = Utility.parseJson( items ) || [];
@@ -408,11 +446,11 @@ var UI = ( function() {
           // Rebuild all items
           DomBuilder.buildAll( itemsToRender );
 
-          // Record display parameters
-          // Date.now returns milliseconds timestamp, but the other timestamp we store (last_retrieve)
-          // coming from Pocket API uses seconds timestamp, so we'll keep the same format here
-          const displayOptions = { currentPage: pageToDisplay, displayedAt: currentTimestamp, query: query };
-          browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
+          // Record currentPage and query, in case they've been "forced" through the opts param
+          // `displayedAt` value must remain the same (that's why we assign `parsedDisplay`)
+          const actualDisplay  = { currentPage: pageToDisplay, query: query };
+          const displayOptions = Object.assign( {}, parsedDisplay, actualDisplay );
+          browser.storage.local.set({ display: JSON.stringify( displayOptions ) });
 
           // Updates the UI with the current page number
           updateCurrentPage( pageToDisplay, perPage, filteredItems.length );
@@ -425,34 +463,6 @@ var UI = ( function() {
       return;
     },
 
-    setup: function() {
-      // Set default zoom level based on Settings
-      setZoomLevel();
-
-      // Show pagination if setting is enabled
-      setPaginationVisibility();
-
-      Authentication.isAuthenticated().then( function( access_token ) {
-        document.querySelector( '.authentication' ).classList.add( 'hidden' );
-        document.querySelector( '.authenticated'  ).classList.remove( 'hidden' );
-
-        // Give focus to the input field
-        focusSearchField();
-
-        // Enable the loading animation and update the list of items
-        MainLoader.enable();
-        chrome.runtime.sendMessage({ action: 'retrieve-items', force: false });
-      }, function( error ) {
-        let authenticationButton = document.querySelector( '.authentication button' );
-
-        document.querySelector( '.authentication' ).classList.remove( 'hidden' );
-        document.querySelector( '.authenticated'  ).classList.add( 'hidden' );
-
-        authenticationButton.addEventListener( 'click', function() {
-          chrome.runtime.sendMessage({ action: 'authenticate' });
-        });
-      });
-    },
 
     markAsRead: ( itemId ) => {
       document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .tick"   ).classList.add(    'hidden' );
