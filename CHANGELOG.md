@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.2 - January 2018
+
+* FIX: on popup opening, if popup has not been opened for more than 5 minutes, the filter is reset and the whole list of items is displayed. But in the user interface, the previous value of the filter was still displayed, with an unfiltered list of items, which was both unexpected and weird.
+
+
 ## 0.7.1 - December 2017
 
 * FIX: on popup opening, the construction of the item list was triggered more than once. It was causing performance issues, and might be the cause of several user-interface-related bugs.
