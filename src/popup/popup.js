@@ -382,7 +382,6 @@ var UI = ( function() {
           const currentTimestamp = ( Date.now() / 1000 | 0 );
           const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
           const lastDisplay   = parsedDisplay.displayedAt;
-          let query           = parsedDisplay.query;
 
           let displayOptions  = Object.assign( {}, parsedDisplay );
 
@@ -393,7 +392,7 @@ var UI = ( function() {
           }
 
           // Set initial filter value in the UI and focus the field
-          setSearchFieldValue( query );
+          setSearchFieldValue( displayOptions.query );
           focusSearchField();
 
           // Updates display.displayedAt and page + query if they have been reset
