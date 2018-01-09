@@ -144,6 +144,10 @@ var DomBuilder = ( function() {
     return isInitialized && areAllItemsBuilt;
   }
 
+  function faviconUrl( url ) {
+    return "http://www.google.com/s2/favicons?domain_url=" + encodeURIComponent(url);
+  }
+
   function formatUrl( url ) {
     let protocolsToRemove = [
       'http', 'https',
@@ -165,6 +169,7 @@ var DomBuilder = ( function() {
   // TODO: replace this with another mechanism (React ?)
   function buildItemElement( item ) {
     let liElement        = document.createElement('li');
+    let faviconElement   = document.createElement('img');
     let titleContent     = document.createElement('span');
     let urlContent       = document.createElement('span');
 
@@ -180,9 +185,10 @@ var DomBuilder = ( function() {
     let trashIconFont    = document.createElement('i');
     let trashLoadElement = document.createElement('div');
 
-    liElement.className    = 'item';
-    titleContent.className = 'title';
-    urlContent.className   = 'url';
+    liElement.className      = 'item';
+    faviconElement.className = 'favicon';
+    titleContent.className   = 'title';
+    urlContent.className     = 'url';
 
     actionContainer.className = 'actions-container';
 
@@ -203,10 +209,13 @@ var DomBuilder = ( function() {
     deleteAction.addEventListener( 'click', function() {
       UI.deleteItem( item.id );
     });
-
-    tickElement.appendChild( tickIconFont );
     trashElement.appendChild( trashIconFont );
 
+    faviconElement.setAttribute('src', faviconUrl( item.resolved_url ) );
+
+    tickElement.appendChild( tickIconFont );
+
+    titleContent.appendChild( faviconElement );
     titleContent.appendChild( document.createTextNode( item.resolved_title ) );
 
     urlContent.appendChild( document.createTextNode( formatUrl( item.resolved_url ) ) );
@@ -511,27 +520,27 @@ document.addEventListener('DOMContentLoaded', function() {
         flashMessage = 'An error occurred: ';
 
         switch( eventData.error ) {
-          case PocketError.UNREACHABLE:
-            flashMessage += 'could not reach the server';
-            break;
-          case PocketError.UNAUTHORIZED:
-            flashMessage += 'unauthorized, you might need to login again';
-            break;
-          case PocketError.PERMISSIONS:
-            flashMessage += 'missing permissions';
-            break;
-          case PocketError.RATE_LIMIT:
-            flashMessage += 'max number of requests reach for this hour';
-            flashMessage += ' (reset in ' + eventData.resetDelay + ')';
-            break;
+        case PocketError.UNREACHABLE:
+          flashMessage += 'could not reach the server';
+          break;
+        case PocketError.UNAUTHORIZED:
+          flashMessage += 'unauthorized, you might need to login again';
+          break;
+        case PocketError.PERMISSIONS:
+          flashMessage += 'missing permissions';
+          break;
+        case PocketError.RATE_LIMIT:
+          flashMessage += 'max number of requests reach for this hour';
+          flashMessage += ' (reset in ' + eventData.resetDelay + ')';
+          break;
         }
       } else if( eventData.notice ) {
         flashContainer.classList.add( noticeClass );
 
         switch( eventData.notice ) {
-          case PocketNotice.ALREADY_IN_LIST:
-            flashMessage = 'This page is already in your Pocket :)';
-            break;
+        case PocketNotice.ALREADY_IN_LIST:
+          flashMessage = 'This page is already in your Pocket :)';
+          break;
         }
       }
 
@@ -547,24 +556,24 @@ document.addEventListener('DOMContentLoaded', function() {
       Logger.log('(popup onMessage) : ' + eventData.action);
 
       switch( eventData.action ) {
-        case 'authenticated':
-          window.close();
-          chrome.runtime.sendMessage({ action: 'update-badge-count' });
-          break;
+      case 'authenticated':
+        window.close();
+        chrome.runtime.sendMessage({ action: 'update-badge-count' });
+        break;
 
-        case 'marked-as-read':
-        case 'deleted':
-          UI.fadeOutItem( eventData.id );
-          break;
+      case 'marked-as-read':
+      case 'deleted':
+        UI.fadeOutItem( eventData.id );
+        break;
 
-        case 'added-item':
-          UI.drawList();
-          break;
+      case 'added-item':
+        UI.drawList();
+        break;
 
-        case 'retrieved-items':
-          UI.drawList();
-          Badge.updateCount();
-          break;
+      case 'retrieved-items':
+        UI.drawList();
+        Badge.updateCount();
+        break;
       }
     }
   });
