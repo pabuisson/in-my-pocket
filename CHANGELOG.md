@@ -1,9 +1,27 @@
 # Changelog
 
+## 0.7.2 - January 2018
+
+* FIX: on popup opening, if popup has not been opened for more than 5 minutes, the filter is reset and the whole list of items is displayed. But in the user interface, the previous value of the filter was still displayed, with an unfiltered list of items, which was both unexpected and weird.
+
+
+## 0.7.1 - December 2017
+
+* FIX: on popup opening, the construction of the item list was triggered more than once. It was causing performance issues, and might be the cause of several user-interface-related bugs.
+* FIX: when the "show items count on badge" option was enabled, the success green check on item add/archive/remove actions was just briefly displayed instead of being visible for 2 seconds
+* CHORE: rewrite the way pagination settings are loaded and updated.
+* FIX: hopefully, this should be fixing an issue when user opened the popup and immediately updated the filter. Sometimes, depending on the duration it took to reach Pocket API, it could end up with weird behaviours (seeing the saved search, changing it and having it back to the original value once the Pocket API responded)
+
 
 ## 0.7.0 - November 2017
 
-* FEATURE: middle-click on an item always open it in a new tab, no matter the "open in a new tab" setting ([contribution from bobi32](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/64/middle-click-on-item-opens-it-in-a-new-tab/diff), thanks a lot!)
+* FEATURE: pagination: it's the big feature of this new release, which required quite a lot of development and testing, but it should be a huge improvements for users dealing with hundreds or even thousands of items in their pocket list. The feature still needs refinments and enhancements but overall, it's working and should be a huge improvement.
+* FEATURE: the current page and filter are temporarily memorized (if you don't open InMyPocket popup for 5 minutes, they're reset), so that you don't need to skip to the same page over and over again!
+* FEATURE: many users needed the possiblity to hide the "add to pocket" button from the address bar. You now have a setting for this on the settings page that has been reorganized and made clearer for the occasion :)
+* FEATURE: middle-click on an item always open it in a new tab, no matter the "open in a new tab" setting ([contribution from bobi32](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/64/middle-click-on-item-opens-it-in-a-new-tab/diff), thanks a lot!). Handy shortcut!
+* DESIGN: aligned the UI with Firefox Photon guidelines for better look and integration. If you're interested, you can find the photo design guidelines over here: [Firefox design guidelines](http://design.firefox.com/photon/).
+* CHORE/PERFS: debounced the search field in the popup. In short, it should make text input faster and filter the list only once you're done typing (depending on the speed you usually type, this might make a difference... or not!)
+* FIX: "disconnect" feature in the settings page didn't reset user data correctly.
 
 
 ## 0.6.1 - September 2017

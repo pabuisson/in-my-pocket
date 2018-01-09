@@ -1,6 +1,6 @@
 "use strict";
 
-import Logger from './logger.js';
+import Utility from './utility.js';
 
 
 // --------------------------
@@ -26,7 +26,7 @@ var Settings = ( function() {
 
         settings = Object.assign( settings, defaultSettings );
         if( data.settings ) {
-          settings = Object.assign( settings, JSON.parse( data.settings ) );
+          settings = Object.assign( settings, ( Utility.parseJson( data.settings ) || {} ) );
         }
 
         resolve();

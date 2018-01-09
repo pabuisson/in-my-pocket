@@ -9,6 +9,7 @@ import Authentication from './modules/authentication.js';
 import Items from './modules/items.js';
 import PageAction from './modules/page_action.js';
 import { PocketNotice } from './modules/constants.js';
+import Utility from './modules/utility.js';
 
 // - - -- - -- - -- - -- - -- - -- - -- - ---
 
@@ -135,13 +136,13 @@ function retrieveFirst() {
 
           // https://getpocket.com/developer/docs/v3/retrieve
           // given_url should be used if the user wants to view the item.
-            itemsList.push({
-              id:             item.item_id,
-              resolved_title: item.given_title || item.resolved_title,
-              resolved_url:   item.given_url || item.resolved_url,
-              created_at:     item.time_added
-            });
-        };
+          itemsList.push({
+            id:             item.item_id,
+            resolved_title: item.given_title || item.resolved_title,
+            resolved_url:   item.given_url || item.resolved_url,
+            created_at:     item.time_added
+          });
+        }
 
         // Save item list in storage and update badge count
         browser.storage.local.set({ items: JSON.stringify( itemsList ) });
@@ -158,9 +159,8 @@ function retrieveFirst() {
         // Updates the tabs page actions
         PageAction.redrawAllTabs();
       });
-
   });
-};
+}
 
 
 function retrieveDiff() {
@@ -185,7 +185,7 @@ function retrieveDiff() {
       .fetch()
       .then( function( response ) {
         Logger.log(Object.keys(response.list).length + ' items in the response');
-        let allItems = JSON.parse( items );
+        let allItems = Utility.parseJson( items ) || [];
 
         // TODO: Extract this into a dedicated method
         for( let itemId in response.list ) {
@@ -208,7 +208,7 @@ function retrieveDiff() {
               break;
 
             case pocketApiStatus.CREATED:
-              let itemIdx = allItems.findIndex( function( item ) { return item.id === itemId });
+              let itemIdx = allItems.findIndex( function( item ) { return item.id === itemId; });
 
               if( itemIdx >= 0 ) {
                 // Item already exists in the list (added by this current extension),
@@ -246,15 +246,23 @@ function retrieveDiff() {
         //       nicely with the items that were correctly removed/added?
         browser.storage.local.set({ last_retrieve: response.since });
 
-        // Send a message back to the UI
+        // Send a message back to the UI and updates the tabs page actions
         // TODO: Do this once in the "retrieveItems" method
         chrome.runtime.sendMessage({ action: 'retrieved-items' });
+        PageAction.redrawAllTabs();
+      })
+      .catch( error => {
+        // Even if something went wrong while retrieving diff, we still can display the current
+        // items, so we send the `retrieved-items` event back to popup to build the item list
+        Logger.warn('(background.retrieveDiff) something went wrong...');
 
-        // Updates the tabs page actions
+        // Send a message back to the UI and updates the tabs page actions
+        // TODO: Do this once in the "retrieveItems" method
+        chrome.runtime.sendMessage({ action: 'retrieved-items' });
         PageAction.redrawAllTabs();
       });
   });
-};
+}
 
 
 // - - - API ACCESS : ITEMS ACTIONS - - -
@@ -263,7 +271,7 @@ function addItem( url, title ) {
   Logger.log( '(background.addItem)' );
 
   browser.storage.local.get( [ 'access_token', 'items' ], function( data ) {
-    let itemsList = JSON.parse( data.items );
+    let itemsList = Utility.parseJson( data.items ) || [];
     // TODO: Move to helper
     let alreadyContainsItem = itemsList.some( function( item, index, array ) {
       return item.resolved_url == url;
@@ -284,7 +292,7 @@ function addItem( url, title ) {
       new Request( 'POST', 'https://getpocket.com/v3/add',  requestParams )
         .fetch()
         .then( function( response ) {
-          let itemsList = JSON.parse( data.items );
+          let itemsList = Utility.parseJson( data.items ) || [];
           let newItem   = response.item;
 
           itemsList.push({
@@ -336,7 +344,7 @@ function markAsRead( itemId ) {
     new Request( 'POST', 'https://getpocket.com/v3/send', requestParams )
       .fetch()
       .then( function( response ) {
-        let items = JSON.parse( data.items );
+        let items = Utility.parseJson( data.items ) || [];
         let removedItemIdx = items.findIndex( function( item ) { return item.id === itemId });
         let removedItem = items[ removedItemIdx ];
 
@@ -392,7 +400,7 @@ function deleteItem( itemId ) {
       .fetch()
       .then( function( response ) {
         Logger.log('onload - itemId = ' + itemId );
-        let items = JSON.parse( data.items );
+        let items = Utility.parseJson( data.items ) || [];
         let removedItemIdx = items.findIndex( ( item ) => { return item.id === itemId } );
         let removedItem = items[ removedItemIdx ];
 
@@ -436,7 +444,7 @@ function deleteItem( itemId ) {
 
 function openRandomItem( query, opt = {} ) {
   browser.storage.local.get( 'items' ).then( function( { items } ) {
-    const parsedItems   = items ? JSON.parse( items ) : [];
+    const parsedItems   = Utility.parseJson( items ) || [];
     const filteredItems = Items.filter( parsedItems, query );
 
     if( filteredItems.length > 0 ) {
@@ -486,7 +494,7 @@ browser.contextMenus.onClicked.addListener( function( link, tab ) {
 
     case ContextMenu.archiveId:
       browser.storage.local.get( "items" ).then( function( { items } ) {
-        const parsedItems = JSON.parse( items );
+        const parsedItems = Utility.parseJson( items ) || [];
         const item = parsedItems.find( i => i.resolved_url == tab.url );
         if( item ) {
           markAsRead( item.id );
@@ -496,7 +504,7 @@ browser.contextMenus.onClicked.addListener( function( link, tab ) {
 
     case ContextMenu.deleteId:
       browser.storage.local.get( "items" ).then( function( { items } ) {
-        const parsedItems = JSON.parse( items );
+        const parsedItems = Utility.parseJson( items ) || [];
         const item = parsedItems.find( i => i.resolved_url == tab.url );
         if( item ) {
           deleteItem( item.id );
@@ -526,20 +534,20 @@ browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
       //       when tab.active == true ? So I could remove one test / indentation level here
       if( tab.active ) {
         browser.storage.local.get( "items" ).then( ( { items } ) => {
-          const parsedItems  = JSON.parse( items );
+          const parsedItems  = Utility.parseJson( items ) || [];
           const containsItem = parsedItems.some( i => i.resolved_url == tab.url );
 
           if( containsItem ) {
             Logger.log("(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that IS in my list");
             // Context menu
-            ContextMenu.setState( ContextMenu.pageAlreadyInPocket )
+            ContextMenu.setState( ContextMenu.pageAlreadyInPocket );
             // Page action
             PageAction.drawEnabled( tabId );
             PageAction.show( tabId );
           } else {
             Logger.log( "(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that ISN'T in my list...yet");
             // Context menu
-            ContextMenu.setState( ContextMenu.pageNotInPocket )
+            ContextMenu.setState( ContextMenu.pageNotInPocket );
             // Page action
             PageAction.drawDisabled( tabId );
             PageAction.show( tabId );
@@ -556,20 +564,20 @@ browser.tabs.onActivated.addListener( ({ tabId }) => {
     return tab.url;
   }).then( ( currentUrl ) => {
     browser.storage.local.get( "items" ).then( ( { items } ) => {
-      const parsedItems  = JSON.parse( items );
+      const parsedItems  = Utility.parseJson( items ) || [];
       const containsItem = parsedItems.some( i => i.resolved_url == currentUrl );
 
       if( containsItem ) {
         Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that IS in my list");
         // Context menu
-        ContextMenu.setState( ContextMenu.pageAlreadyInPocket )
+        ContextMenu.setState( ContextMenu.pageAlreadyInPocket );
         // Page action
         PageAction.drawEnabled( tabId );
         PageAction.show( tabId );
       } else {
         Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that ISN'T in my list...yet !");
         // Context menu
-        ContextMenu.setState( ContextMenu.pageNotInPocket )
+        ContextMenu.setState( ContextMenu.pageNotInPocket );
         // Page action
         PageAction.drawDisabled( tabId );
         PageAction.show( tabId );
@@ -625,7 +633,7 @@ browser.commands.onCommand.addListener( (command) => {
       const currentTitle = currentTab.title;
 
       browser.storage.local.get( 'items', ({ items }) => {
-        const parsedItems = JSON.parse( items );
+        const parsedItems = Utility.parseJson( items ) || [];
         const matchingItem = parsedItems.find( i => i.resolved_url == currentUrl );
 
         if( matchingItem ) {
@@ -644,4 +652,4 @@ browser.commands.onCommand.addListener( (command) => {
 Authentication.isAuthenticated().then( function() {
   ContextMenu.createEntries();
   Badge.updateCount();
-})
+});

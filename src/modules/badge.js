@@ -1,6 +1,7 @@
 "use strict";
 
 import Settings from './settings.js';
+import Utility from './utility.js';
 
 
 // -------------------------------------
@@ -34,7 +35,7 @@ var Badge = ( function() {
             chrome.browserAction.setBadgeText({ text: itemsCount.toString() });
           } else {
             browser.storage.local.get( 'items', function( { items } ) {
-                let itemsCollection = items ? JSON.parse( items ) : [];
+              let itemsCollection = Utility.parseJson( items ) || [];
               let itemsCount = itemsNumbers( itemsCollection );
               chrome.browserAction.setBadgeText({ text: itemsCount.toString() });
             });
@@ -48,7 +49,7 @@ var Badge = ( function() {
 
     flashSuccess: function() {
       browser.storage.local.get( 'items', ({ items }) => {
-        let parsedItems = JSON.parse( items );
+        let parsedItems = Utility.parseJson( items ) || [];
 
         browser.browserAction.setBadgeText({ text: '✓' });
         browser.browserAction.setBadgeBackgroundColor({ color: successBackgroundColor });
@@ -61,7 +62,7 @@ var Badge = ( function() {
         }, 2500);
       });
     }
-  }
+  };
 })();
 
 

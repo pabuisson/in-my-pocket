@@ -2,6 +2,7 @@
 
 import Logger from './logger.js';
 import Settings from './settings.js';
+import Utility from './utility.js';
 
 
 // -------------------------------------
@@ -28,7 +29,7 @@ var PageAction = ( function() {
     redraw: function( tabId, url ) {
       mustDisplayPageAction().then( () => {
         browser.storage.local.get( "items" ).then( function({ items }) {
-          const parsedItems  = JSON.parse( items );
+          const parsedItems  = Utility.parseJson( items ) || [];
           const containsItem = parsedItems.some( i => i.resolved_url == url );
 
           if( containsItem ) {
@@ -91,7 +92,7 @@ var PageAction = ( function() {
     toggle: function( tab, markAsRead, addItem ) {
       mustDisplayPageAction().then( () => {
         browser.storage.local.get( "items" ).then( function({ items }) {
-          const parsedItems  = JSON.parse( items );
+          const parsedItems  = Utility.parseJson( items ) || [];
           const matchingItem = parsedItems.find( i => i.resolved_url == tab.url );
 
           if( matchingItem ) {

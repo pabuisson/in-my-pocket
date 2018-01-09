@@ -2,6 +2,9 @@
 
 import Logger from './logger.js';
 import { PocketError } from './constants.js';
+import Utility from './utility.js';
+
+// -----------------------------------
 
 // This module must:
 //       1. prepare the request with url, action, success and error callbacks
@@ -30,9 +33,9 @@ var RequestBuilder = ( function() {
 
       request.onload = function() {
         if( this.status >= 200 && this.status < 400 ) {
-          Logger.log(JSON.parse( this.response));
+          Logger.log( Utility.parseJson( this.response) );
           if( successCallback ) {
-            successCallback( JSON.parse( this.response ));
+            successCallback( Utility.parseJson( this.response ));
           }
 
         } else {
@@ -185,7 +188,7 @@ class Request {
           // Instead of just logging, send an event back to the UI
           // TODO: since I have the error object returned in the promise,
           //       I might not need this "send message" anymore
-          chrome.runtime.sendMessage( errorObject )
+          chrome.runtime.sendMessage( errorObject );
           reject( errorObject );
         });
     });
@@ -195,5 +198,4 @@ class Request {
 }
 
 
-
-export { RequestBuilder, Request }
+export { RequestBuilder, Request };
