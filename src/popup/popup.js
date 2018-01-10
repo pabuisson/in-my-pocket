@@ -22,7 +22,8 @@ let filterItemsInput             = document.querySelector( '.filter-items' );
 let placeholderNoResults         = document.querySelector( '.search-no-results' );
 let listComponent                = document.querySelector( '.list-component' );
 let paginationContainer          = document.querySelector( '.pagination' );
-let paginationCurrentPage        = document.querySelector( '.pagination .pagination-current-page' );
+let paginationPageSelector       = document.querySelector( '#pagination-page-selector' );
+let paginationPagesCount         = document.querySelector( '.pagination .pagination-current-page .pagination-pages-count' );
 let paginationPreviousPageButton = document.querySelector( '.pagination .pagination-previous');
 let paginationNextPageButton     = document.querySelector( '.pagination .pagination-next');
 
@@ -106,8 +107,16 @@ function nextPageEventListener() {
   });
 }
 
+function changePageEventListener(event) {
+	browser.storage.local.get( 'display', ({ display }) => {
+		let newPage = parseInt(event.target.value);
+		UI.drawList({page: newPage });
+	});
+}
+
 paginationPreviousPageButton.addEventListener( 'click', previousPageEventListener );
 paginationNextPageButton.addEventListener( 'click', nextPageEventListener );
+paginationPageSelector.addEventListener( 'change', changePageEventListener );
 
 
 // - - - OTHER MODULES - - -
@@ -336,7 +345,19 @@ var UI = ( function() {
 
   function updateCurrentPage( page, perPage, itemsCount ) {
     const pagesCount = Math.ceil( itemsCount / perPage ) || 1;
-    paginationCurrentPage.innerText = `${ page } / ${ pagesCount }`;
+	while (paginationPageSelector.hasChildNodes()) {
+	    paginationPageSelector.removeChild(paginationPageSelector.lastChild);
+	} // while
+	for ( var i = 1; i <= pagesCount; ++i ) {
+		let option = document.createElement('option');
+		option.setAttribute('value', i);
+		option.innerText = `${ i }`;
+		if (i === page) {
+			option.setAttribute('selected', true);
+		} // if
+		paginationPageSelector.appendChild(option);
+	} // for
+    paginationPagesCount.innerText = ` / ${ pagesCount }`;
   }
 
   function disablePaginationButton( element, handler ) {
