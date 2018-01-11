@@ -108,10 +108,8 @@ function nextPageEventListener() {
 }
 
 function changePageEventListener(event) {
-	browser.storage.local.get( 'display', ({ display }) => {
-		let newPage = parseInt(event.target.value);
-		UI.drawList({page: newPage });
-	});
+	let newPage = parseInt(event.target.value);
+	UI.drawList({page: newPage });
 }
 
 paginationPreviousPageButton.addEventListener( 'click', previousPageEventListener );
@@ -344,20 +342,24 @@ var UI = ( function() {
   }
 
   function updateCurrentPage( page, perPage, itemsCount ) {
-    const pagesCount = Math.ceil( itemsCount / perPage ) || 1;
-	while (paginationPageSelector.hasChildNodes()) {
-	    paginationPageSelector.removeChild(paginationPageSelector.lastChild);
-	} // while
-	for ( var i = 1; i <= pagesCount; ++i ) {
-		let option = document.createElement('option');
-		option.setAttribute('value', i);
-		option.innerText = `${ i }`;
-		if (i === page) {
-			option.setAttribute('selected', true);
+	paginationPageSelector.selectedIndex = page - 1;
+	const pagesCount = Math.ceil( itemsCount / perPage ) || 1,
+			currentCount = parseInt(paginationPagesCount.innerText);
+	if(currentCount !== pagesCount){
+		if (currentCount < pagesCount) {
+			for(var i = currentCount + 1; i <= pagesCount; ++i) {
+				let option = document.createElement('option');
+				option.setAttribute('value', i);
+				option.innerText = `${ i }`;
+				paginationPageSelector.appendChild(option);
+			} // for
+		} else {
+			for(var i = currentCount; i > pagesCount; --i) {
+				paginationPageSelector.removeChild(paginationPageSelector.lastChild);
+			} // for
 		} // if
-		paginationPageSelector.appendChild(option);
-	} // for
-    paginationPagesCount.innerText = ` / ${ pagesCount }`;
+		paginationPagesCount.innerText = `${ pagesCount }`;
+	} // if
   }
 
   function disablePaginationButton( element, handler ) {
@@ -395,6 +397,26 @@ var UI = ( function() {
       }
     }
   }
+
+	function build() {
+	  Settings.init().then( function() {
+		return Settings.get( 'perPage' );
+	  }).then( function( perPage ) {
+		browser.storage.local.get( [ 'items' ], function( { items } ) {
+			let parsedItems   = Utility.parseJson( items ) || [];
+			console.log(filterItemsInput.value);
+			let filteredItems = Items.filter(parsedItems, filterItemsInput.value);
+			const pagesCount = Math.ceil( filteredItems.length / perPage ) || 1;
+			for ( var i = 1; i <= pagesCount; ++i ) {
+				let option = document.createElement('option');
+				option.setAttribute('value', i);
+				option.innerText = `${ i }`;
+				paginationPageSelector.appendChild(option);
+			} // for
+			paginationPagesCount.innerText = `${ pagesCount }`;
+		});
+	  });
+	}
 
   return {
     setup: function() {
@@ -444,6 +466,9 @@ var UI = ( function() {
           chrome.runtime.sendMessage({ action: 'authenticate' });
         });
       });
+
+	  build();
+
     },
 
 
