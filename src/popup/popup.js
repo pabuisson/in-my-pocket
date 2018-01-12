@@ -404,7 +404,6 @@ var UI = ( function() {
 	  }).then( function( perPage ) {
 		browser.storage.local.get( [ 'items' ], function( { items } ) {
 			let parsedItems   = Utility.parseJson( items ) || [];
-			console.log(filterItemsInput.value);
 			let filteredItems = Items.filter(parsedItems, filterItemsInput.value);
 			const pagesCount = Math.ceil( filteredItems.length / perPage ) || 1;
 			for ( var i = 1; i <= pagesCount; ++i ) {
