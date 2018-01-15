@@ -218,20 +218,19 @@ var DomBuilder = ( function() {
     deleteAction.addEventListener( 'click', function() {
       UI.deleteItem( item.id );
     });
-    trashElement.appendChild( trashIconFont );
 
     faviconElement.setAttribute('src', faviconUrl( item.resolved_url ) );
-
-    tickElement.appendChild( tickIconFont );
 
     titleContent.appendChild( faviconElement );
     titleContent.appendChild( document.createTextNode( item.resolved_title ) );
 
     urlContent.appendChild( document.createTextNode( formatUrl( item.resolved_url ) ) );
 
+    tickElement.appendChild( tickIconFont );
     tickAction.appendChild( tickElement );
     tickAction.appendChild( tickLoadElement );
 
+    trashElement.appendChild( trashIconFont );
     deleteAction.appendChild( trashElement );
     deleteAction.appendChild( trashLoadElement );
 
