@@ -22,10 +22,9 @@ let filterItemsInput             = document.querySelector( '.filter-items' );
 let placeholderNoResults         = document.querySelector( '.search-no-results' );
 let listComponent                = document.querySelector( '.list-component' );
 let paginationContainer          = document.querySelector( '.pagination' );
-let paginationPageSelector       = document.querySelector( '#pagination-page-selector' );
-let paginationPagesCount         = document.querySelector( '.pagination .pagination-current-page .pagination-pages-count' );
-let paginationPreviousPageButton = document.querySelector( '.pagination .pagination-previous');
-let paginationNextPageButton     = document.querySelector( '.pagination .pagination-next');
+let paginationPageSelector       = document.querySelector( '.pagination-page-selector' );
+let paginationPreviousPageButton = document.querySelector( '.pagination-previous');
+let paginationNextPageButton     = document.querySelector( '.pagination-next');
 
 // prevent general.autoScroll
 document.body.onmousedown = ( e ) => {
@@ -88,28 +87,31 @@ let debouncedFilterEventHandler = Utility.debounce( function() {
 filterItemsInput.addEventListener( 'keyup', debouncedFilterEventHandler );
 
 
-// TODO: add some logging for paging and so forth
 function previousPageEventListener() {
   browser.storage.local.get( 'display', ({ display }) => {
     const parsedDisplay  = Utility.parseJson( display ) || {};
     const currentPage = display ? parsedDisplay.currentPage : 1;
 
+    Logger.log(`Load previous page: from ${ currentPage } to ${ currentPage - 1 }`);
     UI.drawList({ page: currentPage - 1 });
   });
 }
 
-// TODO: add some logging for paging and so forth
 function nextPageEventListener() {
   browser.storage.local.get( 'display', ({ display }) => {
     const parsedDisplay  = Utility.parseJson( display ) || {};
     const currentPage = display ? parsedDisplay.currentPage : 1;
+
+    Logger.log(`Load next page: from ${ currentPage } to ${ currentPage + 1 }`);
     UI.drawList({ page: currentPage + 1 });
   });
 }
 
-function changePageEventListener(event) {
-	let newPage = parseInt(event.target.value);
-	UI.drawList({page: newPage });
+function changePageEventListener( event ) {
+  let pageToLoad = parseInt( event.target.value );
+
+  Logger.log(`Load page ${ pageToLoad }`);
+  UI.drawList({ page: pageToLoad });
 }
 
 paginationPreviousPageButton.addEventListener( 'click', previousPageEventListener );
@@ -342,24 +344,14 @@ var UI = ( function() {
   }
 
   function updateCurrentPage( page, perPage, itemsCount ) {
-	paginationPageSelector.selectedIndex = page - 1;
-	const pagesCount = Math.ceil( itemsCount / perPage ) || 1,
-			currentCount = parseInt(paginationPagesCount.innerText);
-	if(currentCount !== pagesCount){
-		if (currentCount < pagesCount) {
-			for(var i = currentCount + 1; i <= pagesCount; ++i) {
-				let option = document.createElement('option');
-				option.setAttribute('value', i);
-				option.innerText = `${ i }`;
-				paginationPageSelector.appendChild(option);
-			} // for
-		} else {
-			for(var i = currentCount; i > pagesCount; --i) {
-				paginationPageSelector.removeChild(paginationPageSelector.lastChild);
-			} // for
-		} // if
-		paginationPagesCount.innerText = `${ pagesCount }`;
-	} // if
+    const pagesCount   = Math.ceil( itemsCount / perPage ) || 1;
+    const currentCount = paginationPageSelector.children.length;
+
+    if( currentCount != pagesCount ) {
+      buildPageSelector( perPage, itemsCount );
+    }
+
+    paginationPageSelector.value = page;
   }
 
   function disablePaginationButton( element, handler ) {
@@ -398,24 +390,30 @@ var UI = ( function() {
     }
   }
 
-	function build() {
-	  Settings.init().then( function() {
-		return Settings.get( 'perPage' );
-	  }).then( function( perPage ) {
-		browser.storage.local.get( [ 'items' ], function( { items } ) {
-			let parsedItems   = Utility.parseJson( items ) || [];
-			let filteredItems = Items.filter(parsedItems, filterItemsInput.value);
-			const pagesCount = Math.ceil( filteredItems.length / perPage ) || 1;
-			for ( var i = 1; i <= pagesCount; ++i ) {
-				let option = document.createElement('option');
-				option.setAttribute('value', i);
-				option.innerText = `${ i }`;
-				paginationPageSelector.appendChild(option);
-			} // for
-			paginationPagesCount.innerText = `${ pagesCount }`;
-		});
-	  });
-	}
+  function buildPageSelector( perPage, itemsCount ) {
+    if( !perPage ) {
+      return;
+    }
+
+    const pagesCount = Math.ceil( itemsCount / perPage ) || 1;
+
+    // Empty the pagination selector
+    while( paginationPageSelector.firstChild ) {
+      paginationPageSelector.removeChild( paginationPageSelector.firstChild );
+    }
+
+    // Recreate all the options
+    for ( let i = 0; i < pagesCount; i++ ) {
+      let option = document.createElement('option');
+      option.setAttribute('value', i + 1 );
+      option.innerText = `${ i + 1 } / ${ pagesCount }`;
+
+      paginationPageSelector.appendChild(option);
+    }
+
+    // By default, the selector is hidden until it's completely built
+    paginationPageSelector.style.display = 'inline-block';
+  }
 
   return {
     setup: function() {
@@ -465,9 +463,6 @@ var UI = ( function() {
           chrome.runtime.sendMessage({ action: 'authenticate' });
         });
       });
-
-	  build();
-
     },
 
 
@@ -505,7 +500,8 @@ var UI = ( function() {
           const displayOptions = Object.assign( {}, parsedDisplay, actualDisplay );
           browser.storage.local.set({ display: JSON.stringify( displayOptions ) });
 
-          // Updates the UI with the current page number
+          // Updates the UI: page selector with the current page options
+          buildPageSelector( perPage, filteredItems.length );
           updateCurrentPage( pageToDisplay, perPage, filteredItems.length );
 
           // Disables the navigation buttons if need be
@@ -531,6 +527,28 @@ var UI = ( function() {
 
     fadeOutItem: ( itemId ) => {
       document.querySelector( ".item[data-id='" + itemId + "']" ).classList.add( 'disappearing' );
+    },
+
+    // TODO: lots of duplication here. I need to extract all this items logic into
+    //       a dedicated module to avoid repeating the filtering code etc..
+    updatePaginationElements: () => {
+      Settings.init().then( function() {
+        return Settings.get( 'perPage' );
+      }).then( function( perPage ) {
+        browser.storage.local.get( [ 'items', 'display' ], function( { items, display } ) {
+          const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
+          let query           = parsedDisplay.query;
+          let pageToDisplay   = parsedDisplay.currentPage;
+
+          // Parse and filter the item list
+          let parsedItems   = Utility.parseJson( items ) || [];
+          let filteredItems = Items.filter( parsedItems, query );
+
+          updatePaginationButtonsState( pageToDisplay, perPage, filteredItems.length );
+          buildPageSelector( perPage, filteredItems.length );
+          updateCurrentPage( pageToDisplay, perPage, filteredItems.length );
+        });
+      });
     }
   };
 })();
@@ -609,10 +627,13 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'marked-as-read':
       case 'deleted':
         UI.fadeOutItem( eventData.id );
+        // TODO: add new item if pagination is enabled and there are items on next page
+        UI.updatePaginationElements();
         break;
 
       case 'added-item':
         UI.drawList();
+        UI.updatePaginationElements();
         break;
 
       case 'retrieved-items':
