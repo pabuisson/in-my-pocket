@@ -78,9 +78,15 @@ html, body, .authenticated, .authentication {
     }
 
     .favicon {
-      width: 16px;
+      height: 1.3rem;
+      width: 1.3rem;
+      max-height: 16px;
+      max-width: 16px;
       margin-right: 0.5rem;
       vertical-align: middle;
+      position: relative;
+      top: -0.1rem;
+      border-radius: 2px;
     }
 
     .title {
@@ -356,10 +362,13 @@ html, body, .authenticated, .authentication {
     }
   }
 
-  .pagination-current-page {
+  .pagination-page-selector {
+    // On popup opening, the selector is hidden
+    display: none;
+
     flex: initial;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left:  0.5rem;
+    padding-right: 0.5rem;
     text-align: center;
   }
 }
