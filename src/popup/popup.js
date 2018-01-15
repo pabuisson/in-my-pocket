@@ -22,7 +22,8 @@ let filterItemsInput             = document.querySelector( '.filter-items' );
 let placeholderNoResults         = document.querySelector( '.search-no-results' );
 let listComponent                = document.querySelector( '.list-component' );
 let paginationContainer          = document.querySelector( '.pagination' );
-let paginationCurrentPage        = document.querySelector( '.pagination .pagination-current-page' );
+let paginationPageSelector       = document.querySelector( '#pagination-page-selector' );
+let paginationPagesCount         = document.querySelector( '.pagination .pagination-current-page .pagination-pages-count' );
 let paginationPreviousPageButton = document.querySelector( '.pagination .pagination-previous');
 let paginationNextPageButton     = document.querySelector( '.pagination .pagination-next');
 
@@ -106,8 +107,14 @@ function nextPageEventListener() {
   });
 }
 
+function changePageEventListener(event) {
+	let newPage = parseInt(event.target.value);
+	UI.drawList({page: newPage });
+}
+
 paginationPreviousPageButton.addEventListener( 'click', previousPageEventListener );
 paginationNextPageButton.addEventListener( 'click', nextPageEventListener );
+paginationPageSelector.addEventListener( 'change', changePageEventListener );
 
 
 // - - - OTHER MODULES - - -
@@ -335,8 +342,24 @@ var UI = ( function() {
   }
 
   function updateCurrentPage( page, perPage, itemsCount ) {
-    const pagesCount = Math.ceil( itemsCount / perPage ) || 1;
-    paginationCurrentPage.innerText = `${ page } / ${ pagesCount }`;
+	paginationPageSelector.selectedIndex = page - 1;
+	const pagesCount = Math.ceil( itemsCount / perPage ) || 1,
+			currentCount = parseInt(paginationPagesCount.innerText);
+	if(currentCount !== pagesCount){
+		if (currentCount < pagesCount) {
+			for(var i = currentCount + 1; i <= pagesCount; ++i) {
+				let option = document.createElement('option');
+				option.setAttribute('value', i);
+				option.innerText = `${ i }`;
+				paginationPageSelector.appendChild(option);
+			} // for
+		} else {
+			for(var i = currentCount; i > pagesCount; --i) {
+				paginationPageSelector.removeChild(paginationPageSelector.lastChild);
+			} // for
+		} // if
+		paginationPagesCount.innerText = `${ pagesCount }`;
+	} // if
   }
 
   function disablePaginationButton( element, handler ) {
@@ -374,6 +397,25 @@ var UI = ( function() {
       }
     }
   }
+
+	function build() {
+	  Settings.init().then( function() {
+		return Settings.get( 'perPage' );
+	  }).then( function( perPage ) {
+		browser.storage.local.get( [ 'items' ], function( { items } ) {
+			let parsedItems   = Utility.parseJson( items ) || [];
+			let filteredItems = Items.filter(parsedItems, filterItemsInput.value);
+			const pagesCount = Math.ceil( filteredItems.length / perPage ) || 1;
+			for ( var i = 1; i <= pagesCount; ++i ) {
+				let option = document.createElement('option');
+				option.setAttribute('value', i);
+				option.innerText = `${ i }`;
+				paginationPageSelector.appendChild(option);
+			} // for
+			paginationPagesCount.innerText = `${ pagesCount }`;
+		});
+	  });
+	}
 
   return {
     setup: function() {
@@ -423,6 +465,9 @@ var UI = ( function() {
           chrome.runtime.sendMessage({ action: 'authenticate' });
         });
       });
+
+	  build();
+
     },
 
 
