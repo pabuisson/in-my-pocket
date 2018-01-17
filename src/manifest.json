@@ -18,16 +18,20 @@
   },
 
   "permissions": [
+    "<all_urls>",
+    "activeTab",
     "contextMenus",
+    "notifications",
     "storage",
     "tabs",
-    "activeTab",
-    "webRequest",
-    "<all_urls>"
+    "webRequest"
   ],
 
   "background": {
-    "scripts": [ "./background.js" ]
+    "scripts": [
+      "./background.js",
+      "./upgrade.js"
+    ]
   },
 
   "options_ui": {
