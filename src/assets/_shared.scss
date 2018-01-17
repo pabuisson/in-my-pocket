@@ -16,6 +16,8 @@ $ff-grey-80: #2a2a2e;
 $ff-grey-90: #0c0c0d;
 $ff-red-50: #ff0039;
 $ff-yellow-50: #ffe900;
+$ff-green-50: #30e60b;
+$ff-green-60: #12bc00;
 $ff-blue-50: #0a84ff;
 $ff-blue-60: #0060df;
 $ff-blue-70: #003eaa;
@@ -34,7 +36,3 @@ $loader-size: 1.7rem;
   0%    { transform: rotate( 0deg); }
   100%  { transform: rotate(360deg); }
 }
-
-// Shared styles
-
-.hidden { display: none !important; }

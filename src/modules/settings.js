@@ -12,7 +12,7 @@ var Settings = ( function() {
   let defaultSettings = {
     debugMode:      false,
     openInNewTab:   true,
-    perPage:        null,
+    perPage:        '50',
     showBadge:      true,
     showPageAction: true,
     zoomLevel:      '12px'
