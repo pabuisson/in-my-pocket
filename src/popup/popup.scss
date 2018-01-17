@@ -1,5 +1,9 @@
 @import "../assets/shared";
 
+.hidden { display: none !important; }
+
+// -----------
+
 html, body {
   width: 450px;
   min-height: 300px;

@@ -4,6 +4,30 @@ body {
   color: $ff-grey-80;
 }
 
+.hidden {
+  transition: opacity 150ms ease-out;
+  opacity: 0 !important;
+}
+
+.saved-notification {
+  position: absolute;
+  right: 0;
+  top: 1rem;
+
+  width: 100px;
+  padding: 4px;
+
+  color: $ff-green-60;
+  font-weight: bold;
+  text-align: center;
+
+  border: 2px solid $ff-green-60;
+  border-radius: 2px;
+
+  opacity: 1;
+  transition: opacity 400ms ease-out;
+}
+
 h2 {
   font-weight: normal;
 }

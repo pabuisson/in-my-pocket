@@ -20,9 +20,26 @@ let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
 let paginationPerPageSelector = document.querySelector( '.pagination-per-page' );
 let zoomLevelSelector         = document.querySelector( '.zoom-level' );
 
+let savedNotificationElement = document.querySelector( '.saved-notification' );
+
 
 
 var UI = ( function() {
+  let savedNotificationTimerId = null;
+
+  function flashSavedNotification() {
+    savedNotificationElement.classList.remove('hidden');
+
+    if( savedNotificationTimerId ) {
+      clearTimeout( savedNotificationTimerId );
+    }
+
+    savedNotificationTimerId = setTimeout( () => {
+      savedNotificationElement.classList.add('hidden');
+    }, 3000 );
+  }
+
+
   return {
     setup: function() {
       // If user is not connected, we hide the "disconnect" link
@@ -47,12 +64,14 @@ var UI = ( function() {
         Settings.set( 'showBadge', this.checked );
         Settings.save();
         Badge.updateCount();
+        flashSavedNotification();
       });
 
       // Event: "Display add-to-pocket icon in address bar" checkbox
       displayPageActionCheckbox.addEventListener( 'change', function() {
         Settings.set( 'showPageAction', this.checked );
         Settings.save();
+        flashSavedNotification();
 
         if( this.checked ) {
           PageAction.redrawAllTabs();
@@ -65,12 +84,14 @@ var UI = ( function() {
       openInNewTabCheckbox.addEventListener( 'change', function() {
         Settings.set( 'openInNewTab', this.checked );
         Settings.save();
+        flashSavedNotification();
       });
 
       // Event: "Enable debug mode" checkbox
       enableDebugModeCheckbox.addEventListener( 'change', function() {
         Settings.set( 'debugMode', this.checked );
         Settings.save();
+        flashSavedNotification();
       });
 
       paginationPerPageSelector.addEventListener( 'change', function() {
@@ -81,12 +102,15 @@ var UI = ( function() {
         // since we just reset it)
         const displayOptions = { currentPage: 1, displayedAt: null };
         browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
+
+        flashSavedNotification();
       });
 
       // Event: "Zoom level" selector
       zoomLevelSelector.addEventListener( 'change', function() {
         Settings.set( 'zoomLevel', this.value );
         Settings.save();
+        flashSavedNotification();
       });
 
       // Event : "Disconnect" from the Pocket account click
