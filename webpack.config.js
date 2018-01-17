@@ -8,7 +8,8 @@ module.exports = {
   entry: {
     'popup/popup'     : './popup/popup.js',      // will be  ./build/popup/popup.js,
     'options/options' : './options/options.js',  // will be  ./build/options/options.js
-    'background'      : './background.js'        // will be  ./build/background.js
+    'background'      : './background.js',       // will be  ./build/background.js
+    'upgrade'         : './upgrade.js'           // will be  ./build/upgrade.js
   },
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -42,5 +43,5 @@ module.exports = {
       { from: 'manifest.json', to: 'manifest.json' }
     ])
   ]
-}
+};
 
