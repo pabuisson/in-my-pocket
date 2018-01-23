@@ -14,5 +14,12 @@ const PocketNotice = {
 
 const consumerKey = '58817-addc87503598b7ed29e5bf72';
 
-export { PocketError, PocketNotice, consumerKey };
+// https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+const MouseButtons = {
+  LEFT:   0,
+  MIDDLE: 1,
+  RIGHT:  2
+};
+
+export { PocketError, PocketNotice, MouseButtons, consumerKey };
 
