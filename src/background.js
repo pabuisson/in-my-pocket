@@ -1,6 +1,6 @@
 "use strict";
 
-import { Request, RequestBuilder } from './modules/request_builder.js';
+import Request from './modules/request_builder.js';
 import Logger from './modules/logger.js';
 import Settings from './modules/settings.js';
 import Badge from './modules/badge.js';
@@ -8,83 +8,11 @@ import ContextMenu from './modules/context_menu.js';
 import Authentication from './modules/authentication.js';
 import Items from './modules/items.js';
 import PageAction from './modules/page_action.js';
-import { PocketNotice } from './modules/constants.js';
+import { consumerKey, PocketNotice } from './modules/constants.js';
 import Utility from './modules/utility.js';
 
+
 // - - -- - -- - -- - -- - -- - -- - -- - ---
-
-const consumerKey = '58817-addc87503598b7ed29e5bf72';
-
-
-// - - - AUTHENTICATION
-
-// TODO: Move to the Authentication module
-// TODO: After the opening of the callback tab, reactivate the tab where the
-//      user was before for a less disturbing behaviour
-var AuthenticationProcess = ( function() {
-  // TODO: Avoid the loading of a given page (redirectIntermediate variable)
-  //       Replace by an "internal" page with its own JS
-  const redirectIntermediate = 'https://oauth.pabuisson.com';
-  const redirectAuthFinished = 'https://oauth.pabuisson.com';
-
-  function tabCallback( tabId, changeInfo, updatedTab ) {
-    // callback url has been loaded
-    if (changeInfo.status == 'complete' && updatedTab.url.indexOf(redirectIntermediate) === 0) {
-      browser.tabs.remove( tabId );
-
-      browser.storage.local.get( 'requestToken', function( { requestToken } ) {
-        let requestParams = {
-          consumer_key: consumerKey,
-          code: requestToken
-        };
-
-        new Request( 'POST', 'https://getpocket.com/v3/oauth/authorize', requestParams )
-          .fetch()
-          .then( function( response ) {
-            const username = response.username;
-            const access_token = response.access_token;
-
-            // Store the access_token in local storage
-            browser.storage.local.set({ access_token: access_token });
-            browser.storage.local.set({ username: username });
-
-            // Send a message back to the UI
-            chrome.runtime.sendMessage({ action: 'authenticated' });
-
-            // Retrieve the items and update the badge count
-            retrieveItems( true );
-
-            // Create right click context menus
-            ContextMenu.createEntries();
-          });
-      });
-    }
-  }
-
-  return {
-    authenticate: function() {
-      let requestParams = {
-        consumer_key: consumerKey,
-        redirect_uri: redirectAuthFinished
-      };
-
-      new Request( 'POST', 'https://getpocket.com/v3/oauth/request', requestParams )
-        .fetch()
-        .then( function( response ) {
-          const requestToken = response.code;
-
-          browser.storage.local.set({ requestToken: requestToken });
-
-          const authorizeUrl = "https://getpocket.com/auth/authorize?request_token=" + requestToken + "&redirect_uri=" + redirectIntermediate;
-          browser.tabs.create({ 'url': authorizeUrl }, function( tab ) {
-            browser.tabs.onUpdated.addListener( tabCallback );
-          });
-        });
-    }
-  };
-})();
-
-
 
 // - - - API ACCESS : LIST MANAGEMENT - - -
 
@@ -480,6 +408,7 @@ function openItem( { url, openInNewTab } ) {
 
 
 // - - - FEATURE : CONTEXT MENU - - -
+// TODO: extract to dedicated background script
 
 browser.contextMenus.onClicked.addListener( function( link, tab ) {
   switch( link.menuItemId )
@@ -516,6 +445,7 @@ browser.contextMenus.onClicked.addListener( function( link, tab ) {
 
 
 // - - - FEATURE : PAGE ACTION - - -
+// TODO: extract to dedicated background script
 
 browser.pageAction.onClicked.addListener( function( tab ) {
   PageAction.toggle( tab, markAsRead, addItem );
@@ -524,7 +454,7 @@ browser.pageAction.onClicked.addListener( function( tab ) {
 
 // - - - HANDLE CONTEXT MENUS AND PAGE ACTION UPDATES - - -
 // - - - On navigation, and on tab switch             - - -
-
+// TODO: extract to dedicated background script
 
 // 1. When current tab url is changing
 browser.tabs.onUpdated.addListener( function( tabId, changeInfo ) {
@@ -595,7 +525,14 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
   Logger.log( `(background.onMessage) eventData.action: ${eventData.action}` );
   switch( eventData.action ) {
     case 'authenticate':
-      AuthenticationProcess.authenticate();
+      Authentication.authenticate().then( () => {
+        // Send a message back to the UI
+        chrome.runtime.sendMessage({ action: 'authenticated' });
+        // Retrieve the items and update the badge count
+        retrieveItems( true );
+        // Create right click context menus
+        ContextMenu.createEntries();
+      });
       break;
     case 'retrieve-items':
       retrieveItems( eventData.force );
@@ -625,6 +562,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
 
 
 // - - - KEYBOARD SHORTCUTS - - -
+// TODO: extract to dedicated background script
 
 browser.commands.onCommand.addListener( (command) => {
   if ( command === "toggle-page-status" ) {
