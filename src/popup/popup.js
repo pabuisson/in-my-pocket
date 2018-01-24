@@ -8,7 +8,7 @@ import Badge from '../modules/badge.js';
 import Authentication from '../modules/authentication.js';
 import Settings from '../modules/settings.js';
 import Items from '../modules/items.js';
-import { PocketError, PocketNotice } from '../modules/constants.js';
+import { PocketError, PocketNotice, MouseButtons } from '../modules/constants.js';
 import Utility from '../modules/utility.js';
 
 
@@ -28,7 +28,7 @@ let paginationNextPageButton     = document.querySelector( '.pagination-next');
 
 // prevent general.autoScroll
 document.body.onmousedown = ( e ) => {
-  if (e.button === 1 )
+  if (e.button === MouseButtons.MIDDLE )
     return false;
 };
 
@@ -244,22 +244,29 @@ var DomBuilder = ( function() {
 
     liElement.dataset.id = item.id;
 
-    titleContent.addEventListener( 'click',   () => { openLink( item.resolved_url ); });
-    titleContent.addEventListener( 'mouseup', ( event ) => {
+    let itemClickEventHandler = ( event ) => {
+      event.preventDefault();
       const openInNewTab = true;
-      if( event.button == 1 ) {
-        event.preventDefault();
-        openLink( item.resolved_url, openInNewTab );
+
+      switch( event.button ) {
+        case MouseButtons.MIDDLE:
+          Logger.log('(itemClickEventHandler) Middle-click, force opening in new tab');
+          openLink( item.resolved_url, openInNewTab );
+          break;
+        case MouseButtons.LEFT:
+          if( event.ctrlKey || event.metaKey ) {
+            Logger.log(`(itemClickEventHandler) Left-click + ctrlKey:${ event.ctrlKey } / metaKey:${ event.metaKey }, force opening in new tab`);
+            openLink( item.resolved_url, openInNewTab );
+          } else {
+            Logger.log('(itemClickEventHandler) Left-click no modifier key, will open based on openInNewTab setting');
+            openLink( item.resolved_url );
+          }
+          break;
       }
-    });
-    urlContent.addEventListener( 'click',    () => { openLink( item.resolved_url ); });
-    urlContent.addEventListener( 'mouseup', ( event ) => {
-      const openInNewTab = true;
-      if( event.button == 1 ) {
-        event.preventDefault();
-        openLink( item.resolved_url, openInNewTab );
-      }
-    });
+    };
+
+    titleContent.addEventListener( 'mouseup', itemClickEventHandler );
+    urlContent.addEventListener(   'mouseup',itemClickEventHandler );
 
     return liElement;
   }
