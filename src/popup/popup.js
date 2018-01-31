@@ -313,6 +313,24 @@ var DomBuilder = ( function() {
       // Build the dom
       Logger.log('(DomBuilder.buildAll) Request a 1st animation frame for buildBatch method');
       requestAnimationFrame( buildBatch );
+    },
+
+    appendItem: function( itemToAppend ) {
+      Logger.log(`(DomBuilder.appendItem) ${ itemToAppend.resolved_title }`);
+      itemsContainer.appendChild( buildItemElement( itemToAppend ));
+    },
+
+    getVisibleItems: function() {
+      const visibleItems = itemsContainer.querySelectorAll('.item:not(.disappearing)');
+      const visibleItemsIds = [];
+
+      Logger.log('(DomBuilder.getVisibleItems) ${ visibleItems.length } visible items');
+
+      for( let i = 0; i < visibleItems.length; i++ ) {
+        visibleItemsIds.push( visibleItems[ i ].dataset.id );
+      }
+
+      return visibleItemsIds;
     }
   };
 })();
@@ -474,6 +492,7 @@ var UI = ( function() {
 
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth
+    // TODO: almost all logic duplicated with updateList
     drawList: function( opts = {} ) {
       Settings.init().then( function() {
         return Settings.get( 'perPage' );
@@ -518,6 +537,58 @@ var UI = ( function() {
       return;
     },
 
+
+    // TODO: almost all logic duplicated with drawList
+    updateList: function( opts = {} ) {
+      Settings.init().then( function() {
+        return Settings.get( 'perPage' );
+      }).then( function( perPage ) {
+        // If there's no pagination enabled, we don't need to do any of this
+        if( !perPage ) {
+          Logger.log('(UI.updateList) pagination disabled, no need to run this piece of logic');
+          return;
+        }
+
+        Logger.log('(UI.updateList) pagination enabled, will update the display');
+        browser.storage.local.get( [ 'items', 'display' ], function( { items, display } ) {
+          const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
+          let query           = opts.query || parsedDisplay.query;
+          let pageToDisplay   = opts.page  || parsedDisplay.currentPage;
+
+          // Parse and filter the item list
+          let parsedItems   = Utility.parseJson( items ) || [];
+          let filteredItems = Items.filter( parsedItems, query );
+          let itemsToRender = Items.paginate( filteredItems, pageToDisplay, perPage );
+
+          // If search enabled && no more items to render, display the "no results" message
+          if( query && itemsToRender.length == 0 ) {
+            listComponent.classList.add( 'hidden' );
+            placeholderNoResults.classList.remove( 'hidden' );
+          }
+
+          // If there are missing items, they must necessarily be inserted at the end of the list
+          // It's the only current scenario for this method
+          let currentVisibleItemsIds = DomBuilder.getVisibleItems();
+
+          // If item that should be visible can't be found, we append it at the end of the list
+          for( let item of itemsToRender ) {
+            if( currentVisibleItemsIds.indexOf( item.id ) < 0 ) {
+              Logger.log(`(UI.updateList) missing item ${ item.id } / ${ item.resolved_title }`);
+              DomBuilder.appendItem( item );
+            }
+          }
+
+          // Updates the UI: page selector with the current page options
+          buildPageSelector( perPage, filteredItems.length );
+          updateCurrentPage( pageToDisplay, perPage, filteredItems.length );
+
+          // Disables the navigation buttons if need be
+          updatePaginationButtonsState( pageToDisplay, perPage, filteredItems.length );
+        });
+      });
+
+      return;
+    },
 
     markAsRead: ( itemId ) => {
       document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .tick"   ).classList.add(    'hidden' );
@@ -633,8 +704,7 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'marked-as-read':
       case 'deleted':
         UI.fadeOutItem( eventData.id );
-        // TODO: add new item if pagination is enabled and there are items on next page
-        UI.updatePaginationElements();
+        UI.updateList();
         break;
 
       case 'added-item':

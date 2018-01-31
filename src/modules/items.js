@@ -8,6 +8,8 @@ var Items = ( function() {
     const lowerTitle   = ( item.resolved_title || '' ).toLowerCase();
     const lowerUrl     = ( item.resolved_url   || '' ).toLowerCase();
 
+    // TODO: do not search on the protocol
+
     return lowerTitle.includes( lowerQuery ) || lowerUrl.includes( lowerQuery );
   }
 
