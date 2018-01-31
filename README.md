@@ -19,7 +19,7 @@ If you want to, `eslint` is configured and can help you in the development proce
 
 ## Contribute
 
-Before submitting a pull request, please always make sure that it starts from the latest `origin/master` available (if you've fetched the project long ago, you might not have the latest version). If it's not the case, please do not forget to rebase your branch on `master` first.
+Before submitting a pull request, please always make sure that it starts from the latest `origin/master` available (if you've fetched the project long ago, you might not have the latest version). If it's not the case, please do not forget to rebase your branch on `origin/master` first (you'll need to merge `origin/master` in your own `master` branch).
 
 
 ## Thanks
@@ -31,4 +31,4 @@ Special thanks to the developers who helped me and contributed to the project:
 * [adambro](https://bitbucket.org/adambro/)
 * [eight04](https://bitbucket.org/eight04/)
 * [bobi32](https://bitbucket.org/bobi32/)
-
+* [kEINnAMER](https://bitbucket.org/kEINnAMER/)

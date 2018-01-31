@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.8.0 - January 2018
+
+* FEATURE: here they are: favicons! The item list now displays the website favicon on the left. It makes items much easier to recognize and the list easier to scan ([contribution from Pavel Gavlík](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/71/feature-add-page-favicon-to-popup/diff), thank you so much for your help!).
+* FEATURE: from now on, you'll notice a tiny notification when you update InMyPocket. This will make it much easier for me to notify you of new features, so that you don't miss important stuff.
+* UPDATE: pagination gets a little easier with a page selector instead of just next/previous links. Say you have 25 page and need to go to page 14? That's not a problem anymore thanks to [this new contribution from bobi32](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/78/feature-pagination-pages-selectable-within/diff).
+* UPDATE: pagination also gets more clever. Now, when you remove an item from the current page and there are other items on the next page, then the next items is added at the bottom of the page. No more ever-shrinking page!
+* UPDATE: settings interface now has an indicator displayed everytime a setting is changed and saved. It was not so obvious before.
+* UPDATE: ctrl-click behaviour has been refined. If you ctrl-click a link, it will always open in a new tab, no matter which setting you have for "open link in a new tab". This setting is still in use if you left-click your items though.
+* FIX/SETTINGS: pagination was disabled by default, which led to issue on 1st install for users with lots of items. From now on, default for new installs will be "paginate with 50 items per page".
+
+
 ## 0.7.2 - January 2018
 
 * FIX: on popup opening, if popup has not been opened for more than 5 minutes, the filter is reset and the whole list of items is displayed. But in the user interface, the previous value of the filter was still displayed, with an unfiltered list of items, which was both unexpected and weird.
