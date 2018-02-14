@@ -1,3 +1,5 @@
-web-ext-artifacts/
-node_modules/
 build/
+coverage/
+node_modules/
+web-ext-artifacts/
+.nyc_output/

@@ -2,7 +2,6 @@
 
 import Logger from './logger.js';
 import { PocketError } from './constants.js';
-import Utility from './utility.js';
 
 // -----------------------------------
 
@@ -73,7 +72,7 @@ class Request {
                 Logger.error( response.status + ' ERROR');
                 errorObject.error = PocketError.GENERIC;
                 break;
-            };
+            }
 
             // Instead of just logging, send an event back to the UI
             // TODO: since I have the error object returned in the promise,
@@ -81,7 +80,7 @@ class Request {
             chrome.runtime.sendMessage( errorObject );
             reject( errorObject );
           }
-        }).catch( error => {
+        }).catch( () => {
           // TODO: Extract this to a separate method, to avoid this long method
           Logger.error('(Request.fetch) error while reaching the server');
 
