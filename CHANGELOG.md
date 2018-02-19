@@ -1,5 +1,10 @@
 # Changelog
 
+
+## 0.8.1 - February 2018
+
+* FIX: it was not possible anymore to right-click a link and "add it to pocket" if current page was already in the pocket list. This is now fixed!
+
 ## 0.8.0 - January 2018
 
 * FEATURE: here they are: favicons! The item list now displays the website favicon on the left. It makes items much easier to recognize and the list easier to scan ([contribution from Pavel Gavlík](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/71/feature-add-page-favicon-to-popup/diff), thank you so much for your help!).
