@@ -54,12 +54,12 @@ var ContextMenu = ( function() {
     setState: function( state ) {
       switch( state ) {
         case ContextMenu.pageAlreadyInPocket:
-          disable( ContextMenu.addId );
+          enable( ContextMenu.addId );    // always enabled, for click on link to remain possible
           enable( ContextMenu.archiveId );
           enable( ContextMenu.deleteId );
           break;
         case ContextMenu.pageNotInPocket:
-          enable( ContextMenu.addId );
+          enable( ContextMenu.addId );    // always enabled
           disable( ContextMenu.archiveId );
           disable( ContextMenu.deleteId );
           break;
@@ -75,7 +75,7 @@ var ContextMenu = ( function() {
         }
       });
     }
-  }
+  };
 })();
 
 
