@@ -37,6 +37,14 @@ var Utility = ( function() {
       }
 
       return parsedResponse;
+    },
+
+    isMajorOrMinorUpdate: ( previousVersion ) => {
+      const currentVersion = chrome.runtime.getManifest().version;
+      const currentMinor   = currentVersion.split('.').slice( 0, 2 ).join('');
+      const previousMinor  = previousVersion.split('.').slice( 0, 2 ).join('');
+
+      return currentMinor != previousMinor;
     }
   };
 })();

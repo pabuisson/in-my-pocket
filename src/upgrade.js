@@ -1,14 +1,23 @@
 "use strict";
 
 import Logger from './modules/logger.js';
+import Utility from './modules/utility.js';
 
-let upgradeNotificationId = '0001';
+const upgradeNotificationId = '0001';
+
+
+function mustShowUpdateNotification( details ) {
+  const isUpdate = ( details.reason == 'update' );
+  const isMajorOrMinorUpdate = Utility.isMajorOrMinorUpdate( details.previousVersion );
+
+  return isUpdate && isMajorOrMinorUpdate;
+}
 
 chrome.runtime.onInstalled.addListener( (details) => {
   if( details.reason == "install" ) {
     // TODO: maybe propose some tips, or send user to a FAQ or any kind of post-install page
     Logger.log("Fresh install! Welcome on board :)");
-  } else if( details.reason == "update" ) {
+  } else if( mustShowUpdateNotification() ) {
     Logger.log("IMP has been upgraded from " + details.previousVersion + " !");
     browser.notifications.create( upgradeNotificationId, {
       type: 'basic',
