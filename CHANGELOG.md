@@ -1,9 +1,10 @@
 # Changelog
 
-
 ## 0.8.1 - February 2018
 
 * FIX: it was not possible anymore to right-click a link and "add it to pocket" if current page was already in the pocket list. This is now fixed!
+* FIX: on update, only show notifications for major upgrades (from 0.x.x to 1.x.x) or minor upgrade (from 0.8.x to 0.9.x).
+
 
 ## 0.8.0 - January 2018
 
