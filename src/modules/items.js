@@ -4,7 +4,7 @@ import Logger from './logger.js';
 
 var Items = ( function() {
   function matchQuery( item, query ) {
-    const lowerQuery = query.toLowerCase()
+    const lowerQuery = query.toLowerCase();
     const lowerTitle   = ( item.resolved_title || '' ).toLowerCase();
     const lowerUrl     = ( item.resolved_url   || '' ).toLowerCase();
 

@@ -6,15 +6,22 @@
     "babel-core": "6.24.0",
     "babel-loader": "6.4.1",
     "babel-preset-es2015": "6.24.0",
+    "chai": "^4.1.2",
     "copy-webpack-plugin": "4.0.1",
+    "cross-env": "^5.1.3",
     "css-loader": "0.27.3",
     "extract-text-webpack-plugin": "2.1.0",
     "file-loader": "0.10.1",
+    "istanbul-instrumenter-loader": "^3.0.0",
+    "mocha": "^5.0.1",
+    "mocha-webpack": "^1.0.1",
     "node-sass": "4.5.1",
+    "nyc": "^11.4.1",
     "sass-loader": "6.0.3",
     "style-loader": "0.16.0",
     "web-ext": "1.10.0",
-    "webpack": "2.3.1"
+    "webpack": "2.3.1",
+    "webpack-node-externals": "^1.6.0"
   },
   "scripts": {
     "clean": "rm -rf build/*",
@@ -22,8 +29,10 @@
     "watch": "npm run clean && ./node_modules/.bin/webpack -w",
     "zip-source": "zip -r web-ext-artifacts/source.zip CHANGELOG.md README.md package.json webpack.config.js src/",
     "build-ext": "npm run build && web-ext build --source-dir=build/ --overwrite-dest && npm run zip-source",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "web-ext run -s build"
+    "start": "web-ext run -s build",
+    "test": "mocha-webpack --webpack-config webpack.config-test.js ./test/**/*.js",
+    "test-watch": "mocha-webpack --watch --webpack-config webpack.config-test.js ./test/**/*.js",
+    "cover": "cross-env NODE_ENV=coverage nyc --reporter=lcov --reporter=text npm test"
   },
   "repository": {
     "type": "git",
@@ -38,5 +47,12 @@
   "homepage": "https://bitbucket.org/pabuisson/in-my-pocket#readme",
   "dependencies": {
     "npm": "^5.6.0"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "instrument": false,
+    "sourceMap": false
   }
 }

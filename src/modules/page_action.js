@@ -103,7 +103,7 @@ var PageAction = ( function() {
         });
       });
     }
-  }
+  };
 })();
 
 
