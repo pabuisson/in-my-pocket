@@ -503,8 +503,8 @@ var UI = ( function() {
           let pageToDisplay   = opts.page  || parsedDisplay.currentPage;
 
           // Parse and filter the item list
-          let parsedItems   = Utility.parseJson( items ) || [];
-          let filteredItems = Items.filter( parsedItems, query );
+          // let parsedItems   = Utility.parseJson( items ) || [];
+          let filteredItems = Items.filter( items, query );
           let itemsToRender = Items.paginate( filteredItems, pageToDisplay, perPage );
 
           // Display the "no results" message or hide it
@@ -556,8 +556,8 @@ var UI = ( function() {
           let pageToDisplay   = opts.page  || parsedDisplay.currentPage;
 
           // Parse and filter the item list
-          let parsedItems   = Utility.parseJson( items ) || [];
-          let filteredItems = Items.filter( parsedItems, query );
+          // let parsedItems   = Utility.parseJson( items ) || [];
+          let filteredItems = Items.filter( items, query );
           let itemsToRender = Items.paginate( filteredItems, pageToDisplay, perPage );
 
           // If search enabled && no more items to render, display the "no results" message
@@ -618,8 +618,8 @@ var UI = ( function() {
           let pageToDisplay   = parsedDisplay.currentPage;
 
           // Parse and filter the item list
-          let parsedItems   = Utility.parseJson( items ) || [];
-          let filteredItems = Items.filter( parsedItems, query );
+          // let parsedItems   = Utility.parseJson( items ) || [];
+          let filteredItems = Items.filter( items, query );
 
           updatePaginationButtonsState( pageToDisplay, perPage, filteredItems.length );
           buildPageSelector( perPage, filteredItems.length );

@@ -1,7 +1,7 @@
 "use strict";
 
 import Logger from './logger.js';
-import Request from './request_builder.js';
+import Request from './request.js';
 import { consumerKey } from './constants.js';
 
 
@@ -51,7 +51,7 @@ var Authentication = ( function() {
         new Request( 'POST', 'https://getpocket.com/v3/oauth/request', requestParams )
           .fetch()
           .then( ( response ) => {
-            Logger.log('(Authentication.authenticate) Got the requestToken, open an authorize tab')
+            Logger.log('(Authentication.authenticate) Got the requestToken, open an authorize tab');
             const requestToken = response.code;
 
             const authorizeUrl = "https://getpocket.com/auth/authorize?request_token=" + requestToken + "&redirect_uri=" + redirectIntermediate;
@@ -92,12 +92,5 @@ var Authentication = ( function() {
     }
   }
 })();
-
-
-
-
-var AuthenticationProcess = ( function() {
-})();
-
 
 export default Authentication;

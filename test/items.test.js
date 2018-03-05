@@ -3,25 +3,25 @@ import Items from '../src/modules/items.js';
 describe( 'Items.filter', () => {
   const matchingItem = { resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
   const otherItem = { resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
-  const items = [ matchingItem, otherItem ];
+  const items = JSON.stringify([ matchingItem, otherItem ]);
 
   it( 'returns all items if query is empty', () => {
-    expect( Items.filter( items, '' ).length ).to.equal( items.length );
+    expect( Items.filter( items, '' ).length ).to.equal( 2 );
   });
 
   it( 'returns all items if query is undefined', () => {
-    expect( Items.filter( items, undefined ).length ).to.equal( items.length );
+    expect( Items.filter( items, undefined ).length ).to.equal( 2 );
   });
 
   it( 'returns all items if query is null', () => {
-    expect( Items.filter( items, null ).length ).to.equal( items.length );
+    expect( Items.filter( items, null ).length ).to.equal( 2 );
   });
 
   context( 'query on title', () => {
     context( 'with same case', () => {
       it( 'returns matching items', () => {
         const query = matchingItem.resolved_title;
-        expect( Items.filter( items, query ) ).to.include( matchingItem );
+        expect( Items.filter( items, query ) ).to.deep.include( matchingItem );
       });
 
       it( 'filters out non-matching items', () => {
@@ -33,7 +33,7 @@ describe( 'Items.filter', () => {
     context( 'with different case', () => {
       it( 'returns matching items', () => {
         const query = matchingItem.resolved_title.toUpperCase();
-        expect( Items.filter( items, query ) ).to.include( matchingItem );
+        expect( Items.filter( items, query ) ).to.deep.include( matchingItem );
       });
 
       it( 'does not return non-matching items', () => {
@@ -48,7 +48,7 @@ describe( 'Items.filter', () => {
     context( 'with same case', () => {
       it( 'returns matching items', () => {
         const query = matchingItem.resolved_url;
-        expect( Items.filter( items, query ) ).to.include( matchingItem );
+        expect( Items.filter( items, query ) ).to.deep.include( matchingItem );
       });
 
       it( 'does not return non-matching items', () => {
@@ -157,6 +157,86 @@ describe( 'Items.paginate', () => {
         expect( paginatedItems ).not.to.include( item_3 );
         expect( paginatedItems ).not.to.include( item_2 );
       });
+    });
+  });
+});
+
+
+describe( 'Items.contains', () => {
+  const matchingItem = { resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
+  const otherItem = { resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
+  const items = JSON.stringify([ matchingItem, otherItem ]);
+
+  context('invalid searchedItem', () => {
+    it( 'no item given returns false', () => {
+      expect( Items.contains( items ) ).to.equal( false );
+    });
+
+    it( 'empty item given returns false', () => {
+      const searchFor = {};
+      expect( Items.contains( items, searchFor ) ).to.equal( false );
+    });
+
+    it( 'empty item given returns false', () => {
+      const searchFor = { field: 'blah' };
+      expect( Items.contains( items, searchFor ) ).to.equal( false );
+    });
+  });
+
+  context('valid searchItem', () => {
+    it( 'matches nothing returns false', () => {
+      const searchFor = { url: 'www.a-url-that-doesnt-match.com' };
+      expect( Items.contains( items, searchFor ) ).to.equal( false );
+    });
+
+    it( 'partially matches one item returns false', () => {
+      const searchFor = { url: 'quelque' };
+      expect( Items.contains( items, searchFor ) ).to.equal( false );
+    });
+
+    it( 'exactly matches one item returns true', () => {
+      const searchFor = { url: matchingItem.resolved_url };
+      expect( Items.contains( items, searchFor ) ).to.equal( true );
+    });
+  });
+});
+
+describe( 'Items.find', () => {
+  const matchingItem = { resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
+  const otherItem = { resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
+  const items = JSON.stringify([ matchingItem, otherItem ]);
+
+  context('invalid searchedItem', () => {
+    it( 'no item given is falsy', () => {
+      expect( Items.find( items ) ).to.be.not.ok;
+    });
+
+    it( 'empty item given is falsy', () => {
+      const searchFor = {};
+      expect( Items.find( items, searchFor ) ).to.be.not.ok;
+    });
+
+    it( 'empty item given is falsy', () => {
+      const searchFor = { field: 'blah' };
+      expect( Items.find( items, searchFor ) ).to.be.not.ok;
+    });
+  });
+
+  context('valid searchItem', () => {
+    it( 'matches nothing is falsy', () => {
+      const searchFor = { url: 'www.a-url-that-doesnt-match.com' };
+      expect( Items.find( items, searchFor ) ).to.be.not.ok;
+    });
+
+    it( 'partially matches one item is falsy', () => {
+      const searchFor = { url: 'quelque' };
+      expect( Items.find( items, searchFor ) ).to.be.not.ok;
+    });
+
+    it( 'exactly matches one item returns the item', () => {
+      const searchFor = { url: matchingItem.resolved_url };
+      // NOTE: deep matching
+      expect( Items.find( items, searchFor ) ).to.eql( matchingItem );
     });
   });
 });

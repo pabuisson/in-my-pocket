@@ -9,7 +9,9 @@ module.exports = {
     'popup/popup'     : './popup/popup.js',      // will be  ./build/popup/popup.js,
     'options/options' : './options/options.js',  // will be  ./build/options/options.js
     'background'      : './background.js',       // will be  ./build/background.js
-    'upgrade'         : './upgrade.js'           // will be  ./build/upgrade.js
+    'upgrade'         : './upgrade.js',          // will be  ./build/upgrade.js
+    'keyboard'        : './keyboard.js',         // will be  ./build/keyboard.js
+    'context_menus_page_actions' : './context_menus_page_actions.js'  // will be  ./build/context_menus_page_actions.js
   },
   output: {
     path: path.resolve(__dirname, 'build'),
