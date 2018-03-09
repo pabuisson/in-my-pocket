@@ -47,7 +47,7 @@ var Items = ( function() {
         return sortedItems.slice( fromIndex, toIndex + 1 );
       }
     }
-  }
+  };
 })();
 
 export default Items;
