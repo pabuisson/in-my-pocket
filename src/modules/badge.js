@@ -8,8 +8,8 @@ import Utility from './utility.js';
 
 
 var Badge = ( function() {
-  let defaultBackgroundColor = '#444';
-  let successBackgroundColor = '#50bcb6';
+  let defaultBackgroundColor = '#333';
+  let successBackgroundColor = '#12bc00'; // ff-green-60
 
   function itemsNumbers( items ) {
     if( items && Object.keys( items ).length > 0 ) {

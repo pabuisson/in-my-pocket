@@ -231,7 +231,8 @@ html, body, .authenticated, .authentication {
   height: 2.8rem;
   padding: 0.5rem 0;
 
-  background-color: $pocket-aqua;
+  background-color: $ff-ink-90;
+  background-color: $my-dark-blue;
 
   .icon {
     flex: initial;
@@ -293,7 +294,7 @@ html, body, .authenticated, .authentication {
     position: absolute;
     display: block;
     height: 100%;
-    background-color: $pocket-red;
+    background-color: $pocket-aqua;
     left: 0%;
     right: 100%;
 
