@@ -21,15 +21,15 @@ var Logger = ( function() {
 
   return {
     log: function( message ) {
-      isLoggingEnabled().then( function(isEnabled) {
+      isLoggingEnabled().then( () => {
         console.log( prefix + message );
       }).catch( function() {
         // Debug mode is disabled
         // 'catch' needed to avoid throwing error because of unhandled rejected promise
-      })
+      });
     },
     warn: function( message ) {
-      isLoggingEnabled().then( function() {
+      isLoggingEnabled().then( () => {
         console.warn( prefix + message );
       }).catch( function() {
         // Debug mode is disabled

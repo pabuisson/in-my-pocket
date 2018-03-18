@@ -30,7 +30,9 @@
   "background": {
     "scripts": [
       "./background.js",
-      "./upgrade.js"
+      "./upgrade.js",
+      "./context_menus_page_actions.js",
+      "./keyboard.js"
     ]
   },
 

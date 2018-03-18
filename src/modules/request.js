@@ -3,7 +3,9 @@
 import Logger from './logger.js';
 import { PocketError } from './constants.js';
 
+
 // -----------------------------------
+
 
 class Request {
   constructor( action, url, params ) {
@@ -17,7 +19,6 @@ class Request {
   }
 
   fetch() {
-    // TODO: extract to a dedicated class/module
     let errorObject = {
       httpCode: undefined,
       error:    undefined,
@@ -36,12 +37,11 @@ class Request {
           if( response.ok ) {
             let data = response.json();
 
-            Logger.log( 'response OK, received data : ');
+            Logger.log( 'Response OK, received data : ');
             Logger.log( data );
             resolve( data );
-
           } else {
-            Logger.error( 'response is wrong');
+            Logger.error( 'Response not OK, something went wrong');
             errorObject.httpCode = response.status;
 
             switch( response.status ) {

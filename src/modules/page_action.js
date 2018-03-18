@@ -2,7 +2,7 @@
 
 import Logger from './logger.js';
 import Settings from './settings.js';
-import Utility from './utility.js';
+import Items from './items.js';
 
 
 // -------------------------------------
@@ -29,8 +29,8 @@ var PageAction = ( function() {
     redraw: function( tabId, url ) {
       mustDisplayPageAction().then( () => {
         browser.storage.local.get( "items" ).then( function({ items }) {
-          const parsedItems  = Utility.parseJson( items ) || [];
-          const containsItem = parsedItems.some( i => i.resolved_url == url );
+          // const parsedItems  = Utility.parseJson( items ) || [];
+          const containsItem = Items.contains( items, { url: url });
 
           if( containsItem ) {
             PageAction.drawEnabled( tabId );
@@ -87,18 +87,16 @@ var PageAction = ( function() {
       });
     },
 
-    // TODO: Instead of using callbacks, puts those markAsRead/addItem method in their own
-    //       module, and call this module from here
-    toggle: function( tab, markAsRead, addItem ) {
+    toggle: function( tab ) {
       mustDisplayPageAction().then( () => {
         browser.storage.local.get( "items" ).then( function({ items }) {
-          const parsedItems  = Utility.parseJson( items ) || [];
-          const matchingItem = parsedItems.find( i => i.resolved_url == tab.url );
+          // const parsedItems  = Utility.parseJson( items ) || [];
+          const matchingItem = Items.find( items, { url: tab.url });
 
           if( matchingItem ) {
-            markAsRead( matchingItem.id );
+            Items.markAsRead( matchingItem.id );
           } else {
-            addItem( tab.url, tab.title );
+            Items.addItem( tab.url, tab.title );
           }
         });
       });

@@ -58,8 +58,9 @@ var Badge = ( function() {
           // Reset the color to default
           browser.browserAction.setBadgeBackgroundColor({ color: defaultBackgroundColor });
           // Update the badge if needed
+          // TODO: pass the items count instead of the collection
           Badge.updateCount( parsedItems );
-        }, 2500);
+        }, 2000);
       });
     }
   };
