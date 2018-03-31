@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "In My Pocket",
-  "version": "0.8.1",
+  "version": "0.9.0a",
 
   "description": "For all those who are missing the old Firefox Pocket addon, here is an unofficial client for the excellent Pocket service. Goal is to provide a useful, but still lightweight means to access your Pocket account from your browser. Enjoy!",
   "homepage_url": "https://bitbucket.org/pabuisson/in-my-pocket",
@@ -41,13 +41,22 @@
   },
 
   "browser_action": {
-    "default_icon": "assets/icons/inmypocket-flat-grey.svg",
+    "default_icon": "assets/icons/inmypocket-flat-grey-dark.svg",
+    "theme_icons": [{
+      "light": "assets/icons/inmypocket-flat-grey-light.svg",
+      "dark": "assets/icons/inmypocket-flat-grey-dark.svg",
+      "size": 16
+    }, {
+      "light": "assets/icons/inmypocket-flat-grey-light.svg",
+      "dark": "assets/icons/inmypocket-flat-grey-dark.svg",
+      "size": 32
+    }],
     "default_popup": "./popup/popup.html",
     "browser_style": true
   },
 
   "page_action": {
-    "default_icon": "assets/icons/inmypocket-flat-grey.svg",
+    "default_icon": "assets/icons/inmypocket-flat-grey-dark.svg",
     "default_title": "Add to pocket"
   },
 

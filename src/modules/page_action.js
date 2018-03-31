@@ -58,7 +58,7 @@ var PageAction = ( function() {
     // TODO: give a list of arguments : tabs ou tabIds and iterate here instead of in backgroundjs
     drawEnabled: function( tabId ) {
       mustDisplayPageAction().then( () => {
-        browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-blue.svg" });
+        browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-red.svg" });
         browser.pageAction.setTitle({ tabId, title: "Mark as read" });
       });
     },
@@ -66,7 +66,7 @@ var PageAction = ( function() {
     // TODO: give a list of arguments : tabs ou tabIds and iterate here instead of in backgroundjs
     drawDisabled: function( tabId ) {
       mustDisplayPageAction().then( () => {
-        browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-grey.svg" });
+        browser.pageAction.setIcon( { tabId, path: "assets/icons/inmypocket-flat-grey-dark.svg" });
         browser.pageAction.setTitle({ tabId, title: "Add to pocket" });
       });
     },
