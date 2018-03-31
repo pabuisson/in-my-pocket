@@ -15,25 +15,21 @@ var Settings = ( function() {
     perPage:        '50',
     showBadge:      true,
     showPageAction: true,
-    zoomLevel:      '12px'
+    zoomLevel:      '12px',
+    // Automations
+    archiveWhenOpened: false,
+    closeTabWhenAdded: false
   };
 
   function load() {
-    // TODO: I must not need to wrap this in a new promise, just use the existing promise chain
-    let promise = new Promise( function( resolve, reject ) {
-      browser.storage.local.get( 'settings', function( data ) {
-        _loaded  = true;
+    return browser.storage.local.get( 'settings' ).then(( data ) => {
+      _loaded  = true;
 
-        settings = Object.assign( settings, defaultSettings );
-        if( data.settings ) {
-          settings = Object.assign( settings, ( Utility.parseJson( data.settings ) || {} ) );
-        }
-
-        resolve();
-      });
+      settings = Object.assign( settings, defaultSettings );
+      if( data.settings ) {
+        settings = Object.assign( settings, ( Utility.parseJson( data.settings ) || {} ) );
+      }
     });
-
-    return promise;
   }
 
 

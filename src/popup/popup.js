@@ -176,15 +176,16 @@ var DomBuilder = ( function() {
     return url.replace( removalRegex, '' );
   }
 
-  function openLink( url, openInNewTab = false ) {
-    browser.runtime.sendMessage({ action: 'read-item', url: url, openInNewTab: openInNewTab });
+  // openInNewTab param allows us to force the behaviour (ctrl-click or middle-click)
+  function openLink( itemId, openInNewTab = false ) {
+    browser.runtime.sendMessage({ action: 'read-item', itemId: itemId, openInNewTab: openInNewTab });
   }
 
   function resetUI() {
     itemsContainer.innerHTML = '';
   }
 
-  // TODO: replace this with another mechanism (React ?)
+  // TODO: replace this with another mechanism (React, Preact, Inferno, Vue...)
   function buildItemElement( item ) {
     let liElement        = document.createElement('li');
     let faviconElement   = document.createElement('img');
@@ -260,15 +261,15 @@ var DomBuilder = ( function() {
       switch( event.button ) {
         case MouseButtons.MIDDLE:
           Logger.log('(itemClickEventHandler) Middle-click, force opening in new tab');
-          openLink( item.resolved_url, openInNewTab );
+          openLink( item.id, openInNewTab );
           break;
         case MouseButtons.LEFT:
           if( event.ctrlKey || event.metaKey ) {
             Logger.log(`(itemClickEventHandler) Left-click + ctrlKey:${ event.ctrlKey } / metaKey:${ event.metaKey }, force opening in new tab`);
-            openLink( item.resolved_url, openInNewTab );
+            openLink( item.id, openInNewTab );
           } else {
             Logger.log('(itemClickEventHandler) Left-click no modifier key, will open based on openInNewTab setting');
-            openLink( item.resolved_url );
+            openLink( item.id );
           }
           break;
       }

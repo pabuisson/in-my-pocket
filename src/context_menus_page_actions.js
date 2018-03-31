@@ -16,7 +16,8 @@ browser.contextMenus.onClicked.addListener( ( link, tab ) => {
       if( link.linkUrl ) {
         Items.addItem( link.linkUrl );
       } else {
-        Items.addItem( link.pageUrl, tab.title );
+        const addItemOptions = { closeTabId: tab.id };
+        Items.addItem( link.pageUrl, tab.title, addItemOptions );
       }
       break;
 

@@ -90,13 +90,13 @@ var PageAction = ( function() {
     toggle: function( tab ) {
       mustDisplayPageAction().then( () => {
         browser.storage.local.get( "items" ).then( function({ items }) {
-          // const parsedItems  = Utility.parseJson( items ) || [];
           const matchingItem = Items.find( items, { url: tab.url });
 
           if( matchingItem ) {
             Items.markAsRead( matchingItem.id );
           } else {
-            Items.addItem( tab.url, tab.title );
+            const addItemOptions = { closeTabId: tab.id };
+            Items.addItem( tab.url, tab.title, addItemOptions );
           }
         });
       });
