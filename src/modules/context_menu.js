@@ -31,18 +31,27 @@ var ContextMenu = ( function() {
       Logger.log( '(ContextMenu.createEntries) create all right-click entries' );
       chrome.contextMenus.create({
         id: ContextMenu.addId,
-        title: '✚ Add to Pocket',
-        contexts: ['link', 'page']
+        title: 'Add to Pocket',
+        contexts: ['link', 'page'],
+        icons: {
+          16: 'assets/icons/ionicons-android-add-circle.svg'
+        }
       });
       chrome.contextMenus.create({
         id: ContextMenu.archiveId,
-        title: '✓ Mark as read',
-        contexts: ['page']
+        title: 'Mark as read',
+        contexts: ['page'],
+        icons: {
+          16: 'assets/icons/ionicons-checkmark.svg'
+        }
       });
       chrome.contextMenus.create({
         id: ContextMenu.deleteId,
-        title: '𝘅 Delete',
-        contexts: ['page']
+        title: 'Delete',
+        contexts: ['page'],
+        icons: {
+          16: 'assets/icons/ionicons-trash-b.svg'
+        }
       });
     },
 
