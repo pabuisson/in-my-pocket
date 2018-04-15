@@ -19,6 +19,7 @@ let addCurrentPageButton         = document.querySelector( '.add-current'  );
 let readRandomItemButton         = document.querySelector( '.random-item' );
 let openSettingsButton           = document.querySelector( '.open-settings' );
 let filterItemsInput             = document.querySelector( '.filter-items' );
+let clearSearchBoxButton         = document.querySelector( '.clear-search-box');
 let placeholderNoResults         = document.querySelector( '.search-no-results' );
 let listComponent                = document.querySelector( '.list-component' );
 let paginationContainer          = document.querySelector( '.pagination' );
@@ -64,11 +65,19 @@ openSettingsButton.addEventListener( 'click', () => {
   browser.runtime.openOptionsPage();
 });
 
+clearSearchBoxButton.addEventListener('click', () => {
+  filterItemsInput.value = '';
+  debouncedFilterEventHandler.apply(filterItemsInput);
+  UI.focusSearchField();
+});
 
 let debouncedFilterEventHandler = Utility.debounce( function() {
   let query = this.value.toLowerCase();
   if( query !== '' ) {
     MainLoader.enable();
+    clearSearchBoxButton.classList.remove('hidden');
+  } else {
+    clearSearchBoxButton.classList.add('hidden');
   }
 
   // Save query to localStorage 'display' variable
@@ -340,15 +349,16 @@ var UI = ( function() {
   const intervalWithoutOpening = 5*60;
   const defaultDisplaySetting  = { currentPage: 1, query: '' };
 
-  function focusSearchField() {
-    setTimeout( function() {
-      filterItemsInput.focus();
-    }, 200 );
-  }
-
   function setSearchFieldValue( query ) {
     Logger.log('(UI.setSearchFieldValue) set search query to ' + query);
     filterItemsInput.value = query || '';
+
+    // Show/Hide the clear search button depending on the restored query value
+    if(filterItemsInput.value == '') {
+      clearSearchBoxButton.classList.add('hidden');
+    } else {
+      clearSearchBoxButton.classList.remove('hidden');
+    }
   }
 
   function setZoomLevel() {
@@ -440,6 +450,12 @@ var UI = ( function() {
   }
 
   return {
+    focusSearchField: function() {
+      setTimeout( function() {
+        filterItemsInput.focus();
+      }, 200 );
+    },
+
     setup: function() {
       // Set default zoom level based on Settings
       setZoomLevel();
@@ -466,7 +482,7 @@ var UI = ( function() {
 
           // Set initial filter value in the UI and focus the field
           setSearchFieldValue( displayOptions.query );
-          focusSearchField();
+          UI.focusSearchField();
 
           // Updates display.displayedAt and page + query if they have been reset
           Object.assign( displayOptions, { displayedAt: currentTimestamp });
