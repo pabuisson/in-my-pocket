@@ -5,6 +5,7 @@ import ContextMenu from './context_menu.js';
 import Logger from './logger.js';
 import PageAction from './page_action.js';
 import PocketApiRequester from './pocket_api_requester.js';
+import Settings from './settings.js';
 import Utility from './utility.js';
 import { PocketNotice } from './constants.js';
 
@@ -110,25 +111,39 @@ var Items = ( function() {
     },
 
     contains: function( rawItems, searchedItem = {} ) {
-      if( !searchedItem.hasOwnProperty('url') ) {
+      if( !searchedItem.hasOwnProperty('id') && !searchedItem.hasOwnProperty('url') ) {
         return false;
       }
 
+      const id  = searchedItem.id;
       const url = searchedItem.url;
       let parsedItems = parseItems( rawItems );
 
-      return parsedItems.some( item => item.resolved_url == url );
+      return parsedItems.some( item => {
+        let itemMatching = false;
+        if( id  ) { itemMatching = itemMatching || item.id == id; }
+        if( url ) { itemMatching = itemMatching || item.resolved_url == url; }
+
+        return itemMatching;
+      });
     },
 
     find: function( rawItems, searchedItem = {} ) {
-      if( !searchedItem.hasOwnProperty('url') ) {
+      if( !searchedItem.hasOwnProperty('id') && !searchedItem.hasOwnProperty('url') ) {
         return null;
       }
 
+      const id  = searchedItem.id;
       const url = searchedItem.url;
       let parsedItems = parseItems( rawItems );
 
-      return parsedItems.find( item => item.resolved_url == url );
+      return parsedItems.find( item => {
+        let itemMatching = false;
+        if( id  ) { itemMatching = itemMatching || item.id == id; }
+        if( url ) { itemMatching = itemMatching || item.resolved_url == url; }
+
+        return itemMatching;
+      });
     },
 
     // TODO: I call both filter and paginate most of the time...but for consistency, I should
@@ -154,7 +169,7 @@ var Items = ( function() {
 
     // ---------------
 
-    addItem: function( url, title ) {
+    addItem: function( url, title, options = {} ) {
       Logger.log( '(Items.addItem)' );
 
       browser.storage.local.get([ 'access_token', 'items' ], ({ access_token, items }) => {
@@ -186,6 +201,18 @@ var Items = ( function() {
 
             // Send a message back to the UI
             chrome.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
+
+            // Close the given tab if setting closeTabWhenAdded is "on"
+            if( options.closeTabId ) {
+              Settings.init().then( () => {
+                const closeTabWhenAdded = Settings.get('closeTabWhenAdded');
+                if( closeTabWhenAdded ) {
+                  setTimeout( () => {
+                    browser.tabs.remove( options.closeTabId );
+                  }, 200);
+                }
+              });
+            }
 
             // Redraw every page pageAction
             Logger.log('(Items.addItem) new item has been added, we will update all matching pageActions');

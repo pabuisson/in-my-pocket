@@ -193,36 +193,45 @@ function retrieveDiff() {
 
 function openRandomItem( query, opt = {} ) {
   browser.storage.local.get( 'items' ).then( function( { items } ) {
-    // const parsedItems   = Utility.parseJson( items ) || [];
     const filteredItems = Items.filter( items, query );
 
     if( filteredItems.length > 0 ) {
       const item = filteredItems[ Math.floor( Math.random() * filteredItems.length ) ];
 
-      opt.url = item.resolved_url;
+      opt.itemId = item.id;
       openItem( opt );
     }
   });
 }
 
 
-function openItem( { url, openInNewTab } ) {
+function openItem( { itemId, openInNewTab } ) {
   let pending;
+  let archiveWhenOpened = false;
 
   if( !openInNewTab ) {
     pending = Settings.init().then( () => {
-      openInNewTab = Settings.get( 'openInNewTab' );
+      openInNewTab      = Settings.get( 'openInNewTab' );
+      archiveWhenOpened = Settings.get( 'archiveWhenOpened' );
     });
   } else {
     pending = Promise.resolve();
   }
 
   pending.then( () => {
-    if( openInNewTab ) {
-      browser.tabs.create( { url } );
-    } else {
-      browser.tabs.update( { url } );
-    }
+    browser.storage.local.get( 'items' ).then( function( { items } ) {
+      const item = Items.find( items, { id: itemId } );
+
+      if( openInNewTab ) {
+        browser.tabs.create( { url: item.resolved_url } );
+      } else {
+        browser.tabs.update( { url: item.resolved_url } );
+      }
+
+      if( archiveWhenOpened ) {
+        Items.markAsRead( item.id );
+      }
+    });
   });
 }
 
@@ -246,7 +255,8 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       retrieveItems( eventData.force );
       break;
     case 'add-item':
-      Items.addItem( eventData.url, eventData.title );
+      const addItemOptions = { closeTabId: eventData.closeTabId };
+      Items.addItem( eventData.url, eventData.title, addItemOptions );
       break;
     case 'mark-as-read':
       Items.markAsRead( eventData.id );
@@ -261,7 +271,7 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
       openRandomItem( eventData.query );
       break;
     case 'read-item':
-      openItem({ url: eventData.url, openInNewTab: eventData.openInNewTab });
+      openItem({ itemId: eventData.itemId, openInNewTab: eventData.openInNewTab });
       break;
     default:
       Logger.log( `Unknown action: ${eventData.action}` );

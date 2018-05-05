@@ -6,3 +6,10 @@ global.chrome = {
     getManifest: () => {}
   }
 };
+global.browser = {
+  storage: {
+    local: {
+      get: () => Promise.resolve()
+    }
+  }
+};

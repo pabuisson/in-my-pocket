@@ -19,6 +19,8 @@ let enableDebugModeCheckbox   = document.querySelector( '.enable-debug-mode' );
 let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
 let paginationPerPageSelector = document.querySelector( '.pagination-per-page' );
 let zoomLevelSelector         = document.querySelector( '.zoom-level' );
+let archiveWhenOpenedCheckbox = document.querySelector( '.archive-when-opened' );
+let closeTabWhenAddedCheckbox = document.querySelector( '.close-tab-when-added' );
 
 let savedNotificationElement = document.querySelector( '.saved-notification' );
 
@@ -55,6 +57,8 @@ var UI = ( function() {
         displayPageActionCheckbox.checked = settings[ 'showPageAction' ];
         enableDebugModeCheckbox.checked   = settings[ 'debugMode' ];
         openInNewTabCheckbox.checked      = settings[ 'openInNewTab' ];
+        archiveWhenOpenedCheckbox.checked = settings[ 'archiveWhenOpened' ];
+        closeTabWhenAddedCheckbox.checked = settings[ 'closeTabWhenAdded' ];
         paginationPerPageSelector.value   = settings[ 'perPage' ] || '';
         zoomLevelSelector.value           = settings[ 'zoomLevel' ];
       });
@@ -81,6 +85,7 @@ var UI = ( function() {
       });
 
       // Event: "Open in new tab" checkbox
+      // TODO: DRY those checkbox save actions
       openInNewTabCheckbox.addEventListener( 'change', function() {
         Settings.set( 'openInNewTab', this.checked );
         Settings.save();
@@ -88,8 +93,25 @@ var UI = ( function() {
       });
 
       // Event: "Enable debug mode" checkbox
+      // TODO: DRY those checkbox save actions
       enableDebugModeCheckbox.addEventListener( 'change', function() {
         Settings.set( 'debugMode', this.checked );
+        Settings.save();
+        flashSavedNotification();
+      });
+
+      // Event: "Automation: archive when opened" checkbox
+      // TODO: DRY those checkbox save actions
+      archiveWhenOpenedCheckbox.addEventListener( 'change', function() {
+        Settings.set( 'archiveWhenOpened', this.checked );
+        Settings.save();
+        flashSavedNotification();
+      });
+
+      // Event: "Automation: close tab when added" checkbox
+      // TODO: DRY those checkbox save actions
+      closeTabWhenAddedCheckbox.addEventListener( 'change', function() {
+        Settings.set( 'closeTabWhenAdded', this.checked );
         Settings.save();
         flashSavedNotification();
       });

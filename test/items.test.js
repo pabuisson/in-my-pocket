@@ -163,8 +163,8 @@ describe( 'Items.paginate', () => {
 
 
 describe( 'Items.contains', () => {
-  const matchingItem = { resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
-  const otherItem = { resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
+  const matchingItem = { id: '1234', resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
+  const otherItem = { id: '5678', resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
   const items = JSON.stringify([ matchingItem, otherItem ]);
 
   context('invalid searchedItem', () => {
@@ -184,26 +184,69 @@ describe( 'Items.contains', () => {
   });
 
   context('valid searchItem', () => {
-    it( 'matches nothing returns false', () => {
-      const searchFor = { url: 'www.a-url-that-doesnt-match.com' };
-      expect( Items.contains( items, searchFor ) ).to.equal( false );
+    context('with only id', () => {
+      it( 'matches nothing is false', () => {
+        const searchFor = { id: '11111' };
+        expect( Items.contains( items, searchFor ) ).to.equal(false);
+      });
+
+      it( 'partially matches one item id is false', () => {
+        const searchFor = { id: '12' };
+        expect( Items.contains( items, searchFor ) ).to.equal(false);
+      });
+
+      it( 'exactly matches one item id returns the item', () => {
+        const searchFor = { id: matchingItem.id };
+        // NOTE: deep matching
+        expect( Items.contains( items, searchFor ) ).to.equal(true);
+      });
     });
 
-    it( 'partially matches one item returns false', () => {
-      const searchFor = { url: 'quelque' };
-      expect( Items.contains( items, searchFor ) ).to.equal( false );
+    context('with only url', () => {
+      it( 'matches nothing is false', () => {
+        const searchFor = { url: 'www.a-url-that-doesnt-match.com' };
+        expect( Items.contains( items, searchFor ) ).to.equal(false);
+      });
+
+      it( 'partially matches one item is false', () => {
+        const searchFor = { url: 'quelque' };
+        expect( Items.contains( items, searchFor ) ).to.equal(false);
+      });
+
+      it( 'exactly matches one item returns the item', () => {
+        const searchFor = { url: matchingItem.resolved_url };
+        // NOTE: deep matching
+        expect( Items.contains( items, searchFor ) ).to.equal(true);
+      });
     });
 
-    it( 'exactly matches one item returns true', () => {
-      const searchFor = { url: matchingItem.resolved_url };
-      expect( Items.contains( items, searchFor ) ).to.equal( true );
+    context('with both id and url', () => {
+      it('both match nothing is false', () => {
+        const searchFor = { id: '1111', url: 'www.a-url-that-doesnt-match.com' };
+        expect( Items.contains( items, searchFor ) ).to.equal(false);
+      });
+
+      it('both match the same item returns the item', () => {
+        const searchFor = { id: matchingItem.id, url: matchingItem.resolved_url };
+        expect( Items.contains( items, searchFor ) ).to.equal(true);
+      });
+
+      it('id matches nothing, url partially matches something is false', () => {
+        const searchFor = { id: '1111', url: 'quelque' };
+        expect( Items.contains( items, searchFor ) ).to.equal(false);
+      });
+
+      it('id matches nothing, url exactly matches something returns the item', () => {
+        const searchFor = { id: '1111', url: matchingItem.resolved_url };
+        expect( Items.contains( items, searchFor ) ).to.equal(true);
+      });
     });
   });
 });
 
 describe( 'Items.find', () => {
-  const matchingItem = { resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
-  const otherItem = { resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
+  const matchingItem = { id: '1234', resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
+  const otherItem = { id: '5678', resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
   const items = JSON.stringify([ matchingItem, otherItem ]);
 
   context('invalid searchedItem', () => {
@@ -216,27 +259,69 @@ describe( 'Items.find', () => {
       expect( Items.find( items, searchFor ) ).to.be.not.ok;
     });
 
-    it( 'empty item given is falsy', () => {
+    it( 'ill-formatted item given is falsy', () => {
       const searchFor = { field: 'blah' };
       expect( Items.find( items, searchFor ) ).to.be.not.ok;
     });
   });
 
   context('valid searchItem', () => {
-    it( 'matches nothing is falsy', () => {
-      const searchFor = { url: 'www.a-url-that-doesnt-match.com' };
-      expect( Items.find( items, searchFor ) ).to.be.not.ok;
+    context('with only id', () => {
+      it( 'matches nothing is falsy', () => {
+        const searchFor = { id: '11111' };
+        expect( Items.find( items, searchFor ) ).to.be.not.ok;
+      });
+
+      it( 'partially matches one item id is falsy', () => {
+        const searchFor = { id: '12' };
+        expect( Items.find( items, searchFor ) ).to.be.not.ok;
+      });
+
+      it( 'exactly matches one item id returns the item', () => {
+        const searchFor = { id: matchingItem.id };
+        // NOTE: deep matching
+        expect( Items.find( items, searchFor ) ).to.eql( matchingItem );
+      });
     });
 
-    it( 'partially matches one item is falsy', () => {
-      const searchFor = { url: 'quelque' };
-      expect( Items.find( items, searchFor ) ).to.be.not.ok;
+    context('with only url', () => {
+      it( 'matches nothing is falsy', () => {
+        const searchFor = { url: 'www.a-url-that-doesnt-match.com' };
+        expect( Items.find( items, searchFor ) ).to.be.not.ok;
+      });
+
+      it( 'partially matches one item is falsy', () => {
+        const searchFor = { url: 'quelque' };
+        expect( Items.find( items, searchFor ) ).to.be.not.ok;
+      });
+
+      it( 'exactly matches one item returns the item', () => {
+        const searchFor = { url: matchingItem.resolved_url };
+        // NOTE: deep matching
+        expect( Items.find( items, searchFor ) ).to.eql( matchingItem );
+      });
     });
 
-    it( 'exactly matches one item returns the item', () => {
-      const searchFor = { url: matchingItem.resolved_url };
-      // NOTE: deep matching
-      expect( Items.find( items, searchFor ) ).to.eql( matchingItem );
+    context('with both id and url', () => {
+      it('both match nothing is falsy', () => {
+        const searchFor = { id: '1111', url: 'www.a-url-that-doesnt-match.com' };
+        expect( Items.find( items, searchFor ) ).to.be.not.ok;
+      });
+
+      it('both match the same item returns the item', () => {
+        const searchFor = { id: matchingItem.id, url: matchingItem.resolved_url };
+        expect( Items.find( items, searchFor ) ).to.eql( matchingItem );
+      });
+
+      it('id matches nothing, url partially matches something is falsy', () => {
+        const searchFor = { id: '1111', url: 'quelque' };
+        expect( Items.find( items, searchFor ) ).to.be.not.ok;
+      });
+
+      it('id matches nothing, url exactly matches something returns the item', () => {
+        const searchFor = { id: '1111', url: matchingItem.resolved_url };
+        expect( Items.find( items, searchFor ) ).to.eql( matchingItem );
+      });
     });
   });
 });
