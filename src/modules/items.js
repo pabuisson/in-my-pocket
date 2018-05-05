@@ -57,7 +57,7 @@ var Items = ( function() {
       const callbackAction = method == 'archive' ? 'marked-as-read' : 'deleted';
       const removalPromise = method == 'archive' ? apiRequester.archive( itemId ) : apiRequester.delete( itemId );
 
-      removalPromise.then( ( response ) => {
+      removalPromise.then( response => {
         let parsedItems    = Utility.parseJson( items ) || [];
         let removedItemIdx = parsedItems.findIndex( item => item.id === itemId );
         let removedItem    = parsedItems[ removedItemIdx ];
@@ -92,6 +92,11 @@ var Items = ( function() {
           // If current url is the one of the current tab, will update the available context menus
           ContextMenu.setCurrentPageState( removedItem.resolved_url, ContextMenu.pageNotInPocket );
         }
+      })
+      .catch( error => {
+        Logger.error('(Items.removeItem) Error while removing an item');
+        Logger.error(`(Items.removeItem) ${ JSON.stringify(error) }`);
+        Badge.flashError();
       });
     });
   }
@@ -182,7 +187,7 @@ var Items = ( function() {
 
         new PocketApiRequester( access_token )
           .add( url, title )
-          .then( function( response ) {
+          .then( response => {
             let parsedItems = Utility.parseJson( items ) || [];
             let newItem   = response.item;
 
@@ -225,6 +230,11 @@ var Items = ( function() {
 
             // If current url is the one of the current tab, will update the available context menus
             ContextMenu.setCurrentPageState( url, ContextMenu.pageAlreadyInPocket );
+          })
+          .catch( error => {
+            Logger.error('(Items.addItem) Error while adding a new item');
+            Logger.error(`(Items.addItem) ${ JSON.stringify(error) }`);
+            Badge.flashError();
           });
       });
     },
