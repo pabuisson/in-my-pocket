@@ -677,27 +677,31 @@ document.addEventListener('DOMContentLoaded', function() {
         flashMessage = 'An error occurred: ';
 
         switch( eventData.error ) {
-        case PocketError.UNREACHABLE:
-          flashMessage += 'could not reach the server';
-          break;
-        case PocketError.UNAUTHORIZED:
-          flashMessage += 'unauthorized, you might need to login again';
-          break;
-        case PocketError.PERMISSIONS:
-          flashMessage += 'missing permissions';
-          break;
-        case PocketError.RATE_LIMIT:
-          flashMessage += 'max number of requests reach for this hour';
-          flashMessage += ' (reset in ' + eventData.resetDelay + ')';
-          break;
+          case PocketError.UNREACHABLE:
+            flashMessage += 'could not reach the server';
+            break;
+          case PocketError.UNAUTHORIZED:
+            flashMessage += 'unauthorized, you might need to login again';
+            break;
+          case PocketError.PERMISSIONS:
+            flashMessage += 'missing permissions';
+            break;
+          case PocketError.RATE_LIMIT:
+            flashMessage += 'max requests reached for this hour';
+            flashMessage += ' (reset in ' + eventData.resetDelay + ')';
+            break;
         }
+
+        // Flash the badge if an error occured
+        chrome.runtime.sendMessage({ action: 'flash-error' });
+
       } else if( eventData.notice ) {
         flashContainer.classList.add( noticeClass );
 
         switch( eventData.notice ) {
-        case PocketNotice.ALREADY_IN_LIST:
-          flashMessage = 'This page is already in your Pocket :)';
-          break;
+          case PocketNotice.ALREADY_IN_LIST:
+            flashMessage = 'This page is already in your Pocket :)';
+            break;
         }
       }
 
@@ -713,26 +717,26 @@ document.addEventListener('DOMContentLoaded', function() {
       Logger.log('(popup onMessage) : ' + eventData.action);
 
       switch( eventData.action ) {
-      case 'authenticated':
-        window.close();
-        chrome.runtime.sendMessage({ action: 'update-badge-count' });
-        break;
+        case 'authenticated':
+          window.close();
+          chrome.runtime.sendMessage({ action: 'update-badge-count' });
+          break;
 
-      case 'marked-as-read':
-      case 'deleted':
-        UI.fadeOutItem( eventData.id );
-        UI.updateList();
-        break;
+        case 'marked-as-read':
+        case 'deleted':
+          UI.fadeOutItem( eventData.id );
+          UI.updateList();
+          break;
 
-      case 'added-item':
-        UI.drawList();
-        UI.updatePaginationElements();
-        break;
+        case 'added-item':
+          UI.drawList();
+          UI.updatePaginationElements();
+          break;
 
-      case 'retrieved-items':
-        UI.drawList();
-        Badge.updateCount();
-        break;
+        case 'retrieved-items':
+          UI.drawList();
+          Badge.updateCount();
+          break;
       }
     }
   });

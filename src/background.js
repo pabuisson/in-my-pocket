@@ -51,7 +51,7 @@ function retrieveFirst() {
 
     new Request( 'POST', 'https://getpocket.com/v3/get', requestParams )
       .fetch()
-      .then( function( response ) {
+      .then( response => {
         Logger.log(Object.keys( response.list ).length + ' items in the response');
 
         let itemsList = [];
@@ -82,13 +82,18 @@ function retrieveFirst() {
 
         // Updates the tabs page actions
         PageAction.redrawAllTabs();
+      })
+      .catch( error => {
+        Logger.warn('(bg.retrieveFirst) something went wrong...');
+        Logger.warn(`(bg.retrieveFirst) ${ JSON.stringify(error) }`);
+        Badge.flashError();
       });
   });
 }
 
 
 function retrieveDiff() {
-  Logger.log('(background.retrieveDiff)');
+  Logger.log('(bg.retrieveDiff)');
 
   const pocketApiStatus = {
     CREATED:  '0',
@@ -119,14 +124,14 @@ function retrieveDiff() {
             case pocketApiStatus.ARCHIVED:
             case pocketApiStatus.DELETED:
               // Archived or deleted: we remove it from the items list
-              Logger.log("(background.retriveDiff) NEED TO ARCHIVE: " + itemId + ' (' + item.resolved_title + ')' );
+              Logger.log("(bg.retriveDiff) NEED TO ARCHIVE: " + itemId + ' (' + item.resolved_title + ')' );
               let removedItemIdx = allItems.findIndex( item => item.id === itemId );
 
               if( removedItemIdx >= 0 ) {
-                Logger.log('(background.retrieveDiff) Item has been found and will be removed from the list');
+                Logger.log('(bg.retrieveDiff) Item has been found and will be removed from the list');
                 allItems.splice( removedItemIdx, 1 );
               } else {
-                Logger.warn('(background.retrieveDiff) Could not find the item to archive in the item lists');
+                Logger.warn('(bg.retrieveDiff) Could not find the item to archive in the item lists');
               }
 
               break;
@@ -137,7 +142,7 @@ function retrieveDiff() {
               if( itemIdx >= 0 ) {
                 // Item already exists in the list (added by this current extension),
                 // we just update the missing fields
-                Logger.log("(background.retriveDiff) Item " + itemId + "(" + item.resolved_title + ") already present, will be updated" );
+                Logger.log("(bg.retriveDiff) Item " + itemId + "(" + item.resolved_title + ") already present, will be updated" );
                 allItems[ itemIdx ] = Object.assign( allItems[ itemIdx ], {
                   resolved_title: item.given_title || item.resolved_title,
                   resolved_url:   item.given_url || item.resolved_url,
@@ -145,7 +150,7 @@ function retrieveDiff() {
                 });
               } else {
                 // Item does not exist in the item list, we just add it
-                Logger.log("(background.retriveDiff) Add new item: " + itemId + ' (' + item.resolved_title + ')' );
+                Logger.log("(bg.retriveDiff) Add new item: " + itemId + ' (' + item.resolved_title + ')' );
                 allItems.push({
                   id:             item.item_id,
                   resolved_title: item.given_title || item.resolved_title,
@@ -156,7 +161,7 @@ function retrieveDiff() {
               break;
 
             default:
-              Logger.log('(background.retriveDiff) Status unknow, dont know how to deal with this : ' + item.status );
+              Logger.log('(bg.retriveDiff) Status unknow, dont know how to deal with this : ' + item.status );
               break;
           }
         }
@@ -178,12 +183,16 @@ function retrieveDiff() {
       .catch( error => {
         // Even if something went wrong while retrieving diff, we still can display the current
         // items, so we send the `retrieved-items` event back to popup to build the item list
-        Logger.warn('(background.retrieveDiff) something went wrong...');
+        Logger.warn('(bg.retrieveDiff) something went wrong...');
+        Logger.warn(`(bg.retrieveDiff) ${ JSON.stringify(error) }`);
 
         // Send a message back to the UI and updates the tabs page actions
         // TODO: Do this once in the "retrieveItems" method
         chrome.runtime.sendMessage({ action: 'retrieved-items' });
         PageAction.redrawAllTabs();
+
+        // Flash the badge if an error occured
+        Badge.flashError();
       });
   });
 }
@@ -239,7 +248,7 @@ function openItem( { itemId, openInNewTab } ) {
 // - - - MESSAGES - - -
 
 chrome.runtime.onMessage.addListener( function( eventData ) {
-  Logger.log( `(background.onMessage) eventData.action: ${eventData.action}` );
+  Logger.log( `(bg.onMessage) eventData.action: ${eventData.action}` );
   switch( eventData.action ) {
     case 'authenticate':
       Authentication.authenticate().then( () => {
@@ -273,8 +282,11 @@ chrome.runtime.onMessage.addListener( function( eventData ) {
     case 'read-item':
       openItem({ itemId: eventData.itemId, openInNewTab: eventData.openInNewTab });
       break;
+    case 'flash-error':
+      Badge.flashError();
+      break;
     default:
-      Logger.log( `Unknown action: ${eventData.action}` );
+      Logger.log( `(bg.onMessage) Unknown action: ${eventData.action}` );
   }
 });
 
