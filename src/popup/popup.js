@@ -608,14 +608,20 @@ var UI = ( function() {
     },
 
     markAsRead: ( itemId ) => {
-      document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .tick"   ).classList.add(    'hidden' );
-      document.querySelector( ".item[data-id='" + itemId + "'] .tick-action .loader" ).classList.remove( 'hidden' );
+      const item = document.querySelector( ".item[data-id='" + itemId + "']");
+      item.classList.add('removing');
+      item.querySelector('.tick-action .tick'   ).classList.add(    'hidden' );
+      item.querySelector('.tick-action .loader' ).classList.remove( 'hidden' );
+
       chrome.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
     },
 
     deleteItem: ( itemId ) => {
-      document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .trash"  ).classList.add(   'hidden' );
-      document.querySelector( ".item[data-id='" + itemId + "'] .delete-action .loader" ).classList.remove( 'hidden' );
+      const item = document.querySelector( ".item[data-id='" + itemId + "']");
+      item.classList.add('removing');
+      item.querySelector('.delete-action .trash'  ).classList.add(   'hidden' );
+      item.querySelector('.delete-action .loader' ).classList.remove( 'hidden' );
+
       chrome.runtime.sendMessage( { action: 'delete-item', id: itemId } );
     },
 
