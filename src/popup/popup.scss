@@ -124,16 +124,19 @@ html, body, .authenticated, .authentication {
     // second duration is the delay after which the transition must begin
     transition: height 250ms, padding 250ms, opacity 0s 200ms, border-bottom-width 0s 240ms;
 
+    // When the item is visually disappearing from the list
     &.disappearing {
-      // TODO: several classes with different colors, depending on the kind of disappearance?
-      //       red for delete, green for archive?
       height: 0px;
       padding: 0;
       opacity: 0;
       border-bottom-width: 0px;
     }
 
-    &:hover .actions-container {
+    // Removing: when the "delete/archive" button has been clicked and the spinner is spinning,
+    // we maintain the visibility of its actions container (so that user keep on seeing the
+    // spinning spinner during the deletion)
+    &:hover .actions-container,
+    &.removing .actions-container {
       opacity: 1;
       transition: opacity 300ms ease-out;
     }
