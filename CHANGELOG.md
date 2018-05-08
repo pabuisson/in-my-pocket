@@ -1,5 +1,19 @@
 # Changelog
 
+
+## 0.9.0 - May 2018
+
+* FEATURE: automations! It's a feature long-awaited by many users. Those two automations must be enabled in the settings interface first:
+    * FEATURE: automatically close a tab when the page is added into pocket (so that you don't need to manually close the tab).
+    * FEATURE: automatically archive links opened from the popup (so that you don't need to manually archive the page once it's been read).
+* FEATURE: in the popup interface, add a "clear current search" button inside the filter component.
+* UPDATE: errors happen. Sometimes you don't have an internet connection, sometimes Pocket might be unreachable. So far, the only error notification was shown in the popup. From now on, in the toolbar, a red badge flashes when an error occurs so that you know something went wrong, even when the popup is closed.
+* UPDATE: when archiving or deleting an item from the popup, the spinner now remains visible until the item is removed, even when you move the cursor around.
+* DESIGN: changed the popup ribbon background to a more neutral colour.
+* DESIGN: refined the toolbar icon, and added light/dark versions to adjust to the Firefox interface theme you're using.
+* DESIGN: added icons to the context menu entries.
+
+
 ## 0.8.1 - February 2018
 
 * FIX: it was not possible anymore to right-click a link and "add it to pocket" if current page was already in the pocket list. This is now fixed!
