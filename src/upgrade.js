@@ -13,11 +13,11 @@ function mustShowUpdateNotification( details ) {
   return isUpdate && isMajorOrMinorUpdate;
 }
 
-chrome.runtime.onInstalled.addListener( (details) => {
+chrome.runtime.onInstalled.addListener( details => {
   if( details.reason == "install" ) {
     // TODO: maybe propose some tips, or send user to a FAQ or any kind of post-install page
     Logger.log("Fresh install! Welcome on board :)");
-  } else if( mustShowUpdateNotification() ) {
+  } else if( mustShowUpdateNotification(details) ) {
     Logger.log("IMP has been upgraded from " + details.previousVersion + " !");
     browser.notifications.create( upgradeNotificationId, {
       type: 'basic',
@@ -28,7 +28,7 @@ chrome.runtime.onInstalled.addListener( (details) => {
 });
 
 
-browser.notifications.onClicked.addListener( ( notificationId ) => {
+browser.notifications.onClicked.addListener( notificationId => {
   if( notificationId !== upgradeNotificationId ) {
     return;
   }
