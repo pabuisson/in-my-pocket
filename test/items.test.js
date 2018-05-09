@@ -81,21 +81,56 @@ describe( 'Items.paginate', () => {
   const items = [ item_1, item_2, item_3, item_4, item_5 ];
   const perPage = 4;
 
+  context('pagination disabled', () => {
+    context('perPage undefined', () => {
+      it('returns all items', () => {
+        expect( Items.paginate(items, 1, undefined) ).to.deep.equal(items);
+      });
+
+      it('returns all items sorted by antechronological created_at', () => {
+        const output = Items.paginate(items, 1, undefined );
+        expect( output[0] ).to.equal(item_5);
+        expect( output[1] ).to.equal(item_4);
+        expect( output[2] ).to.equal(item_3);
+        expect( output[3] ).to.equal(item_2);
+        expect( output[4] ).to.equal(item_1);
+      });
+    });
+
+    context('perPage is null', () => {
+      it('returns all items', () => {
+        expect( Items.paginate(items, 1, null) ).to.deep.equal(items);
+      });
+
+      it('returns all items sorted by antechronological created_at', () => {
+        const output = Items.paginate(items, 1, null );
+        expect( output[0] ).to.equal(item_5);
+        expect( output[1] ).to.equal(item_4);
+        expect( output[2] ).to.equal(item_3);
+        expect( output[3] ).to.equal(item_2);
+        expect( output[4] ).to.equal(item_1);
+      });
+    });
+
+    context('perPage is 0', () => {
+      it('returns all items', () => {
+        expect( Items.paginate(items, 1, 0) ).to.deep.equal(items);
+      });
+
+      it('returns all items sorted by antechronological created_at', () => {
+        const output = Items.paginate(items, 1, 0 );
+        expect( output[0] ).to.equal(item_5);
+        expect( output[1] ).to.equal(item_4);
+        expect( output[2] ).to.equal(item_3);
+        expect( output[3] ).to.equal(item_2);
+        expect( output[4] ).to.equal(item_1);
+      });
+    });
+  });
+
   context('not pagineable input', () => {
     it('returns [] if items = []', () => {
       expect( Items.paginate([], 1, perPage) ).to.be.empty;
-    });
-
-    it('returns items if perPage is undefined', () => {
-      expect( Items.paginate(items, 1, undefined) ).to.deep.equal(items);
-    });
-
-    it('returns items if perPage is null', () => {
-      expect( Items.paginate(items, 1, null) ).to.deep.equal(items);
-    });
-
-    it('returns items if perPage is 0', () => {
-      expect( Items.paginate(items, 1, 0) ).to.deep.equal(items);
     });
 
     it('returns nothing if page param is < 0', () => {
