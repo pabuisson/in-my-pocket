@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.2 - May 2018
+
+* FEATURE: a new keybard shortcut, to open the popup. Just hit Alt+Q and you'll be right there!
+
+
 ## 0.9.1 - May 2018
 
 * FIX: the item order was broken when pagination was disabled.
