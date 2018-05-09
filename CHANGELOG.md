@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1 - May 2018
+
+* FIX: the item order was broken when pagination was disabled.
+
 
 ## 0.9.0 - May 2018
 

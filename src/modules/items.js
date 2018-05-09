@@ -154,13 +154,14 @@ var Items = ( function() {
     // TODO: I call both filter and paginate most of the time...but for consistency, I should
     //       call paginate with raw items as well?
     paginate: function( parsedItems, page, perPage ) {
-      if( !perPage || parsedItems.length == 0 ) {
-        return parsedItems;
+      const itemsCount = parsedItems.length;
+      let sortedItems  = parsedItems.sort( ( a, b ) => a.created_at < b.created_at );
+
+      if( !perPage || itemsCount == 0 ) {
+        return sortedItems;
       }
 
-      const itemsCount = parsedItems.length;
       const pagesCount = Math.ceil( itemsCount / perPage );
-      let sortedItems  = parsedItems.sort( ( a, b ) => a.created_at < b.created_at );
 
       if( page <= 0 || page > pagesCount ) {
         Logger.warn( `Could not get page ${ page } (${ itemsCount } items, asked ${ perPage } per page)` );
