@@ -77,7 +77,7 @@ var ContextMenu = ( function() {
 
     // If current url is the one of the current tab, will update the available context menus
     setCurrentPageState: function( urlToMatch, state ) {
-      browser.tabs.query( { url: urlToMatch, active: true } ).then( function( matchingTabs ) {
+      browser.tabs.query( { url: urlToMatch, active: true } ).then( matchingTabs => {
         for( const tab of matchingTabs ) {
           Logger.log( '(ContextMenu.setCurrentPageState) change current page context menu state to ' + state + ' for ' + tab.url );
           ContextMenu.setState( state );
