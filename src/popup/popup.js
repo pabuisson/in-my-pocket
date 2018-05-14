@@ -43,10 +43,11 @@ retrieveItemsButton.addEventListener( 'click', function() {
 
 addCurrentPageButton.addEventListener( 'click', function() {
   MainLoader.enable();
-  chrome.tabs.query({ active: true, currentWindow: true }, function ( tabs ) {
-    let currentUrl = tabs[ 0 ].url;
-    let currentTitle = tabs[ 0 ].title;
-    chrome.runtime.sendMessage({ action: 'add-item', url: currentUrl, title: currentTitle });
+  browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+    let currentUrl   = currentTab.url;
+    let currentTitle = currentTab.title;
+    const addItemOptions = { action: 'add-item', url: currentUrl, title: currentTitle, closeTabId: currentTab.id };
+    chrome.runtime.sendMessage(addItemOptions);
   });
 });
 
