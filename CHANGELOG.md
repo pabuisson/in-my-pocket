@@ -4,6 +4,7 @@
 
 * FEATURE: a new keybard shortcut, to open the popup. Just hit Alt+Q and you'll be right there!
 * FIX: the "automatically close a tab when page is added to pocket" automation was not working when adding new items through the "+" button of the popup. Everything's now back to normal!
+* FIX: using keyboard shortcut to add a new page with several windows opened could result in unexpected behaviour (sometimes, tabs from an inactive window were added instead of the current tab of the active window).
 
 
 ## 0.9.1 - May 2018
