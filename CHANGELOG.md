@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.3 - May 2018
+
+* FIX: "in my pocket" icon was not visible in FF56 and older
+
+
 ## 0.9.2 - May 2018
 
 * FEATURE: a new keybard shortcut, to open the popup. Just hit Alt+Q and you'll be right there!
