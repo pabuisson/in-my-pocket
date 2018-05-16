@@ -5,7 +5,8 @@
 // -----------
 
 html, body {
-  width: 450px;
+  width: 100%;
+  max-width: 470px;
   min-height: 300px;
 
   font-size: 12px;
@@ -248,10 +249,10 @@ html, body, .authenticated, .authentication {
     transition: opacity 200ms ease-out;
 
     width: 2rem;
-    margin-right: 0.5rem;
+    margin-right: 0.4rem;
 
     &:first-child {
-      margin-left: 0.5rem;
+      margin-left: 0.4rem;
     }
 
     &:hover {
@@ -261,14 +262,14 @@ html, body, .authenticated, .authentication {
 
     &.random-item {
       font-weight: bold;
-      margin-right: 1rem;
+      margin-right: 0.8rem;
     }
   }
 
   .filter-items-container {
     position: relative;
     flex: 1;
-    margin-right: 3rem;
+    margin-right: 1.5rem;
 
     .clear-search-box {
       position: absolute;
