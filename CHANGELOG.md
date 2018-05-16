@@ -3,6 +3,7 @@
 ## 0.9.3 - May 2018
 
 * FIX: "in my pocket" icon was not visible in FF56 and older
+* FIX: the popup user interface was broken when "In My Pocket" was pinned to the overflow menu. Several UI compnents could not be seen. The interface should now adapt correctly, even in the overflow menu.
 
 
 ## 0.9.2 - May 2018
