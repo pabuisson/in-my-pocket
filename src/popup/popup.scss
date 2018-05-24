@@ -5,8 +5,7 @@
 // -----------
 
 html, body {
-  width: 100%;
-  max-width: 470px;
+  width: 470px;
   min-height: 300px;
 
   font-size: 12px;
@@ -394,5 +393,17 @@ html, body, .authenticated, .authentication {
     padding-left:  0.5rem;
     padding-right: 0.5rem;
     text-align: center;
+  }
+}
+
+
+// -----------------------
+
+// Dealing with the popup width in case it's pinned to overflow menu
+// Apparently, overflow menu width must be around 425px atm
+
+@media (max-width: 400px) {
+  html, body {
+    max-width: 100%;
   }
 }
