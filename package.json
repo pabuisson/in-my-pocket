@@ -3,9 +3,9 @@
   "description": "For all those who are missing the old Pocket addon for Firefox, here's an unofficial client for the [Pocket](http://getpocket.com/) webservice. I'm not in any way affiliated to Pocket and only does this for my fellow Firefox users looking for an easy to use Pocket extension for their favorite browser.",
   "main": "src/manifest.json",
   "devDependencies": {
-    "babel-core": "6.24.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "6.4.1",
-    "babel-preset-es2015": "6.24.0",
+    "babel-preset-env": "^1.7.0",
     "chai": "^4.1.2",
     "copy-webpack-plugin": "4.0.1",
     "cross-env": "^5.1.3",
@@ -14,13 +14,13 @@
     "file-loader": "0.10.1",
     "istanbul-instrumenter-loader": "^3.0.0",
     "mocha": "^5.0.1",
-    "mocha-webpack": "^1.0.1",
-    "node-sass": "4.5.1",
+    "mocha-webpack": "^1.1.0",
+    "node-sass": "^4.9.0",
     "nyc": "^11.4.1",
     "sass-loader": "6.0.3",
     "sinon": "^4.4.2",
     "style-loader": "0.16.0",
-    "web-ext": "1.10.0",
+    "web-ext": "^2.7.0",
     "webpack": "2.3.1",
     "webpack-node-externals": "^1.6.0"
   },
@@ -47,7 +47,7 @@
   "license": "Mozilla Public License, version 2.0",
   "homepage": "https://bitbucket.org/pabuisson/in-my-pocket#readme",
   "dependencies": {
-    "npm": "^5.8.0"
+    "npm": "^6.1.0"
   },
   "nyc": {
     "include": [
