@@ -77,7 +77,7 @@ class Request {
             // Instead of just logging, send an event back to the UI
             // TODO: since I have the error object returned in the promise,
             //       I might not need this "send message" anymore
-            chrome.runtime.sendMessage( errorObject );
+            browser.runtime.sendMessage( errorObject );
             reject( errorObject );
           }
         }).catch( () => {
@@ -90,7 +90,7 @@ class Request {
           // Instead of just logging, send an event back to the UI
           // TODO: since I have the error object returned in the promise,
           //       I might not need this "send message" anymore
-          chrome.runtime.sendMessage( errorObject );
+          browser.runtime.sendMessage( errorObject );
           reject( errorObject );
         });
     });

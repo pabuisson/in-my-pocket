@@ -28,7 +28,7 @@ var PageAction = ( function() {
   return {
     redraw: function( tabId, url ) {
       mustDisplayPageAction().then( () => {
-        browser.storage.local.get( "items" ).then( function({ items }) {
+        browser.storage.local.get('items').then( ({ items }) => {
           // const parsedItems  = Utility.parseJson( items ) || [];
           const containsItem = Items.contains( items, { url: url });
 
@@ -97,7 +97,7 @@ var PageAction = ( function() {
 
     toggle: function( tab ) {
       mustDisplayPageAction().then( () => {
-        browser.storage.local.get( "items" ).then( function({ items }) {
+        browser.storage.local.get('items').then( ({ items }) => {
           const matchingItem = Items.find( items, { url: tab.url });
 
           if( matchingItem ) {

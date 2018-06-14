@@ -38,7 +38,7 @@ document.body.onmousedown = ( e ) => {
 
 retrieveItemsButton.addEventListener( 'click', function() {
   MainLoader.enable();
-  chrome.runtime.sendMessage({ action: 'retrieve-items', force: true });
+  browser.runtime.sendMessage({ action: 'retrieve-items', force: true });
 });
 
 addCurrentPageButton.addEventListener( 'click', function() {
@@ -47,7 +47,7 @@ addCurrentPageButton.addEventListener( 'click', function() {
     let currentUrl   = currentTab.url;
     let currentTitle = currentTab.title;
     const addItemOptions = { action: 'add-item', url: currentUrl, title: currentTitle, closeTabId: currentTab.id };
-    chrome.runtime.sendMessage(addItemOptions);
+    browser.runtime.sendMessage(addItemOptions);
   });
 });
 
@@ -82,7 +82,7 @@ let debouncedFilterEventHandler = Utility.debounce( function() {
   }
 
   // Save query to localStorage 'display' variable
-  browser.storage.local.get( 'display', ({ display }) => {
+  browser.storage.local.get('display').then( ({ display }) => {
     const parsedDisplay  = Utility.parseJson( display ) || {};
     const displayOptions = Object.assign( {}, parsedDisplay, { query: query });
     browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
@@ -98,7 +98,7 @@ filterItemsInput.addEventListener( 'keyup', debouncedFilterEventHandler );
 
 
 function previousPageEventListener() {
-  browser.storage.local.get( 'display', ({ display }) => {
+  browser.storage.local.get('display').then( ({ display }) => {
     const parsedDisplay  = Utility.parseJson( display ) || {};
     const currentPage = display ? parsedDisplay.currentPage : 1;
 
@@ -108,7 +108,7 @@ function previousPageEventListener() {
 }
 
 function nextPageEventListener() {
-  browser.storage.local.get( 'display', ({ display }) => {
+  browser.storage.local.get('display').then( ({ display }) => {
     const parsedDisplay  = Utility.parseJson( display ) || {};
     const currentPage = display ? parsedDisplay.currentPage : 1;
 
@@ -469,7 +469,7 @@ var UI = ( function() {
         document.querySelector( '.authentication' ).classList.add( 'hidden' );
         document.querySelector( '.authenticated'  ).classList.remove( 'hidden' );
 
-        browser.storage.local.get( 'display', function( { display } ) {
+        browser.storage.local.get('display').then( ({ display }) => {
           const currentTimestamp = ( Date.now() / 1000 | 0 );
           const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
           const lastDisplay   = parsedDisplay.displayedAt;
@@ -494,7 +494,7 @@ var UI = ( function() {
 
         // Enable the loading animation and update the list of items
         MainLoader.enable();
-        chrome.runtime.sendMessage({ action: 'retrieve-items', force: false });
+        browser.runtime.sendMessage({ action: 'retrieve-items', force: false });
       }, function( error ) {
         let authenticationButton = document.querySelector( '.authentication button' );
 
@@ -502,7 +502,7 @@ var UI = ( function() {
         document.querySelector( '.authenticated'  ).classList.add( 'hidden' );
 
         authenticationButton.addEventListener( 'click', function() {
-          chrome.runtime.sendMessage({ action: 'authenticate' });
+          browser.runtime.sendMessage({ action: 'authenticate' });
         });
       });
     },
@@ -515,7 +515,7 @@ var UI = ( function() {
       Settings.init().then( function() {
         return Settings.get( 'perPage' );
       }).then( function( perPage ) {
-        browser.storage.local.get( [ 'items', 'display' ], function( { items, display } ) {
+        browser.storage.local.get([ 'items', 'display' ]).then( ({ items, display }) => {
           const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
           let query           = opts.query || parsedDisplay.query;
           let pageToDisplay   = opts.page  || parsedDisplay.currentPage;
@@ -568,7 +568,7 @@ var UI = ( function() {
         }
 
         Logger.log('(UI.updateList) pagination enabled, will update the display');
-        browser.storage.local.get( [ 'items', 'display' ], function( { items, display } ) {
+        browser.storage.local.get([ 'items', 'display' ]).then( ({ items, display }) => {
           const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
           let query           = opts.query || parsedDisplay.query;
           let pageToDisplay   = opts.page  || parsedDisplay.currentPage;
@@ -614,7 +614,7 @@ var UI = ( function() {
       item.querySelector('.tick-action .tick'   ).classList.add(    'hidden' );
       item.querySelector('.tick-action .loader' ).classList.remove( 'hidden' );
 
-      chrome.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
+      browser.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
     },
 
     deleteItem: ( itemId ) => {
@@ -623,7 +623,7 @@ var UI = ( function() {
       item.querySelector('.delete-action .trash'  ).classList.add(   'hidden' );
       item.querySelector('.delete-action .loader' ).classList.remove( 'hidden' );
 
-      chrome.runtime.sendMessage( { action: 'delete-item', id: itemId } );
+      browser.runtime.sendMessage( { action: 'delete-item', id: itemId } );
     },
 
     fadeOutItem: ( itemId ) => {
@@ -636,7 +636,7 @@ var UI = ( function() {
       Settings.init().then( function() {
         return Settings.get( 'perPage' );
       }).then( function( perPage ) {
-        browser.storage.local.get( [ 'items', 'display' ], function( { items, display } ) {
+        browser.storage.local.get([ 'items', 'display' ]).then( ({ items, display }) => {
           const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
           let query           = parsedDisplay.query;
           let pageToDisplay   = parsedDisplay.currentPage;
@@ -665,7 +665,7 @@ var UI = ( function() {
 document.addEventListener('DOMContentLoaded', function() {
   UI.setup();
 
-  chrome.runtime.onMessage.addListener( function( eventData ) {
+  browser.runtime.onMessage.addListener( function( eventData ) {
     MainLoader.disable();
 
     if( eventData.error || eventData.notice ) {
@@ -700,7 +700,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Flash the badge if an error occured
-        chrome.runtime.sendMessage({ action: 'flash-error' });
+        browser.runtime.sendMessage({ action: 'flash-error' });
 
       } else if( eventData.notice ) {
         flashContainer.classList.add( noticeClass );
@@ -726,7 +726,7 @@ document.addEventListener('DOMContentLoaded', function() {
       switch( eventData.action ) {
         case 'authenticated':
           window.close();
-          chrome.runtime.sendMessage({ action: 'update-badge-count' });
+          browser.runtime.sendMessage({ action: 'update-badge-count' });
           break;
 
         case 'marked-as-read':

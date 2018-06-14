@@ -12,7 +12,7 @@ browser.commands.onCommand.addListener( (command) => {
       const currentUrl   = currentTab.url;
       const currentTitle = currentTab.title;
 
-      browser.storage.local.get( 'items', ({ items }) => {
+      browser.storage.local.get('items').then( ({ items }) => {
         const matchingItem = Items.find( items, { url: currentUrl });
 
         if( matchingItem ) {

@@ -57,7 +57,7 @@ browser.tabs.onUpdated.addListener( ( tabId, changeInfo ) => {
       // TODO: Maybe I can organize promises differently, so that I only access this handler
       //       when tab.active == true ? So I could remove one test / indentation level here
       if( tab.active ) {
-        browser.storage.local.get( "items" ).then( ({ items }) => {
+        browser.storage.local.get("items").then( ({ items }) => {
           // const parsedItems  = Utility.parseJson( items ) || [];
           const containsItem = Items.contains( items, { url: tab.url });
 
@@ -87,7 +87,7 @@ browser.tabs.onActivated.addListener( ({ tabId }) => {
   browser.tabs.get( tabId ).then( function( tab ) {
     return tab.url;
   }).then( ( currentUrl ) => {
-    browser.storage.local.get( "items" ).then( ({ items }) => {
+    browser.storage.local.get("items").then( ({ items }) => {
       // const parsedItems  = Utility.parseJson( items ) || [];
       const containsItem = Items.contains( items, { url: currentUrl });
 

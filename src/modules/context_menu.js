@@ -2,17 +2,22 @@
 
 import Logger from './logger.js';
 
+// Before Firefox 55 this API was also originally named contextMenus, and that name has been
+// retained as an alias, so you can use contextMenus to write code that works in Firefox and
+// also in other browsers.
+// To use this API you need to have the "menus"  permission (or "contextMenus" for the alias)
+
 var ContextMenu = ( function() {
   function enable( id ) {
     Logger.log( '(ContextMenu.enable) enable ' + id + ' context menu');
-    chrome.contextMenus.update( id, {
+    browser.contextMenus.update( id, {
       enabled: true
     });
   }
 
   function disable( id ) {
     Logger.log( '(ContextMenu.enable) disable ' + id + ' context menu');
-    chrome.contextMenus.update( id, {
+    browser.contextMenus.update( id, {
       enabled: false
     });
   }
@@ -29,7 +34,7 @@ var ContextMenu = ( function() {
 
     createEntries: function() {
       Logger.log( '(ContextMenu.createEntries) create all right-click entries' );
-      chrome.contextMenus.create({
+      browser.contextMenus.create({
         id: ContextMenu.addId,
         title: 'Add to Pocket',
         contexts: ['link', 'page'],
@@ -37,7 +42,7 @@ var ContextMenu = ( function() {
           16: 'assets/icons/ionicons-android-add-circle.svg'
         }
       });
-      chrome.contextMenus.create({
+      browser.contextMenus.create({
         id: ContextMenu.archiveId,
         title: 'Mark as read',
         contexts: ['page'],
@@ -45,7 +50,7 @@ var ContextMenu = ( function() {
           16: 'assets/icons/ionicons-checkmark.svg'
         }
       });
-      chrome.contextMenus.create({
+      browser.contextMenus.create({
         id: ContextMenu.deleteId,
         title: 'Delete',
         contexts: ['page'],
@@ -57,7 +62,7 @@ var ContextMenu = ( function() {
 
     destroyEntries: function() {
       Logger.log( '(ContextMenu.destroyEntries) destroy all right-click entries' );
-      chrome.contextMenus.removeAll();
+      browser.contextMenus.removeAll();
     },
 
     setState: function( state ) {

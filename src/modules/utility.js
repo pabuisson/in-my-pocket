@@ -41,7 +41,7 @@ var Utility = ( function() {
     },
 
     isMajorOrMinorUpdate: ( previousVersion ) => {
-      const currentVersion = chrome.runtime.getManifest().version;
+      const currentVersion = browser.runtime.getManifest().version;
       const currentMinor   = currentVersion.split('.').slice( 0, 2 ).join('');
       const previousMinor  = previousVersion.split('.').slice( 0, 2 ).join('');
 
