@@ -497,12 +497,19 @@ var UI = ( function() {
         browser.runtime.sendMessage({ action: 'retrieve-items', force: false });
       }, function( error ) {
         let authenticationButton = document.querySelector( '.authentication button' );
+        let pocketSignupLink     = document.querySelector( '.authentication .signup' );
 
         document.querySelector( '.authentication' ).classList.remove( 'hidden' );
         document.querySelector( '.authenticated'  ).classList.add( 'hidden' );
 
-        authenticationButton.addEventListener( 'click', function() {
+        authenticationButton.addEventListener( 'click', () => {
           browser.runtime.sendMessage({ action: 'authenticate' });
+        });
+
+        pocketSignupLink.addEventListener('click', () => {
+          setTimeout( () => {
+            window.close();
+          }, 200);
         });
       });
     },
