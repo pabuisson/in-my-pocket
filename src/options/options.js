@@ -143,7 +143,7 @@ var UI = ( function() {
         //      once disconnected)
         let mustDisconnect = confirm("You're about to disconnect from your pocket account. Go on?");
         if( mustDisconnect ) {
-          browser.storage.local.get().then( ( data ) => {
+          browser.storage.local.get().then( data => {
             let keysToPersist = [ 'settings' ];
             let keysToRemove = Object.keys( data ).filter( ( key ) => {
               // Filter out keys listed in keysToPersist, and keeps

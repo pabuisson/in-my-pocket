@@ -22,23 +22,23 @@ var Badge = ( function() {
 
   return {
     hide: function() {
-      chrome.browserAction.setBadgeText({ text: '' });
+      browser.browserAction.setBadgeText({ text: '' });
     },
 
     updateCount: function( items ) {
       Settings.init().then( function() {
         let showBadge = Settings.get( 'showBadge' );
         if( showBadge === true ) {
-          chrome.browserAction.setBadgeBackgroundColor({ color: defaultBackgroundColor });
+          browser.browserAction.setBadgeBackgroundColor({ color: defaultBackgroundColor });
 
           if( items ) {
             let itemsCount = itemsNumbers( items );
-            chrome.browserAction.setBadgeText({ text: itemsCount.toString() });
+            browser.browserAction.setBadgeText({ text: itemsCount.toString() });
           } else {
-            browser.storage.local.get( 'items', function( { items } ) {
+            browser.storage.local.get('items').then( ({ items }) => {
               let itemsCollection = Utility.parseJson( items ) || [];
               let itemsCount = itemsNumbers( itemsCollection );
-              chrome.browserAction.setBadgeText({ text: itemsCount.toString() });
+              browser.browserAction.setBadgeText({ text: itemsCount.toString() });
             });
           }
         } else {
@@ -50,7 +50,7 @@ var Badge = ( function() {
 
     // TODO: code duplication with flashError
     flashSuccess: function() {
-      browser.storage.local.get( 'items', ({ items }) => {
+      browser.storage.local.get('items').then( ({ items }) => {
         let parsedItems = Utility.parseJson( items ) || [];
 
         browser.browserAction.setBadgeText({ text: '✓' });
@@ -70,7 +70,7 @@ var Badge = ( function() {
     // TODO: in case of an error, I could just get the badge number, display the
     //       error notification and redisplay the previous value afterwards
     flashError: function() {
-      browser.storage.local.get( 'items', ({ items }) => {
+      browser.storage.local.get('items').then( ({ items }) => {
         let parsedItems = Utility.parseJson( items ) || [];
 
         browser.browserAction.setBadgeText({ text: '!' });

@@ -55,7 +55,7 @@ var Authentication = ( function() {
             const requestToken = response.code;
 
             const authorizeUrl = "https://getpocket.com/auth/authorize?request_token=" + requestToken + "&redirect_uri=" + redirectIntermediate;
-            browser.tabs.create({ 'url': authorizeUrl }, ( tab ) => {
+            browser.tabs.create({ 'url': authorizeUrl }).then( ( tab ) => {
               browser.tabs.onUpdated.addListener( ( tabId, changeInfo, updatedTab ) => {
                 // callback url has been loaded
                 if (changeInfo.status == 'complete' && updatedTab.url.indexOf(redirectIntermediate) === 0) {

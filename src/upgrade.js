@@ -13,7 +13,7 @@ function mustShowUpdateNotification( details ) {
   return isUpdate && isMajorOrMinorUpdate;
 }
 
-chrome.runtime.onInstalled.addListener( details => {
+browser.runtime.onInstalled.addListener( details => {
   if( details.reason == "install" ) {
     // TODO: maybe propose some tips, or send user to a FAQ or any kind of post-install page
     Logger.log("Fresh install! Welcome on board :)");

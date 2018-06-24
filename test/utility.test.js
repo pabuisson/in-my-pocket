@@ -21,11 +21,11 @@ describe('Utility.parseJson', () => {
 
 describe('Utility.isMajorOrMinorUpdate', () => {
   beforeEach( () => {
-    sinon.stub(chrome.runtime, 'getManifest').returns({ version: '1.2.2' });
+    sinon.stub(browser.runtime, 'getManifest').returns({ version: '1.2.2' });
   });
 
   afterEach( () => {
-    chrome.runtime.getManifest.restore();
+    browser.runtime.getManifest.restore();
   });
 
   it('returns false if version has not been updated', () => {

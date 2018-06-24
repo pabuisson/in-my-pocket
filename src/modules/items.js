@@ -52,7 +52,7 @@ var Items = ( function() {
   function removeItem( itemId, method ) {
     Logger.log('(Items.removeItem) id to remove: ' + itemId );
 
-    browser.storage.local.get( [ 'access_token', 'items' ], ({ access_token, items }) => {
+    browser.storage.local.get([ 'access_token', 'items' ]).then( ({ access_token, items }) => {
       const apiRequester = new PocketApiRequester( access_token );
       const callbackAction = method == 'archive' ? 'marked-as-read' : 'deleted';
       const removalPromise = method == 'archive' ? apiRequester.archive( itemId ) : apiRequester.delete( itemId );
@@ -77,7 +77,7 @@ var Items = ( function() {
         }
 
         // Send a message back to the UI
-        chrome.runtime.sendMessage({ action: callbackAction, id: itemId });
+        browser.runtime.sendMessage({ action: callbackAction, id: itemId });
 
         // Redraw page actions
         if( removedItem ) {
@@ -178,11 +178,11 @@ var Items = ( function() {
     addItem: function( url, title, options = {} ) {
       Logger.log( '(Items.addItem)' );
 
-      browser.storage.local.get([ 'access_token', 'items' ], ({ access_token, items }) => {
+      browser.storage.local.get([ 'access_token', 'items' ]).then( ({ access_token, items }) => {
         const alreadyContainsItem = Items.contains( items, { url: url } );
         if( alreadyContainsItem === true ) {
           // Instead of just logging, send an event back to the UI and exit
-          chrome.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST });
+          browser.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST });
           return;
         }
 
@@ -206,7 +206,7 @@ var Items = ( function() {
             Badge.flashSuccess();
 
             // Send a message back to the UI
-            chrome.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
+            browser.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
 
             // Close the given tab if setting closeTabWhenAdded is "on"
             if( options.closeTabId ) {

@@ -20,7 +20,7 @@ function retrieveItems( force ) {
   const intervalWithoutReload = 15*60;
   const currentTimestamp      = ( Date.now()/1000 | 0 );
 
-  browser.storage.local.get([ 'items', 'last_retrieve' ], function( { items, last_retrieve } ) {
+  browser.storage.local.get([ 'items', 'last_retrieve' ]).then( ({ items, last_retrieve }) => {
     Logger.log( "(retrieveItems) timeout: " + ( currentTimestamp - last_retrieve ) + ' / ' + intervalWithoutReload );
 
     if ( force || !items || !last_retrieve ) {
@@ -31,7 +31,7 @@ function retrieveItems( force ) {
       retrieveDiff();
     } else {
       // Do this to stop the main-loader component
-      chrome.runtime.sendMessage({ action: 'retrieved-items' });
+      browser.runtime.sendMessage({ action: 'retrieved-items' });
       // Update the badge count, in case it wasn't displayed but no items reload happened
       Badge.updateCount();
     }
@@ -42,7 +42,7 @@ function retrieveItems( force ) {
 function retrieveFirst() {
   Logger.log('(retrieve first)');
 
-  browser.storage.local.get('access_token', function( { access_token } ) {
+  browser.storage.local.get('access_token').then( ({ access_token }) => {
     let requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
@@ -78,7 +78,7 @@ function retrieveFirst() {
 
         // Send a message back to the UI
         // TODO: Do this once in the "retrieveItems" method
-        chrome.runtime.sendMessage({ action: 'retrieved-items' });
+        browser.runtime.sendMessage({ action: 'retrieved-items' });
 
         // Updates the tabs page actions
         PageAction.redrawAllTabs();
@@ -101,7 +101,7 @@ function retrieveDiff() {
     DELETED:  '2'
   };
 
-  browser.storage.local.get( ['access_token', 'last_retrieve', 'items'], ( { access_token, last_retrieve, items } ) => {
+  browser.storage.local.get(['access_token', 'last_retrieve', 'items']).then( ({ access_token, last_retrieve, items }) => {
     let requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
@@ -177,7 +177,7 @@ function retrieveDiff() {
 
         // Send a message back to the UI and updates the tabs page actions
         // TODO: Do this once in the "retrieveItems" method
-        chrome.runtime.sendMessage({ action: 'retrieved-items' });
+        browser.runtime.sendMessage({ action: 'retrieved-items' });
         PageAction.redrawAllTabs();
       })
       .catch( error => {
@@ -188,7 +188,7 @@ function retrieveDiff() {
 
         // Send a message back to the UI and updates the tabs page actions
         // TODO: Do this once in the "retrieveItems" method
-        chrome.runtime.sendMessage({ action: 'retrieved-items' });
+        browser.runtime.sendMessage({ action: 'retrieved-items' });
         PageAction.redrawAllTabs();
 
         // Flash the badge if an error occured
@@ -201,7 +201,7 @@ function retrieveDiff() {
 // - - - OPEN ITEMS - - -
 
 function openRandomItem( query, opt = {} ) {
-  browser.storage.local.get( 'items' ).then( function( { items } ) {
+  browser.storage.local.get( 'items' ).then( ({ items }) => {
     const filteredItems = Items.filter( items, query );
 
     if( filteredItems.length > 0 ) {
@@ -228,7 +228,7 @@ function openItem( { itemId, openInNewTab } ) {
   }
 
   pending.then( () => {
-    browser.storage.local.get( 'items' ).then( function( { items } ) {
+    browser.storage.local.get( 'items' ).then( ({ items }) => {
       const item = Items.find( items, { id: itemId } );
 
       if( openInNewTab ) {
@@ -247,13 +247,13 @@ function openItem( { itemId, openInNewTab } ) {
 
 // - - - MESSAGES - - -
 
-chrome.runtime.onMessage.addListener( function( eventData ) {
+browser.runtime.onMessage.addListener( function( eventData ) {
   Logger.log( `(bg.onMessage) eventData.action: ${eventData.action}` );
   switch( eventData.action ) {
     case 'authenticate':
       Authentication.authenticate().then( () => {
         // Send a message back to the UI
-        chrome.runtime.sendMessage({ action: 'authenticated' });
+        browser.runtime.sendMessage({ action: 'authenticated' });
         // Retrieve the items and update the badge count
         retrieveItems( true );
         // Create right click context menus
