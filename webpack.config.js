@@ -26,7 +26,12 @@ module.exports = {
         loader: 'babel-loader',
         options: {
           presets: [
-            ['es2015', { modules: false }]
+            ['env', {
+              targets: {
+                browsers: ["firefox >= 45"]
+              },
+              modules: false
+            }]
           ]
         }
       }]
