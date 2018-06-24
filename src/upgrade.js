@@ -34,6 +34,6 @@ browser.notifications.onClicked.addListener( notificationId => {
   }
 
   browser.notifications.clear( notificationId );
-  browser.tabs.create({ 'url': 'https://addons.mozilla.org/firefox/addon/in-my-pocket/versions/' });
+  browser.tabs.create({ 'url': 'https://inmypocket.pabuisson.com/changelog.html' });
 });
 
