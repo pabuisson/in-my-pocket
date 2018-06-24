@@ -21,9 +21,12 @@ html, body, .authenticated, .authentication {
 }
 
 .authentication {
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
   padding: 20px 0;
-  text-align: center;
 
   button {
     padding: 1rem 2rem;
@@ -34,12 +37,26 @@ html, body, .authenticated, .authentication {
     font-size: 1.2rem;
     cursor: pointer;
 
+    max-width: 80%;
+
     &:hover {
       background-color: $ff-blue-60;
     }
 
     &:active {
       background-color: $ff-blue-70;
+    }
+  }
+
+  .bottom {
+    padding: 1rem 2rem;
+    color: $ff-secondary-text;
+
+    a {
+      color: $ff-secondary-text;
+      &:hover {
+        color: $ff-blue-70;
+      }
     }
   }
 }
