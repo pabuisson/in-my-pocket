@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.4 - June 2018
+
+* DESIGN: updated the addon icon, simpler and more modern!
+* UPDATE: before authentication, a message is displayed at the bottom of the popup to explain why you need a pocket account and link to the pocket signup page
+
+
 ## 0.9.3 - May 2018
 
 * FIX: "in my pocket" icon was not visible in FF56 and older
