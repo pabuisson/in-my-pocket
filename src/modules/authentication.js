@@ -8,11 +8,7 @@ import { consumerKey } from './constants.js';
 // -------------------------------------
 
 
-// TODO: After the opening of the callback tab, reactivate the tab where the
-//      user was before for a less disturbing behaviour
-
 var Authentication = ( function() {
-  // TODO: Replace by an "internal" page with its own JS
   const redirectIntermediate = 'https://oauth.pabuisson.com';
   const redirectAuthFinished = 'https://oauth.pabuisson.com';
 

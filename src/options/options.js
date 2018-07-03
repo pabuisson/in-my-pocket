@@ -85,7 +85,6 @@ var UI = ( function() {
       });
 
       // Event: "Open in new tab" checkbox
-      // TODO: DRY those checkbox save actions
       openInNewTabCheckbox.addEventListener( 'change', function() {
         Settings.set( 'openInNewTab', this.checked );
         Settings.save();
@@ -93,7 +92,6 @@ var UI = ( function() {
       });
 
       // Event: "Enable debug mode" checkbox
-      // TODO: DRY those checkbox save actions
       enableDebugModeCheckbox.addEventListener( 'change', function() {
         Settings.set( 'debugMode', this.checked );
         Settings.save();
@@ -101,7 +99,6 @@ var UI = ( function() {
       });
 
       // Event: "Automation: archive when opened" checkbox
-      // TODO: DRY those checkbox save actions
       archiveWhenOpenedCheckbox.addEventListener( 'change', function() {
         Settings.set( 'archiveWhenOpened', this.checked );
         Settings.save();
@@ -109,7 +106,6 @@ var UI = ( function() {
       });
 
       // Event: "Automation: close tab when added" checkbox
-      // TODO: DRY those checkbox save actions
       closeTabWhenAddedCheckbox.addEventListener( 'change', function() {
         Settings.set( 'closeTabWhenAdded', this.checked );
         Settings.save();
@@ -139,8 +135,6 @@ var UI = ( function() {
       disconnectAccountAction.addEventListener( 'click', function(ev) {
         ev.preventDefault();
 
-        // TODO: Enhance UI for confirmation (maybe inline button that appear and update the UI
-        //      once disconnected)
         let mustDisconnect = confirm("You're about to disconnect from your pocket account. Go on?");
         if( mustDisconnect ) {
           browser.storage.local.get().then( data => {

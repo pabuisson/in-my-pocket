@@ -77,7 +77,6 @@ function retrieveFirst() {
         browser.storage.local.set({ last_retrieve: response.since });
 
         // Send a message back to the UI
-        // TODO: Do this once in the "retrieveItems" method
         browser.runtime.sendMessage({ action: 'retrieved-items' });
 
         // Updates the tabs page actions
@@ -176,7 +175,6 @@ function retrieveDiff() {
         browser.storage.local.set({ last_retrieve: response.since });
 
         // Send a message back to the UI and updates the tabs page actions
-        // TODO: Do this once in the "retrieveItems" method
         browser.runtime.sendMessage({ action: 'retrieved-items' });
         PageAction.redrawAllTabs();
       })
@@ -187,7 +185,6 @@ function retrieveDiff() {
         Logger.warn(`(bg.retrieveDiff) ${ JSON.stringify(error) }`);
 
         // Send a message back to the UI and updates the tabs page actions
-        // TODO: Do this once in the "retrieveItems" method
         browser.runtime.sendMessage({ action: 'retrieved-items' });
         PageAction.redrawAllTabs();
 

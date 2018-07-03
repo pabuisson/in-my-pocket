@@ -15,7 +15,6 @@ function mustShowUpdateNotification( details ) {
 
 browser.runtime.onInstalled.addListener( details => {
   if( details.reason == "install" ) {
-    // TODO: maybe propose some tips, or send user to a FAQ or any kind of post-install page
     Logger.log("Fresh install! Welcome on board :)");
   } else if( mustShowUpdateNotification(details) ) {
     Logger.log("IMP has been upgraded from " + details.previousVersion + " !");

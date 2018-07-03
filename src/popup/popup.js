@@ -148,7 +148,6 @@ var MainLoader = ( function() {
   };
 })();
 
-// TODO: maybe I'll remove this once I'll have a pagination working
 var DomBuilder = ( function() {
   const ITEMS_PER_BATCH = 50;
   let itemsToCreate     = undefined;
@@ -186,7 +185,6 @@ var DomBuilder = ( function() {
     itemsContainer.innerHTML = '';
   }
 
-  // TODO: replace this with another mechanism (React, Preact, Inferno, Vue...)
   function buildItemElement( item ) {
     let liElement        = document.createElement('li');
     let faviconElement   = document.createElement('img');
@@ -517,7 +515,6 @@ var UI = ( function() {
 
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth
-    // TODO: almost all logic duplicated with updateList
     drawList: function( opts = {} ) {
       Settings.init().then( function() {
         return Settings.get( 'perPage' );
@@ -563,7 +560,6 @@ var UI = ( function() {
     },
 
 
-    // TODO: almost all logic duplicated with drawList
     updateList: function( opts = {} ) {
       Settings.init().then( function() {
         return Settings.get( 'perPage' );
@@ -637,8 +633,6 @@ var UI = ( function() {
       document.querySelector( ".item[data-id='" + itemId + "']" ).classList.add( 'disappearing' );
     },
 
-    // TODO: lots of duplication here. I need to extract all this items logic into
-    //       a dedicated module to avoid repeating the filtering code etc..
     updatePaginationElements: () => {
       Settings.init().then( function() {
         return Settings.get( 'perPage' );

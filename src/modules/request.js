@@ -81,7 +81,6 @@ class Request {
             reject( errorObject );
           }
         }).catch( () => {
-          // TODO: Extract this to a separate method, to avoid this long method
           Logger.error('(Request.fetch) error while reaching the server');
 
           errorObject.httpCode = undefined;

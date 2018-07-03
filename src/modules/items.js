@@ -18,14 +18,6 @@ var Items = ( function() {
   let parsedItems     = null;
 
   function parseItems( rawItems ) {
-    // TODO: would this make sense?
-    // if( rawItems.constructor != String ) {
-    //   return rawItems;
-    // }
-
-    // TODO: replace this dummy checksum
-    // TODO: replace this dummy checksum
-    // TODO: replace this dummy checksum
     const rawItemsChecksum = rawItems.length;
     Logger.log(`(Items.parseItems) checksum: ${ currentChecksum } ; new: ${ rawItemsChecksum }`);
 
@@ -48,7 +40,7 @@ var Items = ( function() {
     return lowerTitle.includes( lowerQuery ) || lowerUrl.includes( lowerQuery );
   }
 
-  // TODO: method should not be a magical string. Define fixed values
+  // TODO: 'method' param should not be a magical string. Define fixed values in a module
   function removeItem( itemId, method ) {
     Logger.log('(Items.removeItem) id to remove: ' + itemId );
 

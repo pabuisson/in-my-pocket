@@ -55,7 +55,6 @@ var PageAction = ( function() {
       });
     },
 
-    // TODO: give a list of arguments : tabs ou tabIds and iterate here instead of in backgroundjs
     drawEnabled: function( tabId ) {
       mustDisplayPageAction().then( () => {
         // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
@@ -67,7 +66,6 @@ var PageAction = ( function() {
       });
     },
 
-    // TODO: give a list of arguments : tabs ou tabIds and iterate here instead of in backgroundjs
     drawDisabled: function( tabId ) {
       mustDisplayPageAction().then( () => {
         // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
@@ -79,7 +77,7 @@ var PageAction = ( function() {
       });
     },
 
-    // TODO: Can't I just add this in my public draw methods? so that it would be necessary
+    // TODO: Can't I just add this in my public draw methods? so that it wouldn't be necessary
     //       to manually call this each time I draw some page actions
     show: function( tabId ) {
       mustDisplayPageAction().then( () => {

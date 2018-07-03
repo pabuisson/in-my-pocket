@@ -48,7 +48,6 @@ var Badge = ( function() {
       });
     },
 
-    // TODO: code duplication with flashError
     flashSuccess: function() {
       browser.storage.local.get('items').then( ({ items }) => {
         let parsedItems = Utility.parseJson( items ) || [];
@@ -60,15 +59,11 @@ var Badge = ( function() {
           // Reset the color to default
           browser.browserAction.setBadgeBackgroundColor({ color: defaultBackgroundColor });
           // Update the badge if needed
-          // TODO: pass the items count instead of the collection
           Badge.updateCount( parsedItems );
         }, 2000);
       });
     },
 
-    // TODO: code duplication with flashSuccess
-    // TODO: in case of an error, I could just get the badge number, display the
-    //       error notification and redisplay the previous value afterwards
     flashError: function() {
       browser.storage.local.get('items').then( ({ items }) => {
         let parsedItems = Utility.parseJson( items ) || [];
@@ -80,7 +75,6 @@ var Badge = ( function() {
           // Reset the color to default
           browser.browserAction.setBadgeBackgroundColor({ color: defaultBackgroundColor });
           // Update the badge if needed
-          // TODO: pass the items count instead of the collection
           Badge.updateCount( parsedItems );
         }, 2000);
       });
