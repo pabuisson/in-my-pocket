@@ -1,6 +1,6 @@
 "use strict";
 
-require( "file-loader?name=[path][name].[ext]!./popup.html" );
+import'./popup.html';
 import'./popup.scss';
 
 import Logger from '../modules/logger.js';
