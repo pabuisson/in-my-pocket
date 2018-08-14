@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.0 - Not released
+
+* FEATURE: from now on, you'll notice a tiny notification when you install InMyPocket. Clicking the notification will redirect you to the FAQ page of the support, for more details about the details, most frequently asked questions, etc.
+
+
 ## 0.9.4 - June 2018
 
 * DESIGN: updated the addon icon, simpler and more modern!
