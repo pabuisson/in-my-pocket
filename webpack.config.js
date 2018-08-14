@@ -1,52 +1,51 @@
-const webpack = require( 'webpack' );
-const path    = require( 'path' );
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin    = require('copy-webpack-plugin');
 
 module.exports = {
-  context: path.resolve(__dirname, 'src'),
+  context: __dirname + '/src',
+  mode: 'production',
   entry: {
-    'popup/popup'     : './popup/popup.js',      // will be  ./build/popup/popup.js,
-    'options/options' : './options/options.js',  // will be  ./build/options/options.js
-    'background'      : './background.js',       // will be  ./build/background.js
-    'upgrade'         : './upgrade.js',          // will be  ./build/upgrade.js
-    'keyboard'        : './keyboard.js',         // will be  ./build/keyboard.js
-    'context_menus_page_actions' : './context_menus_page_actions.js'  // will be  ./build/context_menus_page_actions.js
+    'popup/popup'                : './popup/popup.js',
+    'options/options'            : './options/options.js',
+    'background'                 : './background.js',
+    'upgrade'                    : './upgrade.js',
+    'keyboard'                   : './keyboard.js',
+    'context_menus_page_actions' : './context_menus_page_actions.js'
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: __dirname + '/build',
     filename: '[name].js'
   },
   module: {
     rules: [{
-      test: /\.js$/,
-      // include: path.resolve(__dirname, 'src'),
-      exclude: /(node_modules|bower_components)/,
-      use: [{
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            ['env', {
-              targets: {
-                browsers: ["firefox >= 45"]
-              },
-              modules: false
-            }]
-          ]
+      test: /\.html$/,
+      use: [
+        {
+          loader: 'file-loader',
+          options: {
+            name: '[path][name].[ext]'
+          }
         }
-      }]
+      ]
+    }, {
+      test: /\.js$/,
+      exclude: /(node_modules|bower_components)/,
+      use: [
+        'babel-loader'
+      ]
     },{
       test: /\.scss$/,
-      use: ExtractTextPlugin.extract({
-        fallback: 'style-loader',
-        use: [ 'css-loader', 'sass-loader' ]
-      })
+      use: [
+        MiniCssExtractPlugin.loader,
+        "css-loader", // translates CSS into CommonJS
+        "sass-loader" // compiles Sass to CSS, using Node Sass by default
+      ]
     }]
   },
   plugins: [
-    new ExtractTextPlugin('[name].css'),
+    new MiniCssExtractPlugin(),
     new CopyWebpackPlugin([
-      { from: 'assets/', to: 'assets/' },
+      { from: 'assets/', to: 'assets/',  ignore: [ '.DS_Store' ] },
       { from: 'manifest.json', to: 'manifest.json' }
     ])
   ]

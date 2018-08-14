@@ -3,3 +3,4 @@ coverage/
 node_modules/
 web-ext-artifacts/
 .nyc_output/
+.cache/

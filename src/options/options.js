@@ -1,6 +1,6 @@
 "use strict";
 
-require( "file-loader?name=[path][name].[ext]!./options.html" );
+import './options.html';
 import './options.scss';
 
 import Authentication from '../modules/authentication.js';
