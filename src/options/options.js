@@ -4,10 +4,12 @@ import './options.html';
 import './options.scss';
 
 import Authentication from '../modules/authentication.js';
-import Badge from '../modules/badge.js';
-import ContextMenu from '../modules/context_menu.js';
-import PageAction from '../modules/page_action.js';
-import Settings from '../modules/settings.js';
+import Badge          from '../modules/badge.js';
+import ContextMenu    from '../modules/context_menu.js';
+import Keyboard       from '../modules/keyboard.js';
+import PageAction     from '../modules/page_action.js';
+import Settings       from '../modules/settings.js';
+import { KeyboardShortcuts } from '../modules/constants.js';
 
 // -------------
 
@@ -21,6 +23,8 @@ let paginationPerPageSelector = document.querySelector( '.pagination-per-page' )
 let zoomLevelSelector         = document.querySelector( '.zoom-level' );
 let archiveWhenOpenedCheckbox = document.querySelector( '.archive-when-opened' );
 let closeTabWhenAddedCheckbox = document.querySelector( '.close-tab-when-added' );
+let keyboardOpenPopupShortcut = document.querySelector( '.keyboard-open-popup' );
+let keyboardToggleShortcut    = document.querySelector( '.keyboard-toggle' );
 
 let savedNotificationElement = document.querySelector( '.saved-notification' );
 
@@ -61,6 +65,8 @@ var UI = ( function() {
         closeTabWhenAddedCheckbox.checked = settings[ 'closeTabWhenAdded' ];
         paginationPerPageSelector.value   = settings[ 'perPage' ] || '';
         zoomLevelSelector.value           = settings[ 'zoomLevel' ];
+        keyboardOpenPopupShortcut.value   = settings[ 'keyboardOpenPopup' ];
+        keyboardToggleShortcut.value      = settings[ 'keyboardToggle' ];
       });
 
       // Event: "Display count badge" checkbox
@@ -129,6 +135,34 @@ var UI = ( function() {
         Settings.set( 'zoomLevel', this.value );
         Settings.save();
         flashSavedNotification();
+      });
+
+      // Event: updating "toggle page state" keyboard shortcut
+      keyboardToggleShortcut.addEventListener( 'keydown', function(ev) {
+        ev.preventDefault();
+        this.value = Keyboard.stringifyCombination(ev);
+
+        if(Keyboard.isValidCombination(ev)) {
+          Settings.set( 'keyboardToggle', this.value );
+          Settings.save();
+          Keyboard.registerShortcut(KeyboardShortcuts.toggle, this.value);
+          flashSavedNotification();
+          this.blur();
+        }
+      });
+
+      // Event: updating "open popup" keyboard shortcut
+      keyboardOpenPopupShortcut.addEventListener( 'keydown', function(ev) {
+        ev.preventDefault();
+        this.value = Keyboard.stringifyCombination(ev);
+
+        if(Keyboard.isValidCombination(ev)) {
+          Settings.set( 'keyboardOpenPopup', this.value );
+          Settings.save();
+          Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value);
+          flashSavedNotification();
+          this.blur();
+        }
       });
 
       // Event : "Disconnect" from the Pocket account click

@@ -3,6 +3,7 @@
 ## 0.10.0 - Not released
 
 * FEATURE: from now on, you'll notice a tiny notification when you install InMyPocket. Clicking the notification will redirect you to the FAQ page of the support, for more details about the details, most frequently asked questions, etc.
+* SETTINGS: you can now customise keyboard shortcuts on the settings page. Keyboard can be defined with Ctrl/Alt/Shift and a letter/digit/fkey.
 
 
 ## 0.9.4 - June 2018

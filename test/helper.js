@@ -11,3 +11,8 @@ global.browser = {
     getManifest: () => {}
   }
 };
+global.window = {
+  navigator: {
+    platform: ''
+  }
+};

@@ -35,9 +35,9 @@ h2 {
 .row {
   margin: 0px;
   margin-left: -5px;
-  padding: 8px 0px 8px 8px;
-  line-height: 20px;
-  border-top: 1px solid #c1c1c1;
+  padding: 6px 0px 6px 6px;
+  line-height: 16px;
+  border-top: 1px solid #e1e1e1;
 
   label {
     display: inline-block;
@@ -64,8 +64,9 @@ h2 {
     display: inline-block;
   }
 
-  select {
-    width: 10rem;
+  select,
+  input[type="text"] {
+    width: 12rem;
   }
 
   &:first-of-type {

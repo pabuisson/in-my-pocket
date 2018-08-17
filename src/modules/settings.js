@@ -18,7 +18,11 @@ var Settings = ( function() {
     zoomLevel:      '12px',
     // Automations
     archiveWhenOpened: false,
-    closeTabWhenAdded: false
+    closeTabWhenAdded: false,
+    // Keyboard shortcuts
+    // TODO: can I retrieve default from the manifest JSON?
+    keyboardOpenPopup: 'Alt+Q',
+    keyboardToggle: 'Alt+W'
   };
 
   function load() {
