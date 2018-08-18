@@ -31,8 +31,8 @@
     "zip-source": "zip -r web-ext-artifacts/source.zip CHANGELOG.md README.md package.json webpack.config.js src/",
     "build-ext": "npm run build && web-ext build --source-dir=build/ --overwrite-dest && npm run zip-source",
     "start": "web-ext run -s build",
-    "test": "npx mocha --require babel-core/register ./test/**/*.js",
-    "test-watch": "npx mocha -w --require babel-core/register ./test/**/*.js",
+    "test": "npx mocha --require babel-core/register ./test/helper.js ./test/**/*.test.js",
+    "test-watch": "npx mocha -w --require babel-core/register ./test/helper/js ./test/**/*.test.js",
     "cover": "cross-env NODE_ENV=coverage nyc --reporter=lcov --reporter=text npm test"
   },
   "repository": {
