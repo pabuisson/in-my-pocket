@@ -4,6 +4,7 @@
 
 * FEATURE: from now on, you'll notice a tiny notification when you install InMyPocket. Clicking the notification will redirect you to the FAQ page of the support, for more details about the details, most frequently asked questions, etc.
 * SETTINGS: you can now customise keyboard shortcuts on the settings page. Keyboard can be defined with Ctrl/Alt/Shift and a letter/digit/fkey.
+* FIX: the "Saved" notification on the settings page was sometimes not visible due to scrolling. It's now displayed just next to the settings that was modified so that it's always visible to the user.
 
 
 ## 0.9.4 - June 2018
