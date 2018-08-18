@@ -5,7 +5,7 @@ body {
 }
 
 .hidden {
-  transition: opacity 150ms ease-out;
+  transition: opacity 100ms ease-out;
   opacity: 0 !important;
 }
 
@@ -15,8 +15,9 @@ body {
   top: 1rem;
 
   width: 100px;
-  padding: 4px;
+  padding: 2px;
 
+  background-color: transparentize($ff-green-60, 0.8);
   color: $ff-green-60;
   font-weight: bold;
   text-align: center;

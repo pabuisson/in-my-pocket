@@ -33,8 +33,16 @@ let savedNotificationElement = document.querySelector( '.saved-notification' );
 var UI = ( function() {
   let savedNotificationTimerId = null;
 
-  function flashSavedNotification() {
+  function flashSavedNotification(containerRow) {
     savedNotificationElement.classList.remove('hidden');
+
+    if(containerRow) {
+      const topMarginInPx = 2;
+      const offsetTop = parseInt(containerRow.offsetTop) + topMarginInPx;
+      savedNotificationElement.style.top = `${offsetTop}px`;
+    } else {
+      savedNotificationElement.style.top = '0px';
+    }
 
     if( savedNotificationTimerId ) {
       clearTimeout( savedNotificationTimerId );
@@ -42,7 +50,7 @@ var UI = ( function() {
 
     savedNotificationTimerId = setTimeout( () => {
       savedNotificationElement.classList.add('hidden');
-    }, 3000 );
+    }, 2000 );
   }
 
 
@@ -74,14 +82,14 @@ var UI = ( function() {
         Settings.set( 'showBadge', this.checked );
         Settings.save();
         Badge.updateCount();
-        flashSavedNotification();
+        flashSavedNotification(this.parentNode);
       });
 
       // Event: "Display add-to-pocket icon in address bar" checkbox
       displayPageActionCheckbox.addEventListener( 'change', function() {
         Settings.set( 'showPageAction', this.checked );
         Settings.save();
-        flashSavedNotification();
+        flashSavedNotification(this.parentNode);
 
         if( this.checked ) {
           PageAction.redrawAllTabs();
@@ -94,28 +102,28 @@ var UI = ( function() {
       openInNewTabCheckbox.addEventListener( 'change', function() {
         Settings.set( 'openInNewTab', this.checked );
         Settings.save();
-        flashSavedNotification();
+        flashSavedNotification(this.parentNode);
       });
 
       // Event: "Enable debug mode" checkbox
       enableDebugModeCheckbox.addEventListener( 'change', function() {
         Settings.set( 'debugMode', this.checked );
         Settings.save();
-        flashSavedNotification();
+        flashSavedNotification(this.parentNode);
       });
 
       // Event: "Automation: archive when opened" checkbox
       archiveWhenOpenedCheckbox.addEventListener( 'change', function() {
         Settings.set( 'archiveWhenOpened', this.checked );
         Settings.save();
-        flashSavedNotification();
+        flashSavedNotification(this.parentNode);
       });
 
       // Event: "Automation: close tab when added" checkbox
       closeTabWhenAddedCheckbox.addEventListener( 'change', function() {
         Settings.set( 'closeTabWhenAdded', this.checked );
         Settings.save();
-        flashSavedNotification();
+        flashSavedNotification(this.parentNode);
       });
 
       paginationPerPageSelector.addEventListener( 'change', function() {
@@ -127,14 +135,14 @@ var UI = ( function() {
         const displayOptions = { currentPage: 1, displayedAt: null };
         browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
 
-        flashSavedNotification();
+        flashSavedNotification(this.parentNode);
       });
 
       // Event: "Zoom level" selector
       zoomLevelSelector.addEventListener( 'change', function() {
         Settings.set( 'zoomLevel', this.value );
         Settings.save();
-        flashSavedNotification();
+        flashSavedNotification(this.parentNode);
       });
 
       // Event: updating "toggle page state" keyboard shortcut
@@ -146,7 +154,7 @@ var UI = ( function() {
           Settings.set( 'keyboardToggle', this.value );
           Settings.save();
           Keyboard.registerShortcut(KeyboardShortcuts.toggle, this.value);
-          flashSavedNotification();
+          flashSavedNotification(this.parentNode);
           this.blur();
         }
       });
@@ -160,7 +168,7 @@ var UI = ( function() {
           Settings.set( 'keyboardOpenPopup', this.value );
           Settings.save();
           Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value);
-          flashSavedNotification();
+          flashSavedNotification(this.parentNode);
           this.blur();
         }
       });
