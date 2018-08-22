@@ -1,7 +1,7 @@
 "use strict";
 
-import Logger from './modules/logger.js';
-import Utility from './modules/utility.js';
+import Logger  from '../modules/logger.js';
+import Utility from '../modules/utility.js';
 
 const installNotificationId = '0001';
 const upgradeNotificationId = '0002';

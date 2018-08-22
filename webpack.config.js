@@ -5,12 +5,13 @@ module.exports = {
   context: __dirname + '/src',
   mode: 'production',
   entry: {
-    'popup/popup'                : './popup/popup.js',
-    'options/options'            : './options/options.js',
-    'background'                 : './background.js',
-    'upgrade'                    : './upgrade.js',
-    'keyboard'                   : './keyboard.js',
-    'context_menus_page_actions' : './context_menus_page_actions.js'
+    'popup/popup'              : './popup/popup.js',
+    'options/options'          : './options/options.js',
+    'background/background'    : './background/background.js',
+    'background/upgrade'       : './background/upgrade.js',
+    'background/keyboard'      : './background/keyboard.js',
+    'background/page_actions'  : './background/page_actions.js',
+    'background/context_menus' : './background/context_menus.js'
   },
   output: {
     path: __dirname + '/build',

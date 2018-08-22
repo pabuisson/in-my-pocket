@@ -1,15 +1,15 @@
 "use strict";
 
-import Authentication from './modules/authentication.js';
-import Badge from './modules/badge.js';
-import ContextMenu from './modules/context_menu.js';
-import Items from './modules/items.js';
-import Logger from './modules/logger.js';
-import PageAction from './modules/page_action.js';
-import Request from './modules/request.js';
-import Settings from './modules/settings.js';
-import Utility from './modules/utility.js';
-import { consumerKey } from './modules/constants.js';
+import Authentication from '../modules/authentication.js';
+import Badge from '../modules/badge.js';
+import ContextMenu from '../modules/context_menu.js';
+import Items from '../modules/items.js';
+import Logger from '../modules/logger.js';
+import PageAction from '../modules/page_action.js';
+import Request from '../modules/request.js';
+import Settings from '../modules/settings.js';
+import Utility from '../modules/utility.js';
+import { consumerKey } from '../modules/constants.js';
 
 
 // - - -- - -- - -- - -- - -- - -- - -- - ---
@@ -39,6 +39,7 @@ function retrieveItems( force ) {
 }
 
 
+// TODO: Rename -> retrieveAll, more accurate
 function retrieveFirst() {
   Logger.log('(retrieve first)');
 

@@ -1,9 +1,9 @@
 "use strict";
 
-import PageAction from './modules/page_action.js';
-import Keyboard   from './modules/keyboard.js';
-import Settings   from './modules/settings.js';
-import { KeyboardShortcuts } from './modules/constants.js';
+import PageAction from '../modules/page_action.js';
+import Keyboard   from '../modules/keyboard.js';
+import Settings   from '../modules/settings.js';
+import { KeyboardShortcuts } from '../modules/constants.js';
 
 
 // ---------------

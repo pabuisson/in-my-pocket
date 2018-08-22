@@ -17,7 +17,7 @@ var ContextMenu = ( function() {
 
   function disable( id ) {
     Logger.log( '(ContextMenu.enable) disable ' + id + ' context menu');
-    browser.contextMenus.update( id, {
+    return browser.contextMenus.update( id, {
       enabled: false
     });
   }
@@ -37,7 +37,7 @@ var ContextMenu = ( function() {
       browser.contextMenus.create({
         id: ContextMenu.addId,
         title: 'Add to Pocket',
-        contexts: ['link', 'page'],
+        contexts: ['link', 'page', 'tab'],
         icons: {
           16: 'assets/icons/ionicons-android-add-circle.svg'
         }
@@ -45,7 +45,7 @@ var ContextMenu = ( function() {
       browser.contextMenus.create({
         id: ContextMenu.archiveId,
         title: 'Mark as read',
-        contexts: ['page'],
+        contexts: ['link', 'page', 'tab'],
         icons: {
           16: 'assets/icons/ionicons-checkmark.svg'
         }
@@ -53,7 +53,7 @@ var ContextMenu = ( function() {
       browser.contextMenus.create({
         id: ContextMenu.deleteId,
         title: 'Delete',
-        contexts: ['page'],
+        contexts: ['link', 'page', 'tab'],
         icons: {
           16: 'assets/icons/ionicons-trash-b.svg'
         }
@@ -68,26 +68,18 @@ var ContextMenu = ( function() {
     setState: function( state ) {
       switch( state ) {
         case ContextMenu.pageAlreadyInPocket:
-          enable( ContextMenu.addId );    // always enabled, for click on link to remain possible
-          enable( ContextMenu.archiveId );
-          enable( ContextMenu.deleteId );
-          break;
+          return Promise.all([
+            disable( ContextMenu.addId ),
+            enable( ContextMenu.archiveId ),
+            enable( ContextMenu.deleteId )
+          ]);
         case ContextMenu.pageNotInPocket:
-          enable( ContextMenu.addId );    // always enabled
-          disable( ContextMenu.archiveId );
-          disable( ContextMenu.deleteId );
-          break;
+          return Promise.all([
+            enable( ContextMenu.addId ),
+            disable( ContextMenu.archiveId ),
+            disable( ContextMenu.deleteId )
+          ]);
       }
-    },
-
-    // If current url is the one of the current tab, will update the available context menus
-    setCurrentPageState: function( urlToMatch, state ) {
-      browser.tabs.query( { url: urlToMatch, active: true } ).then( matchingTabs => {
-        for( const tab of matchingTabs ) {
-          Logger.log( '(ContextMenu.setCurrentPageState) change current page context menu state to ' + state + ' for ' + tab.url );
-          ContextMenu.setState( state );
-        }
-      });
     }
   };
 })();
