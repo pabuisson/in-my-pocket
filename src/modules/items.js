@@ -80,9 +80,6 @@ var Items = ( function() {
               PageAction.drawDisabled( tab.id );
             }
           });
-
-          // If current url is the one of the current tab, will update the available context menus
-          ContextMenu.setCurrentPageState( removedItem.resolved_url, ContextMenu.pageNotInPocket );
         }
       })
       .catch( error => {
@@ -220,9 +217,6 @@ var Items = ( function() {
                 PageAction.drawEnabled( tab.id );
               }
             });
-
-            // If current url is the one of the current tab, will update the available context menus
-            ContextMenu.setCurrentPageState( url, ContextMenu.pageAlreadyInPocket );
           })
           .catch( error => {
             Logger.error('(Items.addItem) Error while adding a new item');
