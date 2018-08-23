@@ -11,22 +11,21 @@ import Settings from '../modules/settings.js';
 import Utility from '../modules/utility.js';
 import { consumerKey } from '../modules/constants.js';
 
-
-// - - -- - -- - -- - -- - -- - -- - -- - ---
+// ----------------
 
 // - - - API ACCESS : LIST MANAGEMENT - - -
 
-function retrieveItems( force ) {
+function retrieveItems(force) {
   const intervalWithoutReload = 15*60;
   const currentTimestamp      = ( Date.now()/1000 | 0 );
 
   browser.storage.local.get([ 'items', 'last_retrieve' ]).then( ({ items, last_retrieve }) => {
     Logger.log( "(retrieveItems) timeout: " + ( currentTimestamp - last_retrieve ) + ' / ' + intervalWithoutReload );
 
-    if ( force || !items || !last_retrieve ) {
+    if (force || !items || !last_retrieve) {
       // If force == true, we always reload the whole list
       retrieveFirst();
-    } else if( currentTimestamp - last_retrieve > intervalWithoutReload ) {
+    } else if(currentTimestamp - last_retrieve > intervalWithoutReload) {
       // If we already have sync, check if intervalWithoutReload is past, then we can reload
       retrieveDiff();
     } else {
