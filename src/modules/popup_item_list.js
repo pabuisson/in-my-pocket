@@ -2,6 +2,7 @@
 
 import Logger from '../modules/logger.js';
 import PopupUI from '../modules/popup_ui.js';
+import Utility from '../modules/utility.js';
 import { MouseButtons } from '../modules/constants.js';
 
 // ----------------
@@ -78,22 +79,12 @@ var PopupItemList = ( function() {
     trashElement.className = 'trash';
     trashLoadElement.classList.add( 'loader', 'hidden' );
 
-    // TODO: extract into one single event handler for better perfs
-    tickAction.addEventListener( 'click', function() {
-      PopupUI.markAsRead( item.id );
-    });
-
-    // TODO: extract into one single event handler for better perfs
-    deleteAction.addEventListener( 'click', function() {
-      PopupUI.deleteItem( item.id );
-    });
-
-    faviconElement.setAttribute('src', faviconUrl( item.resolved_url ) );
+    faviconElement.setAttribute('src', faviconUrl(item.resolved_url) );
 
     titleContent.appendChild( faviconElement );
-    titleContent.appendChild( document.createTextNode( item.resolved_title ) );
+    titleContent.appendChild( document.createTextNode(item.resolved_title) );
 
-    urlContent.appendChild( document.createTextNode( formatUrl( item.resolved_url ) ) );
+    urlContent.appendChild( document.createTextNode( formatUrl(item.resolved_url) ) );
 
     tickElement.appendChild( tickIconFont );
     tickAction.appendChild( tickElement );
@@ -112,30 +103,6 @@ var PopupItemList = ( function() {
     liElement.appendChild( urlContent );
 
     liElement.dataset.id = item.id;
-
-    let itemClickEventHandler = ( event ) => {
-      event.preventDefault();
-      const openInNewTab = true;
-
-      switch( event.button ) {
-        case MouseButtons.MIDDLE:
-          Logger.log('(itemClickEventHandler) Middle-click, force opening in new tab');
-          openLink( item.id, openInNewTab );
-          break;
-        case MouseButtons.LEFT:
-          if( event.ctrlKey || event.metaKey ) {
-            Logger.log(`(itemClickEventHandler) Left-click + ctrlKey:${ event.ctrlKey } / metaKey:${ event.metaKey }, force opening in new tab`);
-            openLink( item.id, openInNewTab );
-          } else {
-            Logger.log('(itemClickEventHandler) Left-click no modifier key, will open based on openInNewTab setting');
-            openLink( item.id );
-          }
-          break;
-      }
-    };
-
-    titleContent.addEventListener( 'mouseup', itemClickEventHandler );
-    urlContent.addEventListener(   'mouseup',itemClickEventHandler );
 
     return liElement;
   }
@@ -175,6 +142,44 @@ var PopupItemList = ( function() {
   }
 
   return {
+    setupEventListeners() {
+      itemsContainer.addEventListener('click', function(ev) {
+        if(!ev.target)
+          return;
+
+        ev.preventDefault();
+        console.log(ev.target);
+
+        const targetItem = Utility.getParent(ev.target, '.item');
+        const targetItemId = targetItem.dataset.id;
+
+        if(ev.target.matches('.delete-action')) {
+          Logger.log(`(PopupItemList.eventListener) Clicked .delete-action for item ${targetItemId}`);
+          PopupUI.deleteItem(targetItemId);
+        } else if(ev.target.matches('.tick-action')) {
+          Logger.log(`(PopupItemList.eventListener) Clicked .tick-action for item ${targetItemId}`);
+          PopupUI.markAsRead(targetItemId);
+        } else if(ev.target.matches('.title') || ev.target.matches('.url')) {
+          const openInNewTab = true;
+          switch(ev.button) {
+            case MouseButtons.MIDDLE:
+              Logger.log('(PopupItemList.eventListener) Middle-click, force opening ${targetItemId} in new tab');
+              openLink(targetItemId, openInNewTab);
+              break;
+            case MouseButtons.LEFT:
+              if(ev.ctrlKey || ev.metaKey) {
+                Logger.log(`(PopupItemList.eventListener) left-click + ctrlKey:${ev.ctrlKey}/metaKey:${ev.metaKey}, force opening ${targetItemId} in new tab`);
+                openLink(targetItemId, openInNewTab);
+              } else {
+                Logger.log(`(PopupItemList.eventListener) left-click, open ${targetItemId} based on openInNewTab setting`);
+                openLink(targetItemId);
+              }
+              break;
+          }
+        }
+      });
+    },
+
     buildAll: function( items ) {
       Logger.log('(PopupItemList.buildAll)');
 
@@ -221,6 +226,5 @@ var PopupItemList = ( function() {
     }
   };
 })();
-
 
 export default PopupItemList;
