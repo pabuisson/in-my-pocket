@@ -110,6 +110,7 @@ var PopupPagination = ( function() {
 
   return {
     setupEventListeners: function() {
+      Logger.log('(PopupPagination.setupEventListeners)');
       paginationPreviousPageButton.addEventListener( 'click', previousPageEventListener );
       paginationNextPageButton.addEventListener( 'click', nextPageEventListener );
       paginationPageSelector.addEventListener( 'change', changePageEventListener );
@@ -130,6 +131,6 @@ var PopupPagination = ( function() {
       updateButtonsState(currentPage, perPage, itemsCount);
     }
   };
-});
+})();
 
 export default PopupPagination;
