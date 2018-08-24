@@ -44,6 +44,6 @@ var PopupTopActions = ( function() {
       });
     }
   };
-});
+})();
 
 export default PopupTopActions;

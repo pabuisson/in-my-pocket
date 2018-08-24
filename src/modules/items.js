@@ -1,7 +1,6 @@
 "use strict";
 
 import Badge from './badge.js';
-import ContextMenu from './context_menu.js';
 import Logger from './logger.js';
 import PageAction from './page_action.js';
 import PocketApiRequester from './pocket_api_requester.js';

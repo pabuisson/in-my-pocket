@@ -62,4 +62,6 @@ var PopupTopFilter = ( function() {
       filterItemsInput.addEventListener( 'keyup', debouncedFilterEventHandler );
     }
   };
-});
+})();
+
+export default PopupTopFilter;
