@@ -23,6 +23,7 @@ var PopupUI = ( function() {
     PopupPagination.setupEventListeners();
     PopupTopActions.setupEventListeners();
     PopupTopFilter.setupEventListeners();
+    PopupItemList.setupEventListeners();
   }
 
   function setZoomLevel() {

@@ -46,6 +46,13 @@ var Utility = ( function() {
       const previousMinor  = previousVersion.split('.').slice( 0, 2 ).join('');
 
       return currentMinor != previousMinor;
+    },
+
+    getParent: function(node, selector) {
+      while(!node.matches(selector))
+        node = node.parentElement;
+
+      return node;
     }
   };
 })();
