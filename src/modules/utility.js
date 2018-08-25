@@ -49,10 +49,18 @@ var Utility = ( function() {
     },
 
     getParent: function(node, selector) {
-      while(!node.matches(selector))
+      while(node && !node.matches(selector))
         node = node.parentElement;
 
       return node;
+    },
+
+    hasParent: function(node, selector) {
+      return ( Utility.getParent(node, selector) ? true : false );
+    },
+
+    matchesOrHasParent: function(node, selector) {
+      return node.matches(selector) || Utility.hasParent(node, selector);
     }
   };
 })();

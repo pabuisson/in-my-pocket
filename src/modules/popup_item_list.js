@@ -1,6 +1,6 @@
 "use strict";
 
-import Logger from '../modules/logger.js';
+import Logger  from '../modules/logger.js';
 import PopupUI from '../modules/popup_ui.js';
 import Utility from '../modules/utility.js';
 import { MouseButtons } from '../modules/constants.js';
@@ -26,13 +26,13 @@ var PopupItemList = ( function() {
   }
 
   function formatUrl( url ) {
-    let protocolsToRemove = [
+    const protocolsToRemove = [
       'http', 'https',
       'ftp',  'ftps'
     ].join('|');
-    let removalRegex = new RegExp( '(' + protocolsToRemove + '):\/\/(www.){0,1}', 'gi' );
+    const removalRegex = new RegExp('(' + protocolsToRemove + '):\/\/(www.){0,1}', 'gi');
 
-    return url.replace( removalRegex, '' );
+    return url.replace(removalRegex, '');
   }
 
   // openInNewTab param allows us to force the behaviour (ctrl-click or middle-click)
@@ -107,9 +107,9 @@ var PopupItemList = ( function() {
     return liElement;
   }
 
-  function buildDomFragment( items ) {
+  function buildDomFragment(items) {
     let fragment = document.createDocumentFragment();
-    for( let i = 0; i < items.length; i++ ) {
+    for(let i = 0; i < items.length; i++) {
       const newDomElement = buildItemElement(items[i]);
       fragment.appendChild(newDomElement);
     }
@@ -120,24 +120,24 @@ var PopupItemList = ( function() {
   function buildBatch() {
     Logger.log('(PopupItemList.buildBatch) build a new batch of ' + ITEMS_PER_BATCH + ' items');
 
-    for( let i = 0; i < ITEMS_PER_BATCH; i++ ) {
+    for(let i = 0; i < ITEMS_PER_BATCH; i++) {
       // If we've already built all items then get out of this loop
-      if( areAllItemsBuilt() == true ) {
+      if(areAllItemsBuilt() == true) {
         Logger.log('All items are built -> break out of this loop, now!');
         break;
       }
 
       let itemToCreate = itemsToCreate[ createdItemsCount ];
-      itemsContainer.appendChild( buildItemElement( itemToCreate ) );
+      itemsContainer.appendChild( buildItemElement(itemToCreate) );
 
       createdItemsCount++;
     }
 
     // if DOM is not all built yet, then ask for another animation frame where
     // we can keep on building the DOM
-    if( areAllItemsBuilt() == false ) {
+    if(areAllItemsBuilt() == false) {
       Logger.log('Will request an animation frame for another run of the buildBatch method');
-      requestAnimationFrame( buildBatch );
+      requestAnimationFrame(buildBatch);
     }
   }
 
@@ -148,15 +148,14 @@ var PopupItemList = ( function() {
           return;
 
         ev.preventDefault();
-        console.log(ev.target);
 
         const targetItem = Utility.getParent(ev.target, '.item');
         const targetItemId = targetItem.dataset.id;
 
-        if(ev.target.matches('.delete-action')) {
+        if(Utility.matchesOrHasParent(ev.target, '.delete-action')) {
           Logger.log(`(PopupItemList.eventListener) Clicked .delete-action for item ${targetItemId}`);
           PopupUI.deleteItem(targetItemId);
-        } else if(ev.target.matches('.tick-action')) {
+        } else if(Utility.matchesOrHasParent(ev.target, '.tick-action')) {
           Logger.log(`(PopupItemList.eventListener) Clicked .tick-action for item ${targetItemId}`);
           PopupUI.markAsRead(targetItemId);
         } else if(ev.target.matches('.title') || ev.target.matches('.url')) {
