@@ -45,22 +45,66 @@ browser.contextMenus.onClicked.addListener( (info, tab) => {
 // When context menu is shown, I update the status of the right-click entries
 // It can be a right click on the page, on a link or on a tab
 // NOTE: as of 201808, there's no way to handle multi-selected tabs
-browser.contextMenus.onShown.addListener( (info, tab) => {
-  const url = info.linkUrl ? info.linkUrl : info.pageUrl;
 
-  browser.storage.local.get("items").then( ({ items }) => {
-    const containsItem = Items.contains( items, { url: url });
+// browser.contextMenus.onShown available for FF 60+ only
+if(browser.contextMenus.onShown) {
+  browser.contextMenus.onShown.addListener( (info, tab) => {
+    const url = info.linkUrl ? info.linkUrl : info.pageUrl;
 
-    if( containsItem ) {
-      Logger.log("(background.onShown) updating contextMenu for " + url + " that IS in my list");
-      ContextMenu.setState( ContextMenu.pageAlreadyInPocket ).then( () => {
-        browser.contextMenus.refresh();
-      });
-    } else {
-      Logger.log( "(background.onShown) updating contextMenu for " + url + " that ISN'T in my list...yet");
-      ContextMenu.setState( ContextMenu.pageNotInPocket ).then( () => {
-        browser.contextMenus.refresh();
+    browser.storage.local.get("items").then( ({ items }) => {
+      const containsItem = Items.contains( items, { url: url });
+
+      if(containsItem) {
+        Logger.log("(background.onShown) updating contextMenu for " + url + " that IS in my list");
+        ContextMenu.setState( ContextMenu.pageAlreadyInPocket ).then( () => {
+          browser.contextMenus.refresh();
+        });
+      } else {
+        Logger.log( "(background.onShown) updating contextMenu for " + url + " that ISN'T in my list...yet");
+        ContextMenu.setState( ContextMenu.pageNotInPocket ).then( () => {
+          browser.contextMenus.refresh();
+        });
+      }
+    });
+  });
+} else {
+  // 1. When current tab url is changing
+  browser.tabs.onUpdated.addListener( ( tabId, changeInfo ) => {
+    if(changeInfo.hasOwnProperty('url')) {
+      browser.tabs.get( tabId ).then( tab => {
+        if(tab.active) {
+          browser.storage.local.get("items").then( ({ items }) => {
+            const containsItem = Items.contains( items, { url: tab.url });
+
+            if(containsItem) {
+              Logger.log("(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that IS in my list");
+              ContextMenu.setState( ContextMenu.pageAlreadyInPocket );
+            } else {
+              Logger.log( "(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that ISN'T in my list...yet");
+              ContextMenu.setState( ContextMenu.pageNotInPocket );
+            }
+          });
+        }
       });
     }
   });
-});
+
+  // 2. When I switch to another tab, check if I need to update the state of context menus
+  browser.tabs.onActivated.addListener( ({ tabId }) => {
+    browser.tabs.get( tabId ).then( tab => {
+      return tab.url;
+    }).then( currentUrl => {
+      browser.storage.local.get("items").then( ({ items }) => {
+        const containsItem = Items.contains( items, { url: currentUrl });
+
+        if(containsItem) {
+          Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that IS in my list");
+          ContextMenu.setState( ContextMenu.pageAlreadyInPocket );
+        } else {
+          Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that ISN'T in my list...yet !");
+          ContextMenu.setState( ContextMenu.pageNotInPocket );
+        }
+      });
+    });
+  });
+}

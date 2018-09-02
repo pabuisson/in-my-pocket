@@ -9,12 +9,16 @@ import { KeyboardShortcuts } from '../modules/constants.js';
 // ---------------
 
 
-Settings.init().then( function() {
-  let settings = Settings.get();
+// browser.commands.update available for FF 60+ only
+// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/commands/update
+if(browser.commands.update) {
+  Settings.init().then( function() {
+    let settings = Settings.get();
 
-  Keyboard.registerShortcut(KeyboardShortcuts.toggle,    settings.keyboardToggle);
-  Keyboard.registerShortcut(KeyboardShortcuts.openPopup, settings.keyboardOpenPopup);
-});
+    Keyboard.registerShortcut(KeyboardShortcuts.toggle,    settings.keyboardToggle);
+    Keyboard.registerShortcut(KeyboardShortcuts.openPopup, settings.keyboardOpenPopup);
+  });
+}
 
 
 browser.commands.onCommand.addListener( (command) => {

@@ -22,6 +22,23 @@ var ContextMenu = ( function() {
     });
   }
 
+  // "tab" context does not exist for chrome and older firefoxes, feature will be broken for them
+  function getAvaiableContexts() {
+    const availabeContexts = browser.contextMenus.ContextType;
+    let contexts = [
+      availabeContexts.PAGE,
+      availabeContexts.LINK
+    ];
+
+    // Use the tab context only if it exist and if we can update the context menus when it's shown
+    // (right-clicking on a tab in Pocket must display different state then a tab not in pocket)
+    if(availabeContexts.TAB && browser.contextMenus.onShown) {
+      contexts.push(availabeContexts.TAB);
+    }
+
+    return contexts;
+  }
+
   return {
     addId:     'inmypocket-add-item',
     archiveId: 'inmypocket-archive-item',
@@ -35,25 +52,25 @@ var ContextMenu = ( function() {
     createEntries: function() {
       Logger.log( '(ContextMenu.createEntries) create all right-click entries' );
       browser.contextMenus.create({
+        contexts: getAvaiableContexts(),
         id: ContextMenu.addId,
         title: 'Add to Pocket',
-        contexts: ['link', 'page', 'tab'],
         icons: {
           16: 'assets/icons/ionicons-android-add-circle.svg'
         }
       });
       browser.contextMenus.create({
+        contexts: getAvaiableContexts(),
         id: ContextMenu.archiveId,
         title: 'Mark as read',
-        contexts: ['link', 'page', 'tab'],
         icons: {
           16: 'assets/icons/ionicons-checkmark.svg'
         }
       });
       browser.contextMenus.create({
+        contexts: getAvaiableContexts(),
         id: ContextMenu.deleteId,
         title: 'Delete',
-        contexts: ['link', 'page', 'tab'],
         icons: {
           16: 'assets/icons/ionicons-trash-b.svg'
         }
