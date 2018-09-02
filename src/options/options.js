@@ -13,20 +13,20 @@ import { KeyboardShortcuts } from '../modules/constants.js';
 
 // -------------
 
-let disconnectAccountAction   = document.querySelector( '.disconnect-account' );
-let disconnectAccountRow      = document.querySelector( '.disconnect-account-row' );
-let displayBadgeCountCheckbox = document.querySelector( '.display-badge-count' );
-let displayPageActionCheckbox = document.querySelector( '.display-page-action' );
-let enableDebugModeCheckbox   = document.querySelector( '.enable-debug-mode' );
-let openInNewTabCheckbox      = document.querySelector( '.open-in-new-tab' );
-let paginationPerPageSelector = document.querySelector( '.pagination-per-page' );
-let zoomLevelSelector         = document.querySelector( '.zoom-level' );
-let archiveWhenOpenedCheckbox = document.querySelector( '.archive-when-opened' );
-let closeTabWhenAddedCheckbox = document.querySelector( '.close-tab-when-added' );
-let keyboardOpenPopupShortcut = document.querySelector( '.keyboard-open-popup' );
-let keyboardToggleShortcut    = document.querySelector( '.keyboard-toggle' );
+let disconnectAccountAction   = document.querySelector('.disconnect-account');
+let disconnectAccountRow      = document.querySelector('.disconnect-account-row');
+let displayBadgeCountCheckbox = document.querySelector('.display-badge-count');
+let displayPageActionCheckbox = document.querySelector('.display-page-action');
+let enableDebugModeCheckbox   = document.querySelector('.enable-debug-mode');
+let openInNewTabCheckbox      = document.querySelector('.open-in-new-tab');
+let paginationPerPageSelector = document.querySelector('.pagination-per-page');
+let zoomLevelSelector         = document.querySelector('.zoom-level');
+let archiveWhenOpenedCheckbox = document.querySelector('.archive-when-opened');
+let closeTabWhenAddedCheckbox = document.querySelector('.close-tab-when-added');
+let keyboardOpenPopupShortcut = document.querySelector('.keyboard-open-popup');
+let keyboardToggleShortcut    = document.querySelector('.keyboard-toggle');
 
-let savedNotificationElement = document.querySelector( '.saved-notification' );
+let savedNotificationElement = document.querySelector('.saved-notification');
 
 
 
@@ -65,16 +65,16 @@ var UI = ( function() {
       Settings.init().then( function() {
         let settings = Settings.get();
 
-        displayBadgeCountCheckbox.checked = settings[ 'showBadge' ];
-        displayPageActionCheckbox.checked = settings[ 'showPageAction' ];
-        enableDebugModeCheckbox.checked   = settings[ 'debugMode' ];
-        openInNewTabCheckbox.checked      = settings[ 'openInNewTab' ];
-        archiveWhenOpenedCheckbox.checked = settings[ 'archiveWhenOpened' ];
-        closeTabWhenAddedCheckbox.checked = settings[ 'closeTabWhenAdded' ];
-        paginationPerPageSelector.value   = settings[ 'perPage' ] || '';
-        zoomLevelSelector.value           = settings[ 'zoomLevel' ];
-        keyboardOpenPopupShortcut.value   = settings[ 'keyboardOpenPopup' ];
-        keyboardToggleShortcut.value      = settings[ 'keyboardToggle' ];
+        displayBadgeCountCheckbox.checked = settings['showBadge'];
+        displayPageActionCheckbox.checked = settings['showPageAction'];
+        enableDebugModeCheckbox.checked   = settings['debugMode'];
+        openInNewTabCheckbox.checked      = settings['openInNewTab'];
+        archiveWhenOpenedCheckbox.checked = settings['archiveWhenOpened'];
+        closeTabWhenAddedCheckbox.checked = settings['closeTabWhenAdded'];
+        paginationPerPageSelector.value   = settings['perPage'] || '';
+        zoomLevelSelector.value           = settings['zoomLevel'];
+        keyboardOpenPopupShortcut.value   = settings['keyboardOpenPopup'];
+        keyboardToggleShortcut.value      = settings['keyboardToggle'];
       });
 
       // Event: "Display count badge" checkbox
@@ -145,33 +145,42 @@ var UI = ( function() {
         flashSavedNotification(this.parentNode);
       });
 
-      // Event: updating "toggle page state" keyboard shortcut
-      keyboardToggleShortcut.addEventListener( 'keydown', function(ev) {
-        ev.preventDefault();
-        this.value = Keyboard.stringifyCombination(ev);
+      //
+      // Only register keyboard update events if browser has the ability to upgrade keyboard shortcuts
+      // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/commands/update
+      //
+      if(browser.commands.update) {
+        // Event: updating "toggle page state" keyboard shortcut
+        keyboardToggleShortcut.addEventListener( 'keydown', function(ev) {
+          ev.preventDefault();
+          this.value = Keyboard.stringifyCombination(ev);
 
-        if(Keyboard.isValidCombination(ev)) {
-          Settings.set( 'keyboardToggle', this.value );
-          Settings.save();
-          Keyboard.registerShortcut(KeyboardShortcuts.toggle, this.value);
-          flashSavedNotification(this.parentNode);
-          this.blur();
-        }
-      });
+          if(Keyboard.isValidCombination(ev)) {
+            Settings.set( 'keyboardToggle', this.value );
+            Settings.save();
+            Keyboard.registerShortcut(KeyboardShortcuts.toggle, this.value);
+            flashSavedNotification(this.parentNode);
+            this.blur();
+          }
+        });
 
-      // Event: updating "open popup" keyboard shortcut
-      keyboardOpenPopupShortcut.addEventListener( 'keydown', function(ev) {
-        ev.preventDefault();
-        this.value = Keyboard.stringifyCombination(ev);
+        // Event: updating "open popup" keyboard shortcut
+        keyboardOpenPopupShortcut.addEventListener( 'keydown', function(ev) {
+          ev.preventDefault();
+          this.value = Keyboard.stringifyCombination(ev);
 
-        if(Keyboard.isValidCombination(ev)) {
-          Settings.set( 'keyboardOpenPopup', this.value );
-          Settings.save();
-          Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value);
-          flashSavedNotification(this.parentNode);
-          this.blur();
-        }
-      });
+          if(Keyboard.isValidCombination(ev)) {
+            Settings.set( 'keyboardOpenPopup', this.value );
+            Settings.save();
+            Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value);
+            flashSavedNotification(this.parentNode);
+            this.blur();
+          }
+        });
+      } else {
+        keyboardToggleShortcut.setAttribute('disabled', 'disabled');
+        keyboardOpenPopupShortcut.setAttribute('disabled', 'disabled');
+      }
 
       // Event : "Disconnect" from the Pocket account click
       disconnectAccountAction.addEventListener( 'click', function(ev) {
@@ -180,20 +189,20 @@ var UI = ( function() {
         let mustDisconnect = confirm("You're about to disconnect from your pocket account. Go on?");
         if( mustDisconnect ) {
           browser.storage.local.get().then( data => {
-            let keysToPersist = [ 'settings' ];
-            let keysToRemove = Object.keys( data ).filter( ( key ) => {
+            let keysToPersist = ['settings'];
+            let keysToRemove = Object.keys(data).filter( key => {
               // Filter out keys listed in keysToPersist, and keeps
               // all the other storage keys -> those will be removed
-              return keysToPersist.indexOf( key ) < 0;
+              return keysToPersist.indexOf(key) < 0;
             });
 
-            browser.storage.local.remove( keysToRemove );
+            browser.storage.local.remove(keysToRemove);
 
             // Remove the badge and destroy all right-click entries
             Badge.hide();
             ContextMenu.destroyEntries();
 
-            disconnectAccountRow.classList.add( 'hidden' );
+            disconnectAccountRow.classList.add('hidden');
           });
         }
       });

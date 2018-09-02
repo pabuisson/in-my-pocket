@@ -1,11 +1,11 @@
 # Changelog
 
-## 0.10.0 - Not released
+## 0.10.0 - September 2018
 
-* FEATURE: from now on, you'll notice a tiny notification when you install InMyPocket. Clicking the notification will redirect you to the FAQ page of the support, for more details about the details, most frequently asked questions, etc.
-* FEATURE: right-click on a tab header will show the same context menus as right-click in a web page, with the same actions.
-* UPDATE: right-click actions are now properly enabled/disabled in all situations, no more weird states.
-* SETTINGS: you can now customise keyboard shortcuts on the settings page. Keyboard can be defined with Ctrl/Alt/Shift and a letter/digit/fkey.
+* FEATURE: right-click on a tab header will show the same context menus as right-click in a web page, with the same actions (Firefox 60+).
+* SETTINGS: you can now customise keyboard shortcuts on the settings page. Keyboard can be defined with Ctrl/Alt/Shift and a letter/digit/fkey (Firefox 60+).
+* UPDATE: right-click actions are now properly enabled/disabled in all situations, no more weird states (Firefox 60+).
+* UPDATE: from now on, you'll notice a tiny notification when you install InMyPocket. Clicking the notification will redirect you to the FAQ page of the support, for more details about the addon, answers to frequently asked questions, etc.
 * FIX: the "Saved" notification on the settings page was sometimes not visible due to scrolling. It's now displayed just next to the settings that was modified so that it's always visible to the user.
 
 
