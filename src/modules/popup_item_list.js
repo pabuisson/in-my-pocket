@@ -142,7 +142,7 @@ var PopupItemList = ( function() {
   }
 
   return {
-    setupEventListeners() {
+    setupEventListeners: function() {
       itemsContainer.addEventListener('click', function(ev) {
         if(!ev.target)
           return;
@@ -201,6 +201,8 @@ var PopupItemList = ( function() {
     // Will build DOM for items and insert it before the item whose id=beforeItemId
     insertItems: function(items, beforeItemId) {
       const beforeNode  = document.querySelector(`.item:not(.disappearing)[data-id='${beforeItemId}']`);
+      Logger.log(`(PopupItemList.insertItems) Insert ${items.length} items before item ${beforeItemId}`);
+      Logger.log(`(PopupItemList.insertItems) Insert before ${beforeNode}`);
       const domToInsert = buildDomFragment(items);
       itemsContainer.insertBefore(domToInsert, beforeNode);
     },
@@ -215,7 +217,7 @@ var PopupItemList = ( function() {
       const visibleItems = itemsContainer.querySelectorAll('.item:not(.disappearing)');
       const visibleItemsIds = [];
 
-      Logger.log('(PopupItemList.getVisibleItems) ${ visibleItems.length } visible items');
+      Logger.log(`(PopupItemList.getVisibleItems) ${ visibleItems.length } visible items`);
 
       for( let i = 0; i < visibleItems.length; i++ ) {
         visibleItemsIds.push( visibleItems[ i ].dataset.id );

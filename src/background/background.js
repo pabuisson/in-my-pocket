@@ -127,10 +127,10 @@ function retrieveDiff() {
               let removedItemIdx = allItems.findIndex( item => item.id === itemId );
 
               if( removedItemIdx >= 0 ) {
-                Logger.log('(bg.retrieveDiff) Item has been found and will be removed from the list');
+                Logger.log('(bg.retrieveDiff) Item has been found and will be removed from the stored items');
                 allItems.splice( removedItemIdx, 1 );
               } else {
-                Logger.warn('(bg.retrieveDiff) Could not find the item to archive in the item lists');
+                Logger.warn('(bg.retrieveDiff) Could not find the item to archive in the stored items');
               }
 
               break;

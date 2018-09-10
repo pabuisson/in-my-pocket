@@ -173,7 +173,7 @@ var PopupUI = ( function() {
           let itemIdsToDelete   = visibleItemsIds.filter( id => !itemsToRenderIds.includes(id) );
 
           // First step: all removed items still visible must disappear
-          PopupUI.fadeOutItem(itemIdsToDelete);
+          PopupUI.fadeOutItem(...itemIdsToDelete);
 
           // Second step: prepare the insertion of all missing items
           // Generate a table of all predecessors, to use insertBefore and appendChild to build the DOM
@@ -223,7 +223,7 @@ var PopupUI = ( function() {
       item.querySelector('.tick-action .tick'   ).classList.add(    'hidden' );
       item.querySelector('.tick-action .loader' ).classList.remove( 'hidden' );
 
-      browser.runtime.sendMessage( { action: 'mark-as-read', id: itemId } );
+      browser.runtime.sendMessage({ action: 'mark-as-read', id: itemId });
     },
 
     deleteItem: ( itemId ) => {
@@ -232,11 +232,12 @@ var PopupUI = ( function() {
       item.querySelector('.delete-action .trash'  ).classList.add(   'hidden' );
       item.querySelector('.delete-action .loader' ).classList.remove( 'hidden' );
 
-      browser.runtime.sendMessage( { action: 'delete-item', id: itemId } );
+      browser.runtime.sendMessage({ action: 'delete-item', id: itemId });
     },
 
     fadeOutItem: (...itemIds) => {
       itemIds.forEach(itemId => {
+        Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list`);
         document.querySelector(`.item[data-id='${itemId}']`).classList.add('disappearing');
       });
     }

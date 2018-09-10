@@ -37,11 +37,11 @@ class Request {
           if( response.ok ) {
             let data = response.json();
 
-            Logger.log( 'Response OK, received data : ');
-            Logger.log( data );
+            Logger.log('Response OK, received data : ');
+            Logger.log(JSON.stringify(data));
             resolve( data );
           } else {
-            Logger.error( 'Response not OK, something went wrong');
+            Logger.error('Response not OK, something went wrong');
             errorObject.httpCode = response.status;
 
             switch( response.status ) {
@@ -78,7 +78,7 @@ class Request {
             // TODO: since I have the error object returned in the promise,
             //       I might not need this "send message" anymore
             browser.runtime.sendMessage( errorObject );
-            reject( errorObject );
+            reject(errorObject);
           }
         }).catch( () => {
           Logger.error('(Request.fetch) error while reaching the server');
@@ -89,8 +89,8 @@ class Request {
           // Instead of just logging, send an event back to the UI
           // TODO: since I have the error object returned in the promise,
           //       I might not need this "send message" anymore
-          browser.runtime.sendMessage( errorObject );
-          reject( errorObject );
+          browser.runtime.sendMessage(errorObject);
+          reject(errorObject);
         });
     });
 
