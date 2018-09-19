@@ -18,7 +18,7 @@
   },
 
   "permissions": [
-    "*://getpocket.com/*",
+    "<all_urls>",
     "activeTab",
     "contextMenus",
     "notifications",
