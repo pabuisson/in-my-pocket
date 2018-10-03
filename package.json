@@ -6,22 +6,21 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "copy-webpack-plugin": "^4.5.2",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "file-loader": "^1.1.11",
     "istanbul-instrumenter-loader": "^3.0.1",
-    "mini-css-extract-plugin": "^0.4.1",
+    "mini-css-extract-plugin": "^0.4.3",
     "mocha": "^5.2.0",
-    "node-sass": "^4.9.2",
+    "node-sass": "^4.9.3",
     "nyc": "^11.9.0",
     "sass-loader": "^7.1.0",
-    "sinon": "^6.1.4",
+    "sinon": "^6.3.5",
     "style-loader": "^0.21.0",
-    "web-ext": "^2.8.0",
-    "webpack": "^4.16.5",
-    "webpack-cli": "^3.1.0",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
     "webpack-node-externals": "^1.7.2"
   },
   "scripts": {
@@ -47,7 +46,7 @@
   "license": "Mozilla Public License, version 2.0",
   "homepage": "https://bitbucket.org/pabuisson/in-my-pocket#readme",
   "dependencies": {
-    "npm": "^6.3.0"
+    "npm": "^6.4.1"
   },
   "nyc": {
     "include": [
