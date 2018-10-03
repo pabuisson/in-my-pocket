@@ -43,7 +43,7 @@
     "plugin"
   ],
   "author": "Pierre-Adrien Buisson",
-  "license": "Mozilla Public License, version 2.0",
+  "license": "MPL-2.0",
   "homepage": "https://bitbucket.org/pabuisson/in-my-pocket#readme",
   "dependencies": {
     "npm": "^6.4.1"
