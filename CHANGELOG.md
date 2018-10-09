@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.10.0 - September 2018
+## 0.10.1 - October 2018
+
+* FIX: middle-click on an item (usually opens the link in a new tab) was broken in 0.10.0
+
+
+## 0.10.0 - October 2018
 
 * FEATURE: right-click on a tab header will show the same context menus as right-click in a web page, with the same actions (Firefox 60+).
 * SETTINGS: you can now customise keyboard shortcuts on the settings page. Keyboard can be defined with Ctrl/Alt/Shift and a letter/digit/fkey (Firefox 60+).

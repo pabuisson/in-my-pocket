@@ -143,7 +143,7 @@ var PopupItemList = ( function() {
 
   return {
     setupEventListeners: function() {
-      itemsContainer.addEventListener('click', function(ev) {
+      itemsContainer.addEventListener('mouseup', function(ev) {
         if(!ev.target)
           return;
 
