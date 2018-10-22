@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.2 - October 2018
+
+* FIX: keyboard shortcut to add new items was not working anymore if the setting "Show 'add to pocket' button in address bar" was disabled. Thanks a ton to Tyler for his help on this.
+
+
 ## 0.10.1 - October 2018
 
 * FIX: middle-click on an item (usually opens the link in a new tab) was broken in 0.10.0
