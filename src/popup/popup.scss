@@ -85,7 +85,6 @@ html, body, .authenticated, .authentication {
     position: relative;
     padding: 0.5rem 0.1rem 0.2rem 0.1rem;
     border-bottom: 1px solid #eee;
-    height: 3.5rem;
 
     span {
       display: inline-block;
@@ -111,6 +110,7 @@ html, body, .authenticated, .authentication {
 
     .title {
       height: 1.5rem;
+      line-height: 1.5rem;
 
       color: $ff-grey-70;
       font-size: 1.2rem;
@@ -120,9 +120,8 @@ html, body, .authenticated, .authentication {
     }
 
     .url {
-      height: 1.1rem;
-      position: relative;
-      top: -2px;
+      height: 1rem;
+      line-height: 1rem;
 
       font-size: 0.75rem;
       color: $ff-secondary-text;
@@ -247,8 +246,8 @@ html, body, .authenticated, .authentication {
   flex-direction: row;
   align-items: center;
 
-  height: 2.8rem;
-  padding: 0.5rem 0;
+  height: 2.6rem;
+  padding: 0.3rem 0;
 
   background-color: $ff-ink-90;
   background-color: $my-dark-blue;
@@ -297,15 +296,17 @@ html, body, .authenticated, .authentication {
     }
 
     .filter-items {
+      box-sizing: border-box;
       width: 100%;
       padding: 0.4rem 1rem;
-      height: 2rem;
+      height: 2.2rem;
 
       background-color: transparentize( white, 0.3 );
       border-radius: 2rem;
       border: 0px transparent;
       color: $ff-grey-80;
       font-size: 1.1rem;
+      outline: none;
     }
   }
 }
