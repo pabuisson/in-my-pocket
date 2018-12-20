@@ -246,8 +246,7 @@ html, body, .authenticated, .authentication {
   flex-direction: row;
   align-items: center;
 
-  height: 2.6rem;
-  padding: 0.3rem 0;
+  height: 3rem;
 
   background-color: $ff-ink-90;
   background-color: $my-dark-blue;
@@ -298,7 +297,7 @@ html, body, .authenticated, .authentication {
     .filter-items {
       box-sizing: border-box;
       width: 100%;
-      padding: 0.4rem 1rem;
+      padding: 0.2rem 1rem;
       height: 2.2rem;
 
       background-color: transparentize( white, 0.3 );
@@ -380,8 +379,8 @@ html, body, .authenticated, .authentication {
   flex: initial;
 
   z-index: 2;
-  height: 30px;
-  line-height: 30px;
+  height: 2.5rem;
+  line-height: 2.5rem;
   display: flex;
   flex-direction: row;
 
