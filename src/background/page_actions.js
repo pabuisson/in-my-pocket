@@ -7,10 +7,11 @@ import PageAction from '../modules/page_action.js';
 
 // ---------------
 
-browser.pageAction.onClicked.addListener( tab => {
-  PageAction.toggle( tab );
-});
-
+if(browser.pageAction) {
+  browser.pageAction.onClicked.addListener( tab => {
+    PageAction.toggle( tab );
+  });
+}
 
 // - - -  PAGE ACTION UPDATES - - -
 
