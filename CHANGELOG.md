@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.3 - December 2018
+
+* SETTINGS: the "disconnect account" link was previously triggering a confirmation dialog. Instead, use a confirmation link that only appear once you click the "Disconnect" link.
+
+
 ## 0.10.2 - October 2018
 
 * FIX: keyboard shortcut to add new items was not working anymore if the setting "Show 'add to pocket' button in address bar" was disabled. Thanks a ton to Tyler for his help on this.
