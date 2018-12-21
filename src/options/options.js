@@ -13,8 +13,11 @@ import { KeyboardShortcuts } from '../modules/constants.js';
 
 // -------------
 
-let disconnectAccountAction   = document.querySelector('.disconnect-account');
-let disconnectAccountRow      = document.querySelector('.disconnect-account-row');
+let disconnectAccountRow                = document.querySelector('.disconnect-account-row');
+let disconnectAccountStep2              = document.querySelector('.disconnect-account-second-step');
+let disconnectAccountActionStep1        = document.querySelector('.disconnect-account-first-step');
+let disconnectAccountActionStep2Confirm = document.querySelector('.disconnect-account-second-step-confirm');
+let disconnectAccountActionStep2Cancel  = document.querySelector('.disconnect-account-second-step-cancel');
 let displayBadgeCountCheckbox = document.querySelector('.display-badge-count');
 let displayPageActionCheckbox = document.querySelector('.display-page-action');
 let enableDebugModeCheckbox   = document.querySelector('.enable-debug-mode');
@@ -183,28 +186,34 @@ var UI = ( function() {
       }
 
       // Event : "Disconnect" from the Pocket account click
-      disconnectAccountAction.addEventListener( 'click', function(ev) {
+      disconnectAccountActionStep1.addEventListener( 'click', function(ev) {
         ev.preventDefault();
+        disconnectAccountStep2.classList.remove('hidden');
+      });
 
-        let mustDisconnect = confirm("You're about to disconnect from your pocket account. Go on?");
-        if( mustDisconnect ) {
-          browser.storage.local.get().then( data => {
-            let keysToPersist = ['settings'];
-            let keysToRemove = Object.keys(data).filter( key => {
-              // Filter out keys listed in keysToPersist, and keeps
-              // all the other storage keys -> those will be removed
-              return keysToPersist.indexOf(key) < 0;
-            });
+      disconnectAccountActionStep2Cancel.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        disconnectAccountStep2.classList.add('hidden');
+      });
 
-            browser.storage.local.remove(keysToRemove);
-
-            // Remove the badge and destroy all right-click entries
-            Badge.hide();
-            ContextMenu.destroyEntries();
-
-            disconnectAccountRow.classList.add('hidden');
+      disconnectAccountActionStep2Confirm.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        browser.storage.local.get().then( data => {
+          let keysToPersist = ['settings'];
+          let keysToRemove = Object.keys(data).filter( key => {
+            // Filter out keys listed in keysToPersist, and keeps
+            // all the other storage keys -> those will be removed
+            return keysToPersist.indexOf(key) < 0;
           });
-        }
+
+          browser.storage.local.remove(keysToRemove);
+
+          // Remove the badge and destroy all right-click entries
+          Badge.hide();
+          ContextMenu.destroyEntries();
+
+          disconnectAccountRow.classList.add('hidden');
+        });
       });
     }
   };

@@ -2,6 +2,7 @@
 
 body {
   color: $ff-grey-80;
+  min-width: 600px;
 }
 
 .hidden {
@@ -72,5 +73,9 @@ h2 {
 
   &:first-of-type {
     border-top: 0px none;
+  }
+
+  .disconnect-account-second-step-confirm {
+    font-weight: bold;
   }
 }
