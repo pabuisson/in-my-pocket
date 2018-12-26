@@ -8,7 +8,7 @@ If you have suggestions on how to improve this extension or encounter some bugs,
 
 ## Useful links
 
-* [In My Pocket homepage](https://inmypocket.pabuisson.com), where you'll find a FAQ, the changelog and more info about the addon,
+* [In My Pocket homepage](https://inmypocketaddon.com), where you'll find a FAQ, the changelog and more info about the addon,
 * [In My Pocket on addons.mozilla.org](https://addons.mozilla.org/en-US/firefox/addon/in-my-pocket/)
 * [In My Pocket contact form](https://pabuisson.wufoo.com/forms/zi5scw41v368kr/)
 * [In My Pocket public roadmap on Trello](https://trello.com/b/MfdNQXzX/imp-public-roadmap)
