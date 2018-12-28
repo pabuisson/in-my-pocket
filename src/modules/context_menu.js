@@ -9,17 +9,21 @@ import Logger from './logger.js';
 
 var ContextMenu = ( function() {
   function enable( id ) {
-    Logger.log( '(ContextMenu.enable) enable ' + id + ' context menu');
-    browser.contextMenus.update( id, {
-      enabled: true
-    });
+    Logger.log(`(ContextMenu.enable) enable ${id} context menu`);
+
+    const promiseEnable  = browser.contextMenus.update(id, { enabled: true });
+    const promiseVisible = browser.contextMenus.update(id, { visible: true });
+
+    return Promise.all([ promiseEnable, promiseVisible ]);
   }
 
   function disable( id ) {
-    Logger.log( '(ContextMenu.enable) disable ' + id + ' context menu');
-    return browser.contextMenus.update( id, {
-      enabled: false
-    });
+    Logger.log(`(ContextMenu.enable) disable ${id} context menu`);
+
+    const promiseEnable  = browser.contextMenus.update(id, { enabled: false });
+    const promiseVisible = browser.contextMenus.update(id, { visible: false });
+
+    return Promise.all([ promiseEnable, promiseVisible ]);
   }
 
   // "tab" context does not exist for chrome and older firefoxes, feature will be broken for them
