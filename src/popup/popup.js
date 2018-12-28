@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
   PopupUI.setup();
 
   Authentication.isAuthenticated().then( () => {
-    PopupUI.drawList();
+    PopupUI.drawList({ resetFiltersIfEmpty: true });
     // Enable the loading animation and try to update the list of items
     setTimeout( () => {
       PopupMainLoader.enable();
