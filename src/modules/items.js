@@ -143,7 +143,7 @@ var Items = ( function() {
     //       call paginate with raw items as well?
     paginate: function( parsedItems, page, perPage ) {
       const itemsCount = parsedItems.length;
-      let sortedItems  = parsedItems.sort( ( a, b ) => a.created_at < b.created_at );
+      let sortedItems  = parsedItems.sort( ( a, b ) => b.created_at - a.created_at );
 
       if( !perPage || itemsCount == 0 ) {
         return sortedItems;
