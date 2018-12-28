@@ -1,5 +1,10 @@
 # Changelog
 
+## Not released
+
+* FIX: on certain platforms, context menu with only one enabled entry was shown inside a submenu, which is not handy. On most recent browsers, context menus will now be hidden instead of disabled, so having one single entry ("Add to pocket") should not create a "In My Pocket" submenu anymore.
+
+
 ## 0.10.3 - December 2018
 
 * SETTINGS: the "disconnect account" link was previously triggering a confirmation dialog. Instead, use a confirmation link that only appear once you click the "Disconnect" link.
