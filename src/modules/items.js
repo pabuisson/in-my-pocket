@@ -153,6 +153,7 @@ var Items = ( function() {
 
       if( page <= 0 || page > pagesCount ) {
         Logger.warn( `Could not get page ${ page } (${ itemsCount } items, asked ${ perPage } per page)` );
+        return [];
       } else {
         const fromIndex = ( page - 1 ) * perPage;
         const toIndex   = ( page * perPage ) - 1;

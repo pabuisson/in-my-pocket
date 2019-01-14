@@ -33,6 +33,9 @@ var PopupUI = ( function() {
     });
   }
 
+  function resetAllFilters(currentDisplayOptions) {
+  }
+
   function setupAuthenticatedUI() {
     // User is authenticated
     document.querySelector('.authentication').classList.add('hidden');
@@ -127,21 +130,26 @@ var PopupUI = ( function() {
           let filteredItems = Items.filter(items, query);
           let itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage);
 
-          if(opts.resetFiltersIfEmpty === true && itemsToRender.length == 0) {
+          if(opts.resetFiltersIfEmpty === true && filteredItems.length == 0) {
             Logger.log("(PopupUI.drawList) Nothing to show, reset the filter and draw whole list again");
 
             // Reset the filters and save the update display options
             const displayOptions = Object.assign({}, parsedDisplay, defaultDisplaySetting);
 
-            Logger.log("(PopupUI.drawList) Save display variable to local storage: " + displayOptions);
+            Logger.log("(PopupUI.resetAllFilters) Save display variable to local storage: " + displayOptions);
             browser.storage.local.set({ display: JSON.stringify( displayOptions ) });
 
             // Set initial filter value in the PopupUI and focus the field
             PopupTopFilter.setValue('');
             PopupTopFilter.focusSearchField();
 
-            // Reset the view
+            // Redraw the view
             PopupUI.drawList();
+          } else if(opts.resetFiltersIfEmpty === true && itemsToRender.length == 0) {
+            const previousPage = pageToDisplay - 1 || 1;
+
+            Logger.log(`(PopupUI.drawList) This page is empty, let's show previous page: ${previousPage}`);
+            PopupUI.drawList({ page: previousPage });
           } else {
             // Display the "no results" message or hide it
             togglePlaceholderVisibility(itemsToRender.length);

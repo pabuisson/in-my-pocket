@@ -133,14 +133,19 @@ describe( 'Items.paginate', () => {
       expect( Items.paginate([], 1, perPage) ).to.be.empty;
     });
 
-    it('returns nothing if page param is < 0', () => {
+    it('returns an empty array if page param is < 0', () => {
       const negativePage = -1;
-      expect( Items.paginate(items, negativePage, perPage) ).not.to.be.ok;
+      expect( Items.paginate(items, negativePage, perPage) ).to.be.empty;
     });
 
-    it('returns nothing if page param is > max possible page', () => {
+    it('returns an empty array if page param is = 0', () => {
+      const zeroPage = 0;
+      expect( Items.paginate(items, zeroPage, perPage) ).to.be.empty;
+    });
+
+    it('returns an empty array if page param is > max possible page', () => {
       const tooHighPage = 10;
-      expect( Items.paginate(items, tooHighPage, perPage) ).not.to.be.ok;
+      expect( Items.paginate(items, tooHighPage, perPage) ).to.be.empty;
     });
   });
 
