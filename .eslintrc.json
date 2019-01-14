@@ -1,18 +1,34 @@
 {
     "env": {
-        "browser": true,
-        "webextensions": true,
-        "es6": true,
-        "mocha": true
+      "amd": true,
+      "browser": true,
+      "webextensions": true,
+      "es6": true,
+      "mocha": true
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "sourceType": "module"
+      "sourceType": "module"
+    },
+    "globals": {
+      "expect": true,
+      "global": true,
+      "sinon": true
     },
     "rules": {
-        "indent": [ "error", 2, { "SwitchCase": 1 } ],
-        "linebreak-style": [ "error", "unix" ],
-        "quotes": [ "off", "double" ],
-        "semi": [ "error", "always" ]
+      "linebreak-style": ["error", "unix"],
+      "no-trailing-spaces": "error",
+      "no-var": "error",
+      "semi": ["error", "always"],
+      "indent": ["warn", 2, { "SwitchCase": 1 }],
+      "prefer-const": "warn",
+      "camelcase": "warn",
+      "complexity": "warn",
+      "max-depth": "warn",
+      "max-params": "warn",
+      "max-lines-per-function": [ "warn", { "skipBlankLines": true, "skipComments": true }],
+      "max-lines": "warn",
+      "max-len": ["warn", { "code": 100 }],
+      "quotes": ["off", "double"]
     }
 }
