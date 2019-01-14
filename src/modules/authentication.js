@@ -86,7 +86,7 @@ var Authentication = ( function() {
 
       return promise;
     }
-  }
+  };
 })();
 
 export default Authentication;
