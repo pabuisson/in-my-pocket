@@ -1,7 +1,7 @@
 "use strict";
 
-var PopupMainLoader = ( function() {
-  let mainLoaderComponent = document.querySelector( '.main-loader' );
+const PopupMainLoader = ( function() {
+  const mainLoaderComponent = document.querySelector( '.main-loader' );
 
   return {
     enable: function() {
@@ -9,7 +9,7 @@ var PopupMainLoader = ( function() {
     },
 
     disable: function( instantly = true ) {
-      let timeoutDuration = ( instantly ? 0 : 1000 );
+      const timeoutDuration = ( instantly ? 0 : 1000 );
       setTimeout( function() {
         mainLoaderComponent.classList.remove('loading');
       }, timeoutDuration );
