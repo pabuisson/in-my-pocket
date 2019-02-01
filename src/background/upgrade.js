@@ -37,11 +37,11 @@ browser.notifications.onClicked.addListener( notificationId => {
   switch(notificationId) {
     case installNotificationId:
       browser.notifications.clear( notificationId );
-      browser.tabs.create({ 'url': 'https://inmypocket.pabuisson.com/faq.html?utm_source=addon&utm_medium=notification&utm_campaign=install' });
+      browser.tabs.create({ 'url': 'https://inmypocketaddon.com/faq.html?utm_source=addon&utm_medium=notification&utm_campaign=install' });
       break;
     case upgradeNotificationId:
       browser.notifications.clear( notificationId );
-      browser.tabs.create({ 'url': 'https://inmypocket.pabuisson.com/changelog.html?utm_source=addon&utm_medium=notification&utm_campaign=upgrade' });
+      browser.tabs.create({ 'url': 'https://inmypocketaddon.com/changelog.html?utm_source=addon&utm_medium=notification&utm_campaign=upgrade' });
       break;
   }
 });
