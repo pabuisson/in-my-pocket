@@ -1,8 +1,10 @@
 # Changelog
 
-## Not released
+## 0.10.4 - February 2019
 
+* FEATURE: IMP now makes use of the badge on the toolbar icon to show that an action is in progress. This way, you'll know that something is actually happening when you're adding or removing items from your pocket list!
 * FIX: on certain platforms, context menu with only one enabled entry was shown inside a submenu, which is not handy. On most recent browsers, context menus will now be hidden instead of disabled, so having one single entry ("Add to pocket") should not create a "In My Pocket" submenu anymore.
+* FIX: an issue that could lead to inconsistency in items ordering.
 
 
 ## 0.10.3 - December 2018
