@@ -13,21 +13,23 @@ import { KeyboardShortcuts } from '../modules/constants.js';
 
 // -------------
 
-const disconnectRow                = document.querySelector('.disconnect-row');
-const disconnectStep2              = document.querySelector('.disconnect-second-step');
-const disconnectActionStep1        = document.querySelector('.disconnect-first-step');
-const disconnectActionStep2Confirm = document.querySelector('.disconnect-second-step-confirm');
-const disconnectActionStep2Cancel  = document.querySelector('.disconnect-second-step-cancel');
-const displayBadgeCountCheckbox = document.querySelector('.display-badge-count');
-const displayPageActionCheckbox = document.querySelector('.display-page-action');
-const enableDebugModeCheckbox   = document.querySelector('.enable-debug-mode');
-const openInNewTabCheckbox      = document.querySelector('.open-in-new-tab');
-const paginationPerPageSelector = document.querySelector('.pagination-per-page');
-const zoomLevelSelector         = document.querySelector('.zoom-level');
-const archiveWhenOpenedCheckbox = document.querySelector('.archive-when-opened');
-const closeTabWhenAddedCheckbox = document.querySelector('.close-tab-when-added');
-const keyboardOpenPopupShortcut = document.querySelector('.keyboard-open-popup');
-const keyboardToggleShortcut    = document.querySelector('.keyboard-toggle');
+const disconnectRow                  = document.querySelector('.disconnect-row');
+const disconnectStep2                = document.querySelector('.disconnect-second-step');
+const disconnectActionStep1          = document.querySelector('.disconnect-first-step');
+const disconnectActionStep2Confirm   = document.querySelector('.disconnect-second-step-confirm');
+const disconnectActionStep2Cancel    = document.querySelector('.disconnect-second-step-cancel');
+const displayBadgeCountCheckbox      = document.querySelector('.display-badge-count');
+const displayPageActionCheckbox      = document.querySelector('.display-page-action');
+const enableDebugModeCheckbox        = document.querySelector('.enable-debug-mode');
+const openInNewTabCheckbox           = document.querySelector('.open-in-new-tab');
+const paginationPerPageSelector      = document.querySelector('.pagination-per-page');
+const zoomLevelSelector              = document.querySelector('.zoom-level');
+const archiveWhenOpenedCheckbox      = document.querySelector('.archive-when-opened');
+const closeTabWhenAddedCheckbox      = document.querySelector('.close-tab-when-added');
+const keyboardOpenPopupShortcut      = document.querySelector('.keyboard-open-popup');
+const keyboardToggleShortcut         = document.querySelector('.keyboard-toggle');
+const keyboardOpenFirstItemShortcut  = document.querySelector('.keyboard-open-first-item');
+const keyboardOpenRandomItemShortcut = document.querySelector('.keyboard-open-random-item');
 
 const savedNotificationElement = document.querySelector('.saved-notification');
 
@@ -67,16 +69,19 @@ const UI = ( function() {
       Settings.init().then( function() {
         const settings = Settings.get();
 
-        displayBadgeCountCheckbox.checked = settings['showBadge'];
-        displayPageActionCheckbox.checked = settings['showPageAction'];
-        enableDebugModeCheckbox.checked   = settings['debugMode'];
-        openInNewTabCheckbox.checked      = settings['openInNewTab'];
-        archiveWhenOpenedCheckbox.checked = settings['archiveWhenOpened'];
-        closeTabWhenAddedCheckbox.checked = settings['closeTabWhenAdded'];
-        paginationPerPageSelector.value   = settings['perPage'] || '';
-        zoomLevelSelector.value           = settings['zoomLevel'];
-        keyboardOpenPopupShortcut.value   = settings['keyboardOpenPopup'];
-        keyboardToggleShortcut.value      = settings['keyboardToggle'];
+        displayBadgeCountCheckbox.checked    = settings['showBadge'];
+        displayPageActionCheckbox.checked    = settings['showPageAction'];
+        enableDebugModeCheckbox.checked      = settings['debugMode'];
+        openInNewTabCheckbox.checked         = settings['openInNewTab'];
+        archiveWhenOpenedCheckbox.checked    = settings['archiveWhenOpened'];
+        closeTabWhenAddedCheckbox.checked    = settings['closeTabWhenAdded'];
+        paginationPerPageSelector.value      = settings['perPage'] || '';
+        zoomLevelSelector.value              = settings['zoomLevel'];
+
+        keyboardOpenPopupShortcut.value      = settings['keyboardOpenPopup'];
+        keyboardToggleShortcut.value         = settings['keyboardToggle'];
+        keyboardOpenFirstItemShortcut.value  = settings['keyboardOpenFirstItem'];
+        keyboardOpenRandomItemShortcut.value = settings['keyboardOpenRandomItem'];
       });
 
       // Event: "Display count badge" checkbox
@@ -179,9 +184,41 @@ const UI = ( function() {
             this.blur();
           }
         });
+
+        // Event: updating "open first item" keyboard shortcut
+        keyboardOpenFirstItemShortcut.addEventListener('keydown', function(ev) {
+          ev.preventDefault();
+          this.value = Keyboard.stringifyCombination(ev);
+
+          if(Keyboard.isValidCombination(ev)) {
+            Settings.set('keyboardOpenFirstItem', this.value);
+            Settings.save();
+            // TODO:
+            // Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value);
+            flashSavedNotification(this.parentNode);
+            this.blur();
+          }
+        });
+
+        // Event: updating "open random item" keyboard shortcut
+        keyboardOpenRandomItemShortcut.addEventListener('keydown', function(ev) {
+          ev.preventDefault();
+          this.value = Keyboard.stringifyCombination(ev);
+
+          if(Keyboard.isValidCombination(ev)) {
+            Settings.set('keyboardOpenRandomItem', this.value);
+            Settings.save();
+            // TODO:
+            // Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value);
+            flashSavedNotification(this.parentNode);
+            this.blur();
+          }
+        });
       } else {
         keyboardToggleShortcut.setAttribute('disabled', 'disabled');
         keyboardOpenPopupShortcut.setAttribute('disabled', 'disabled');
+        keyboardOpenFirstItemShortcut.setAttribute('disabled', 'disabled');
+        keyboardOpenRandomItemShortcut.setAttribute('disabled', 'disabled');
       }
 
       // Event : "Disconnect" from the Pocket account click

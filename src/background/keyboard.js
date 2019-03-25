@@ -13,10 +13,12 @@ import { KeyboardShortcuts } from '../modules/constants.js';
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/commands/update
 if(browser.commands.update) {
   Settings.init().then( function() {
-    let settings = Settings.get();
+    const settings = Settings.get();
 
     Keyboard.registerShortcut(KeyboardShortcuts.toggle,    settings.keyboardToggle);
     Keyboard.registerShortcut(KeyboardShortcuts.openPopup, settings.keyboardOpenPopup);
+    Keyboard.registerShortcut(KeyboardShortcuts.openFirstItem,  settings.keyboardOpenFirstItem);
+    Keyboard.registerShortcut(KeyboardShortcuts.openRandomItem, settings.keyboardOpenRandomItem);
   });
 }
 

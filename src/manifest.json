@@ -73,6 +73,18 @@
         "default": "Alt+Q"
       },
       "description": "Open the popup containing pocket items"
+    },
+    "open-first-item": {
+      "suggested_key": {
+        "default": "Alt+F"
+      },
+      "description": "Send a 'open-first-item' event: opens the first item of the list"
+    },
+    "open-random-item": {
+      "suggested_key": {
+        "default": "Alt+R"
+      },
+      "description": "Send a 'open-random-item' event: opens a random item of the list"
     }
   }
 }

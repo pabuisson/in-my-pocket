@@ -6,10 +6,10 @@ import Utility from './utility.js';
 // --------------------------
 
 
-var Settings = ( function() {
+const Settings = ( function() {
   let _loaded  = false;
   let settings = {};
-  let defaultSettings = {
+  const defaultSettings = {
     debugMode:      false,
     openInNewTab:   true,
     perPage:        '50',
@@ -22,7 +22,9 @@ var Settings = ( function() {
     // Keyboard shortcuts
     // TODO: can I retrieve default from the manifest JSON?
     keyboardOpenPopup: 'Alt+Q',
-    keyboardToggle: 'Alt+W'
+    keyboardToggle: 'Alt+W',
+    keyboardOpenFirstItem: 'Alt+F',
+    keyboardOpenRandomItem: 'Alt+R'
   };
 
   function load() {
