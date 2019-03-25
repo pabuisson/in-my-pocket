@@ -2,6 +2,7 @@
 
 import Items      from '../modules/items.js';
 import Keyboard   from '../modules/keyboard.js';
+import Logger     from '../modules/logger.js';
 import Settings   from '../modules/settings.js';
 import { KeyboardShortcuts } from '../modules/constants.js';
 
@@ -22,25 +23,31 @@ if(browser.commands.update) {
   });
 }
 
+browser.commands.onCommand.addListener( command => {
+  switch(command) {
+    case KeyboardShortcuts.toggle:
+      Logger.log('(keyboard) KeyboardShortcuts.toggle');
+      browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+        // FIXME: duplication with PageAction.toggle())
+        browser.storage.local.get('items').then( ({ items }) => {
+          const matchingItem = Items.find( items, { url: currentTab.url });
 
-browser.commands.onCommand.addListener( (command) => {
-  if( command === KeyboardShortcuts.toggle ) {
-    browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
-      //
-      // PageAction.toggle(currentTab);
-      //
-
-      // FIXME: duplication with PageACtion.toggle())
-      browser.storage.local.get('items').then( ({ items }) => {
-        const matchingItem = Items.find( items, { url: currentTab.url });
-
-        if( matchingItem ) {
-          Items.markAsRead( matchingItem.id );
-        } else {
-          const addItemOptions = { closeTabId: currentTab.id };
-          Items.addItem( currentTab.url, currentTab.title, addItemOptions );
-        }
+          if(matchingItem) {
+            Items.markAsRead(matchingItem.id);
+          } else {
+            const addItemOptions = { closeTabId: currentTab.id };
+            Items.addItem(currentTab.url, currentTab.title, addItemOptions);
+          }
+        });
       });
-    });
+      break;
+    case KeyboardShortcuts.openFirstItem:
+      Logger.log('(keyboard) KeyboardShortcuts.openFirstItem');
+      Items.openFirst();
+      break;
+    case KeyboardShortcuts.openRandomItem:
+      Logger.log('(keyboard) KeyboardShortcuts.openRandomItem');
+      Items.openRandom();
+      break;
   }
 });

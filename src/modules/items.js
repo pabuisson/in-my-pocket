@@ -16,9 +16,9 @@ const Items = ( function() {
   let currentChecksum = null;
   let parsedItems     = null;
 
-  function parseItems( rawItems ) {
+  function parseItems(rawItems) {
     const rawItemsChecksum = rawItems.length;
-    Logger.log(`(Items.parseItems) checksum: ${ currentChecksum } ; new: ${ rawItemsChecksum }`);
+    Logger.log(`(Items.parseItems) checksum: ${currentChecksum} ; new: ${rawItemsChecksum}`);
 
     if( rawItemsChecksum != currentChecksum ) {
       Logger.log('(Items.parsedItems) checksum not defined, parse those items for the first time');
@@ -231,6 +231,50 @@ const Items = ( function() {
 
     deleteItem: function(itemId) {
       removeItem(itemId, 'delete');
+    },
+
+    open: function(itemId) {
+      Settings.init().then( () => {
+        const openInNewTab      = Settings.get('openInNewTab');
+        const archiveWhenOpened = Settings.get('archiveWhenOpened');
+
+        browser.storage.local.get('items').then( ({ items }) => {
+          const item = Items.find( items, { id: itemId } );
+
+          if(openInNewTab) {
+            browser.tabs.create({ url: item.resolved_url });
+          } else {
+            browser.tabs.update({ url: item.resolved_url });
+          }
+
+          if(archiveWhenOpened) {
+            Items.markAsRead(item.id);
+          }
+        });
+      });
+    },
+
+    openRandom: function(query = '') {
+      browser.storage.local.get('items').then( ({ items }) => {
+        const filteredItems = Items.filter(items, query);
+
+        if(filteredItems.length > 0) {
+          const item = filteredItems[ Math.floor( Math.random() * filteredItems.length ) ];
+          Items.open(item.id);
+        }
+      });
+    },
+
+    openFirst: function(query = '') {
+      browser.storage.local.get('items').then( ({ items }) => {
+        const filteredItems = Items.filter(items, query);
+
+        if(filteredItems.length > 0) {
+          const sortedItems = filteredItems.sort( (a, b) => b.created_at - a.created_at );
+          const firstItem = sortedItems[0];
+          Items.open(firstItem.id);
+        }
+      });
     }
   };
 })();

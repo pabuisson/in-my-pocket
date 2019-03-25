@@ -195,64 +195,17 @@ function retrieveDiff() {
 }
 
 
-// - - - OPEN ITEMS - - -
-
-function openRandomItem( query, opt = {} ) {
-  browser.storage.local.get( 'items' ).then( ({ items }) => {
-    const filteredItems = Items.filter( items, query );
-
-    if( filteredItems.length > 0 ) {
-      const item = filteredItems[ Math.floor( Math.random() * filteredItems.length ) ];
-
-      opt.itemId = item.id;
-      openItem( opt );
-    }
-  });
-}
-
-
-function openItem( { itemId, openInNewTab } ) {
-  let pending;
-  let archiveWhenOpened = false;
-
-  if( !openInNewTab ) {
-    pending = Settings.init().then( () => {
-      openInNewTab      = Settings.get( 'openInNewTab' );
-      archiveWhenOpened = Settings.get( 'archiveWhenOpened' );
-    });
-  } else {
-    pending = Promise.resolve();
-  }
-
-  pending.then( () => {
-    browser.storage.local.get( 'items' ).then( ({ items }) => {
-      const item = Items.find( items, { id: itemId } );
-
-      if( openInNewTab ) {
-        browser.tabs.create( { url: item.resolved_url } );
-      } else {
-        browser.tabs.update( { url: item.resolved_url } );
-      }
-
-      if( archiveWhenOpened ) {
-        Items.markAsRead( item.id );
-      }
-    });
-  });
-}
-
-
 // - - - MESSAGES - - -
 
 browser.runtime.onMessage.addListener( function( eventData ) {
   Logger.log( `(bg.onMessage) eventData.action: ${eventData.action}` );
-  switch( eventData.action ) {
+  switch(eventData.action) {
     case 'authenticate':
       Authentication.authenticate().then( () => {
         // Send a message back to the UI
         browser.runtime.sendMessage({ action: 'authenticated' });
         // Retrieve the items and update the badge count
-        retrieveItems( true );
+        retrieveItems(true);
         // Create right click context menus
         ContextMenu.createEntries();
       });
@@ -265,19 +218,19 @@ browser.runtime.onMessage.addListener( function( eventData ) {
       Items.addItem( eventData.url, eventData.title, addItemOptions );
       break;
     case 'mark-as-read':
-      Items.markAsRead( eventData.id );
+      Items.markAsRead(eventData.id);
       break;
     case 'delete-item':
-      Items.deleteItem( eventData.id );
+      Items.deleteItem(eventData.id);
       break;
     case 'update-badge-count':
       Badge.updateCount();
       break;
-    case 'random-item':
-      openRandomItem( eventData.query );
-      break;
     case 'read-item':
-      openItem({ itemId: eventData.itemId, openInNewTab: eventData.openInNewTab });
+      Items.open(eventData.itemId);
+      break;
+    case 'random-item':
+      Items.openRandom(eventData.query);
       break;
     case 'flash-error':
       Badge.flashError();
