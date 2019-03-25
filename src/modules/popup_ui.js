@@ -12,7 +12,7 @@ import Utility         from '../modules/utility.js';
 
 // ----------------
 
-var PopupUI = ( function() {
+const PopupUI = ( function() {
   const intervalWithoutOpening = 5*60;
   const defaultDisplaySetting  = { currentPage: 1, query: '' };
 
@@ -49,7 +49,7 @@ var PopupUI = ( function() {
       const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
       const lastDisplay   = parsedDisplay.displayedAt;
 
-      let displayOptions  = Object.assign({}, parsedDisplay);
+      const displayOptions = Object.assign({}, parsedDisplay);
 
       // Reset query and currentPage if more than `intervalWithoutOpening` since last opening
       if(lastDisplay && currentTimestamp - lastDisplay > intervalWithoutOpening) {
@@ -72,8 +72,8 @@ var PopupUI = ( function() {
     Logger.log('(PopupUI.setupUnauthenticatedUI)');
 
     // User is not authenticated yet
-    let authenticationButton = document.querySelector('.authentication button');
-    let pocketSignupLink     = document.querySelector('.authentication .signup');
+    const authenticationButton = document.querySelector('.authentication button');
+    const pocketSignupLink     = document.querySelector('.authentication .signup');
 
     document.querySelector('.authentication').classList.remove('hidden');
     document.querySelector('.authenticated').classList.add('hidden');
@@ -120,12 +120,12 @@ var PopupUI = ( function() {
       }).then( function(perPage) {
         browser.storage.local.get([ 'items', 'display' ]).then( ({ items, display }) => {
           const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting;
-          let query           = opts.query || parsedDisplay.query;
-          let pageToDisplay   = opts.page  || parsedDisplay.currentPage;
+          const query         = opts.query || parsedDisplay.query;
+          const pageToDisplay = opts.page  || parsedDisplay.currentPage;
 
           // Parse and filter the item list
-          let filteredItems = Items.filter(items, query);
-          let itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage);
+          const filteredItems = Items.filter(items, query);
+          const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage);
 
           // Display the "no results" message or hide it
           togglePlaceholderVisibility(itemsToRender.length);
@@ -156,31 +156,31 @@ var PopupUI = ( function() {
       }).then( function( perPage ) {
         browser.storage.local.get([ 'items', 'display' ]).then( ({ items, display }) => {
           const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
-          let query           = opts.query || parsedDisplay.query;
-          let pageToDisplay   = opts.page  || parsedDisplay.currentPage;
+          const query         = opts.query || parsedDisplay.query;
+          const pageToDisplay   = opts.page  || parsedDisplay.currentPage;
 
           // Parse and filter the item list
-          let filteredItems    = Items.filter( items, query );
-          let itemsToRender    = Items.paginate( filteredItems, pageToDisplay, perPage );
-          let itemsToRenderIds = itemsToRender.map( item => item.id );
+          const filteredItems    = Items.filter( items, query );
+          const itemsToRender    = Items.paginate( filteredItems, pageToDisplay, perPage );
+          const itemsToRenderIds = itemsToRender.map( item => item.id );
 
           // Display the "no results" message or hide it
           togglePlaceholderVisibility(itemsToRender.length);
 
           // Rebuild all items
           const visibleItemsIds = PopupItemList.getVisibleItemsIds();
-          let itemIdsToKeep     = visibleItemsIds.filter( id => itemsToRenderIds.includes(id) );
-          let itemIdsToDelete   = visibleItemsIds.filter( id => !itemsToRenderIds.includes(id) );
+          const itemIdsToKeep     = visibleItemsIds.filter( id => itemsToRenderIds.includes(id) );
+          const itemIdsToDelete   = visibleItemsIds.filter( id => !itemsToRenderIds.includes(id) );
 
           // First step: all removed items still visible must disappear
           PopupUI.fadeOutItem(...itemIdsToDelete);
 
           // Second step: prepare the insertion of all missing items
-          // Generate a table of all predecessors, to use insertBefore and appendChild to build the DOM
-          let predecessorTable = {};
+          // Generate a table of all predecessors, to use insertBefore/appendChild to build the DOM
+          const predecessorTable = {};
           let nextVisibleItemId = itemIdsToKeep.shift();
 
-          for(let itemToRender of itemsToRender) {
+          for(const itemToRender of itemsToRender) {
             if(itemToRender.id != nextVisibleItemId) {
               if(predecessorTable[nextVisibleItemId])
                 predecessorTable[nextVisibleItemId].push(itemToRender);
@@ -192,7 +192,7 @@ var PopupUI = ( function() {
           }
 
           // Use the predecessor table to inject the new items at the proper place in the list
-          for(let key in predecessorTable) {
+          for(const key in predecessorTable) {
             const itemsToInject = predecessorTable[key];
             if(key != 'last') {
               // When key is an ID, we insert before the node having this ID

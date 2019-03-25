@@ -7,12 +7,12 @@ import { MouseButtons } from '../modules/constants.js';
 
 // ----------------
 
-var PopupItemList = ( function() {
+const PopupItemList = ( function() {
   const ITEMS_PER_BATCH = 50;
   let itemsToCreate     = undefined;
   let totalItemsCount   = undefined;
   let createdItemsCount = undefined;
-  let itemsContainer    = document.querySelector('.list-component');
+  const itemsContainer  = document.querySelector('.list-component');
 
   function areAllItemsBuilt() {
     const isInitialized    = totalItemsCount !== undefined && createdItemsCount !== undefined;
@@ -30,7 +30,7 @@ var PopupItemList = ( function() {
       'http', 'https',
       'ftp',  'ftps'
     ].join('|');
-    const removalRegex = new RegExp('(' + protocolsToRemove + '):\/\/(www.){0,1}', 'gi');
+    const removalRegex = new RegExp('(' + protocolsToRemove + ')://(www.){0,1}', 'gi');
 
     return url.replace(removalRegex, '');
   }
@@ -41,7 +41,11 @@ var PopupItemList = ( function() {
 
   // openInNewTab param allows us to force the behaviour (ctrl-click or middle-click)
   function openLink( itemId, openInNewTab = false ) {
-    browser.runtime.sendMessage({ action: 'read-item', itemId: itemId, openInNewTab: openInNewTab });
+    browser.runtime.sendMessage({
+      action: 'read-item',
+      itemId: itemId,
+      openInNewTab: openInNewTab
+    });
   }
 
   function resetUI() {
@@ -49,22 +53,22 @@ var PopupItemList = ( function() {
   }
 
   function buildItemElement( item ) {
-    let liElement        = document.createElement('li');
-    let faviconElement   = document.createElement('img');
-    let titleContent     = document.createElement('span');
-    let urlContent       = document.createElement('span');
+    const liElement        = document.createElement('li');
+    const faviconElement   = document.createElement('img');
+    const titleContent     = document.createElement('span');
+    const urlContent       = document.createElement('span');
 
-    let actionContainer  = document.createElement('div');
+    const actionContainer  = document.createElement('div');
 
-    let tickAction       = document.createElement('div');
-    let tickElement      = document.createElement('div');
-    let tickIconFont     = document.createElement('i');
-    let tickLoadElement  = document.createElement('div');
+    const tickAction       = document.createElement('div');
+    const tickElement      = document.createElement('div');
+    const tickIconFont     = document.createElement('i');
+    const tickLoadElement  = document.createElement('div');
 
-    let deleteAction     = document.createElement('div');
-    let trashElement     = document.createElement('div');
-    let trashIconFont    = document.createElement('i');
-    let trashLoadElement = document.createElement('div');
+    const deleteAction     = document.createElement('div');
+    const trashElement     = document.createElement('div');
+    const trashIconFont    = document.createElement('i');
+    const trashLoadElement = document.createElement('div');
 
     liElement.className      = 'item';
     faviconElement.className = 'favicon';
@@ -112,7 +116,7 @@ var PopupItemList = ( function() {
   }
 
   function buildDomFragment(items) {
-    let fragment = document.createDocumentFragment();
+    const fragment = document.createDocumentFragment();
     for(let i = 0; i < items.length; i++) {
       const newDomElement = buildItemElement(items[i]);
       fragment.appendChild(newDomElement);
@@ -122,7 +126,7 @@ var PopupItemList = ( function() {
   }
 
   function buildBatch() {
-    Logger.log('(PopupItemList.buildBatch) build a new batch of ' + ITEMS_PER_BATCH + ' items');
+    Logger.log(`(PopupItemList.buildBatch) build a new batch of ${ITEMS_PER_BATCH} items`);
 
     for(let i = 0; i < ITEMS_PER_BATCH; i++) {
       // If we've already built all items then get out of this loop
@@ -131,7 +135,7 @@ var PopupItemList = ( function() {
         break;
       }
 
-      let itemToCreate = itemsToCreate[ createdItemsCount ];
+      const itemToCreate = itemsToCreate[createdItemsCount];
       itemsContainer.appendChild( buildItemElement(itemToCreate) );
 
       createdItemsCount++;
@@ -204,7 +208,7 @@ var PopupItemList = ( function() {
 
     // Will build DOM for items and insert it before the item whose id=beforeItemId
     insertItems: function(items, beforeItemId) {
-      const beforeNode  = document.querySelector(`.item:not(.disappearing)[data-id='${beforeItemId}']`);
+      const beforeNode = document.querySelector(`.item:not(.disappearing)[data-id='${beforeItemId}']`);
       Logger.log(`(PopupItemList.insertItems) Insert ${items.length} items before item ${beforeItemId}`);
       Logger.log(`(PopupItemList.insertItems) Insert before ${beforeNode}`);
       const domToInsert = buildDomFragment(items);

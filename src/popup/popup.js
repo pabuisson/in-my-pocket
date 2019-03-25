@@ -36,25 +36,25 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Listen for message from background
-  browser.runtime.onMessage.addListener( function( eventData ) {
+  browser.runtime.onMessage.addListener( function(eventData) {
     PopupMainLoader.disable();
 
-    if( eventData.error || eventData.notice ) {
+    if(eventData.error || eventData.notice) {
       Logger.warn('(popup onMessage) : ' + eventData);
 
-      let flashContainer = document.querySelector( '.flash-overlay' );
-      let flashMessage   = '';
-      let errorClass     = 'error';
-      let noticeClass    = 'notice';
+      const flashContainer = document.querySelector('.flash-overlay');
+      const errorClass     = 'error';
+      const noticeClass    = 'notice';
+      let flashMessage = '';
 
-      flashContainer.classList.remove( errorClass  );
-      flashContainer.classList.remove( noticeClass );
+      flashContainer.classList.remove(errorClass);
+      flashContainer.classList.remove(noticeClass);
 
-      if( eventData.error ) {
-        flashContainer.classList.add( errorClass );
+      if(eventData.error) {
+        flashContainer.classList.add(errorClass);
         flashMessage = 'An error occurred: ';
 
-        switch( eventData.error ) {
+        switch(eventData.error) {
           case PocketError.UNREACHABLE:
             flashMessage += 'could not reach the server';
             break;
@@ -73,10 +73,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Flash the badge if an error occured
         browser.runtime.sendMessage({ action: 'flash-error' });
 
-      } else if( eventData.notice ) {
-        flashContainer.classList.add( noticeClass );
+      } else if(eventData.notice) {
+        flashContainer.classList.add(noticeClass);
 
-        switch( eventData.notice ) {
+        switch(eventData.notice) {
           case PocketNotice.ALREADY_IN_LIST:
             flashMessage = 'This page is already in your Pocket :)';
             break;
@@ -84,17 +84,17 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       flashContainer.innerHTML = flashMessage;
-      flashContainer.classList.remove( 'hidden' );
+      flashContainer.classList.remove('hidden');
 
       // Hide the error message after 5 seconds and reset the class list
       setTimeout( () => {
-        flashContainer.classList.add( 'hidden' );
+        flashContainer.classList.add('hidden');
       }, 5000 );
 
     } else {
       Logger.log('(popup onMessage) : ' + eventData.action);
 
-      switch( eventData.action ) {
+      switch(eventData.action) {
         case 'authenticated':
           window.close();
           browser.runtime.sendMessage({ action: 'update-badge-count' });
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         case 'marked-as-read':
         case 'deleted':
-          PopupUI.fadeOutItem( eventData.id );
+          PopupUI.fadeOutItem(eventData.id);
           PopupUI.updateList();
           break;
 

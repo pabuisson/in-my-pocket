@@ -8,9 +8,9 @@ import Items from './items.js';
 // -------------------------------------
 
 
-var PageAction = ( function() {
+const PageAction = ( function() {
   function mustDisplayPageAction() {
-    let promise = new Promise( ( resolve, reject ) => {
+    const promise = new Promise( ( resolve, reject ) => {
       Settings.init().then( () => {
         Logger.log('must display page action ? ' + Settings.get('showPageAction'));
         if( Settings.get( 'showPageAction' ) ) {

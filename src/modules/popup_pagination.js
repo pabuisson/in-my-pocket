@@ -7,7 +7,7 @@ import Utility  from './utility.js';
 
 // ---------------
 
-var PopupPagination = ( function() {
+const PopupPagination = ( function() {
   const paginationContainer          = document.querySelector( '.pagination' );
   const paginationNextPageButton     = document.querySelector( '.pagination-next');
   const paginationPageSelector       = document.querySelector( '.pagination-page-selector' );
@@ -20,7 +20,7 @@ var PopupPagination = ( function() {
       const parsedDisplay  = Utility.parseJson( display ) || {};
       const currentPage = display ? parsedDisplay.currentPage : 1;
 
-      Logger.log(`(PopupPagination) Load previous page: from ${ currentPage } to ${ currentPage - 1 }`);
+      Logger.log(`(PopupPagination) Load previous page: from ${currentPage} to ${currentPage - 1}`);
       PopupUI.drawList({ page: currentPage - 1 });
     });
   }
@@ -30,15 +30,15 @@ var PopupPagination = ( function() {
       const parsedDisplay  = Utility.parseJson( display ) || {};
       const currentPage = display ? parsedDisplay.currentPage : 1;
 
-      Logger.log(`(PopupPagination) Load next page: from ${ currentPage } to ${ currentPage + 1 }`);
+      Logger.log(`(PopupPagination) Load next page: from ${currentPage} to ${currentPage + 1}`);
       PopupUI.drawList({ page: currentPage + 1 });
     });
   }
 
-  function changePageEventListener( event ) {
-    let pageToLoad = parseInt( event.target.value );
+  function changePageEventListener(event) {
+    let pageToLoad = parseInt(event.target.value);
 
-    Logger.log(`(PopupPagination) Load page ${ pageToLoad }`);
+    Logger.log(`(PopupPagination) Load page ${pageToLoad}`);
     PopupUI.drawList({ page: pageToLoad });
   }
 
@@ -57,7 +57,7 @@ var PopupPagination = ( function() {
     // Recreate all the options
     const pagesCount = Math.ceil(itemsCount / perPage) || 1;
     for(let i = 0; i < pagesCount; i++) {
-      let option = document.createElement('option');
+      const option = document.createElement('option');
       option.setAttribute('value', i + 1 );
       option.innerText = `${ i + 1 } / ${ pagesCount }`;
 
@@ -85,7 +85,7 @@ var PopupPagination = ( function() {
   function updateButtonsState(page, perPage, itemsCount) {
     const pagesCount = Math.ceil(itemsCount / perPage);
 
-    if(pagesCount == 0 || pagesCount == 1) {
+    if(pagesCount === 0 || pagesCount === 1) {
       Logger.log(`(PopupPagination.updateButtonsState) Only 1 page, disable "next" & "previous" links`);
 
       disableButton(paginationPreviousPageButton, previousPageEventListener);
@@ -95,14 +95,14 @@ var PopupPagination = ( function() {
       enableButton(paginationNextPageButton, nextPageEventListener);
 
       // First page
-      if(page == 1) {
-        Logger.log(`(PopupPagination.updateButtonsState) Page 1/${ pagesCount }, disable "previous" link`);
+      if(page === 1) {
+        Logger.log(`(PopupPagination.updateButtonsState) Page 1/${pagesCount}, disable "previous" link`);
         disableButton(paginationPreviousPageButton, previousPageEventListener);
       }
 
       // Last page
-      if(page == pagesCount) {
-        Logger.log(`(PopupPagination.updateButtonsState) Page ${ page }/${ pagesCount }, disable "next" link`);
+      if(page === pagesCount) {
+        Logger.log(`(PopupPagination.updateButtonsState) Page ${page}/${pagesCount}, disable "next" link`);
         disableButton(paginationNextPageButton, nextPageEventListener);
       }
     }

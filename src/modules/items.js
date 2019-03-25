@@ -80,8 +80,7 @@ const Items = ( function() {
           Logger.warn('(Items.removeItem) item ' + itemId + ' could not be found!' );
           Badge.updateCount();
         }
-      })
-      .catch( error => {
+      }).catch( error => {
         Logger.error('(Items.removeItem) Error while removing an item');
         Logger.error(`(Items.removeItem) ${ JSON.stringify(error) }`);
         Badge.flashError();
@@ -91,7 +90,7 @@ const Items = ( function() {
 
   return {
     filter: function(rawItems, query) {
-      let parsedItems   = parseItems(rawItems);
+      const parsedItems = parseItems(rawItems);
       let filteredItems = undefined;
 
       if(query == '' || !query) {
@@ -143,7 +142,7 @@ const Items = ( function() {
     //       call paginate with raw items as well?
     paginate: function(parsedItems, page, perPage) {
       const itemsCount = parsedItems.length;
-      const sortedItems  = parsedItems.sort( (a, b) => b.created_at - a.created_at );
+      const sortedItems = parsedItems.sort( (a, b) => b.created_at - a.created_at );
 
       if(!perPage || itemsCount == 0) {
         return sortedItems;
@@ -152,7 +151,7 @@ const Items = ( function() {
       const pagesCount = Math.ceil(itemsCount / perPage);
 
       if(page <= 0 || page > pagesCount) {
-        Logger.warn( `Could not get page ${ page } (${ itemsCount } items, asked ${ perPage } per page)` );
+        Logger.warn(`Could not get page ${page} (${itemsCount} items, asked ${perPage} per page)`);
       } else {
         const fromIndex = (page - 1) * perPage;
         const toIndex   = (page * perPage) - 1;
@@ -167,7 +166,7 @@ const Items = ( function() {
       Logger.log('(Items.addItem)');
       Badge.startLoadingSpinner();
 
-      browser.storage.local.get([ 'access_token', 'items' ]).then( ({ access_token, items }) => {
+      browser.storage.local.get(['access_token', 'items']).then(({ access_token, items }) => {
         const alreadyContainsItem = Items.contains(items, { url: url });
         if(alreadyContainsItem === true) {
           // Instead of just logging, send an event back to the UI and exit

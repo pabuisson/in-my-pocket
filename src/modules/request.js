@@ -8,7 +8,7 @@ import { PocketError } from './constants.js';
 
 
 class Request {
-  constructor( action, url, params ) {
+  constructor(action, url, params) {
     this.action  = action;
     this.url     = url;
     this.params  = params;
@@ -24,27 +24,26 @@ class Request {
       error:    undefined,
     };
 
-    let fetchPromise = new Promise( ( resolve, reject ) => {
+    return new Promise( (resolve, reject) => {
       fetch( this.url, {
         method:  this.action,
         headers: this.defaultHeaders,
-        body:    JSON.stringify( this.params )
+        body:    JSON.stringify(this.params)
       })
         .then( response => {
           // TODO: Extract this to a separate method, to avoid this long method
-          Logger.log( '(Request.fetch) response for ' + this.url + ' -  ' + response.status );
+          Logger.log(`(Request.fetch) response for ${this.url} - ${response.status}`);
 
-          if( response.ok ) {
-            let data = response.json();
+          if(response.ok) {
+            const data = response.json();
 
-            Logger.log('Response OK, received data : ');
-            Logger.log(JSON.stringify(data));
-            resolve( data );
+            Logger.log(`Response OK, received data : ${JSON.stringify(data)}`);
+            resolve(data);
           } else {
             Logger.error('Response not OK, something went wrong');
             errorObject.httpCode = response.status;
 
-            switch( response.status ) {
+            switch(response.status) {
               case 401:
                 Logger.error('401: unauthorized');
                 errorObject.error = PocketError.UNAUTHORIZED;
@@ -52,9 +51,9 @@ class Request {
                 // TODO: Re-triggers an authentication
                 break;
               case 403:
-                let userRemaining = response.headers.get('X-Limit-User-Remaining');
-                if( userRemaining && userRemaining == 0 ) {
-                  let delayBeforeReset = response.headers.get('X-Limit-User-Reset');
+                const userRemaining = response.headers.get('X-Limit-User-Remaining');
+                if(userRemaining && userRemaining === 0) {
+                  const delayBeforeReset = response.headers.get('X-Limit-User-Reset');
                   errorObject.error = PocketError.RATE_LIMIT;
                   errorObject.resetDelay = delayBeforeReset;
                   Logger.error('403: access_denied (rate limit)');
@@ -77,7 +76,7 @@ class Request {
             // Instead of just logging, send an event back to the UI
             // TODO: since I have the error object returned in the promise,
             //       I might not need this "send message" anymore
-            browser.runtime.sendMessage( errorObject );
+            browser.runtime.sendMessage(errorObject);
             reject(errorObject);
           }
         }).catch( () => {
@@ -93,8 +92,6 @@ class Request {
           reject(errorObject);
         });
     });
-
-    return fetchPromise;
   }
 }
 

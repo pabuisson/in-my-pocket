@@ -13,27 +13,26 @@ import { KeyboardShortcuts } from '../modules/constants.js';
 
 // -------------
 
-let disconnectAccountRow                = document.querySelector('.disconnect-account-row');
-let disconnectAccountStep2              = document.querySelector('.disconnect-account-second-step');
-let disconnectAccountActionStep1        = document.querySelector('.disconnect-account-first-step');
-let disconnectAccountActionStep2Confirm = document.querySelector('.disconnect-account-second-step-confirm');
-let disconnectAccountActionStep2Cancel  = document.querySelector('.disconnect-account-second-step-cancel');
-let displayBadgeCountCheckbox = document.querySelector('.display-badge-count');
-let displayPageActionCheckbox = document.querySelector('.display-page-action');
-let enableDebugModeCheckbox   = document.querySelector('.enable-debug-mode');
-let openInNewTabCheckbox      = document.querySelector('.open-in-new-tab');
-let paginationPerPageSelector = document.querySelector('.pagination-per-page');
-let zoomLevelSelector         = document.querySelector('.zoom-level');
-let archiveWhenOpenedCheckbox = document.querySelector('.archive-when-opened');
-let closeTabWhenAddedCheckbox = document.querySelector('.close-tab-when-added');
-let keyboardOpenPopupShortcut = document.querySelector('.keyboard-open-popup');
-let keyboardToggleShortcut    = document.querySelector('.keyboard-toggle');
+const disconnectRow                = document.querySelector('.disconnect-row');
+const disconnectStep2              = document.querySelector('.disconnect-second-step');
+const disconnectActionStep1        = document.querySelector('.disconnect-first-step');
+const disconnectActionStep2Confirm = document.querySelector('.disconnect-second-step-confirm');
+const disconnectActionStep2Cancel  = document.querySelector('.disconnect-second-step-cancel');
+const displayBadgeCountCheckbox = document.querySelector('.display-badge-count');
+const displayPageActionCheckbox = document.querySelector('.display-page-action');
+const enableDebugModeCheckbox   = document.querySelector('.enable-debug-mode');
+const openInNewTabCheckbox      = document.querySelector('.open-in-new-tab');
+const paginationPerPageSelector = document.querySelector('.pagination-per-page');
+const zoomLevelSelector         = document.querySelector('.zoom-level');
+const archiveWhenOpenedCheckbox = document.querySelector('.archive-when-opened');
+const closeTabWhenAddedCheckbox = document.querySelector('.close-tab-when-added');
+const keyboardOpenPopupShortcut = document.querySelector('.keyboard-open-popup');
+const keyboardToggleShortcut    = document.querySelector('.keyboard-toggle');
 
-let savedNotificationElement = document.querySelector('.saved-notification');
+const savedNotificationElement = document.querySelector('.saved-notification');
 
 
-
-var UI = ( function() {
+const UI = ( function() {
   let savedNotificationTimerId = null;
 
   function flashSavedNotification(containerRow) {
@@ -61,12 +60,12 @@ var UI = ( function() {
     setup: function() {
       // If user is not connected, we hide the "disconnect" link
       Authentication.isAuthenticated().catch( function() {
-        disconnectAccountRow.style.display = 'none';
+        disconnectRow.style.display = 'none';
       });
 
       // Load the other settings values
       Settings.init().then( function() {
-        let settings = Settings.get();
+        const settings = Settings.get();
 
         displayBadgeCountCheckbox.checked = settings['showBadge'];
         displayPageActionCheckbox.checked = settings['showPageAction'];
@@ -149,17 +148,17 @@ var UI = ( function() {
       });
 
       //
-      // Only register keyboard update events if browser has the ability to upgrade keyboard shortcuts
+      // Only register keyboard update events if browser is able to to upgrade keyboard shortcuts
       // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/commands/update
       //
       if(browser.commands.update) {
         // Event: updating "toggle page state" keyboard shortcut
-        keyboardToggleShortcut.addEventListener( 'keydown', function(ev) {
+        keyboardToggleShortcut.addEventListener('keydown', function(ev) {
           ev.preventDefault();
           this.value = Keyboard.stringifyCombination(ev);
 
           if(Keyboard.isValidCombination(ev)) {
-            Settings.set( 'keyboardToggle', this.value );
+            Settings.set('keyboardToggle', this.value);
             Settings.save();
             Keyboard.registerShortcut(KeyboardShortcuts.toggle, this.value);
             flashSavedNotification(this.parentNode);
@@ -168,12 +167,12 @@ var UI = ( function() {
         });
 
         // Event: updating "open popup" keyboard shortcut
-        keyboardOpenPopupShortcut.addEventListener( 'keydown', function(ev) {
+        keyboardOpenPopupShortcut.addEventListener('keydown', function(ev) {
           ev.preventDefault();
           this.value = Keyboard.stringifyCombination(ev);
 
           if(Keyboard.isValidCombination(ev)) {
-            Settings.set( 'keyboardOpenPopup', this.value );
+            Settings.set('keyboardOpenPopup', this.value);
             Settings.save();
             Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value);
             flashSavedNotification(this.parentNode);
@@ -186,21 +185,21 @@ var UI = ( function() {
       }
 
       // Event : "Disconnect" from the Pocket account click
-      disconnectAccountActionStep1.addEventListener( 'click', function(ev) {
+      disconnectActionStep1.addEventListener( 'click', function(ev) {
         ev.preventDefault();
-        disconnectAccountStep2.classList.remove('hidden');
+        disconnectStep2.classList.remove('hidden');
       });
 
-      disconnectAccountActionStep2Cancel.addEventListener('click', function(ev) {
+      disconnectActionStep2Cancel.addEventListener('click', function(ev) {
         ev.preventDefault();
-        disconnectAccountStep2.classList.add('hidden');
+        disconnectStep2.classList.add('hidden');
       });
 
-      disconnectAccountActionStep2Confirm.addEventListener('click', function(ev) {
+      disconnectActionStep2Confirm.addEventListener('click', function(ev) {
         ev.preventDefault();
         browser.storage.local.get().then( data => {
-          let keysToPersist = ['settings'];
-          let keysToRemove = Object.keys(data).filter( key => {
+          const keysToPersist = ['settings'];
+          const keysToRemove = Object.keys(data).filter( key => {
             // Filter out keys listed in keysToPersist, and keeps
             // all the other storage keys -> those will be removed
             return keysToPersist.indexOf(key) < 0;
@@ -212,7 +211,7 @@ var UI = ( function() {
           Badge.hide();
           ContextMenu.destroyEntries();
 
-          disconnectAccountRow.classList.add('hidden');
+          disconnectRow.classList.add('hidden');
         });
       });
     }
