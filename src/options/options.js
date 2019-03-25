@@ -193,8 +193,7 @@ const UI = ( function() {
           if(Keyboard.isValidCombination(ev)) {
             Settings.set('keyboardOpenFirstItem', this.value);
             Settings.save();
-            // TODO:
-            // Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value);
+            Keyboard.registerShortcut(KeyboardShortcuts.openFirstItem, this.value);
             flashSavedNotification(this.parentNode);
             this.blur();
           }
@@ -208,8 +207,7 @@ const UI = ( function() {
           if(Keyboard.isValidCombination(ev)) {
             Settings.set('keyboardOpenRandomItem', this.value);
             Settings.save();
-            // TODO:
-            // Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value);
+            Keyboard.registerShortcut(KeyboardShortcuts.openRandomItem, this.value);
             flashSavedNotification(this.parentNode);
             this.blur();
           }
