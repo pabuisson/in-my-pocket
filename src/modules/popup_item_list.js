@@ -35,6 +35,10 @@ var PopupItemList = ( function() {
     return url.replace(removalRegex, '');
   }
 
+  function formatTitle(title) {
+    return title || " — ";
+  }
+
   // openInNewTab param allows us to force the behaviour (ctrl-click or middle-click)
   function openLink( itemId, openInNewTab = false ) {
     browser.runtime.sendMessage({ action: 'read-item', itemId: itemId, openInNewTab: openInNewTab });
@@ -82,9 +86,9 @@ var PopupItemList = ( function() {
     faviconElement.setAttribute('src', faviconUrl(item.resolved_url) );
 
     titleContent.appendChild( faviconElement );
-    titleContent.appendChild( document.createTextNode(item.resolved_title) );
+    titleContent.appendChild( document.createTextNode( formatTitle(item.resolved_title) ));
 
-    urlContent.appendChild( document.createTextNode( formatUrl(item.resolved_url) ) );
+    urlContent.appendChild( document.createTextNode( formatUrl(item.resolved_url) ));
 
     tickElement.appendChild( tickIconFont );
     tickAction.appendChild( tickElement );
