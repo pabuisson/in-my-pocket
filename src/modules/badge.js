@@ -34,7 +34,7 @@ const Badge = ( function() {
   }
 
   function getNextSpinnerChar() {
-    const nextCharIndex     = ( spinnerChars.indexOf(spinnerCurrentChar) + 1 ) % spinnerChars.length;
+    const nextCharIndex   = ( spinnerChars.indexOf(spinnerCurrentChar) + 1 ) % spinnerChars.length;
     const nextSpinnerChar = spinnerChars[nextCharIndex];
     return nextSpinnerChar;
   }
