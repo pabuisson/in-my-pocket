@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.5
+
+* FIX: if title is missing, don't display "null" as a title in the pocket list!
+
+
 ## 0.10.4 - February 2019
 
 * FEATURE: IMP now makes use of the badge on the toolbar icon to show that an action is in progress. This way, you'll know that something is actually happening when you're adding or removing items from your pocket list!
