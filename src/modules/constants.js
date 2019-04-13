@@ -23,7 +23,9 @@ const MouseButtons = {
 
 const KeyboardShortcuts = {
   toggle: 'toggle-page-status',
-  openPopup: '_execute_browser_action'
+  openPopup: '_execute_browser_action',
+  openFirstItem: 'open-first-item',
+  openRandomItem: 'open-random-item'
 };
 
 export { KeyboardShortcuts, PocketError, PocketNotice, MouseButtons, consumerKey };

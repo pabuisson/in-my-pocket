@@ -8,7 +8,7 @@ import Logger         from './logger.js';
 // ---------------
 
 
-var Keyboard = ( function() {
+const Keyboard = ( function() {
   function isValidKey(ev) {
     const keyCode = ev.which || ev.keyCode || 0;
     const isValidLetter = KeyIdentifier.isLetter(keyCode);
@@ -29,7 +29,7 @@ var Keyboard = ( function() {
 
     // Transform a keyboard event into a shortcut-compliant and readable string
     stringifyCombination: function(ev) {
-      let combination = [];
+      const combination = [];
 
       // Base modifiers
       if(ev.altKey)  { combination.push("Alt"); }

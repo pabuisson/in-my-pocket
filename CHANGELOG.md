@@ -2,6 +2,7 @@
 
 ## 0.10.5
 
+* FEATURE: 2 new keyboard shortcuts are now available: "open first item" and "open random item", so that you can be even faster to get through your reading list!
 * FIX: if title is missing, don't display "null" as a title in the pocket list!
 
 
