@@ -46,7 +46,7 @@
   "license": "MPL-2.0",
   "homepage": "https://bitbucket.org/pabuisson/in-my-pocket#readme",
   "dependencies": {
-    "npm": "^6.4.1"
+    "npm": "^6.9.0"
   },
   "nyc": {
     "include": [
