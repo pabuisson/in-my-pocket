@@ -233,9 +233,9 @@ const Items = ( function() {
       removeItem(itemId, 'delete');
     },
 
-    open: function(itemId) {
+    open: function(itemId, openInNewTab = false) {
       Settings.init().then( () => {
-        const openInNewTab      = Settings.get('openInNewTab');
+        openInNewTab      = Settings.get('openInNewTab') || openInNewTab;
         const archiveWhenOpened = Settings.get('archiveWhenOpened');
 
         browser.storage.local.get('items').then( ({ items }) => {
