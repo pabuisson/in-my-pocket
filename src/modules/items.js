@@ -35,8 +35,13 @@ const Items = ( function() {
     const lowerQuery = query.toLowerCase();
     const lowerTitle   = (item.resolved_title || '').toLowerCase();
     const lowerUrl     = (item.resolved_url   || '').toLowerCase();
+    const tags = item.tags.map((tag)=>{
+        return tag.toLowerCase();
+    });
 
-    return lowerTitle.includes(lowerQuery) || lowerUrl.includes(lowerQuery);
+    return lowerTitle.includes(lowerQuery) || lowerUrl.includes(lowerQuery) || tags.find((tag)=>{
+        return tag.includes(lowerQuery);
+    });
   }
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module

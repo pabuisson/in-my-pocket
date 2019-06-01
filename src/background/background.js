@@ -46,7 +46,7 @@ function retrieveFirst() {
     let requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
-      detailType: 'simple',
+      detailType: 'complete',
     };
 
     new Request( 'POST', 'https://getpocket.com/v3/get', requestParams )
@@ -57,6 +57,10 @@ function retrieveFirst() {
         let itemsList = [];
         for( let itemId in response.list ) {
           let item = response.list[ itemId ];
+          let tags = [];
+          for(let tag in item.tags){
+              tags.push(tag);
+          }
 
           // https://getpocket.com/developer/docs/v3/retrieve
           // given_url should be used if the user wants to view the item.
@@ -64,7 +68,8 @@ function retrieveFirst() {
             id:             item.item_id,
             resolved_title: item.given_title || item.resolved_title,
             resolved_url:   item.given_url || item.resolved_url,
-            created_at:     item.time_added
+            created_at:     item.time_added,
+            tags: tags
           });
         }
 
@@ -104,7 +109,7 @@ function retrieveDiff() {
     let requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
-      detailType: 'simple',
+      detailType: 'complete',
       state: 'all',
       since: last_retrieve
     };
@@ -137,6 +142,10 @@ function retrieveDiff() {
 
             case pocketApiStatus.CREATED:
               let itemIdx = allItems.findIndex( item => item.id === itemId );
+              let tags = [];
+              for(let tag in item.tags){
+                  tags.push(tag);
+              }
 
               if( itemIdx >= 0 ) {
                 // Item already exists in the list (added by this current extension),
@@ -145,7 +154,8 @@ function retrieveDiff() {
                 allItems[ itemIdx ] = Object.assign( allItems[ itemIdx ], {
                   resolved_title: item.given_title || item.resolved_title,
                   resolved_url:   item.given_url || item.resolved_url,
-                  created_at:     item.time_added
+                  created_at:     item.time_added,
+                  tags: tags
                 });
               } else {
                 // Item does not exist in the item list, we just add it
@@ -154,7 +164,8 @@ function retrieveDiff() {
                   id:             item.item_id,
                   resolved_title: item.given_title || item.resolved_title,
                   resolved_url:   item.given_url || item.resolved_url,
-                  created_at:     item.time_added
+                  created_at:     item.time_added,
+                  tags: tags
                 });
               }
               break;
