@@ -39,14 +39,18 @@ function retrieveItems(force) {
 
 
 // TODO: Rename -> retrieveAll, more accurate
-function retrieveFirst() {
+function retrieveFirst(offset = 0) {
   Logger.log('(retrieve first)');
 
-  browser.storage.local.get('access_token').then( ({ access_token }) => {
+  browser.storage.local.get(['access_token', 'items']).then( ({ access_token, items }) => {
+    const itemsList = Utility.parseJson(items) || [];
     let requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
       detailType: 'simple',
+      offset: offset,
+      count: 1000,
+      sort: 'oldest',
     };
 
     new Request( 'POST', 'https://getpocket.com/v3/get', requestParams )
@@ -54,7 +58,7 @@ function retrieveFirst() {
       .then( response => {
         Logger.log(Object.keys( response.list ).length + ' items in the response');
 
-        let itemsList = [];
+        const retrievedItemsCount = Object.keys(response.list).length;
         for( let itemId in response.list ) {
           let item = response.list[ itemId ];
 
@@ -69,18 +73,24 @@ function retrieveFirst() {
         }
 
         // Save item list in storage and update badge count
-        browser.storage.local.set({ items: JSON.stringify( itemsList ) });
-        Badge.updateCount( itemsList );
+        browser.storage.local.set({ items: JSON.stringify( itemsList ) }).then(()=>{
+          Badge.updateCount( itemsList );
 
-        // Save timestamp into database as "last_retrieve", so that next time we just update the diff
-        // FIXME: use camelCase
-        browser.storage.local.set({ last_retrieve: response.since });
+          // Save timestamp into database as "last_retrieve", so that next time we just update the diff
+          // FIXME: use camelCase
+          browser.storage.local.set({ last_retrieve: response.since });
 
-        // Send a message back to the UI
-        browser.runtime.sendMessage({ action: 'retrieved-items' });
+          if(retrievedItemsCount > 0){
+            retrieveFirst(retrievedItemsCount + offset);
+            return;
+          }
 
-        // Updates the tabs page actions
-        PageAction.redrawAllTabs();
+          // Send a message back to the UI
+          browser.runtime.sendMessage({ action: 'retrieved-items' });
+
+          // Updates the tabs page actions
+          PageAction.redrawAllTabs();
+        });
       })
       .catch( error => {
         Logger.warn('(bg.retrieveFirst) something went wrong...');
