@@ -98,13 +98,16 @@ const PageAction = ( function() {
     toggle: function( tab ) {
       mustDisplayPageAction().then( () => {
         browser.storage.local.get('items').then( ({ items }) => {
-          const matchingItem = Items.find( items, { url: tab.url });
+          const url = tab.url.startsWith('about:reader?')
+            ? decodeURIComponent(tab.url.replace('about:reader?url=', ''))
+            : tab.url;
+          const matchingItem = Items.find( items, { url: url });
 
           if( matchingItem ) {
             Items.markAsRead( matchingItem.id );
           } else {
             const addItemOptions = { closeTabId: tab.id };
-            Items.addItem( tab.url, tab.title, addItemOptions );
+            Items.addItem( url, tab.title, addItemOptions );
           }
         });
       });

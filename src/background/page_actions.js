@@ -20,14 +20,17 @@ browser.tabs.onUpdated.addListener( (tabId, changeInfo) => {
     browser.tabs.get( tabId ).then( tab => {
       if(tab.active) {
         browser.storage.local.get("items").then( ({ items }) => {
-          const containsItem = Items.contains(items, { url: tab.url });
+          const url = tab.url.startsWith('about:reader?')
+            ? decodeURIComponent(tab.url.replace('about:reader?url=', ''))
+            : tab.url;
+          const containsItem = Items.contains(items, { url: url });
 
           if(containsItem) {
-            Logger.log(`(pageAction.tabsOnUpdated) loading ${changeInfo.url} that IS in my list`);
+            Logger.log(`(pageAction.tabsOnUpdated) loading ${url} that IS in my list`);
             PageAction.drawEnabled(tabId);
             PageAction.show(tabId);
           } else {
-            Logger.log(`(pageAction.tabsOnUpdated) loading ${changeInfo.url}, NOT in my list yet`);
+            Logger.log(`(pageAction.tabsOnUpdated) loading ${url}, NOT in my list yet`);
             PageAction.drawDisabled(tabId);
             PageAction.show(tabId);
           }
@@ -43,14 +46,17 @@ browser.tabs.onActivated.addListener( ({ tabId }) => {
     return tab.url;
   }).then( currentUrl => {
     browser.storage.local.get("items").then( ({ items }) => {
-      const containsItem = Items.contains(items, { url: currentUrl });
+      const url = currentUrl.startsWith('about:reader?')
+        ? decodeURIComponent(currentUrl.replace('about:reader?url=', ''))
+        : currentUrl;
+      const containsItem = Items.contains(items, { url: url });
 
       if(containsItem) {
-        Logger.log(`(pageAction.tabsOnActivated) switch to tab ${currentUrl} that IS in my list`);
+        Logger.log(`(pageAction.tabsOnActivated) switch to tab ${url} that IS in my list`);
         PageAction.drawEnabled(tabId);
         PageAction.show(tabId);
       } else {
-        Logger.log(`(pageAction.tabsOnActivated) switch to tab ${currentUrl}, NOT n my list yet`);
+        Logger.log(`(pageAction.tabsOnActivated) switch to tab ${url}, NOT n my list yet`);
         PageAction.drawDisabled(tabId);
         PageAction.show(tabId);
       }
