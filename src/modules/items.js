@@ -162,7 +162,10 @@ const Items = ( function() {
 
     // ---------------
 
-    addItem: function(url, title, options = {}) {
+    addItem: function(passedUrl, title, options = {}) {
+      const url = passedUrl.startsWith('about:reader?')
+        ? decodeURIComponent(passedUrl.replace('about:reader?url=', ''))
+        : passedUrl;
       Logger.log('(Items.addItem)');
       Badge.startLoadingSpinner();
 
