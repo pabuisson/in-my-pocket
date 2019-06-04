@@ -99,14 +99,16 @@ const PageAction = ( function() {
     toggle: function( tab ) {
       mustDisplayPageAction().then( () => {
         browser.storage.local.get('items').then( ({ items }) => {
-          const url = Utility.normalizeUrl(tab.url);
-          const matchingItem = Items.find( items, { url: url });
+          const query = Utility.getQuery(tab.url);
+          const matchingItem = Items.find( items, query);
 
           if( matchingItem ) {
             Items.markAsRead( matchingItem.id );
           } else {
-            const addItemOptions = { closeTabId: tab.id };
-            Items.addItem( url, tab.title, addItemOptions );
+            if(query.url){
+              const addItemOptions = { closeTabId: tab.id };
+              Items.addItem( query.url, tab.title, addItemOptions );
+            }
           }
         });
       });
