@@ -63,10 +63,12 @@ var Utility = ( function() {
       return node.matches(selector) || Utility.hasParent(node, selector);
     },
 
-    normalizeUrl(url){
-      return url.startsWith('about:reader?')
-        ? decodeURIComponent(url.replace('about:reader?url=', ''))
-        : url;
+    getQuery(url){
+      if(url.startsWith('about:reader?'))
+        return {url: decodeURIComponent(url.replace('about:reader?url=', ''))};
+      if(url.startsWith('https://app.getpocket.com'))
+        return {id: url.replace('https://app.getpocket.com/read/', '').toString()};
+      return {url: url};
     }
   };
 })();
