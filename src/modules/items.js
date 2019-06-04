@@ -74,6 +74,12 @@ const Items = ( function() {
                 PageAction.drawDisabled(tab.id);
               }
             });
+            browser.tabs.query({ url: 'https://app.getpocket.com/read/' + removedItem.id }).then( (tabs) => {
+              for(const tab of tabs) {
+                Logger.log('(Items.removeItem) draw disabled page action for ' + tab.url);
+                PageAction.drawDisabled(tab.id);
+              }
+            });
           });
         } else {
           // NOTE: in that case, badge state must be restored and spinner should stop
