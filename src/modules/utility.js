@@ -61,6 +61,12 @@ var Utility = ( function() {
 
     matchesOrHasParent: function(node, selector) {
       return node.matches(selector) || Utility.hasParent(node, selector);
+    },
+
+    normalizeUrl(url){
+      return url.startsWith('about:reader?')
+        ? decodeURIComponent(url.replace('about:reader?url=', ''))
+        : url;
     }
   };
 })();
