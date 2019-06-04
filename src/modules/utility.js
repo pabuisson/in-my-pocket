@@ -68,6 +68,8 @@ var Utility = ( function() {
         return {url: decodeURIComponent(url.replace('about:reader?url=', ''))};
       if(url.startsWith('https://app.getpocket.com'))
         return {id: url.replace('https://app.getpocket.com/read/', '').toString()};
+      if(url.startsWith('https://getpocket.com'))
+        return {id: url.replace('https://getpocket.com/a/read/', '').toString()};
       return {url: url};
     }
   };
