@@ -3,6 +3,7 @@
 import Items  from '../modules/items.js';
 import Logger from '../modules/logger.js';
 import PageAction from '../modules/page_action.js';
+import Utility from "../modules/utility";
 
 
 // ---------------
@@ -20,9 +21,7 @@ browser.tabs.onUpdated.addListener( (tabId, changeInfo) => {
     browser.tabs.get( tabId ).then( tab => {
       if(tab.active) {
         browser.storage.local.get("items").then( ({ items }) => {
-          const url = tab.url.startsWith('about:reader?')
-            ? decodeURIComponent(tab.url.replace('about:reader?url=', ''))
-            : tab.url;
+          const url = Utility.normalizeUrl(tab.url);
           const containsItem = Items.contains(items, { url: url });
 
           if(containsItem) {
@@ -46,9 +45,7 @@ browser.tabs.onActivated.addListener( ({ tabId }) => {
     return tab.url;
   }).then( currentUrl => {
     browser.storage.local.get("items").then( ({ items }) => {
-      const url = currentUrl.startsWith('about:reader?')
-        ? decodeURIComponent(currentUrl.replace('about:reader?url=', ''))
-        : currentUrl;
+      const url = Utility.normalizeUrl(currentUrl);
       const containsItem = Items.contains(items, { url: url });
 
       if(containsItem) {

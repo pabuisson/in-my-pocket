@@ -3,6 +3,7 @@
 import Logger from './logger.js';
 import Settings from './settings.js';
 import Items from './items.js';
+import Utility from "./utility";
 
 
 // -------------------------------------
@@ -98,9 +99,7 @@ const PageAction = ( function() {
     toggle: function( tab ) {
       mustDisplayPageAction().then( () => {
         browser.storage.local.get('items').then( ({ items }) => {
-          const url = tab.url.startsWith('about:reader?')
-            ? decodeURIComponent(tab.url.replace('about:reader?url=', ''))
-            : tab.url;
+          const url = Utility.normalizeUrl(tab.url);
           const matchingItem = Items.find( items, { url: url });
 
           if( matchingItem ) {
