@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.6 - June 2019
+
+* FIX: fix middle-clicking and ctrl-clicking on popup items, that was not forcing new tab opening ([contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/141), thank you for your help!)
+
+
 ## 0.10.5 - April 2019
 
 * FEATURE: 2 new keyboard shortcuts are now available: "open first item" and "open random item", so that you can be even faster to get through your reading list!
