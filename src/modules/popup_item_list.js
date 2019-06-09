@@ -170,7 +170,7 @@ const PopupItemList = ( function() {
           const openInNewTab = true;
           switch(ev.button) {
             case MouseButtons.MIDDLE:
-              Logger.log('(PopupItemList.eventListener) Middle-click, force opening ${targetItemId} in new tab');
+              Logger.log(`(PopupItemList.eventListener) Middle-click, force opening ${targetItemId} in new tab`);
               openLink(targetItemId, openInNewTab);
               break;
             case MouseButtons.LEFT:

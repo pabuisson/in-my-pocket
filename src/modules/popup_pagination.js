@@ -36,7 +36,7 @@ const PopupPagination = ( function() {
   }
 
   function changePageEventListener(event) {
-    let pageToLoad = parseInt(event.target.value);
+    const pageToLoad = parseInt(event.target.value);
 
     Logger.log(`(PopupPagination) Load page ${pageToLoad}`);
     PopupUI.drawList({ page: pageToLoad });

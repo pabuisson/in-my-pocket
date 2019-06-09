@@ -49,7 +49,7 @@ const Items = ( function() {
       const callbackAction = method == 'archive' ? 'marked-as-read' : 'deleted';
       const removalPromise = method == 'archive' ? apiRequester.archive(itemId) : apiRequester.delete(itemId);
 
-      removalPromise.then( response => {
+      removalPromise.then(response => {
         const parsedItems    = Utility.parseJson(items) || [];
         const removedItemIdx = parsedItems.findIndex( item => item.id === itemId );
         const removedItem    = parsedItems[removedItemIdx];
