@@ -8,31 +8,51 @@ import Logger      from '../modules/logger.js';
 // ---------------
 
 browser.contextMenus.onClicked.addListener( (info, tab) => {
-  switch( info.menuItemId )
+  console.log(info, tab);
+  switch(info.menuItemId)
   {
     case ContextMenu.addId:
-      if( info.linkUrl ) {
-        Items.addItem( info.linkUrl );
+      if(info.linkUrl) {
+        Items.addItem(info.linkUrl);
       } else {
-        const addItemOptions = { closeTabId: tab.id };
-        Items.addItem( info.pageUrl, tab.title, addItemOptions );
+        browser.tabs.query({currentWindow: true, highlighted: true}).then( highlightedTabs => {
+          const multipleTabsSelected = highlightedTabs.length > 1;
+          const currentTabsAmongMultipleSelection = highlightedTabs.some(highlightedTab =>
+            highlightedTab.url == tab.url
+          );
+
+          if(multipleTabsSelected && currentTabsAmongMultipleSelection) {
+            const items = highlightedTabs.map(tab => {
+              return {
+                tabId: tab.id,
+                url: tab.url,
+                title: tab.title
+              }
+            });
+            Items.addItem(items);
+          } else {
+            const addItemOptions = { closeTabId: tab.id };
+            Items.addItem([{tabId: tab.id, url: tab.url, title: tab.title}])
+            // Items.addItem(info.pageUrl, tab.title, addItemOptions);
+          }
+        });
       }
       break;
 
     case ContextMenu.archiveId:
-      browser.storage.local.get( "items" ).then( ({ items }) => {
-        const item = Items.find( items, { url: info.linkUrl || info.pageUrl });
-        if( item ) {
-          Items.markAsRead( item.id );
+      browser.storage.local.get("items").then( ({ items }) => {
+        const item = Items.find(items, { url: info.linkUrl || info.pageUrl });
+        if(item) {
+          Items.markAsRead(item.id);
         }
       });
       break;
 
     case ContextMenu.deleteId:
-      browser.storage.local.get( "items" ).then( ({ items }) => {
-        const item = Items.find( items, { url: info.linkUrl || info.pageUrl });
-        if( item ) {
-          Items.deleteItem( item.id );
+      browser.storage.local.get("items").then( ({ items }) => {
+        const item = Items.find(items, { url: info.linkUrl || info.pageUrl });
+        if(item) {
+          Items.deleteItem(item.id);
         }
       });
       break;
@@ -51,37 +71,53 @@ if(browser.contextMenus.onShown) {
   browser.contextMenus.onShown.addListener( (info, tab) => {
     const url = info.linkUrl ? info.linkUrl : info.pageUrl;
 
-    browser.storage.local.get("items").then( ({ items }) => {
-      const containsItem = Items.contains( items, { url: url });
+    // If several tabs selected and user right-clicked one of them, we'll handle them differently
+    browser.tabs.query({currentWindow: true, highlighted: true}).then( highlightedTabs => {
+      const multipleTabsSelected = highlightedTabs.length > 1;
+      const currentTabsAmongMultipleSelection = highlightedTabs.some(highlightedTab =>
+        highlightedTab.url == tab.url
+      );
 
-      if(containsItem) {
-        Logger.log("(background.onShown) updating contextMenu for " + url + " that IS in my list");
-        ContextMenu.setState( ContextMenu.pageAlreadyInPocket ).then( () => {
+      if(multipleTabsSelected && currentTabsAmongMultipleSelection) {
+        Logger.log("(background.onShown) multiple tabs selected and right-clicked one is one of them");
+        ContextMenu.setState(ContextMenu.multipleTabSelection).then( () => {
           browser.contextMenus.refresh();
-        });
+        })
       } else {
-        Logger.log( "(background.onShown) updating contextMenu for " + url + " that ISN'T in my list...yet");
-        ContextMenu.setState( ContextMenu.pageNotInPocket ).then( () => {
-          browser.contextMenus.refresh();
+        // If only one tab clicked OR tab clicked is outside the several highlighted tabs, we'll only deal with this tab
+        browser.storage.local.get("items").then( ({ items }) => {
+          const containsItem = Items.contains( items, { url: url });
+
+          if(containsItem) {
+            Logger.log(`(background.onShown) updating contextMenu for ${url} that IS in my list`);
+            ContextMenu.setState( ContextMenu.pageAlreadyInPocket ).then( () => {
+              browser.contextMenus.refresh();
+            });
+          } else {
+            Logger.log(`(background.onShown) updating contextMenu for ${url} that ISN'T in my list...yet`);
+            ContextMenu.setState( ContextMenu.pageNotInPocket ).then( () => {
+              browser.contextMenus.refresh();
+            });
+          }
         });
       }
-    });
+    })
   });
 } else {
   // 1. When current tab url is changing
-  browser.tabs.onUpdated.addListener( ( tabId, changeInfo ) => {
+  browser.tabs.onUpdated.addListener( (tabId, changeInfo) => {
     if(changeInfo.hasOwnProperty('url')) {
       browser.tabs.get( tabId ).then( tab => {
         if(tab.active) {
           browser.storage.local.get("items").then( ({ items }) => {
-            const containsItem = Items.contains( items, { url: tab.url });
+            const containsItem = Items.contains(items, { url: tab.url });
 
             if(containsItem) {
-              Logger.log("(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that IS in my list");
-              ContextMenu.setState( ContextMenu.pageAlreadyInPocket );
+              Logger.log(`(background.tabsOnUpdated) current tab is loading ${changeInfo.url} that IS in my list`);
+              ContextMenu.setState(ContextMenu.pageAlreadyInPocket);
             } else {
-              Logger.log( "(background.tabsOnUpdated) current tab is loading " + changeInfo.url + " that ISN'T in my list...yet");
-              ContextMenu.setState( ContextMenu.pageNotInPocket );
+              Logger.log(`(background.tabsOnUpdated) current tab is loading ${changeInfo.url} that ISN'T in my list...yet`);
+              ContextMenu.setState(ContextMenu.pageNotInPocket);
             }
           });
         }
@@ -91,18 +127,18 @@ if(browser.contextMenus.onShown) {
 
   // 2. When I switch to another tab, check if I need to update the state of context menus
   browser.tabs.onActivated.addListener( ({ tabId }) => {
-    browser.tabs.get( tabId ).then( tab => {
+    browser.tabs.get(tabId).then( tab => {
       return tab.url;
     }).then( currentUrl => {
       browser.storage.local.get("items").then( ({ items }) => {
-        const containsItem = Items.contains( items, { url: currentUrl });
+        const containsItem = Items.contains(items, { url: currentUrl });
 
         if(containsItem) {
-          Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that IS in my list");
-          ContextMenu.setState( ContextMenu.pageAlreadyInPocket );
+          Logger.log(`(background.tabsOnActivated) switching to a tab ${currentUrl} that IS in my list`);
+          ContextMenu.setState(ContextMenu.pageAlreadyInPocket);
         } else {
-          Logger.log( "(background.tabsOnActivated) switching to a tab " + currentUrl + " that ISN'T in my list...yet !");
-          ContextMenu.setState( ContextMenu.pageNotInPocket );
+          Logger.log(`(background.tabsOnActivated) switching to a tab ${currentUrl} that ISN'T in my list...yet !`);
+          ContextMenu.setState(ContextMenu.pageNotInPocket);
         }
       });
     });

@@ -162,61 +162,67 @@ const Items = ( function() {
 
     // ---------------
 
-    addItem: function(url, title, options = {}) {
+    // DONE: transform this to take an array of { url: title: } objects
+    // TODO: make options.closeTabId part of each item?!
+    // TODO: pass id of the tab into the item object as "tabId" rather than separate thing
+    // addItem: function(url, title, options = {}) {
+    addItem: function(itemsToAdd) {
       Logger.log('(Items.addItem)');
       Badge.startLoadingSpinner();
 
       browser.storage.local.get(['access_token', 'items']).then(({ access_token, items }) => {
-        const alreadyContainsItem = Items.contains(items, { url: url });
-        if(alreadyContainsItem === true) {
+        const newItems = itemsToAdd.filter(item => !Items.contains(items, { url: item.url }));
+        if(newItems.length === 0) {
           // Instead of just logging, send an event back to the UI and exit
           browser.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST });
           return;
         }
 
-        new PocketApiRequester(access_token)
-          .add(url, title)
-          .then( response => {
-            const parsedItems = Utility.parseJson(items) || [];
-            const newItem   = response.item;
+        const requester = new PocketApiRequester(access_token);
+        const request = newItems.length == 1 ? requester.add(newItems[0]) : requester.addBatch(newItems);
 
+        request.then(response => {
+          const parsedItems = Utility.parseJson(items) || [];
+          const addItems    = [ response.item ] || response.action_results;
+
+          addItems.forEach(newItem => {
             parsedItems.push({
               id:             newItem.item_id,
-              resolved_title: title || newItem.title,
-              resolved_url:   url,
+              resolved_title: newItem.title,
+              resolved_url:   newItem.resolved_url,
               created_at:     (Date.now()/1000 | 0)
             });
+          });
 
-            // Save item list in storage and update badge count
-            browser.storage.local.set({ items: JSON.stringify(parsedItems) });
+          // Save item list in storage and update badge count
+          browser.storage.local.set({ items: JSON.stringify(parsedItems) });
 
-            // Send a message back to the UI
-            browser.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
+          // Send a message back to the UI
+          browser.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
 
-            // Display an indicator on the badge that everything went well
-            Badge.flashSuccess().then(() => {
-              // Close the given tab if setting closeTabWhenAdded is "on"
-              if(options.closeTabId) {
-                Settings.init().then( () => {
-                  const closeTabWhenAdded = Settings.get('closeTabWhenAdded');
-                  if(closeTabWhenAdded) {
-                    setTimeout( () => {
-                      browser.tabs.remove(options.closeTabId);
-                    }, 200);
-                  }
-                });
+          // Display an indicator on the badge that everything went well
+          Badge.flashSuccess().then(() => {
+            // Close the given tab if setting closeTabWhenAdded is "on"
+            Settings.init().then( () => {
+              const closeTabWhenAdded = Settings.get('closeTabWhenAdded');
+              if(closeTabWhenAdded) {
+                const tabIdsToClose = newItems.map(item => item.tabId);
+                setTimeout( () => {
+                  browser.tabs.remove(tabIdsToClose);
+                }, 200);
               }
-
-              // Redraw every page pageAction
-              Logger.log('(Items.addItem) new item has been added, we will update all matching pageActions');
-              browser.tabs.query({ url: url }).then( function(tabs) {
-                for(const tab of tabs) {
-                  Logger.log('(Items.addItem) will draw enabled page action for ' + tab.url );
-                  PageAction.drawEnabled(tab.id);
-                }
-              });
             });
-          })
+
+            // Redraw every page pageAction
+            Logger.log('(Items.addItem) new items have been added, we will update all matching pageActions');
+            browser.tabs.query({ url: newItems.map(item => item.resolved_url) }).then( function(tabs) {
+              for(const tab of tabs) {
+                Logger.log(`(Items.addItem) will draw enabled page action for ${tab.url}`);
+                PageAction.drawEnabled(tab.id);
+              }
+            });
+          });
+        })
           .catch( error => {
             Logger.error('(Items.addItem) Error while adding a new item');
             Logger.error(`(Items.addItem) ${ JSON.stringify(error) }`);
