@@ -33,7 +33,6 @@ browser.contextMenus.onClicked.addListener( (info, tab) => {
           } else {
             const addItemOptions = { closeTabId: tab.id };
             Items.addItem([{tabId: tab.id, url: tab.url, title: tab.title}])
-            // Items.addItem(info.pageUrl, tab.title, addItemOptions);
           }
         });
       }

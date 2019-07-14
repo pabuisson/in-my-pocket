@@ -163,12 +163,10 @@ const Items = ( function() {
     // ---------------
 
     // DONE: transform this to take an array of { url: title: } objects
-    // TODO: make options.closeTabId part of each item?!
-    // TODO: pass id of the tab into the item object as "tabId" rather than separate thing
+    // DONE: pass id of the tab into the item object as "tabId" rather than separate thing
     // addItem: function(url, title, options = {}) {
     addItem: function(itemsToAdd) {
       Logger.log('(Items.addItem)');
-      Badge.startLoadingSpinner();
 
       browser.storage.local.get(['access_token', 'items']).then(({ access_token, items }) => {
         const newItems = itemsToAdd.filter(item => !Items.contains(items, { url: item.url }));
@@ -178,14 +176,15 @@ const Items = ( function() {
           return;
         }
 
+        Badge.startLoadingSpinner();
         const requester = new PocketApiRequester(access_token);
         const request = newItems.length == 1 ? requester.add(newItems[0]) : requester.addBatch(newItems);
 
         request.then(response => {
           const parsedItems = Utility.parseJson(items) || [];
-          const addItems    = [ response.item ] || response.action_results;
+          const addedItems  = response.item ? [response.item] : response.action_results;
 
-          addItems.forEach(newItem => {
+          addedItems.forEach(newItem => {
             parsedItems.push({
               id:             newItem.item_id,
               resolved_title: newItem.title,
@@ -198,7 +197,8 @@ const Items = ( function() {
           browser.storage.local.set({ items: JSON.stringify(parsedItems) });
 
           // Send a message back to the UI
-          browser.runtime.sendMessage({ action: 'added-item', id: newItem.item_id });
+          // TODO: send multiple ids? what are they used for?
+          browser.runtime.sendMessage({ action: 'added-item', id: addedItems.map(item => item.item_id) });
 
           // Display an indicator on the badge that everything went well
           Badge.flashSuccess().then(() => {
