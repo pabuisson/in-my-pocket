@@ -12,8 +12,7 @@ browser.contextMenus.onClicked.addListener( (info, tab) => {
   {
     case ContextMenu.addId:
       if(info.linkUrl) {
-        // TODO: how to fix this one?
-        Items.addItem(info.linkUrl);
+        Items.addItem([{url: info.linkUrl }]);
       } else {
         browser.tabs.query({currentWindow: true, highlighted: true}).then( highlightedTabs => {
           const multipleTabsSelected = highlightedTabs.length > 1;
