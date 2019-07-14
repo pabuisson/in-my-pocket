@@ -8,11 +8,11 @@ import Logger      from '../modules/logger.js';
 // ---------------
 
 browser.contextMenus.onClicked.addListener( (info, tab) => {
-  console.log(info, tab);
   switch(info.menuItemId)
   {
     case ContextMenu.addId:
       if(info.linkUrl) {
+        // TODO: how to fix this one?
         Items.addItem(info.linkUrl);
       } else {
         browser.tabs.query({currentWindow: true, highlighted: true}).then( highlightedTabs => {
@@ -31,7 +31,6 @@ browser.contextMenus.onClicked.addListener( (info, tab) => {
             });
             Items.addItem(items);
           } else {
-            const addItemOptions = { closeTabId: tab.id };
             Items.addItem([{tabId: tab.id, url: tab.url, title: tab.title}])
           }
         });

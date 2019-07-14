@@ -164,7 +164,6 @@ const Items = ( function() {
 
     // DONE: transform this to take an array of { url: title: } objects
     // DONE: pass id of the tab into the item object as "tabId" rather than separate thing
-    // addItem: function(url, title, options = {}) {
     addItem: function(itemsToAdd) {
       Logger.log('(Items.addItem)');
 
