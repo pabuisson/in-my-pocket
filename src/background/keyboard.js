@@ -35,8 +35,7 @@ browser.commands.onCommand.addListener( command => {
           if(matchingItem) {
             Items.markAsRead(matchingItem.id);
           } else {
-            const addItemOptions = { closeTabId: currentTab.id };
-            Items.addItem(currentTab.url, currentTab.title, addItemOptions);
+            Items.addItem([{ url: currentTab.url, title: currentTab.title, tabId: currentTab.id }]);
           }
         });
       });

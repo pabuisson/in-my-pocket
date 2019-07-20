@@ -215,8 +215,7 @@ browser.runtime.onMessage.addListener( function(eventData) {
       retrieveItems(eventData.force);
       break;
     case 'add-item':
-      const addItemOptions = { closeTabId: eventData.closeTabId };
-      Items.addItem( eventData.url, eventData.title, addItemOptions );
+      Items.addItem([{ url: eventData.url, title: eventData.title, tabId: eventData.tabId }]);
       break;
     case 'mark-as-read':
       Items.markAsRead(eventData.id);

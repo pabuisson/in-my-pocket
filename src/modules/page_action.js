@@ -103,8 +103,7 @@ const PageAction = ( function() {
           if( matchingItem ) {
             Items.markAsRead( matchingItem.id );
           } else {
-            const addItemOptions = { closeTabId: tab.id };
-            Items.addItem( tab.url, tab.title, addItemOptions );
+            Items.addItem([{ url: tab.url, title: tab.title, tabId: tab.id }]);
           }
         });
       });
