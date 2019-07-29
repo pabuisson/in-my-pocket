@@ -1,5 +1,6 @@
 "use strict";
 
+import Browser from './browser.js';
 import Logger from './logger.js';
 
 // Before Firefox 55 this API was also originally named contextMenus, and that name has been
@@ -7,7 +8,12 @@ import Logger from './logger.js';
 // also in other browsers.
 // To use this API you need to have the "menus"  permission (or "contextMenus" for the alias)
 
-var ContextMenu = ( function() {
+const ContextMenu = ( function() {
+  // Chrome does not support icons on submenus, at all
+  function mustShowIcons() {
+    return !Browser.isChrome();
+  }
+
   function enable(id) {
     Logger.log(`(ContextMenu.enable) enable ${id} context menu`);
 
@@ -26,10 +32,11 @@ var ContextMenu = ( function() {
     return Promise.all([ promiseEnable, promiseVisible ]);
   }
 
-  // "tab" context does not exist for chrome and older firefoxes, feature will be broken for them
-  function getAvaiableContexts() {
+  // NOTE: "tab" context does not exist for chrome and older firefoxes,
+  // feature will be broken for them
+  function getAvailableContexts() {
     const availabeContexts = browser.contextMenus.ContextType;
-    let contexts = [
+    const contexts = [
       availabeContexts.PAGE,
       availabeContexts.LINK
     ];
@@ -41,6 +48,35 @@ var ContextMenu = ( function() {
     }
 
     return contexts;
+  }
+
+  function entries() {
+    const icons = [
+      'assets/icons/ionicons-android-add-circle.svg',
+      'assets/icons/ionicons-checkmark.svg',
+      'assets/icons/ionicons-trash-b.svg'
+    ];
+    const entries = [
+      {
+        contexts: getAvailableContexts(),
+        id: ContextMenu.addId,
+        title: 'Add to Pocket',
+      },
+      {
+        contexts: getAvailableContexts(),
+        id: ContextMenu.archiveId,
+        title: 'Mark as read',
+      },
+      {
+        contexts: getAvailableContexts(),
+        id: ContextMenu.deleteId,
+        title: 'Delete',
+      }
+    ];
+
+    return entries.map((entry, index) => {
+      return mustShowIcons() ? entry.merge(icons[index]) : entry;
+    });
   }
 
   return {
@@ -56,29 +92,8 @@ var ContextMenu = ( function() {
 
     createEntries: function() {
       Logger.log( '(ContextMenu.createEntries) create all right-click entries' );
-      browser.contextMenus.create({
-        contexts: getAvaiableContexts(),
-        id: ContextMenu.addId,
-        title: 'Add to Pocket',
-        icons: {
-          16: 'assets/icons/ionicons-android-add-circle.svg'
-        }
-      });
-      browser.contextMenus.create({
-        contexts: getAvaiableContexts(),
-        id: ContextMenu.archiveId,
-        title: 'Mark as read',
-        icons: {
-          16: 'assets/icons/ionicons-checkmark.svg'
-        }
-      });
-      browser.contextMenus.create({
-        contexts: getAvaiableContexts(),
-        id: ContextMenu.deleteId,
-        title: 'Delete',
-        icons: {
-          16: 'assets/icons/ionicons-trash-b.svg'
-        }
+      entries().forEach(entry => {
+        browser.contextMenus.create(entry);
       });
     },
 
