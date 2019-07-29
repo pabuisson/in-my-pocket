@@ -11,7 +11,7 @@ import Logger from "./logger.js";
 const ContextMenu = (function() {
   // Chrome does not support icons on submenus, at all
   function mustShowIcons() {
-    return !Browser.isChrome();
+    return !Browser.isChromeBased();
   }
 
   function enable(id) {

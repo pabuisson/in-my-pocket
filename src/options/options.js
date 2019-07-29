@@ -62,7 +62,7 @@ const UI = ( function() {
   }
 
   function browserHandlesKeyboard() {
-    return Browser.isChrome();
+    return Browser.isChromeBased();
   }
 
   return {
@@ -80,7 +80,7 @@ const UI = ( function() {
 
       // If browser is Chrome, we can't have both pageAction and browserAction
       // so we don't need the pageAction settings
-      if(Browser.isChrome()) {
+      if(Browser.isChromeBased()) {
         displayPageActionRow.style.display = 'none';
       }
 
@@ -97,7 +97,7 @@ const UI = ( function() {
         paginationPerPageSelector.value      = settings['perPage'] || '';
         zoomLevelSelector.value              = settings['zoomLevel'];
 
-        if(!Browser.isChrome()) {
+        if(!Browser.isChromeBased()) {
           displayPageActionCheckbox.checked = settings['showPageAction'];
         }
 
@@ -118,7 +118,7 @@ const UI = ( function() {
       });
 
       // Event: "Display add-to-pocket icon in address bar" checkbox
-      if(!Browser.isChrome()) {
+      if(!Browser.isChromeBased()) {
         displayPageActionCheckbox.addEventListener( 'change', function() {
           Settings.set( 'showPageAction', this.checked );
           Settings.save();
