@@ -20,6 +20,7 @@ const disconnectActionStep1          = document.querySelector('.disconnect-first
 const disconnectActionStep2Confirm   = document.querySelector('.disconnect-second-step-confirm');
 const disconnectActionStep2Cancel    = document.querySelector('.disconnect-second-step-cancel');
 const displayBadgeCountCheckbox      = document.querySelector('.display-badge-count');
+const displayPageActionRow           = document.querySelector('.display-page-action-row');
 const displayPageActionCheckbox      = document.querySelector('.display-page-action');
 const enableDebugModeCheckbox        = document.querySelector('.enable-debug-mode');
 const openInNewTabCheckbox           = document.querySelector('.open-in-new-tab');
@@ -77,18 +78,28 @@ const UI = ( function() {
         keyboardSection.style.display = 'none';
       }
 
+      // If browser is Chrome, we can't have both pageAction and browserAction
+      // so we don't need the pageAction settings
+      if(Browser.isChrome()) {
+        displayPageActionRow.style.display = 'none';
+      }
+
+
       // Load the other settings values
       Settings.init().then( function() {
         const settings = Settings.get();
 
         displayBadgeCountCheckbox.checked    = settings['showBadge'];
-        displayPageActionCheckbox.checked    = settings['showPageAction'];
         enableDebugModeCheckbox.checked      = settings['debugMode'];
         openInNewTabCheckbox.checked         = settings['openInNewTab'];
         archiveWhenOpenedCheckbox.checked    = settings['archiveWhenOpened'];
         closeTabWhenAddedCheckbox.checked    = settings['closeTabWhenAdded'];
         paginationPerPageSelector.value      = settings['perPage'] || '';
         zoomLevelSelector.value              = settings['zoomLevel'];
+
+        if(!Browser.isChrome()) {
+          displayPageActionCheckbox.checked = settings['showPageAction'];
+        }
 
         if(!browserHandlesKeyboard()) {
           keyboardOpenPopupShortcut.value      = settings['keyboardOpenPopup'];
@@ -107,17 +118,19 @@ const UI = ( function() {
       });
 
       // Event: "Display add-to-pocket icon in address bar" checkbox
-      displayPageActionCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'showPageAction', this.checked );
-        Settings.save();
-        flashSavedNotification(this.parentNode);
+      if(!Browser.isChrome()) {
+        displayPageActionCheckbox.addEventListener( 'change', function() {
+          Settings.set( 'showPageAction', this.checked );
+          Settings.save();
+          flashSavedNotification(this.parentNode);
 
-        if( this.checked ) {
-          PageAction.redrawAllTabs();
-        } else {
-          PageAction.hideAllTabs();
-        }
-      });
+          if( this.checked ) {
+            PageAction.redrawAllTabs();
+          } else {
+            PageAction.hideAllTabs();
+          }
+        });
+      }
 
       // Event: "Open in new tab" checkbox
       openInNewTabCheckbox.addEventListener( 'change', function() {
