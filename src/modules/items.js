@@ -17,7 +17,7 @@ const Items = ( function() {
   let parsedItems     = null;
 
   function parseItems(rawItems) {
-    const rawItemsChecksum = rawItems.length;
+    const rawItemsChecksum = rawItems ? rawItems.length : 0;
     Logger.log(`(Items.parseItems) checksum: ${currentChecksum} ; new: ${rawItemsChecksum}`);
 
     if( rawItemsChecksum != currentChecksum ) {
@@ -127,7 +127,7 @@ const Items = ( function() {
 
       const id  = searchedItem.id;
       const url = searchedItem.url;
-      const parsedItems = parseItems(rawItems);
+      const parsedItems = parseItems(rawItems || []);
 
       return parsedItems.find( item => {
         let itemMatching = false;
