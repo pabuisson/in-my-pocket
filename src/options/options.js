@@ -5,6 +5,7 @@ import './options.scss';
 
 import Authentication from '../modules/authentication.js';
 import Badge          from '../modules/badge.js';
+import Browser        from '../modules/browser.js';
 import ContextMenu    from '../modules/context_menu.js';
 import Keyboard       from '../modules/keyboard.js';
 import PageAction     from '../modules/page_action.js';
@@ -26,6 +27,8 @@ const paginationPerPageSelector      = document.querySelector('.pagination-per-p
 const zoomLevelSelector              = document.querySelector('.zoom-level');
 const archiveWhenOpenedCheckbox      = document.querySelector('.archive-when-opened');
 const closeTabWhenAddedCheckbox      = document.querySelector('.close-tab-when-added');
+const keyboardSectionTitle           = document.querySelector('.keyboard-title');
+const keyboardSection                = document.querySelector('.keyboard');
 const keyboardOpenPopupShortcut      = document.querySelector('.keyboard-open-popup');
 const keyboardToggleShortcut         = document.querySelector('.keyboard-toggle');
 const keyboardOpenFirstItemShortcut  = document.querySelector('.keyboard-open-first-item');
@@ -57,6 +60,9 @@ const UI = ( function() {
     }, 2000 );
   }
 
+  function browserHandlesKeyboard() {
+    return Browser.isChrome();
+  }
 
   return {
     setup: function() {
@@ -64,6 +70,12 @@ const UI = ( function() {
       Authentication.isAuthenticated().catch( function() {
         disconnectRow.style.display = 'none';
       });
+
+      // If the browser does not natively
+      if(browserHandlesKeyboard()) {
+        keyboardSectionTitle.style.display = 'none';
+        keyboardSection.style.display = 'none';
+      }
 
       // Load the other settings values
       Settings.init().then( function() {
@@ -78,10 +90,12 @@ const UI = ( function() {
         paginationPerPageSelector.value      = settings['perPage'] || '';
         zoomLevelSelector.value              = settings['zoomLevel'];
 
-        keyboardOpenPopupShortcut.value      = settings['keyboardOpenPopup'];
-        keyboardToggleShortcut.value         = settings['keyboardToggle'];
-        keyboardOpenFirstItemShortcut.value  = settings['keyboardOpenFirstItem'];
-        keyboardOpenRandomItemShortcut.value = settings['keyboardOpenRandomItem'];
+        if(!browserHandlesKeyboard()) {
+          keyboardOpenPopupShortcut.value      = settings['keyboardOpenPopup'];
+          keyboardToggleShortcut.value         = settings['keyboardToggle'];
+          keyboardOpenFirstItemShortcut.value  = settings['keyboardOpenFirstItem'];
+          keyboardOpenRandomItemShortcut.value = settings['keyboardOpenRandomItem'];
+        }
       });
 
       // Event: "Display count badge" checkbox
@@ -154,9 +168,10 @@ const UI = ( function() {
 
       //
       // Only register keyboard update events if browser is able to to upgrade keyboard shortcuts
+      // and if browser does not handle the addon shortcuts natively
       // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/commands/update
       //
-      if(browser.commands.update) {
+      if(browser.commands.update && !browserHandlesKeyboard()) {
         // Event: updating "toggle page state" keyboard shortcut
         keyboardToggleShortcut.addEventListener('keydown', function(ev) {
           ev.preventDefault();
@@ -212,11 +227,6 @@ const UI = ( function() {
             this.blur();
           }
         });
-      } else {
-        keyboardToggleShortcut.setAttribute('disabled', 'disabled');
-        keyboardOpenPopupShortcut.setAttribute('disabled', 'disabled');
-        keyboardOpenFirstItemShortcut.setAttribute('disabled', 'disabled');
-        keyboardOpenRandomItemShortcut.setAttribute('disabled', 'disabled');
       }
 
       // Event : "Disconnect" from the Pocket account click
