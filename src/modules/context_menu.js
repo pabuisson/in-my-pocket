@@ -1,14 +1,14 @@
 "use strict";
 
-import Browser from './browser.js';
-import Logger from './logger.js';
+import Browser from "./browser.js";
+import Logger from "./logger.js";
 
 // Before Firefox 55 this API was also originally named contextMenus, and that name has been
 // retained as an alias, so you can use contextMenus to write code that works in Firefox and
 // also in other browsers.
 // To use this API you need to have the "menus"  permission (or "contextMenus" for the alias)
 
-const ContextMenu = ( function() {
+const ContextMenu = (function() {
   // Chrome does not support icons on submenus, at all
   function mustShowIcons() {
     return !Browser.isChrome();
@@ -17,33 +17,30 @@ const ContextMenu = ( function() {
   function enable(id) {
     Logger.log(`(ContextMenu.enable) enable ${id} context menu`);
 
-    const promiseEnable  = browser.contextMenus.update(id, { enabled: true });
+    const promiseEnable = browser.contextMenus.update(id, { enabled: true });
     const promiseVisible = browser.contextMenus.update(id, { visible: true });
 
-    return Promise.all([ promiseEnable, promiseVisible ]);
+    return Promise.all([promiseEnable, promiseVisible]);
   }
 
   function disable(id) {
     Logger.log(`(ContextMenu.enable) disable ${id} context menu`);
 
-    const promiseEnable  = browser.contextMenus.update(id, { enabled: false });
+    const promiseEnable = browser.contextMenus.update(id, { enabled: false });
     const promiseVisible = browser.contextMenus.update(id, { visible: false });
 
-    return Promise.all([ promiseEnable, promiseVisible ]);
+    return Promise.all([promiseEnable, promiseVisible]);
   }
 
   // NOTE: "tab" context does not exist for chrome and older firefoxes,
   // feature will be broken for them
   function getAvailableContexts() {
     const availabeContexts = browser.contextMenus.ContextType;
-    const contexts = [
-      availabeContexts.PAGE,
-      availabeContexts.LINK
-    ];
+    const contexts = [availabeContexts.PAGE, availabeContexts.LINK];
 
     // Use the tab context only if it exist and if we can update the context menus when it's shown
     // (right-clicking on a tab in Pocket must display different state then a tab not in pocket)
-    if(availabeContexts.TAB && browser.contextMenus.onShown) {
+    if (availabeContexts.TAB && browser.contextMenus.onShown) {
       contexts.push(availabeContexts.TAB);
     }
 
@@ -52,58 +49,59 @@ const ContextMenu = ( function() {
 
   function entries() {
     const icons = [
-      'assets/icons/ionicons-android-add-circle.svg',
-      'assets/icons/ionicons-checkmark.svg',
-      'assets/icons/ionicons-trash-b.svg'
+      "assets/icons/ionicons-android-add-circle.svg",
+      "assets/icons/ionicons-checkmark.svg",
+      "assets/icons/ionicons-trash-b.svg"
     ];
     const entries = [
       {
         contexts: getAvailableContexts(),
         id: ContextMenu.addId,
-        title: 'Add to Pocket',
+        title: "Add to Pocket"
       },
       {
         contexts: getAvailableContexts(),
         id: ContextMenu.archiveId,
-        title: 'Mark as read',
+        title: "Mark as read"
       },
       {
         contexts: getAvailableContexts(),
         id: ContextMenu.deleteId,
-        title: 'Delete',
+        title: "Delete"
       }
     ];
 
     return entries.map((entry, index) => {
-      return mustShowIcons() ? entry.merge(icons[index]) : entry;
+      const iconObject = { icons: { 16: icons[index] } };
+      return mustShowIcons() ? Object.assign({}, entry, iconObject) : entry;
     });
   }
 
   return {
-    addId:     'inmypocket-add-item',
-    archiveId: 'inmypocket-archive-item',
-    deleteId:  'inmypocket-delete-item',
+    addId: "inmypocket-add-item",
+    archiveId: "inmypocket-archive-item",
+    deleteId: "inmypocket-delete-item",
 
     // TODO: this state should not be defined here, but in another module
     //       A dedicated PageState module? Or a more "Item"-oriented module?
-    pageAlreadyInPocket:  'PAGE_ALREADY_IN_POCKET',
-    pageNotInPocket:      'PAGE_NOT_IN_POCKET',
-    multipleTabSelection: 'MULTIPLE_TABS_SELECTION',
+    pageAlreadyInPocket: "PAGE_ALREADY_IN_POCKET",
+    pageNotInPocket: "PAGE_NOT_IN_POCKET",
+    multipleTabSelection: "MULTIPLE_TABS_SELECTION",
 
     createEntries: function() {
-      Logger.log( '(ContextMenu.createEntries) create all right-click entries' );
+      Logger.log("(ContextMenu.createEntries) create all right-click entries");
       entries().forEach(entry => {
         browser.contextMenus.create(entry);
       });
     },
 
     destroyEntries: function() {
-      Logger.log( '(ContextMenu.destroyEntries) destroy all right-click entries' );
+      Logger.log("(ContextMenu.destroyEntries) destroy all right-click entries");
       browser.contextMenus.removeAll();
     },
 
     setState: function(state) {
-      switch(state) {
+      switch (state) {
         case ContextMenu.pageAlreadyInPocket:
           return Promise.all([
             disable(ContextMenu.addId),
