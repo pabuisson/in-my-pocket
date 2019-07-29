@@ -51,3 +51,4 @@ Special thanks to the developers who helped me and contributed to the project:
 * [eight04](https://bitbucket.org/eight04/)
 * [bobi32](https://bitbucket.org/bobi32/)
 * [kEINnAMER](https://bitbucket.org/kEINnAMER/)
+* [JJ](https://bitbucket.org/jjzakius/)
