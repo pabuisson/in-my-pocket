@@ -23,7 +23,7 @@ var PopupTopActions = ( function() {
         browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
           let currentUrl   = currentTab.url;
           let currentTitle = currentTab.title;
-          const addItemOptions = { action: 'add-item', url: currentUrl, title: currentTitle, closeTabId: currentTab.id };
+          const addItemOptions = { action: 'add-item', url: currentUrl, title: currentTitle, tabId: currentTab.id };
           browser.runtime.sendMessage(addItemOptions);
         });
       });

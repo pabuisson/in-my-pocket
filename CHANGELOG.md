@@ -1,5 +1,10 @@
 # Changelog
 
+## Not released yet
+
+* FEATURE: you can now use right-click to add a bunch of tabs to your pocket list! If you select several tabs and right-click another tab, this one will get added to the pocket list. You'll need to select several tab and right-click one of them. This plays nicely with "close tab after adding to pocket" setting.
+
+
 ## 0.10.6 - June 2019
 
 * FIX: fix middle-clicking and ctrl-clicking on popup items, that was not forcing new tab opening ([contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/141), thank you for your help!)
