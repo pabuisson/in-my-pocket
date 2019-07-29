@@ -23,11 +23,11 @@ If you have suggestions on how to improve this extension or encounter some bugs,
 
 * Clone this repository: `git clone git@bitbucket.org:pabuisson/in-my-pocket.git`
 * `cd` to the directory where you cloned the repository,
-* `$ npm install`: install the tools needed to build the addon from the source files. You'll need to have `npm` installed on your computer. For more information about this, see [npmjs.com - Get npm](https://www.npmjs.com/get-npm),
-* `$ npm run build`: launch webpack and store all the final files into `./build`, which can be loaded in Firefox through the `about:debugging` page for development purpose,
-* `$ npm run watch`: launch webpack in watch mode, building the concatenated files into './build' and updating the build directory everytime you modify the source files. The build directory can be loaded in Firefox through the `about:debugging` page for development purpose,
-* `$ npm run build-ext` : compile the source files and build the addon "zip" file, ready for submission to addons.mozilla.org :)
-* `$ npm run test`: runs the tests associated to this project.
+* `$ npm install`: install the tools needed to build the addon from the source files. You'll need to have `npm` installed on your machine,
+* `$ npm run build`: launch webpack and store all the final files into `./build`. In there, you'll find a `firefox/` directory which can be loaded in Firefox through the `about:debugging` page for development purpose, and a `chrome/` directory, which can be loaded into chrome through the `chrome://extensions` page,
+* `$ npm run watch`: launch webpack in watch mode, building the concatenated files into `./build ` and updating the build directory everytime you modify the source files. See above for details about the generated `build/` directory,
+* `$ npm run package` : compiles the source files and build the addon "zip" files, ready for submission to the browser stores :) This task triggers two different subtasks, `$ npm run package-ff` and `$ npm run package-chrome` that rely on different `manifest.json` files,
+* `$ npm run test`: runs the tests associated to this project,
 
 
 ### Linter
