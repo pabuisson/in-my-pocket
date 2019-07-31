@@ -1,7 +1,7 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin    = require('copy-webpack-plugin');
 
-var base = {
+const base = {
   context: __dirname + '/src',
   mode: 'production',
   entry: {
@@ -46,7 +46,7 @@ var base = {
 
 // ---------------------------------------------------------------------------
 
-var firefoxSpecific = {
+const firefoxSpecific = {
   output: {
     path: __dirname + '/build/firefox',
     filename: '[name].js'
@@ -60,7 +60,7 @@ var firefoxSpecific = {
   ]
 };
 
-var chromeSpecific = {
+const chromeSpecific = {
   output: {
     path: __dirname + '/build/chrome',
     filename: '[name].js'
@@ -70,13 +70,16 @@ var chromeSpecific = {
     new CopyWebpackPlugin([
       { from: 'assets/', to: 'assets/',  ignore: [ '.DS_Store' ] },
       { from: 'manifest_chrome.json', to: 'manifest.json' },
-      { from: '../node_modules/webextension-polyfill/dist/browser-polyfill.min.js', to: 'assets/javascripts/' }
+      {
+        from: '../node_modules/webextension-polyfill/dist/browser-polyfill.min.js',
+        to: 'assets/javascripts/'
+      }
     ])
   ]
 };
 
-var firefox = Object.assign({}, base, firefoxSpecific);
-var chrome  = Object.assign({}, base, chromeSpecific);
+const firefox = Object.assign({}, base, firefoxSpecific);
+const chrome  = Object.assign({}, base, chromeSpecific);
 
 // ---------------------------------------------------------------------------
 

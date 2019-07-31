@@ -12,7 +12,7 @@ const PageAction = (function() {
   }
 
   function mustDisplayPageAction() {
-    let promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve, reject) => {
       if (isPageActionEnabled()) {
         Settings.init().then(() => {
           Logger.log("must display page action ? " + Settings.get("showPageAction"));
