@@ -27,7 +27,8 @@
       "./background/upgrade.js",
       "./background/context_menus.js",
       "./background/page_actions.js",
-      "./background/keyboard.js"
+      "./background/keyboard.js",
+      "./background/uninstall.js"
     ]
   },
 
