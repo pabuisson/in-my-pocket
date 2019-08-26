@@ -86,6 +86,19 @@ const Items = ( function() {
     });
   }
 
+  // rawItems = items to add { url:, title:, tabId: }
+  // parsedItems = items returned by Pocket API
+  function enrichParsedItems(parsedItems, rawItems) {
+    return parsedItems.map(parsedItem => {
+      if(!parsedItem.title) {
+        const rawItem = rawItems.find(item => parsedItem.given_url == item.url);
+        parsedItem.title = rawItem ? rawItem.title : '—';
+      }
+
+      return parsedItem;
+    });
+  }
+
   return {
     filter: function(rawItems, query) {
       const parsedItems = parseItems(rawItems);
@@ -164,8 +177,8 @@ const Items = ( function() {
       Logger.log('(Items.addItem)');
 
       browser.storage.local.get(['access_token', 'items']).then(({ access_token, items }) => {
-        const newItems = itemsToAdd.filter(item => !Items.contains(items, { url: item.url }));
-        if(newItems.length === 0) {
+        const newItemsToAdd = itemsToAdd.filter(item => !Items.contains(items, { url: item.url }));
+        if(newItemsToAdd.length === 0) {
           // Instead of just logging, send an event back to the UI and exit
           browser.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST });
           return;
@@ -173,17 +186,18 @@ const Items = ( function() {
 
         Badge.startLoadingSpinner();
         const requester = new PocketApiRequester(access_token);
-        const request = newItems.length == 1 ? requester.add(newItems[0]) : requester.addBatch(newItems);
+        const request = newItemsToAdd.length == 1 ? requester.add(newItemsToAdd[0]) : requester.addBatch(newItemsToAdd);
 
         request.then(response => {
           const parsedItems = Utility.parseJson(items) || [];
-          const addedItems  = response.item ? [response.item] : response.action_results;
+          const addedItems = (response.item ? [response.item] : response.action_results);
+          const enrichedAddedItems  = enrichParsedItems(addedItems, newItemsToAdd);
 
-          addedItems.forEach(newItem => {
+          enrichedAddedItems.forEach(newItem => {
             parsedItems.push({
               id:             newItem.item_id,
               resolved_title: newItem.title,
-              resolved_url:   newItem.resolved_url,
+              resolved_url:   newItem.given_url,
               created_at:     (Date.now()/1000 | 0)
             });
           });
@@ -201,7 +215,7 @@ const Items = ( function() {
             Settings.init().then( () => {
               const closeTabWhenAdded = Settings.get('closeTabWhenAdded');
               if(closeTabWhenAdded) {
-                const tabIdsToClose = newItems.map(item => item.tabId);
+                const tabIdsToClose = newItemsToAdd.map(item => item.tabId);
                 setTimeout( () => {
                   browser.tabs.remove(tabIdsToClose);
                 }, 200);
