@@ -68,11 +68,9 @@ const Items = ( function() {
           Badge.flashSuccess().then( () => {
             // Disable page actions for removed items
             Logger.log('(Items.removeItem) item removed, update matching pageActions');
-            browser.tabs.query({ url: removedItem.resolved_url }).then( (tabs) => {
-              for(const tab of tabs) {
-                Logger.log('(Items.removeItem) draw disabled page action for ' + tab.url);
-                PageAction.drawDisabled(tab.id);
-              }
+            browser.tabs.query({ url: removedItem.resolved_url }).then(tabs => {
+              const tabIds = tabs.map(tab => tab.id);
+              PageAction.drawDisabled(...tabIds);
             });
           });
         } else {
@@ -212,11 +210,9 @@ const Items = ( function() {
 
             // Redraw every page pageAction
             Logger.log('(Items.addItem) new items added, update matching pageActions');
-            browser.tabs.query({ url: newItemsToAdd.map(item => item.resolved_url) }).then( function(tabs) {
-              for(const tab of tabs) {
-                Logger.log(`(Items.addItem) will draw enabled page action for ${tab.url}`);
-                PageAction.drawEnabled(tab.id);
-              }
+            browser.tabs.query({ url: newItemsToAdd.map(item => item.resolved_url) }).then(tabs => {
+              const tabIds = tabs.map(tab => tab.id);
+              PageAction.drawEnabled(...tabIds);
             });
           });
         })

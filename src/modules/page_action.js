@@ -32,10 +32,10 @@ const PageAction = ( function() {
           // const parsedItems  = Utility.parseJson( items ) || [];
           const containsItem = Items.contains( items, { url: url });
 
-          if( containsItem ) {
-            PageAction.drawEnabled( tabId );
+          if(containsItem) {
+            PageAction.drawEnabled(tabId);
           } else {
-            PageAction.drawDisabled( tabId );
+            PageAction.drawDisabled(tabId);
           }
 
           PageAction.show(tabId);
@@ -55,25 +55,29 @@ const PageAction = ( function() {
       });
     },
 
-    drawEnabled: function( tabId ) {
+    drawEnabled: function(...tabIds) {
       pageActionEnabled().then( () => {
-        // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
-        browser.pageAction.setIcon( { tabId: tabId, path: {
-          19: "assets/icons/inmypocket-flat-red.svg",
-          38: "assets/icons/inmypocket-flat-red.svg"
-        }});
-        browser.pageAction.setTitle({ tabId: tabId, title: "Mark as read" });
+        tabIds.forEach(tabId => {
+          // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
+          browser.pageAction.setIcon({ tabId: tabId, path: {
+            19: "assets/icons/inmypocket-flat-red.svg",
+            38: "assets/icons/inmypocket-flat-red.svg"
+          }});
+          browser.pageAction.setTitle({ tabId: tabId, title: "Mark as read" });
+        });
       });
     },
 
-    drawDisabled: function( tabId ) {
+    drawDisabled: function(...tabIds) {
       pageActionEnabled().then( () => {
-        // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
-        browser.pageAction.setIcon({ tabId: tabId, path: {
-          19: "assets/icons/inmypocket-flat-grey-dark.svg",
-          38: "assets/icons/inmypocket-flat-grey-dark.svg"
-        }});
-        browser.pageAction.setTitle({ tabId: tabId, title: "Add to pocket" });
+        tabIds.forEach(tabId => {
+          // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
+          browser.pageAction.setIcon({ tabId: tabId, path: {
+            19: "assets/icons/inmypocket-flat-grey-dark.svg",
+            38: "assets/icons/inmypocket-flat-grey-dark.svg"
+          }});
+          browser.pageAction.setTitle({ tabId: tabId, title: "Add to pocket" });
+        });
       });
     },
 
