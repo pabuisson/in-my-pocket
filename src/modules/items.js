@@ -31,7 +31,7 @@ const Items = ( function() {
   }
 
   // TODO: exclude the protocol
-  function matchQuery( item, query ) {
+  function matchQuery(item, query) {
     const lowerQuery = query.toLowerCase();
     const lowerTitle   = (item.resolved_title || '').toLowerCase();
     const lowerUrl     = (item.resolved_url   || '').toLowerCase();
@@ -40,7 +40,7 @@ const Items = ( function() {
   }
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module
-  function removeItem( itemId, method ) {
+  function removeItem(itemId, method) {
     Logger.log('(Items.removeItem) id to remove: ' + itemId );
     Badge.startLoadingSpinner();
 
@@ -55,7 +55,7 @@ const Items = ( function() {
         const removedItem    = parsedItems[removedItemIdx];
 
         if(removedItemIdx >= 0) {
-          Logger.log('(Items.removeItem) item ' + itemId + ' has been found and removed');
+          Logger.log(`(Items.removeItem) item ${itemId} has been found and removed`);
 
           // Remove the archived item from the list and save list in storage
           parsedItems.splice(removedItemIdx, 1);
@@ -66,25 +66,35 @@ const Items = ( function() {
 
           // Display an indicator on the badge that everything went well and update badge count
           Badge.flashSuccess().then( () => {
-            // Redraw page actions
-            Logger.log('(Items.removeItem) item has been removed, update all matching pageActions');
-            browser.tabs.query({ url: removedItem.resolved_url }).then( (tabs) => {
-              for(const tab of tabs) {
-                Logger.log('(Items.removeItem) draw disabled page action for ' + tab.url);
-                PageAction.drawDisabled(tab.id);
-              }
+            // Disable page actions for removed items
+            Logger.log('(Items.removeItem) item removed, update matching pageActions');
+            browser.tabs.query({ url: removedItem.resolved_url }).then(tabs => {
+              const tabIds = tabs.map(tab => tab.id);
+              PageAction.drawDisabled(...tabIds);
             });
           });
         } else {
           // NOTE: in that case, badge state must be restored and spinner should stop
-          Logger.warn('(Items.removeItem) item ' + itemId + ' could not be found!' );
+          Logger.warn(`(Items.removeItem) item ${itemId} could not be found!`);
           Badge.updateCount();
         }
-      }).catch( error => {
-        Logger.error('(Items.removeItem) Error while removing an item');
-        Logger.error(`(Items.removeItem) ${ JSON.stringify(error) }`);
+      }).catch(error => {
+        Logger.error(`(Items.removeItem) Error while removing item: ${JSON.stringify(error)}`);
         Badge.flashError();
       });
+    });
+  }
+
+  // rawItems = items to add { url:, title:, tabId: }
+  // parsedItems = items returned by Pocket API
+  function enrichParsedItems(parsedItems, rawItems) {
+    return parsedItems.map(parsedItem => {
+      if(!parsedItem.title) {
+        const rawItem = rawItems.find(item => parsedItem.given_url == item.url);
+        parsedItem.title = rawItem ? rawItem.title : '—';
+      }
+
+      return parsedItem;
     });
   }
 
@@ -162,14 +172,12 @@ const Items = ( function() {
 
     // ---------------
 
-    // DONE: transform this to take an array of { url: title: } objects
-    // DONE: pass id of the tab into the item object as "tabId" rather than separate thing
     addItem: function(itemsToAdd) {
       Logger.log('(Items.addItem)');
 
       browser.storage.local.get(['access_token', 'items']).then(({ access_token, items }) => {
-        const newItems = itemsToAdd.filter(item => !Items.contains(items, { url: item.url }));
-        if(newItems.length === 0) {
+        const newItemsToAdd = itemsToAdd.filter(item => !Items.contains(items, { url: item.url }));
+        if(newItemsToAdd.length === 0) {
           // Instead of just logging, send an event back to the UI and exit
           browser.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST });
           return;
@@ -177,17 +185,18 @@ const Items = ( function() {
 
         Badge.startLoadingSpinner();
         const requester = new PocketApiRequester(access_token);
-        const request = newItems.length == 1 ? requester.add(newItems[0]) : requester.addBatch(newItems);
+        const request = newItemsToAdd.length == 1 ? requester.add(newItemsToAdd[0]) : requester.addBatch(newItemsToAdd);
 
         request.then(response => {
           const parsedItems = Utility.parseJson(items) || [];
-          const addedItems  = response.item ? [response.item] : response.action_results;
+          const addedItems = (response.item ? [response.item] : response.action_results);
+          const enrichedAddedItems  = enrichParsedItems(addedItems, newItemsToAdd);
 
-          addedItems.forEach(newItem => {
+          enrichedAddedItems.forEach(newItem => {
             parsedItems.push({
               id:             newItem.item_id,
               resolved_title: newItem.title,
-              resolved_url:   newItem.resolved_url,
+              resolved_url:   newItem.given_url,
               created_at:     (Date.now()/1000 | 0)
             });
           });
@@ -205,7 +214,7 @@ const Items = ( function() {
             Settings.init().then( () => {
               const closeTabWhenAdded = Settings.get('closeTabWhenAdded');
               if(closeTabWhenAdded) {
-                const tabIdsToClose = newItems.map(item => item.tabId);
+                const tabIdsToClose = newItemsToAdd.map(item => item.tabId);
                 setTimeout( () => {
                   browser.tabs.remove(tabIdsToClose);
                 }, 200);
@@ -213,30 +222,22 @@ const Items = ( function() {
             });
 
             // Redraw every page pageAction
-            Logger.log('(Items.addItem) new items have been added, we will update all matching pageActions');
-            browser.tabs.query({ url: newItems.map(item => item.resolved_url) }).then( function(tabs) {
-              for(const tab of tabs) {
-                Logger.log(`(Items.addItem) will draw enabled page action for ${tab.url}`);
-                PageAction.drawEnabled(tab.id);
-              }
+            Logger.log('(Items.addItem) new items added, update matching pageActions');
+            browser.tabs.query({ url: enrichedAddedItems.map(item => item.given_url) }).then(tabs => {
+              const tabIds = tabs.map(tab => tab.id);
+              PageAction.drawEnabled(...tabIds);
             });
           });
         })
-          .catch( error => {
-            Logger.error('(Items.addItem) Error while adding a new item');
-            Logger.error(`(Items.addItem) ${ JSON.stringify(error) }`);
+          .catch(error => {
+            Logger.error(`(Items.addItem) Error while adding item: ${JSON.stringify(error)}`);
             Badge.flashError();
           });
       });
     },
 
-    markAsRead : function(itemId) {
-      removeItem(itemId, 'archive');
-    },
-
-    deleteItem: function(itemId) {
-      removeItem(itemId, 'delete');
-    },
+    markAsRead : function(itemId) { removeItem(itemId, 'archive'); },
+    deleteItem: function(itemId) { removeItem(itemId, 'delete'); },
 
     open: function(itemId, forceNewTab = false) {
       Settings.init().then( () => {
