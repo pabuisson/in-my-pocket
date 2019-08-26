@@ -31,7 +31,7 @@ const Items = ( function() {
   }
 
   // TODO: exclude the protocol
-  function matchQuery( item, query ) {
+  function matchQuery(item, query) {
     const lowerQuery = query.toLowerCase();
     const lowerTitle   = (item.resolved_title || '').toLowerCase();
     const lowerUrl     = (item.resolved_url   || '').toLowerCase();
@@ -40,7 +40,7 @@ const Items = ( function() {
   }
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module
-  function removeItem( itemId, method ) {
+  function removeItem(itemId, method) {
     Logger.log('(Items.removeItem) id to remove: ' + itemId );
     Badge.startLoadingSpinner();
 
@@ -66,8 +66,8 @@ const Items = ( function() {
 
           // Display an indicator on the badge that everything went well and update badge count
           Badge.flashSuccess().then( () => {
-            // Redraw page actions
-            Logger.log('(Items.removeItem) item has been removed, update all matching pageActions');
+            // Disable page actions for removed items
+            Logger.log('(Items.removeItem) item removed, update matching pageActions');
             browser.tabs.query({ url: removedItem.resolved_url }).then( (tabs) => {
               for(const tab of tabs) {
                 Logger.log('(Items.removeItem) draw disabled page action for ' + tab.url);
@@ -162,8 +162,6 @@ const Items = ( function() {
 
     // ---------------
 
-    // DONE: transform this to take an array of { url: title: } objects
-    // DONE: pass id of the tab into the item object as "tabId" rather than separate thing
     addItem: function(itemsToAdd) {
       Logger.log('(Items.addItem)');
 
@@ -213,8 +211,8 @@ const Items = ( function() {
             });
 
             // Redraw every page pageAction
-            Logger.log('(Items.addItem) new items have been added, we will update all matching pageActions');
-            browser.tabs.query({ url: newItems.map(item => item.resolved_url) }).then( function(tabs) {
+            Logger.log('(Items.addItem) new items added, update matching pageActions');
+            browser.tabs.query({ url: newItemsToAdd.map(item => item.resolved_url) }).then( function(tabs) {
               for(const tab of tabs) {
                 Logger.log(`(Items.addItem) will draw enabled page action for ${tab.url}`);
                 PageAction.drawEnabled(tab.id);
@@ -223,20 +221,14 @@ const Items = ( function() {
           });
         })
           .catch( error => {
-            Logger.error('(Items.addItem) Error while adding a new item');
-            Logger.error(`(Items.addItem) ${ JSON.stringify(error) }`);
+            Logger.error(`(Items.addItem) Error while adding new item: ${JSON.stringify(error)}`);
             Badge.flashError();
           });
       });
     },
 
-    markAsRead : function(itemId) {
-      removeItem(itemId, 'archive');
-    },
-
-    deleteItem: function(itemId) {
-      removeItem(itemId, 'delete');
-    },
+    markAsRead : function(itemId) { removeItem(itemId, 'archive'); },
+    deleteItem: function(itemId) { removeItem(itemId, 'delete'); },
 
     open: function(itemId, forceNewTab = false) {
       Settings.init().then( () => {
