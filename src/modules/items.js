@@ -213,8 +213,8 @@ const Items = ( function() {
             });
 
             // Redraw every page pageAction
-            Logger.log('(Items.addItem) new items have been added, we will update all matching pageActions');
-            browser.tabs.query({ url: newItems.map(item => item.resolved_url) }).then( function(tabs) {
+            Logger.log('(Items.addItem) added new items, update matching pageActions');
+            browser.tabs.query({ url: addedItems.map(item => item.resolved_url) }).then( function(tabs) {
               for(const tab of tabs) {
                 Logger.log(`(Items.addItem) will draw enabled page action for ${tab.url}`);
                 PageAction.drawEnabled(tab.id);
