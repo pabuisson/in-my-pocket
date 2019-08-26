@@ -55,7 +55,7 @@ const Items = ( function() {
         const removedItem    = parsedItems[removedItemIdx];
 
         if(removedItemIdx >= 0) {
-          Logger.log('(Items.removeItem) item ' + itemId + ' has been found and removed');
+          Logger.log(`(Items.removeItem) item ${itemId} has been found and removed`);
 
           // Remove the archived item from the list and save list in storage
           parsedItems.splice(removedItemIdx, 1);
@@ -75,12 +75,11 @@ const Items = ( function() {
           });
         } else {
           // NOTE: in that case, badge state must be restored and spinner should stop
-          Logger.warn('(Items.removeItem) item ' + itemId + ' could not be found!' );
+          Logger.warn(`(Items.removeItem) item ${itemId} could not be found!`);
           Badge.updateCount();
         }
-      }).catch( error => {
-        Logger.error('(Items.removeItem) Error while removing an item');
-        Logger.error(`(Items.removeItem) ${ JSON.stringify(error) }`);
+      }).catch(error => {
+        Logger.error(`(Items.removeItem) Error while removing item: ${JSON.stringify(error)}`);
         Badge.flashError();
       });
     });
@@ -224,14 +223,14 @@ const Items = ( function() {
 
             // Redraw every page pageAction
             Logger.log('(Items.addItem) new items added, update matching pageActions');
-            browser.tabs.query({ url: newItemsToAdd.map(item => item.resolved_url) }).then(tabs => {
+            browser.tabs.query({ url: enrichedAddedItems.map(item => item.given_url) }).then(tabs => {
               const tabIds = tabs.map(tab => tab.id);
               PageAction.drawEnabled(...tabIds);
             });
           });
         })
-          .catch( error => {
-            Logger.error(`(Items.addItem) Error while adding new item: ${JSON.stringify(error)}`);
+          .catch(error => {
+            Logger.error(`(Items.addItem) Error while adding item: ${JSON.stringify(error)}`);
             Badge.flashError();
           });
       });
