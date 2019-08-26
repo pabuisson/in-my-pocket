@@ -9,10 +9,10 @@ import Items from './items.js';
 
 
 const PageAction = ( function() {
-  function mustDisplayPageAction() {
+  function pageActionEnabled() {
     const promise = new Promise( ( resolve, reject ) => {
       Settings.init().then( () => {
-        Logger.log('must display page action ? ' + Settings.get('showPageAction'));
+        Logger.log('page action enabled ? ' + Settings.get('showPageAction'));
         if( Settings.get( 'showPageAction' ) ) {
           resolve();
         } else {
@@ -27,7 +27,7 @@ const PageAction = ( function() {
 
   return {
     redraw: function( tabId, url ) {
-      mustDisplayPageAction().then( () => {
+      pageActionEnabled().then( () => {
         browser.storage.local.get('items').then( ({ items }) => {
           // const parsedItems  = Utility.parseJson( items ) || [];
           const containsItem = Items.contains( items, { url: url });
@@ -44,7 +44,7 @@ const PageAction = ( function() {
     },
 
     redrawAllTabs: function() {
-      mustDisplayPageAction().then( () => {
+      pageActionEnabled().then( () => {
         browser.tabs.query( {} ).then( function( tabs ) {
           for( const tab of tabs ) {
             if( tab.url ) {
@@ -56,7 +56,7 @@ const PageAction = ( function() {
     },
 
     drawEnabled: function( tabId ) {
-      mustDisplayPageAction().then( () => {
+      pageActionEnabled().then( () => {
         // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
         browser.pageAction.setIcon( { tabId: tabId, path: {
           19: "assets/icons/inmypocket-flat-red.svg",
@@ -67,7 +67,7 @@ const PageAction = ( function() {
     },
 
     drawDisabled: function( tabId ) {
-      mustDisplayPageAction().then( () => {
+      pageActionEnabled().then( () => {
         // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
         browser.pageAction.setIcon({ tabId: tabId, path: {
           19: "assets/icons/inmypocket-flat-grey-dark.svg",
@@ -80,7 +80,7 @@ const PageAction = ( function() {
     // TODO: Can't I just add this in my public draw methods? so that it wouldn't be necessary
     //       to manually call this each time I draw some page actions
     show: function( tabId ) {
-      mustDisplayPageAction().then( () => {
+      pageActionEnabled().then( () => {
         browser.pageAction.show( tabId );
       });
     },
@@ -96,7 +96,7 @@ const PageAction = ( function() {
     // FIXME: this violates SRP, should not be responsible of the PageAction visual state
     //        AND of adding/removing the item from the items list
     toggle: function( tab ) {
-      mustDisplayPageAction().then( () => {
+      pageActionEnabled().then( () => {
         browser.storage.local.get('items').then( ({ items }) => {
           const matchingItem = Items.find( items, { url: tab.url });
 
