@@ -263,7 +263,7 @@ const Items = ( function() {
         const archiveWhenOpened = Settings.get('archiveWhenOpened');
 
         browser.storage.local.get('items').then( ({ items }) => {
-          const item = Items.find( items, { id: itemId } );
+          const item = Items.find(items, { id: itemId });
 
           if(openInNewTab) {
             browser.tabs.create({ url: item.resolved_url });

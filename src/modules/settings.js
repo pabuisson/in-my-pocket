@@ -27,12 +27,12 @@ const Settings = ( function() {
   };
 
   function load() {
-    return browser.storage.local.get( 'settings' ).then(( data ) => {
+    return browser.storage.local.get('settings').then(data => {
       _loaded  = true;
 
-      settings = Object.assign( settings, defaultSettings );
+      settings = Object.assign(settings, defaultSettings);
       if( data.settings ) {
-        settings = Object.assign( settings, ( Utility.parseJson( data.settings ) || {} ) );
+        settings = Object.assign(settings, (Utility.parseJson(data.settings) || {}));
       }
     });
   }
@@ -43,10 +43,10 @@ const Settings = ( function() {
       return load();
     },
 
-    get: function( key ) {
-      if( _loaded ) {
-        if( key ) {
-          return settings[ key ];
+    get: function(key) {
+      if(_loaded) {
+        if(key) {
+          return settings[key];
         } else {
           return settings;
         }
@@ -55,9 +55,9 @@ const Settings = ( function() {
       return undefined;
     },
 
-    set: function( key, value ) {
-      if( _loaded ) {
-        settings[ key ] = value;
+    set: function(key, value) {
+      if(_loaded) {
+        settings[key] = value;
         return true;
       }
 
@@ -67,8 +67,8 @@ const Settings = ( function() {
     save: function() {
       // If settings not yet loaded, we don't need to save them (they can't have
       // been modified since they've not even been loaded
-      if( _loaded ) {
-        browser.storage.local.set({ settings: JSON.stringify( settings ) });
+      if(_loaded) {
+        browser.storage.local.set({ settings: JSON.stringify(settings) });
         return true;
       }
 
