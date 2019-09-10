@@ -105,7 +105,9 @@ const PageAction = ( function() {
           const matchingItem = Items.find( items, { url: tab.url });
 
           if( matchingItem ) {
-            Items.markAsRead( matchingItem.id );
+            browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+              Items.markAsRead(matchingItem.id, currentTab.id);
+            });
           } else {
             Items.addItem([{ url: tab.url, title: tab.title, tabId: tab.id }]);
           }

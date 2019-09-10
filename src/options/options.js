@@ -26,6 +26,7 @@ const paginationPerPageSelector      = document.querySelector('.pagination-per-p
 const zoomLevelSelector              = document.querySelector('.zoom-level');
 const archiveWhenOpenedCheckbox      = document.querySelector('.archive-when-opened');
 const closeTabWhenAddedCheckbox      = document.querySelector('.close-tab-when-added');
+const closeTabWhenReadCheckbox       = document.querySelector('.close-tab-when-read');
 const keyboardOpenPopupShortcut      = document.querySelector('.keyboard-open-popup');
 const keyboardToggleShortcut         = document.querySelector('.keyboard-toggle');
 const keyboardOpenFirstItemShortcut  = document.querySelector('.keyboard-open-first-item');
@@ -34,7 +35,7 @@ const keyboardOpenRandomItemShortcut = document.querySelector('.keyboard-open-ra
 const savedNotificationElement = document.querySelector('.saved-notification');
 
 
-const UI = ( function() {
+const UI = (function() {
   let savedNotificationTimerId = null;
 
   function flashSavedNotification(containerRow) {
@@ -75,6 +76,7 @@ const UI = ( function() {
         openInNewTabCheckbox.checked         = settings['openInNewTab'];
         archiveWhenOpenedCheckbox.checked    = settings['archiveWhenOpened'];
         closeTabWhenAddedCheckbox.checked    = settings['closeTabWhenAdded'];
+        closeTabWhenReadCheckbox.checked     = settings['closeTabWhenRead'];
         paginationPerPageSelector.value      = settings['perPage'] || '';
         zoomLevelSelector.value              = settings['zoomLevel'];
 
@@ -85,20 +87,20 @@ const UI = ( function() {
       });
 
       // Event: "Display count badge" checkbox
-      displayBadgeCountCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'showBadge', this.checked );
+      displayBadgeCountCheckbox.addEventListener('change', function() {
+        Settings.set('showBadge', this.checked);
         Settings.save();
         Badge.updateCount();
         flashSavedNotification(this.parentNode);
       });
 
       // Event: "Display add-to-pocket icon in address bar" checkbox
-      displayPageActionCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'showPageAction', this.checked );
+      displayPageActionCheckbox.addEventListener('change', function() {
+        Settings.set('showPageAction', this.checked);
         Settings.save();
         flashSavedNotification(this.parentNode);
 
-        if( this.checked ) {
+        if(this.checked) {
           PageAction.redrawAllTabs();
         } else {
           PageAction.hideAllTabs();
@@ -106,48 +108,55 @@ const UI = ( function() {
       });
 
       // Event: "Open in new tab" checkbox
-      openInNewTabCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'openInNewTab', this.checked );
+      openInNewTabCheckbox.addEventListener('change', function() {
+        Settings.set('openInNewTab', this.checked);
         Settings.save();
         flashSavedNotification(this.parentNode);
       });
 
       // Event: "Enable debug mode" checkbox
-      enableDebugModeCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'debugMode', this.checked );
+      enableDebugModeCheckbox.addEventListener('change', function() {
+        Settings.set('debugMode', this.checked);
         Settings.save();
         flashSavedNotification(this.parentNode);
       });
 
       // Event: "Automation: archive when opened" checkbox
-      archiveWhenOpenedCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'archiveWhenOpened', this.checked );
+      archiveWhenOpenedCheckbox.addEventListener('change', function() {
+        Settings.set('archiveWhenOpened', this.checked);
         Settings.save();
         flashSavedNotification(this.parentNode);
       });
 
       // Event: "Automation: close tab when added" checkbox
-      closeTabWhenAddedCheckbox.addEventListener( 'change', function() {
-        Settings.set( 'closeTabWhenAdded', this.checked );
+      closeTabWhenAddedCheckbox.addEventListener('change', function() {
+        Settings.set('closeTabWhenAdded', this.checked);
         Settings.save();
         flashSavedNotification(this.parentNode);
       });
 
-      paginationPerPageSelector.addEventListener( 'change', function() {
-        Settings.set( 'perPage', parseInt( this.value ) || null );
+      // Event: "Automation: close tab when read" checkbox
+      closeTabWhenReadCheckbox.addEventListener('change', function() {
+        Settings.set('closeTabWhenRead', this.checked);
+        Settings.save();
+        flashSavedNotification(this.parentNode);
+      } );
+
+      paginationPerPageSelector.addEventListener('change', function() {
+        Settings.set('perPage', parseInt(this.value) || null);
         Settings.save();
 
         // Reset the display options (no need to read it from local storage
         // since we just reset it)
         const displayOptions = { currentPage: 1, displayedAt: null };
-        browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
+        browser.storage.local.set({ display: JSON.stringify(displayOptions) });
 
         flashSavedNotification(this.parentNode);
       });
 
       // Event: "Zoom level" selector
-      zoomLevelSelector.addEventListener( 'change', function() {
-        Settings.set( 'zoomLevel', this.value );
+      zoomLevelSelector.addEventListener('change', function() {
+        Settings.set('zoomLevel', this.value);
         Settings.save();
         flashSavedNotification(this.parentNode);
       });

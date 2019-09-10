@@ -218,10 +218,10 @@ browser.runtime.onMessage.addListener( function(eventData) {
       Items.addItem([{ url: eventData.url, title: eventData.title, tabId: eventData.tabId }]);
       break;
     case 'mark-as-read':
-      Items.markAsRead(eventData.id);
+      Items.markAsRead(eventData.id, eventData.tabId);
       break;
     case 'delete-item':
-      Items.deleteItem(eventData.id);
+      Items.deleteItem(eventData.id, eventData.tabId);
       break;
     case 'update-badge-count':
       Badge.updateCount();

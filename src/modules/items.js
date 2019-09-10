@@ -40,7 +40,7 @@ const Items = ( function() {
   }
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module
-  function removeItem(itemId, method) {
+  function removeItem(itemId, method, tabId) {
     Logger.log('(Items.removeItem) id to remove: ' + itemId );
     Badge.startLoadingSpinner();
 
@@ -66,6 +66,24 @@ const Items = ( function() {
 
           // Display an indicator on the badge that everything went well and update badge count
           Badge.flashSuccess().then( () => {
+            // Close the current tab if setting closeTabWhenAdded is "on"
+            // and if its url matches the deleted item
+            if(tabId) {
+              browser.tabs.get(tabId).then(currentTab => {
+                if(currentTab.url == removedItem.resolved_url) {
+                  Settings.init().then( () => {
+                    const closeTabWhenRead = Settings.get('closeTabWhenRead');
+                    if(closeTabWhenRead) {
+                      Logger.log('(Items.removeItem) automatically close tab');
+                      setTimeout( () => {
+                        browser.tabs.remove(currentTab.id);
+                      }, 200);
+                    }
+                  });
+                }
+              });
+            }
+
             // Disable page actions for removed items
             Logger.log('(Items.removeItem) item removed, update matching pageActions');
             browser.tabs.query({ url: removedItem.resolved_url }).then(tabs => {
@@ -236,8 +254,8 @@ const Items = ( function() {
       });
     },
 
-    markAsRead : function(itemId) { removeItem(itemId, 'archive'); },
-    deleteItem: function(itemId) { removeItem(itemId, 'delete'); },
+    markAsRead : function(itemId, tabId) { removeItem(itemId, 'archive', tabId); },
+    deleteItem:  function(itemId, tabId) { removeItem(itemId, 'delete', tabId); },
 
     open: function(itemId, forceNewTab = false) {
       Settings.init().then( () => {
@@ -245,7 +263,7 @@ const Items = ( function() {
         const archiveWhenOpened = Settings.get('archiveWhenOpened');
 
         browser.storage.local.get('items').then( ({ items }) => {
-          const item = Items.find( items, { id: itemId } );
+          const item = Items.find(items, { id: itemId });
 
           if(openInNewTab) {
             browser.tabs.create({ url: item.resolved_url });

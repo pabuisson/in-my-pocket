@@ -217,22 +217,26 @@ const PopupUI = ( function() {
       return;
     },
 
-    markAsRead: ( itemId ) => {
-      const item = document.querySelector( ".item[data-id='" + itemId + "']");
+    markAsRead: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
       item.classList.add('removing');
-      item.querySelector('.tick-action .tick'   ).classList.add(    'hidden' );
-      item.querySelector('.tick-action .loader' ).classList.remove( 'hidden' );
+      item.querySelector('.tick-action .tick'  ).classList.add(   'hidden');
+      item.querySelector('.tick-action .loader').classList.remove('hidden');
 
-      browser.runtime.sendMessage({ action: 'mark-as-read', id: itemId });
+      browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+        browser.runtime.sendMessage({ action: 'mark-as-read', id: itemId, tabId: currentTab.id });
+      });
     },
 
-    deleteItem: ( itemId ) => {
-      const item = document.querySelector( ".item[data-id='" + itemId + "']");
+    deleteItem: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
       item.classList.add('removing');
-      item.querySelector('.delete-action .trash'  ).classList.add(   'hidden' );
-      item.querySelector('.delete-action .loader' ).classList.remove( 'hidden' );
+      item.querySelector('.delete-action .trash' ).classList.add(   'hidden');
+      item.querySelector('.delete-action .loader').classList.remove('hidden');
 
-      browser.runtime.sendMessage({ action: 'delete-item', id: itemId });
+      browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+        browser.runtime.sendMessage({ action: 'delete-item', id: itemId, tabId: currentTab.id });
+      });
     },
 
     fadeOutItem: (...itemIds) => {
