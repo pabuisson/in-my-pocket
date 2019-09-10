@@ -3,24 +3,26 @@
   "description": "For all those who are missing the old Pocket addon for Firefox, here's an unofficial client for the [Pocket](http://getpocket.com/) webservice. I'm not in any way affiliated to Pocket and only does this for my fellow Firefox users looking for an easy to use Pocket extension for their favorite browser.",
   "main": "src/manifest.json",
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-transform-runtime": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/register": "^7.6.0",
+    "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
-    "copy-webpack-plugin": "^4.5.2",
-    "cross-env": "^5.2.0",
-    "css-loader": "^1.0.0",
-    "file-loader": "^4.0.0",
+    "copy-webpack-plugin": "^4.6.0",
+    "cross-env": "^5.2.1",
+    "css-loader": "^1.0.1",
+    "file-loader": "^4.2.0",
     "istanbul-instrumenter-loader": "^3.0.1",
-    "mini-css-extract-plugin": "^0.4.3",
-    "mocha": "^5.2.0",
+    "mini-css-extract-plugin": "^0.4.5",
+    "mocha": "^6.2.0",
     "node-sass": "^4.12.0",
     "nyc": "^13.3.0",
-    "sass-loader": "^7.1.0",
+    "sass-loader": "^7.3.1",
     "sinon": "^6.3.5",
     "style-loader": "^0.23.1",
-    "webpack": "^4.33.0",
-    "webpack-cli": "^3.3.3",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8",
     "webpack-node-externals": "^1.7.2"
   },
   "scripts": {
@@ -30,8 +32,8 @@
     "package": "npm run build && npm run package-firefox && npm run zip-source",
     "package-firefox": "cd ./build && zip -r -FS ../web-ext-artifacts/in_my_pocket-firefox.zip * --exclude .DS_Store",
     "zip-source": "zip -r web-ext-artifacts/source.zip CHANGELOG.md README.md LICENSE package.json webpack.config.js src/ --exclude .DS_Store",
-    "test": "npx mocha --require babel-core/register ./test/helper.js ./test/**/*.test.js",
-    "test-watch": "npx mocha -w --require babel-core/register ./test/helper/js ./test/**/*.test.js",
+    "test": "npx mocha --require @babel/register ./test/helper.js ./test/**/*.test.js",
+    "test-watch": "npx mocha -w ./test/helper/js ./test/**/*.test.js",
     "cover": "cross-env NODE_ENV=coverage nyc --reporter=lcov --reporter=text npm test"
   },
   "repository": {
@@ -46,7 +48,8 @@
   "license": "MPL-2.0",
   "homepage": "https://bitbucket.org/pabuisson/in-my-pocket#readme",
   "dependencies": {
-    "npm": "^6.9.0"
+    "@babel/runtime": "^7.6.0",
+    "npm": "^6.11.3"
   },
   "nyc": {
     "include": [
