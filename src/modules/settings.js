@@ -2,9 +2,7 @@
 
 import Utility from './utility.js';
 
-
 // --------------------------
-
 
 const Settings = ( function() {
   let _loaded  = false;
@@ -19,6 +17,7 @@ const Settings = ( function() {
     // Automations
     archiveWhenOpened: false,
     closeTabWhenAdded: false,
+    closeTabWhenRead: false,
     // Keyboard shortcuts
     // TODO: can I retrieve default from the manifest JSON?
     keyboardOpenPopup: 'Alt+Q',
