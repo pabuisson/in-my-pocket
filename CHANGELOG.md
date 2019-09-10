@@ -3,7 +3,7 @@
 ## Not released yet
 
 * FEATURE: you can now use right-click to add a bunch of tabs to your pocket list! If you select several tabs and right-click another tab, this one will get added to the pocket list. You'll need to select several tab and right-click one of them. This plays nicely with "close tab after adding to pocket" setting.
-* OTHER: when uninstalling the addon, users will be presented a feedback form. This will help me get more feedback and improve the addon!
+* FEATURE: a new automation completes the two existing ones! You can now set IMP to automatically close your tab when you mark the as read / delete it from your pocket list.
 
 
 ## 0.10.6 - June 2019
