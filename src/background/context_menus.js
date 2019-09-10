@@ -40,7 +40,9 @@ browser.contextMenus.onClicked.addListener( (info, tab) => {
       browser.storage.local.get("items").then( ({ items }) => {
         const item = Items.find(items, { url: info.linkUrl || info.pageUrl });
         if(item) {
-          Items.markAsRead(item.id);
+          browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+            Items.markAsRead(item.id, currentTab.id);
+          });
         }
       });
       break;
@@ -49,7 +51,9 @@ browser.contextMenus.onClicked.addListener( (info, tab) => {
       browser.storage.local.get("items").then( ({ items }) => {
         const item = Items.find(items, { url: info.linkUrl || info.pageUrl });
         if(item) {
-          Items.deleteItem(item.id);
+          browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+            Items.deleteItem(item.id, currentTab.id);
+          });
         }
       });
       break;

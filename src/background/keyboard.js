@@ -33,7 +33,9 @@ browser.commands.onCommand.addListener( command => {
           const matchingItem = Items.find( items, { url: currentTab.url });
 
           if(matchingItem) {
-            Items.markAsRead(matchingItem.id);
+            browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+              Items.markAsRead(matchingItem.id, currentTab.id);
+            });
           } else {
             Items.addItem([{ url: currentTab.url, title: currentTab.title, tabId: currentTab.id }]);
           }
