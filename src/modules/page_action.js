@@ -60,8 +60,8 @@ const PageAction = ( function() {
         tabIds.forEach(tabId => {
           // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
           browser.pageAction.setIcon({ tabId: tabId, path: {
-            19: "assets/icons/inmypocket-flat-red.svg",
-            38: "assets/icons/inmypocket-flat-red.svg"
+            19: "assets/icons/page-action-enabled.svg",
+            38: "assets/icons/page-action-enabled.svg"
           }});
           browser.pageAction.setTitle({ tabId: tabId, title: "Mark as read" });
         });
@@ -73,8 +73,8 @@ const PageAction = ( function() {
         tabIds.forEach(tabId => {
           // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
           browser.pageAction.setIcon({ tabId: tabId, path: {
-            19: "assets/icons/inmypocket-flat-grey-dark.svg",
-            38: "assets/icons/inmypocket-flat-grey-dark.svg"
+            19: "assets/icons/page-action-disabled.svg",
+            38: "assets/icons/page-action-disabled.svg"
           }});
           browser.pageAction.setTitle({ tabId: tabId, title: "Add to pocket" });
         });
