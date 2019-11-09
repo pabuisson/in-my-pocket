@@ -4,7 +4,7 @@
 
 This project is aimed to all people who are missing the old Pocket addon for Firefox. It is an unofficial browser addon for the [Pocket](http://getpocket.com/) webservice, for the moment targeting only Firefox > 45. I'm not in any way affiliated to Pocket and only does this for my fellow Firefox users looking for an easy to use Pocket extension for their favorite browser.
 
-![In My Pocket 0.9.x logo](./assets/logo.png)
+![In My Pocket 0.11.x logo](./assets/banner.png)
 
 If you have suggestions on how to improve this extension or encounter some bugs, do not hesitate to contact me on Twitter [@pabuisson](https://twitter.com/pabuisson). And of course, if you like this extension, do not forget to leave a review on [Mozilla addons](https://addons.mozilla.org/en-US/firefox/addon/in-my-pocket/), it will be greatly appreciated!
 
