@@ -172,7 +172,7 @@ const Items = ( function() {
       const itemsCount = parsedItems.length;
       const sortedItems = parsedItems.sort( (a, b) => b.created_at - a.created_at );
 
-      if(!perPage || itemsCount == 0) {
+      if(!perPage || itemsCount === 0) {
         return sortedItems;
       }
 
@@ -203,7 +203,9 @@ const Items = ( function() {
 
         Badge.startLoadingSpinner();
         const requester = new PocketApiRequester(access_token);
-        const request = newItemsToAdd.length == 1 ? requester.add(newItemsToAdd[0]) : requester.addBatch(newItemsToAdd);
+        const request = newItemsToAdd.length === 1 ?
+          requester.add(newItemsToAdd[0]) :
+          requester.addBatch(newItemsToAdd);
 
         request.then(response => {
           const parsedItems = Utility.parseJson(items) || [];

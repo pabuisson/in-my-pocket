@@ -54,7 +54,7 @@ function retrieveFirst() {
       .then(response => {
         Logger.log(Object.keys( response.list ).length + ' items in the response');
 
-        let itemsList = [];
+        const itemsList = [];
         for(const itemId in response.list) {
           const item = response.list[ itemId ];
 
@@ -114,7 +114,7 @@ function retrieveDiff() {
         .fetch()
         .then( function(response) {
           Logger.log(Object.keys(response.list).length + ' items in the response');
-          let allItems = Utility.parseJson(items) || [];
+          const allItems = Utility.parseJson(items) || [];
 
           // TODO: Extract this into a dedicated method
           for(const itemId in response.list) {

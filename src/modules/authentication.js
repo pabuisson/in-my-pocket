@@ -8,7 +8,7 @@ import { consumerKey } from './constants.js';
 // -------------------------------------
 
 
-var Authentication = ( function() {
+const Authentication = ( function() {
   const redirectIntermediate = 'https://oauth.pabuisson.com';
   const redirectAuthFinished = 'https://oauth.pabuisson.com';
 
@@ -37,20 +37,21 @@ var Authentication = ( function() {
   return {
     authenticate: function() {
       Logger.log('(Authentication.authenticate) Starting the authentication process');
-      let promise = new Promise( (resolve, reject) => {
+      const promise = new Promise( (resolve, reject) => {
         const requestParams = {
           consumer_key: consumerKey,
           redirect_uri: redirectAuthFinished
         };
 
         Logger.log('(Authentication.authenticate) Requesting the requestToken');
-        new Request( 'POST', 'https://getpocket.com/v3/oauth/request', requestParams )
+        new Request('POST', 'https://getpocket.com/v3/oauth/request', requestParams)
           .fetch()
-          .then( ( response ) => {
+          .then( response => {
             Logger.log('(Authentication.authenticate) Got the requestToken, open an authorize tab');
             const requestToken = response.code;
+            const authorizeUrl =
+              `https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectIntermediate}`;
 
-            const authorizeUrl = `https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectIntermediate}`;
             browser.tabs.create({ 'url': authorizeUrl }).then( tab => {
               browser.tabs.onUpdated.addListener( (tabId, changeInfo, updatedTab) => {
                 // callback url has been loaded

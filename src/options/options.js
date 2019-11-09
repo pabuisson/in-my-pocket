@@ -9,7 +9,7 @@ import ContextMenu    from '../modules/context_menu.js';
 import Keyboard       from '../modules/keyboard.js';
 import PageAction     from '../modules/page_action.js';
 import Settings       from '../modules/settings.js';
-import { KeyboardShortcuts } from '../modules/constants.js';
+import { KeyboardShortcuts, parseIntBase } from '../modules/constants.js';
 
 // -------------
 
@@ -43,7 +43,7 @@ const UI = (function() {
 
     if(containerRow) {
       const topMarginInPx = 2;
-      const offsetTop = parseInt(containerRow.offsetTop) + topMarginInPx;
+      const offsetTop = parseInt(containerRow.offsetTop, parseIntBase) + topMarginInPx;
       savedNotificationElement.style.top = `${offsetTop}px`;
     } else {
       savedNotificationElement.style.top = '0px';
@@ -143,7 +143,7 @@ const UI = (function() {
       } );
 
       paginationPerPageSelector.addEventListener('change', function() {
-        Settings.set('perPage', parseInt(this.value) || null);
+        Settings.set('perPage', parseInt(this.value, parseIntBase) || null);
         Settings.save();
 
         // Reset the display options (no need to read it from local storage

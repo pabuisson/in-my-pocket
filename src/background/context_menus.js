@@ -26,11 +26,11 @@ browser.contextMenus.onClicked.addListener( (info, tab) => {
                 tabId: tab.id,
                 url: tab.url,
                 title: tab.title
-              }
+              };
             });
             Items.addItem(items);
           } else {
-            Items.addItem([{tabId: tab.id, url: tab.url, title: tab.title}])
+            Items.addItem([{tabId: tab.id, url: tab.url, title: tab.title}]);
           }
         });
       }
@@ -102,7 +102,7 @@ if(browser.contextMenus.onShown) {
           }
         });
       }
-    })
+    });
   });
 } else {
   // 1. When current tab url is changing

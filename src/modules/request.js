@@ -19,7 +19,7 @@ class Request {
   }
 
   fetch() {
-    let errorObject = {
+    const errorObject = {
       httpCode: undefined,
       error:    undefined,
     };

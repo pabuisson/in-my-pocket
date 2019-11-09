@@ -38,11 +38,11 @@ class PocketApiRequester {
           action: 'add',
           url: item.url,
           title: item.title
-        }
+        };
       })
     };
 
-    const request = new Request( 'POST', requestUrl, requestParams );
+    const request = new Request('POST', requestUrl, requestParams);
     return request.fetch();
   }
 
@@ -57,7 +57,7 @@ class PocketApiRequester {
       ]
     };
 
-    const request = new Request( 'POST', requestUrl, requestParams );
+    const request = new Request('POST', requestUrl, requestParams);
     return request.fetch();
   }
 

@@ -7,7 +7,7 @@ import Utility         from './utility.js';
 
 // ----------------
 
-var PopupTopFilter = ( function() {
+const PopupTopFilter = ( function() {
   const filterItemsInput     = document.querySelector('.filter-items');
   const clearSearchBoxButton = document.querySelector('.clear-search-box');
 
@@ -37,9 +37,9 @@ var PopupTopFilter = ( function() {
         PopupTopFilter.focusSearchField();
       });
 
-      let debouncedFilterEventHandler = Utility.debounce( function() {
-        let query = this.value.toLowerCase();
-        if( query !== '' ) {
+      const debouncedFilterEventHandler = Utility.debounce( function() {
+        const query = this.value.toLowerCase();
+        if(query !== '') {
           PopupMainLoader.enable();
           clearSearchBoxButton.classList.remove('hidden');
         } else {
@@ -48,18 +48,18 @@ var PopupTopFilter = ( function() {
 
         // Save query to localStorage 'display' variable
         browser.storage.local.get('display').then( ({ display }) => {
-          const parsedDisplay  = Utility.parseJson( display ) || {};
+          const parsedDisplay  = Utility.parseJson(display) || {};
           const displayOptions = Object.assign( {}, parsedDisplay, { query: query });
-          browser.storage.local.set( { display: JSON.stringify( displayOptions ) } );
+          browser.storage.local.set({ display: JSON.stringify(displayOptions) });
         });
 
         // Draw the items lists
         Logger.log('(debouncedFilterEventHandler) will draw list with query=' + query);
         PopupUI.drawList({ page: 1, query: query });
-        PopupMainLoader.disable( true );
-      }, 200 );
+        PopupMainLoader.disable(true);
+      }, 200);
 
-      filterItemsInput.addEventListener( 'keyup', debouncedFilterEventHandler );
+      filterItemsInput.addEventListener('keyup', debouncedFilterEventHandler);
     }
   };
 })();

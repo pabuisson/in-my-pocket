@@ -28,5 +28,14 @@ const KeyboardShortcuts = {
   openRandomItem: 'open-random-item'
 };
 
-export { KeyboardShortcuts, PocketError, PocketNotice, MouseButtons, consumerKey };
+const parseIntBase = 10;
+
+export {
+  KeyboardShortcuts,
+  PocketError,
+  PocketNotice,
+  MouseButtons,
+  consumerKey,
+  parseIntBase
+};
 
