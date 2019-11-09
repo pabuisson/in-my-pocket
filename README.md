@@ -1,6 +1,10 @@
 # In My Pocket browser addon for Firefox
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1b66013669b94f77a574b39c305ef23b)](https://www.codacy.com/app/pabuisson/in-my-pocket?utm_source=pabuisson@bitbucket.org&amp;utm_medium=referral&amp;utm_content=pabuisson/in-my-pocket&amp;utm_campaign=Badge_Grade)
+[![Mozilla Add-on](https://img.shields.io/amo/v/in-my-pocket.svg)](https://addons.mozilla.org/firefox/addon/in-my-pocket/)
+[![](https://img.shields.io/amo/users/in-my-pocket.svg)](https://addons.mozilla.org/firefox/addon/in-my-pocket/statistics/usage/?last=365)
+[![](https://img.shields.io/amo/rating/in-my-pocket.svg)](https://addons.mozilla.org/firefox/addon/in-my-pocket/reviews/)
+
 
 This project is aimed to all people who are missing the old Pocket addon for Firefox. It is an unofficial browser addon for the [Pocket](http://getpocket.com/) webservice, for the moment targeting only Firefox > 45. I'm not in any way affiliated to Pocket and only does this for my fellow Firefox users looking for an easy to use Pocket extension for their favorite browser.
 
