@@ -43,7 +43,7 @@
   },
 
   "browser_action": {
-    "default_icon": "assets/icons/browser-action-light3.svg",
+    "default_icon": "assets/icons/browser-action-light.svg",
     "theme_icons": [{
       "light": "assets/icons/browser-action-dark.svg",
       "dark": "assets/icons/browser-action-light.svg",
