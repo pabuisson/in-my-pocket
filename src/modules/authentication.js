@@ -56,7 +56,7 @@ const Authentication = ( function() {
               browser.tabs.onUpdated.addListener( (tabId, changeInfo, updatedTab) => {
                 // callback url has been loaded
                 if (changeInfo.status == 'complete' && updatedTab.url.indexOf(redirectIntermediate) === 0) {
-                  Logger.log('(Authentication.authenticate) Authorize tab has been loaded correctly');
+                  Logger.log('(Authentication.authenticate) Authorize tab loaded correctly');
                   browser.tabs.remove(tabId);
 
                   authenticateStep2(requestToken)
@@ -76,10 +76,10 @@ const Authentication = ( function() {
       const promise = new Promise( (resolve, reject) => {
         browser.storage.local.get('access_token').then( ({ access_token }) => {
           if(access_token) {
-            Logger.log('(Authentication.isAuthenticated) access_token present, user authenticated');
+            Logger.log('(Authentication.isAuthenticated) access_token present, authenticated');
             resolve(access_token);
           } else {
-            Logger.warn('(Authentication.isAuthenticated) access_token missing, user not authenticated');
+            Logger.warn('(Authentication.isAuthenticated) access_token missing, not authenticated');
             reject();
           }
         });

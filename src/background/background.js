@@ -24,7 +24,7 @@ function retrieveItems(force) {
 
     if (force || !items || !last_retrieve) {
       // If force == true, we always reload the whole list
-      retrieveFirst();
+      retrieveAll();
     } else if(timeSinceLastRetrieve > intervalWithoutReload) {
       // If we already have sync, check if intervalWithoutReload is past, then we can reload
       retrieveDiff();
@@ -38,9 +38,8 @@ function retrieveItems(force) {
 }
 
 
-// TODO: Rename -> retrieveAll, more accurate
-function retrieveFirst() {
-  Logger.log('(retrieve first)');
+function retrieveAll() {
+  Logger.log('(retrieve all items)');
 
   browser.storage.local.get('access_token').then( ({ access_token }) => {
     const requestParams = {
@@ -69,10 +68,10 @@ function retrieveFirst() {
         }
 
         // Save item list in storage and update badge count
-        browser.storage.local.set({ items: JSON.stringify( itemsList ) });
+        browser.storage.local.set({ items: JSON.stringify(itemsList) });
         Badge.updateCount( itemsList );
 
-        // Save timestamp into database as "last_retrieve", so that next time we just update the diff
+        // Save timestamp to database as "last_retrieve", so that next time we just update the diff
         // FIXME: use camelCase
         browser.storage.local.set({ last_retrieve: response.since });
 
@@ -83,8 +82,8 @@ function retrieveFirst() {
         PageAction.redrawAllTabs();
       })
       .catch( error => {
-        Logger.warn('(bg.retrieveFirst) something went wrong...');
-        Logger.warn(`(bg.retrieveFirst) ${ JSON.stringify(error) }`);
+        Logger.warn('(bg.retrieveAll) something went wrong...');
+        Logger.warn(`(bg.retrieveAll) ${ JSON.stringify(error) }`);
         Badge.flashError();
       });
   });
@@ -128,7 +127,7 @@ function retrieveDiff() {
                 const removedItemIdx = allItems.findIndex(item => item.id === itemId);
 
                 if(removedItemIdx >= 0) {
-                  Logger.log('(bg.retrieveDiff) Item has been found and will be removed from the stored items');
+                  Logger.log('(bg.retrieveDiff) Item found,  will be removed from the stored items');
                   allItems.splice(removedItemIdx, 1);
                 } else {
                   Logger.warn('(bg.retrieveDiff) Could not find the item to archive in the stored items');
@@ -161,7 +160,7 @@ function retrieveDiff() {
                 break;
 
               default:
-                Logger.log(`(bg.retriveDiff) Status unknow, dont know how to deal with this : ${item.status}`);
+                Logger.log(`(bg.retriveDiff) Unknown item status: ${item.status}`);
                 break;
             }
           }
