@@ -80,22 +80,23 @@ if(browser.contextMenus.onShown) {
       );
 
       if(multipleTabsSelected && currentTabsAmongMultipleSelection) {
-        Logger.log("(background.onShown) multiple tabs selected and right-clicked one is one of them");
+        Logger.log("(background.onShown) multiple tabs selected, right-clicked one of them");
         ContextMenu.setState(ContextMenu.multipleTabSelection).then( () => {
           browser.contextMenus.refresh();
-        })
+        });
       } else {
-        // If only one tab clicked OR tab clicked is outside the several highlighted tabs, we'll only deal with this tab
+        // If only one tab clicked OR tab clicked is outside the several highlighted tabs,
+        // we'll only deal with this tab
         browser.storage.local.get("items").then( ({ items }) => {
           const containsItem = Items.contains( items, { url: url });
 
           if(containsItem) {
-            Logger.log(`(background.onShown) updating contextMenu for ${url} that IS in my list`);
+            Logger.log(`(background.onShown) update contextMenu for ${url} that IS in my list`);
             ContextMenu.setState( ContextMenu.pageAlreadyInPocket ).then( () => {
               browser.contextMenus.refresh();
             });
           } else {
-            Logger.log(`(background.onShown) updating contextMenu for ${url} that ISN'T in my list...yet`);
+            Logger.log(`(background.onShown) update contextMenu for ${url} that ISN'T in my list`);
             ContextMenu.setState( ContextMenu.pageNotInPocket ).then( () => {
               browser.contextMenus.refresh();
             });
@@ -114,10 +115,10 @@ if(browser.contextMenus.onShown) {
             const containsItem = Items.contains(items, { url: tab.url });
 
             if(containsItem) {
-              Logger.log(`(background.tabsOnUpdated) current tab is loading ${changeInfo.url} that IS in my list`);
+              Logger.log(`(background.tabsOnUpdated) current tab loading ${changeInfo.url} that IS in my list`);
               ContextMenu.setState(ContextMenu.pageAlreadyInPocket);
             } else {
-              Logger.log(`(background.tabsOnUpdated) current tab is loading ${changeInfo.url} that ISN'T in my list...yet`);
+              Logger.log(`(background.tabsOnUpdated) current tab loading ${changeInfo.url} that ISN'T in my list`);
               ContextMenu.setState(ContextMenu.pageNotInPocket);
             }
           });
@@ -135,10 +136,10 @@ if(browser.contextMenus.onShown) {
         const containsItem = Items.contains(items, { url: currentUrl });
 
         if(containsItem) {
-          Logger.log(`(background.tabsOnActivated) switching to a tab ${currentUrl} that IS in my list`);
+          Logger.log(`(background.tabsOnActivated) switch to a tab ${currentUrl} that IS in my list`);
           ContextMenu.setState(ContextMenu.pageAlreadyInPocket);
         } else {
-          Logger.log(`(background.tabsOnActivated) switching to a tab ${currentUrl} that ISN'T in my list...yet !`);
+          Logger.log(`(background.tabsOnActivated) switch to a tab ${currentUrl} that ISN'T in my list`);
           ContextMenu.setState(ContextMenu.pageNotInPocket);
         }
       });
