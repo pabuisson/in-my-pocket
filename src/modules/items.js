@@ -116,6 +116,40 @@ const Items = ( function() {
     });
   }
 
+  function setFavorite(itemId, action) {
+    Logger.log('(Items.setFavorite)');
+
+    browser.storage.local.get(['access_token', 'items']).then(({ access_token, items }) => {
+      Badge.startLoadingSpinner();
+      const requester = new PocketApiRequester(access_token);
+      const request = action === 'favorite' ?
+        requester.favorite(itemId) :
+        requester.unfavorite(itemId);
+
+      request.then(response => {
+        const parsedItems = Utility.parseJson(items) || [];
+
+        // Update item in parsedItems
+        const updatedItem = parsedItems.find(item => item.id == itemId);
+        updatedItem.fav = (action === 'favorite' ? 1 : 0);
+
+        // Save item list in storage and update badge count
+        browser.storage.local.set({ items: JSON.stringify(parsedItems) });
+
+        // Send a message back to the UI: favorited/unfavorited
+        const actionOver = `${action}d`;
+        browser.runtime.sendMessage({ action: actionOver, id: itemId });
+
+        // Display an indicator on the badge that everything went well
+        Badge.flashSuccess();
+      })
+      .catch(error => {
+        Logger.error(`(Items.setFavorite) Error for action ${action} : ${JSON.stringify(error)}`);
+        Badge.flashError();
+      });
+    });
+  }
+
   return {
     filter: function(rawItems, query) {
       const parsedItems = parseItems(rawItems);
@@ -190,6 +224,9 @@ const Items = ( function() {
 
     // ---------------
 
+    favoriteItem: function(itemId) { setFavorite(itemId, 'favorite') },
+    unfavoriteItem: function(itemId) { setFavorite(itemId, 'unfavorite') },
+
     addItem: function(itemsToAdd) {
       Logger.log('(Items.addItem)');
 
@@ -209,7 +246,7 @@ const Items = ( function() {
 
         request.then(response => {
           const parsedItems = Utility.parseJson(items) || [];
-          const addedItems = (response.item ? [response.item] : response.action_results);
+          const addedItems = (esponse.item ? [response.item] : response.action_results);
           const enrichedAddedItems  = enrichParsedItems(addedItems, newItemsToAdd);
 
           enrichedAddedItems.forEach(newItem => {

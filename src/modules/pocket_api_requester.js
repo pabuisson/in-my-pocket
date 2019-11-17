@@ -75,6 +75,36 @@ class PocketApiRequester {
     const request = new Request('POST', requestUrl, requestParams);
     return request.fetch();
   }
+
+  favorite(itemId) {
+    Logger.log('(PocketApiRequester.favorite)');
+    const requestUrl = 'https://getpocket.com/v3/send';
+    const requestParams = {
+      consumer_key: consumerKey,
+      access_token: this.accessToken,
+      actions: [
+        { action: 'favorite', item_id: itemId }
+      ]
+    };
+
+    const request = new Request('POST', requestUrl, requestParams);
+    return request.fetch();
+  }
+
+  unfavorite(itemId) {
+    Logger.log('(PocketApiRequester.unfavorite)');
+    const requestUrl = 'https://getpocket.com/v3/send';
+    const requestParams = {
+      consumer_key: consumerKey,
+      access_token: this.accessToken,
+      actions: [
+        { action: 'unfavorite', item_id: itemId }
+      ]
+    };
+
+    const request = new Request('POST', requestUrl, requestParams);
+    return request.fetch();
+  }
 }
 
 export default PocketApiRequester;

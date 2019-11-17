@@ -207,6 +207,12 @@ browser.runtime.onMessage.addListener( function(eventData) {
     case 'retrieve-items':
       retrieveItems(eventData.force);
       break;
+    case 'favorite':
+      Items.favoriteItem(eventData.id);
+      break;
+    case 'unfavorite':
+      Items.unfavoriteItem(eventData.id);
+      break;
     case 'add-item':
       Items.addItem([{ url: eventData.url, title: eventData.title, tabId: eventData.tabId }]);
       break;

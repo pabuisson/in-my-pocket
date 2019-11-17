@@ -60,6 +60,11 @@ const PopupItemList = ( function() {
 
     const actionContainer  = document.createElement('div');
 
+    const favoriteAction      = document.createElement('div');
+    const favoriteElement     = document.createElement('div');
+    const favoriteIconFont    = document.createElement('i');
+    const favoriteLoadElement = document.createElement('div');
+
     const tickAction       = document.createElement('div');
     const tickElement      = document.createElement('div');
     const tickIconFont     = document.createElement('i');
@@ -81,6 +86,11 @@ const PopupItemList = ( function() {
 
     actionContainer.className = 'actions-container';
 
+    favoriteAction.className = 'favorite-action';
+    favoriteIconFont.classList.add('icon', 'ion-star');
+    favoriteElement.className  = 'favorite';
+    favoriteLoadElement.classList.add('loader', 'hidden');
+
     tickAction.className = 'tick-action';
     tickIconFont.classList.add('icon', 'ion-checkmark');
     tickElement.className  = 'tick';
@@ -98,6 +108,10 @@ const PopupItemList = ( function() {
 
     urlContent.appendChild(document.createTextNode( formatUrl(item.resolved_url) ));
 
+    favoriteElement.appendChild(favoriteIconFont);
+    favoriteAction.appendChild(favoriteElement);
+    favoriteAction.appendChild(favoriteLoadElement);
+
     tickElement.appendChild(tickIconFont);
     tickAction.appendChild(tickElement);
     tickAction.appendChild(tickLoadElement);
@@ -106,6 +120,7 @@ const PopupItemList = ( function() {
     deleteAction.appendChild(trashElement);
     deleteAction.appendChild(trashLoadElement);
 
+    actionContainer.appendChild(favoriteAction);
     actionContainer.appendChild(tickAction);
     actionContainer.appendChild(deleteAction);
 
@@ -114,7 +129,8 @@ const PopupItemList = ( function() {
     liElement.appendChild(document.createElement('br'));
     liElement.appendChild(urlContent);
 
-    liElement.dataset.id = item.id;
+    liElement.dataset.id  = item.id;
+    liElement.dataset.fav = item.fav;
 
     return liElement;
   }
@@ -170,6 +186,9 @@ const PopupItemList = ( function() {
         } else if(Utility.matchesOrHasParent(ev.target, '.tick-action')) {
           Logger.log(`(PopupItemList.eventListener) Clicked .tick-action for item ${targetItemId}`);
           PopupUI.markAsRead(targetItemId);
+        } else if(Utility.matchesOrHasParent(ev.target, '.favorite-action')) {
+          Logger.log(`(PopupItemList.eventListener) Clicked .favorite-action for item ${targetItemId}`);
+          PopupUI.toggleFavorite(targetItemId);
         } else if(ev.target.matches('.title') || ev.target.matches('.url')) {
           const openInNewTab = true;
           switch(ev.button) {

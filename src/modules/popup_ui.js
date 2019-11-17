@@ -175,6 +175,8 @@ const PopupUI = ( function() {
           // First step: all removed items still visible must disappear
           PopupUI.fadeOutItem(...itemIdsToDelete);
 
+          // TODO: do I need to add a step to set faved/unfaved items?
+
           // Second step: prepare the insertion of all missing items
           // Generate a table of all predecessors, to use insertBefore/appendChild to build the DOM
           const predecessorTable = {};
@@ -217,6 +219,18 @@ const PopupUI = ( function() {
       return;
     },
 
+    toggleFavorite: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
+      const isFaved = item.dataset.fav;
+      item.querySelector('.favorite-action .favorite').classList.add(   'hidden');
+      item.querySelector('.favorite-action .loader'  ).classList.remove('hidden');
+
+      browser.runtime.sendMessage({
+        action: (isFaved === '1' ? 'unfavorite' : 'favorite'),
+        id: itemId
+      });
+    },
+
     markAsRead: (itemId) => {
       const item = document.querySelector(`.item[data-id='${itemId}']`);
       item.classList.add('removing');
@@ -244,6 +258,21 @@ const PopupUI = ( function() {
         Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list`);
         document.querySelector(`.item[data-id='${itemId}']`).classList.add('disappearing');
       });
+    },
+
+    favoriteItem: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
+      item.querySelector('.favorite-action .favorite').classList.remove('hidden');
+      item.querySelector('.favorite-action .loader'  ).classList.add('hidden');
+      item.classList.add('favorite');
+      item.dataset.fav = '1';
+    },
+    unfavoriteItem: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
+      item.querySelector('.favorite-action .favorite').classList.remove('hidden');
+      item.querySelector('.favorite-action .loader'  ).classList.add('hidden');
+      item.classList.remove('favorite');
+      item.dataset.fav = '0';
     }
   };
 })();
