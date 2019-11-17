@@ -51,14 +51,14 @@ function retrieveAll() {
     new Request('POST', 'https://getpocket.com/v3/get', requestParams)
       .fetch()
       .then(response => {
-        Logger.log(Object.keys( response.list ).length + ' items in the response');
+        Logger.log(Object.keys(response.list).length + ' items in the response');
 
         const itemsList = [];
         for(const itemId in response.list) {
-          const item = response.list[ itemId ];
+          const item = response.list[itemId];
 
           // https://getpocket.com/developer/docs/v3/retrieve
-          // given_url should be used if the user wants to view the item.
+          // given_url should be used if the user wants to view the item
           itemsList.push({
             id:             item.item_id,
             resolved_title: item.given_title || item.resolved_title,

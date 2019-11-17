@@ -87,6 +87,10 @@ html, body, .authenticated, .authentication {
     border-bottom: 1px solid #eee;
     height: 3.5rem;
 
+    &.favorite {
+      background-color: #fce158;
+    }
+
     span {
       display: inline-block;
       width: 95%;

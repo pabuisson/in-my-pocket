@@ -52,7 +52,7 @@ const PopupItemList = ( function() {
     itemsContainer.innerHTML = '';
   }
 
-  function buildItemElement( item ) {
+  function buildItemElement(item) {
     const liElement        = document.createElement('li');
     const faviconElement   = document.createElement('img');
     const titleContent     = document.createElement('span');
@@ -70,7 +70,11 @@ const PopupItemList = ( function() {
     const trashIconFont    = document.createElement('i');
     const trashLoadElement = document.createElement('div');
 
-    liElement.className      = 'item';
+    liElement.className = 'item';
+    if(item.fav == 1) {
+      liElement.classList.add('favorite');
+    }
+
     faviconElement.className = 'favicon';
     titleContent.className   = 'title';
     urlContent.className     = 'url';
@@ -78,37 +82,37 @@ const PopupItemList = ( function() {
     actionContainer.className = 'actions-container';
 
     tickAction.className = 'tick-action';
-    tickIconFont.classList.add( 'icon', 'ion-checkmark' );
+    tickIconFont.classList.add('icon', 'ion-checkmark');
     tickElement.className  = 'tick';
-    tickLoadElement.classList.add( 'loader', 'hidden' );
+    tickLoadElement.classList.add('loader', 'hidden');
 
     deleteAction.className = 'delete-action';
-    trashIconFont.classList.add( 'icon', 'ion-trash-b' );
+    trashIconFont.classList.add('icon', 'ion-trash-b');
     trashElement.className = 'trash';
-    trashLoadElement.classList.add( 'loader', 'hidden' );
+    trashLoadElement.classList.add('loader', 'hidden');
 
-    faviconElement.setAttribute('src', faviconUrl(item.resolved_url) );
+    faviconElement.setAttribute('src', faviconUrl(item.resolved_url));
 
-    titleContent.appendChild( faviconElement );
-    titleContent.appendChild( document.createTextNode( formatTitle(item.resolved_title) ));
+    titleContent.appendChild(faviconElement);
+    titleContent.appendChild(document.createTextNode( formatTitle(item.resolved_title) ));
 
-    urlContent.appendChild( document.createTextNode( formatUrl(item.resolved_url) ));
+    urlContent.appendChild(document.createTextNode( formatUrl(item.resolved_url) ));
 
-    tickElement.appendChild( tickIconFont );
-    tickAction.appendChild( tickElement );
-    tickAction.appendChild( tickLoadElement );
+    tickElement.appendChild(tickIconFont);
+    tickAction.appendChild(tickElement);
+    tickAction.appendChild(tickLoadElement);
 
-    trashElement.appendChild( trashIconFont );
-    deleteAction.appendChild( trashElement );
-    deleteAction.appendChild( trashLoadElement );
+    trashElement.appendChild(trashIconFont);
+    deleteAction.appendChild(trashElement);
+    deleteAction.appendChild(trashLoadElement);
 
-    actionContainer.appendChild( tickAction );
-    actionContainer.appendChild( deleteAction );
+    actionContainer.appendChild(tickAction);
+    actionContainer.appendChild(deleteAction);
 
-    liElement.appendChild( actionContainer );
-    liElement.appendChild( titleContent );
-    liElement.appendChild( document.createElement('br') );
-    liElement.appendChild( urlContent );
+    liElement.appendChild(actionContainer);
+    liElement.appendChild(titleContent);
+    liElement.appendChild(document.createElement('br'));
+    liElement.appendChild(urlContent);
 
     liElement.dataset.id = item.id;
 
