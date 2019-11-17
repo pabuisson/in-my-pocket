@@ -8,7 +8,7 @@ import Logger from '../modules/logger.js';
 import PageAction from '../modules/page_action.js';
 import Request from '../modules/request.js';
 import Utility from '../modules/utility.js';
-import { consumerKey } from '../modules/constants.js';
+import { consumerKey, PocketApiStatus } from '../modules/constants.js';
 
 // ----------------
 
@@ -93,12 +93,6 @@ function retrieveAll() {
 function retrieveDiff() {
   Logger.log('(bg.retrieveDiff)');
 
-  const pocketApiStatus = {
-    CREATED:  '0',
-    ARCHIVED: '1',
-    DELETED:  '2'
-  };
-
   browser.storage.local.get(['access_token', 'last_retrieve', 'items']).then(
     ({ access_token, last_retrieve, items }) => {
       const requestParams = {
@@ -115,13 +109,12 @@ function retrieveDiff() {
           Logger.log(Object.keys(response.list).length + ' items in the response');
           const allItems = Utility.parseJson(items) || [];
 
-          // TODO: Extract this into a dedicated method
           for(const itemId in response.list) {
             const item = response.list[ itemId ];
 
             switch(item.status) {
-              case pocketApiStatus.ARCHIVED:
-              case pocketApiStatus.DELETED:
+              case PocketApiStatus.ARCHIVED:
+              case PocketApiStatus.DELETED:
                 // Archived or deleted: we remove it from the items list
                 Logger.log(`(bg.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.resolved_title})`);
                 const removedItemIdx = allItems.findIndex(item => item.id === itemId);
@@ -135,7 +128,7 @@ function retrieveDiff() {
 
                 break;
 
-              case pocketApiStatus.CREATED:
+              case PocketApiStatus.CREATED:
                 const itemIdx = allItems.findIndex(item => item.id === itemId);
 
                 if(itemIdx >= 0) {

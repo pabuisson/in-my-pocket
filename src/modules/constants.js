@@ -10,6 +10,12 @@ const PocketError = {
   RATE_LIMIT:   'user_rate_limit_reached'
 };
 
+const PocketApiStatus = {
+  CREATED:  '0',
+  ARCHIVED: '1',
+  DELETED:  '2'
+};
+
 const PocketNotice = {
   ALREADY_IN_LIST: 'already_in_list'
 };
@@ -32,6 +38,7 @@ const parseIntBase = 10;
 
 export {
   KeyboardShortcuts,
+  PocketApiStatus,
   PocketError,
   PocketNotice,
   MouseButtons,
