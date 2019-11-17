@@ -18,9 +18,9 @@ function retrieveItems(force) {
   const intervalWithoutReload = 15*60;
   const currentTimestamp      = ( Date.now()/1000 | 0 );
 
-  browser.storage.local.get([ 'items', 'last_retrieve' ]).then( ({ items, last_retrieve }) => {
+  browser.storage.local.get(['items', 'last_retrieve']).then( ({ items, last_retrieve }) => {
     const timeSinceLastRetrieve = currentTimestamp - last_retrieve;
-    Logger.log( `(retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`);
+    Logger.log(`(retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`);
 
     if (force || !items || !last_retrieve) {
       // If force == true, we always reload the whole list
@@ -63,6 +63,7 @@ function retrieveAll() {
             id:             item.item_id,
             resolved_title: item.given_title || item.resolved_title,
             resolved_url:   item.given_url || item.resolved_url,
+            fav:            item.favorite,
             created_at:     item.time_added
           });
         }
@@ -72,7 +73,6 @@ function retrieveAll() {
         Badge.updateCount( itemsList );
 
         // Save timestamp to database as "last_retrieve", so that next time we just update the diff
-        // FIXME: use camelCase
         browser.storage.local.set({ last_retrieve: response.since });
 
         // Send a message back to the UI
@@ -134,10 +134,11 @@ function retrieveDiff() {
                 if(itemIdx >= 0) {
                   // Item already exists in the list (added by this current extension),
                   // we just update the missing fields
-                  Logger.log(`(bg.retriveDiff) Item ${itemId} (${item.resolved_title}) already present, will be updated`);
-                  allItems[ itemIdx ] = Object.assign(allItems[ itemIdx ], {
+                  Logger.log(`(bg.retriveDiff) Existing item ${itemId} (${item.resolved_title}) will be updated`);
+                  allItems[itemIdx] = Object.assign(allItems[itemIdx], {
                     resolved_title: item.given_title || item.resolved_title,
                     resolved_url:   item.given_url || item.resolved_url,
+                    fav:            item.favorite,
                     created_at:     item.time_added
                   });
                 } else {
@@ -147,6 +148,7 @@ function retrieveDiff() {
                     id:             item.item_id,
                     resolved_title: item.given_title || item.resolved_title,
                     resolved_url:   item.given_url || item.resolved_url,
+                    fav:            item.favorite,
                     created_at:     item.time_added
                   });
                 }
@@ -171,11 +173,10 @@ function retrieveDiff() {
           browser.runtime.sendMessage({ action: 'retrieved-items' });
           PageAction.redrawAllTabs();
         })
-        .catch( error => {
+        .catch(error => {
           // Even if something went wrong while retrieving diff, we still can display the current
           // items, so we send the `retrieved-items` event back to popup to build the item list
-          Logger.warn('(bg.retrieveDiff) something went wrong...');
-          Logger.warn(`(bg.retrieveDiff) ${ JSON.stringify(error) }`);
+          Logger.warn(`(bg.retrieveDiff) something went wrong: ${JSON.stringify(error)}`);
 
           // Send a message back to the UI and updates the tabs page actions
           browser.runtime.sendMessage({ action: 'retrieved-items' });

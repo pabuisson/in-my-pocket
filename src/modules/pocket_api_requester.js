@@ -9,7 +9,7 @@ import { consumerKey } from './constants.js';
 
 
 class PocketApiRequester {
-  constructor( accessToken ) {
+  constructor(accessToken) {
     this.accessToken = accessToken;
   }
 
@@ -23,7 +23,7 @@ class PocketApiRequester {
       title: item.title
     };
 
-    const request = new Request( 'POST', requestUrl, requestParams );
+    const request = new Request('POST', requestUrl, requestParams);
     return request.fetch();
   }
 
@@ -46,7 +46,7 @@ class PocketApiRequester {
     return request.fetch();
   }
 
-  archive( itemId ) {
+  archive(itemId) {
     Logger.log('(PocketApiRequester.archive)');
     const requestUrl = 'https://getpocket.com/v3/send';
     const requestParams = {
@@ -61,7 +61,7 @@ class PocketApiRequester {
     return request.fetch();
   }
 
-  delete( itemId ) {
+  delete(itemId) {
     Logger.log('(PocketApiRequester.delete)');
     const requestUrl = 'https://getpocket.com/v3/send';
     const requestParams = {
@@ -72,7 +72,7 @@ class PocketApiRequester {
       ]
     };
 
-    const request = new Request( 'POST', requestUrl, requestParams );
+    const request = new Request('POST', requestUrl, requestParams);
     return request.fetch();
   }
 }
