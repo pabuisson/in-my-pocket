@@ -246,7 +246,7 @@ const Items = ( function() {
 
         request.then(response => {
           const parsedItems = Utility.parseJson(items) || [];
-          const addedItems = (esponse.item ? [response.item] : response.action_results);
+          const addedItems = (response.item ? [response.item] : response.action_results);
           const enrichedAddedItems  = enrichParsedItems(addedItems, newItemsToAdd);
 
           enrichedAddedItems.forEach(newItem => {
