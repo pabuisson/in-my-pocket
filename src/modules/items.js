@@ -35,9 +35,9 @@ const Items = ( function() {
 
     const protocolsToRemove = concealedProtocols.join('|');
     const protocolsRemovalRegex = new RegExp(`(${protocolsToRemove})://(www.)?`, 'gi');
+    const lowerUrl = (item.resolved_url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
 
-    const lowerTitle = (item.resolved_title.replace(protocolsRemovalRegex, '') || '').toLowerCase();
-    const lowerUrl   = (item.resolved_url.replace(protocolsRemovalRegex, '')   || '').toLowerCase();
+    const lowerTitle = (item.resolved_title || '').toLowerCase();
 
     return lowerTitle.includes(textCriteria) || lowerUrl.includes(textCriteria);
   }
