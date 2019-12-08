@@ -57,9 +57,9 @@ const Items = ( function() {
 
   function matchFavedUnfaved(item, keepFaved, keepUnfaved) {
     if(keepFaved) {
-      return item.fav === true;
+      return item.fav === "1";
     } else if(keepUnfaved) {
-      return !item.fav;
+      return item.fav === "0" || !item.fav;
     }
 
     // No faved/unfaved criteria, should not filter the item out

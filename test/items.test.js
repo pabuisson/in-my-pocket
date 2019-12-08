@@ -3,7 +3,7 @@ import Items from '../src/modules/items.js';
 describe( 'Items.filter', () => {
   const matchingItem = { resolved_title: 'french', resolved_url: 'https://www.quelquepart.fr' };
   const otherItem = { resolved_title: 'other', resolved_url: 'https://www.somewherelse.com' };
-  const favedItem = { resolved_title: 'favorite', resolved_url: 'https://somefavoriteitem.com', fav: true };
+  const favedItem = { resolved_title: 'favorite', resolved_url: 'https://somefavoriteitem.com', fav: "1" };
   const items = JSON.stringify([ matchingItem, otherItem, favedItem ]);
 
   it('returns all items if query is empty', () => {
@@ -44,8 +44,7 @@ describe( 'Items.filter', () => {
     });
   });
 
-
-  context( 'query on url', () => {
+  context('query on url', () => {
     context( 'query on protocol', () => {
       it('www is not taken into account', () => {
         const query = 'www';
@@ -84,6 +83,17 @@ describe( 'Items.filter', () => {
       });
     });
   });
+
+    context('query on favorites', () => {
+      it('returns favorite items if query contains is:faved')
+      it('returns non-favorite items if query contains is:unfaved')
+    })
+
+    context('query on favorites + text', () => {
+      // `is:faved|unfaved` is excluded from the text query
+      // `is:faved|unfaved` + text apply both filters on title
+      // `is:faved|unfaved` + text apply both filters on url
+    })
 });
 
 
