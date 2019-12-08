@@ -13,11 +13,11 @@ const PopupTopFilter = ( function() {
 
   return {
     setValue: function(query) {
-      Logger.log('(PopupTopFilter.setValue) set search query to ' + query);
+      Logger.log(`(PopupTopFilter.setValue) set search query to ${query}`);
       filterItemsInput.value = query || '';
 
       // Show/Hide the clear search button depending on the restored query value
-      if(filterItemsInput.value == '') {
+      if(filterItemsInput.value === '') {
         clearSearchBoxButton.classList.add('hidden');
       } else {
         clearSearchBoxButton.classList.remove('hidden');
@@ -49,12 +49,12 @@ const PopupTopFilter = ( function() {
         // Save query to localStorage 'display' variable
         browser.storage.local.get('display').then( ({ display }) => {
           const parsedDisplay  = Utility.parseJson(display) || {};
-          const displayOptions = Object.assign( {}, parsedDisplay, { query: query });
+          const displayOptions = Object.assign({}, parsedDisplay, { query: query });
           browser.storage.local.set({ display: JSON.stringify(displayOptions) });
         });
 
         // Draw the items lists
-        Logger.log('(debouncedFilterEventHandler) will draw list with query=' + query);
+        Logger.log(`(debouncedFilterEventHandler) will draw list with query=${query}`);
         PopupUI.drawList({ page: 1, query: query });
         PopupMainLoader.disable(true);
       }, 200);

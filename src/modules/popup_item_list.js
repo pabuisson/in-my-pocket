@@ -21,7 +21,7 @@ const PopupItemList = ( function() {
     return isInitialized && areAllItemsBuilt;
   }
 
-  function faviconUrl( url ) {
+  function faviconUrl(url) {
     return "http://www.google.com/s2/favicons?domain_url=" + encodeURIComponent(url);
   }
 
@@ -37,7 +37,7 @@ const PopupItemList = ( function() {
   }
 
   // openInNewTab param allows us to force the behaviour (ctrl-click or middle-click)
-  function openLink( itemId, openInNewTab = false ) {
+  function openLink(itemId, openInNewTab = false) {
     browser.runtime.sendMessage({
       action: 'read-item',
       itemId: itemId,

@@ -113,7 +113,7 @@ const PopupUI = ( function() {
 
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth
-    // TODO: reduce duplication with drawList !?
+    // TODO: reduce duplication with updateList !?
     drawList: function(opts = {}) {
       Settings.init().then( function() {
         return Settings.get('perPage');
@@ -150,27 +150,27 @@ const PopupUI = ( function() {
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth
     // TODO: reduce duplication with drawList !?
-    updateList: function( opts = {} ) {
+    updateList: function(opts = {}) {
       Settings.init().then( function() {
-        return Settings.get( 'perPage' );
-      }).then( function( perPage ) {
+        return Settings.get('perPage');
+      }).then( function(perPage) {
         browser.storage.local.get([ 'items', 'display' ]).then( ({ items, display }) => {
-          const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
+          const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting;
           const query         = opts.query || parsedDisplay.query;
-          const pageToDisplay   = opts.page  || parsedDisplay.currentPage;
+          const pageToDisplay = opts.page  || parsedDisplay.currentPage;
 
           // Parse and filter the item list
-          const filteredItems    = Items.filter( items, query );
-          const itemsToRender    = Items.paginate( filteredItems, pageToDisplay, perPage );
-          const itemsToRenderIds = itemsToRender.map( item => item.id );
+          const filteredItems    = Items.filter(items, query);
+          const itemsToRender    = Items.paginate(filteredItems, pageToDisplay, perPage);
+          const itemsToRenderIds = itemsToRender.map(item => item.id);
 
           // Display the "no results" message or hide it
           togglePlaceholderVisibility(itemsToRender.length);
 
           // Rebuild all items
           const visibleItemsIds = PopupItemList.getVisibleItemsIds();
-          const itemIdsToKeep     = visibleItemsIds.filter( id => itemsToRenderIds.includes(id) );
-          const itemIdsToDelete   = visibleItemsIds.filter( id => !itemsToRenderIds.includes(id) );
+          const itemIdsToKeep     = visibleItemsIds.filter(id => itemsToRenderIds.includes(id));
+          const itemIdsToDelete   = visibleItemsIds.filter(id => !itemsToRenderIds.includes(id));
 
           // First step: all removed items still visible must disappear
           PopupUI.fadeOutItem(...itemIdsToDelete);
@@ -187,7 +187,7 @@ const PopupUI = ( function() {
               if(predecessorTable[nextVisibleItemId])
                 predecessorTable[nextVisibleItemId].push(itemToRender);
               else
-                predecessorTable[nextVisibleItemId] = [ itemToRender ];
+                predecessorTable[nextVisibleItemId] = [itemToRender];
             } else {
               nextVisibleItemId = itemIdsToKeep.shift() || 'last';
             }
