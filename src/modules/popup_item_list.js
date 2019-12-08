@@ -27,7 +27,7 @@ const PopupItemList = ( function() {
 
   function formatUrl(url) {
     const protocolsToRemove = concealedProtocols.join('|');
-    const removalRegex = new RegExp(`(${protocolsToRemove})://(www.)?`, 'gi');
+    const removalRegex = new RegExp(`^(${protocolsToRemove})://(www.)?`, 'gi');
 
     return url.replace(removalRegex, '');
   }

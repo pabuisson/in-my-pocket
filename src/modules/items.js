@@ -34,7 +34,7 @@ const Items = ( function() {
     const textCriteria = query.toLowerCase();
 
     const protocolsToRemove = concealedProtocols.join('|');
-    const protocolsRemovalRegex = new RegExp(`(${protocolsToRemove})://(www.)?`, 'gi');
+    const protocolsRemovalRegex = new RegExp(`^(${protocolsToRemove})://(www.)?`, 'gi');
     const lowerUrl = (item.resolved_url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
 
     const lowerTitle = (item.resolved_title || '').toLowerCase();
