@@ -30,16 +30,40 @@ const Items = ( function() {
     return parsedItems || [];
   }
 
+  // Query must be something like "a string" or "a string is:faved" or "a string is:unfaved"
   function matchQuery(item, query) {
-    const textCriteria = query.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+
+    const isFavedCriteria   = lowerQuery.includes('is:faved');
+    const isUnfavedCriteria = lowerQuery.includes('is:unfaved');
+    const textCriteria      = lowerQuery.replace(/is:(faved|unfaved)/, '');
+
+    return matchFavedUnfaved(item, isFavedCriteria, isUnfavedCriteria) &&
+      matchText(item, textCriteria);
+  }
+
+  function matchText(item, textToMatch) {
+    if(textToMatch === '')
+      return true
 
     const protocolsToRemove = concealedProtocols.join('|');
     const protocolsRemovalRegex = new RegExp(`^(${protocolsToRemove})://(www.)?`, 'gi');
-    const lowerUrl = (item.resolved_url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
 
+    const lowerUrl = (item.resolved_url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
     const lowerTitle = (item.resolved_title || '').toLowerCase();
 
-    return lowerTitle.includes(textCriteria) || lowerUrl.includes(textCriteria);
+    return lowerTitle.includes(textToMatch) || lowerUrl.includes(textToMatch);
+  }
+
+  function matchFavedUnfaved(item, keepFaved, keepUnfaved) {
+    if(keepFaved) {
+      return item.fav === true;
+    } else if(keepUnfaved) {
+      return !item.fav;
+    }
+
+    // No faved/unfaved criteria, should not filter the item out
+    return true;
   }
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module
@@ -161,14 +185,14 @@ const Items = ( function() {
       if(query == '' || !query) {
         filteredItems = parsedItems;
       } else {
-        filteredItems = parsedItems.filter( item => matchQuery(item, query) );
+        filteredItems = parsedItems.filter(item => matchQuery(item, query));
       }
 
       return filteredItems;
     },
 
-    contains: function( rawItems, searchedItem = {} ) {
-      if( !searchedItem.hasOwnProperty('id') && !searchedItem.hasOwnProperty('url') ) {
+    contains: function(rawItems, searchedItem = {}) {
+      if(!searchedItem.hasOwnProperty('id') && !searchedItem.hasOwnProperty('url')) {
         return false;
       }
 

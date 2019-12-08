@@ -3,42 +3,43 @@ import Items from '../src/modules/items.js';
 describe( 'Items.filter', () => {
   const matchingItem = { resolved_title: 'french', resolved_url: 'https://www.quelquepart.fr' };
   const otherItem = { resolved_title: 'other', resolved_url: 'https://www.somewherelse.com' };
-  const items = JSON.stringify([ matchingItem, otherItem ]);
+  const favedItem = { resolved_title: 'favorite', resolved_url: 'https://somefavoriteitem.com', fav: true };
+  const items = JSON.stringify([ matchingItem, otherItem, favedItem ]);
 
-  it( 'returns all items if query is empty', () => {
-    expect( Items.filter( items, '' ).length ).to.equal( 2 );
+  it('returns all items if query is empty', () => {
+    expect(Items.filter(items, '').length).to.equal(3);
   });
 
-  it( 'returns all items if query is undefined', () => {
-    expect( Items.filter( items, undefined ).length ).to.equal( 2 );
+  it('returns all items if query is undefined', () => {
+    expect(Items.filter(items, undefined).length).to.equal(3);
   });
 
-  it( 'returns all items if query is null', () => {
-    expect( Items.filter( items, null ).length ).to.equal( 2 );
+  it('returns all items if query is null', () => {
+    expect(Items.filter(items, null).length).to.equal(3);
   });
 
-  context( 'query on title', () => {
-    context( 'with same case', () => {
-      it( 'returns matching items', () => {
+  context('query on title', () => {
+    context('with same case', () => {
+      it('returns matching items', () => {
         const query = matchingItem.resolved_title;
-        expect( Items.filter( items, query ) ).to.deep.include( matchingItem );
+        expect(Items.filter(items, query)).to.deep.include(matchingItem);
       });
 
-      it( 'filters out non-matching items', () => {
+      it('filters out non-matching items', () => {
         const query = matchingItem.resolved_title;
-        expect( Items.filter( items, query ) ).not.to.include( otherItem );
+        expect(Items.filter(items, query)).not.to.include(otherItem);
       });
     });
 
-    context( 'with different case', () => {
-      it( 'returns matching items', () => {
+    context('with different case', () => {
+      it('returns matching items', () => {
         const query = matchingItem.resolved_title.toUpperCase();
-        expect( Items.filter( items, query ) ).to.deep.include( matchingItem );
+        expect(Items.filter(items, query)).to.deep.include(matchingItem);
       });
 
-      it( 'does not return non-matching items', () => {
+      it('does not return non-matching items', () => {
         const query = matchingItem.resolved_title;
-        expect( Items.filter( items, query ) ).not.to.include( otherItem );
+        expect(Items.filter(items, query)).not.to.include(otherItem);
       });
     });
   });
