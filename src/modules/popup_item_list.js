@@ -3,7 +3,7 @@
 import Logger  from '../modules/logger.js';
 import PopupUI from '../modules/popup_ui.js';
 import Utility from '../modules/utility.js';
-import { MouseButtons } from '../modules/constants.js';
+import { MouseButtons, concealedProtocols } from '../modules/constants.js';
 
 // ----------------
 
@@ -25,12 +25,9 @@ const PopupItemList = ( function() {
     return "http://www.google.com/s2/favicons?domain_url=" + encodeURIComponent(url);
   }
 
-  function formatUrl( url ) {
-    const protocolsToRemove = [
-      'http', 'https',
-      'ftp',  'ftps'
-    ].join('|');
-    const removalRegex = new RegExp('(' + protocolsToRemove + ')://(www.){0,1}', 'gi');
+  function formatUrl(url) {
+    const protocolsToRemove = concealedProtocols.join('|');
+    const removalRegex = new RegExp(`^(${protocolsToRemove})://(www.)?`, 'gi');
 
     return url.replace(removalRegex, '');
   }

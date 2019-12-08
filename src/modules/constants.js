@@ -36,6 +36,8 @@ const KeyboardShortcuts = {
 
 const parseIntBase = 10;
 
+const concealedProtocols = ['http', 'https', 'ftp', 'ftps'];
+
 export {
   KeyboardShortcuts,
   PocketApiStatus,
@@ -43,6 +45,7 @@ export {
   PocketNotice,
   MouseButtons,
   consumerKey,
-  parseIntBase
+  parseIntBase,
+  concealedProtocols
 };
 

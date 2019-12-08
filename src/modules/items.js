@@ -6,7 +6,7 @@ import PageAction from './page_action.js';
 import PocketApiRequester from './pocket_api_requester.js';
 import Settings from './settings.js';
 import Utility from './utility.js';
-import { PocketNotice } from './constants.js';
+import { PocketNotice, concealedProtocols } from './constants.js';
 
 
 // ---------------
@@ -30,13 +30,16 @@ const Items = ( function() {
     return parsedItems || [];
   }
 
-  // TODO: exclude the protocol
   function matchQuery(item, query) {
-    const lowerQuery = query.toLowerCase();
-    const lowerTitle   = (item.resolved_title || '').toLowerCase();
-    const lowerUrl     = (item.resolved_url   || '').toLowerCase();
+    const textCriteria = query.toLowerCase();
 
-    return lowerTitle.includes(lowerQuery) || lowerUrl.includes(lowerQuery);
+    const protocolsToRemove = concealedProtocols.join('|');
+    const protocolsRemovalRegex = new RegExp(`^(${protocolsToRemove})://(www.)?`, 'gi');
+    const lowerUrl = (item.resolved_url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
+
+    const lowerTitle = (item.resolved_title || '').toLowerCase();
+
+    return lowerTitle.includes(textCriteria) || lowerUrl.includes(textCriteria);
   }
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module
