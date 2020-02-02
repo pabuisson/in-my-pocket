@@ -36,7 +36,7 @@ const Items = ( function() {
 
     const isFavedCriteria   = lowerQuery.includes('is:faved');
     const isUnfavedCriteria = lowerQuery.includes('is:unfaved');
-    const textCriteria      = lowerQuery.replace(/is:(faved|unfaved)/, '');
+    const textCriteria      = lowerQuery.replace(/is:(faved|unfaved)/, '').trim();
 
     return matchFavedUnfaved(item, isFavedCriteria, isUnfavedCriteria) &&
       matchText(item, textCriteria);
