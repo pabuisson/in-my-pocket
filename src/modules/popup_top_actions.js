@@ -2,7 +2,9 @@
 
 import PopupMainLoader from './popup_main_loader.js';
 import PopupTopFilter from './popup_top_filter';
-import { FavoriteFilterState } from './constants.js'
+import PopupUI from './popup_ui';
+import Utility from './utility';
+import { FavoriteFilterState } from './constants';
 
 // ----------------
 
@@ -24,19 +26,32 @@ const PopupTopActions = ( function() {
       });
 
       filterFavoriteIcon.addEventListener('click', function() {
-        const currentFilter = filterItemsInput.value;
+        const previousQuery = filterItemsInput.value;
+        let newQuery = '';
         const currentFilterState = PopupTopFilter.getFavoriteFilterState();
 
         if(currentFilterState == FavoriteFilterState.ON) {
-          PopupTopFilter.setValue(currentFilter.replace('is:faved', 'is:unfaved').trim());
+          newQuery = previousQuery.replace('is:faved', 'is:unfaved').trim();
           filterFavoriteIcon.style.color = 'red';
         } else if(currentFilterState == FavoriteFilterState.OFF) {
-          PopupTopFilter.setValue(currentFilter.replace('is:unfaved', '').trim());
+          newQuery = previousQuery.replace('is:unfaved', '').trim();
           filterFavoriteIcon.style.color = 'grey';
         } else if(currentFilterState == FavoriteFilterState.UNSET) {
-          PopupTopFilter.setValue(`${currentFilter} is:faved`);
+          newQuery = `${previousQuery} is:faved`;
           filterFavoriteIcon.style.color = 'lime';
         }
+
+        // Set the new search query in the UI
+        PopupTopFilter.setValue(newQuery);
+
+        // Save query to localStorage 'display' variable
+        browser.storage.local.get('display').then( ({ display }) => {
+          const parsedDisplay  = Utility.parseJson(display) || {};
+          const displayOptions = Object.assign({}, parsedDisplay, { query: newQuery });
+          browser.storage.local.set({ display: JSON.stringify(displayOptions) });
+        });
+
+        PopupUI.drawList();
       });
 
       addCurrentPageButton.addEventListener('click', function() {

@@ -45,7 +45,6 @@ const PopupTopFilter = ( function() {
     setValue: function(query) {
       Logger.log(`(PopupTopFilter.setValue) set search query to ${query}`);
       filterItemsInput.value = query || '';
-      onFilterChanged();
 
       // Show/Hide the clear search button depending on the restored query value
       if(filterItemsInput.value === '') {
@@ -53,13 +52,12 @@ const PopupTopFilter = ( function() {
       } else {
         clearSearchBoxButton.classList.remove('hidden');
       }
-
     },
 
     focusSearchField: function() {
       setTimeout( function() {
         filterItemsInput.focus();
-      }, 200 );
+      }, 200);
     },
 
     setupEventListeners: function() {
