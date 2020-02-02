@@ -273,6 +273,10 @@ html, body, .authenticated, .authentication {
 
     &.random-item {
       font-weight: bold;
+    }
+
+    &.filter-faved {
+      position: relative;
       margin-right: 0.8rem;
     }
   }
