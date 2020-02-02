@@ -2,8 +2,8 @@ import Items from '../src/modules/items.js';
 
 describe( 'Items.filter', () => {
   const matchingItem = { resolved_title: 'french', resolved_url: 'https://www.quelquepart.fr' };
-  const otherItem = { resolved_title: 'other', resolved_url: 'https://www.somewherelse.com' };
-  const favedItem = { resolved_title: 'favorite', resolved_url: 'https://somefavoriteitem.com', fav: "1" };
+  const otherItem = { resolved_title: 'other',    resolved_url: 'https://www.somewherelse.com', fav: '0' };
+  const favedItem = { resolved_title: 'favorite', resolved_url: 'https://somefavoriteitem.com', fav: '1' };
   const items = JSON.stringify([ matchingItem, otherItem, favedItem ]);
 
   it('returns all items if query is empty', () => {
@@ -48,14 +48,16 @@ describe( 'Items.filter', () => {
     context( 'query on protocol', () => {
       it('www is not taken into account', () => {
         const query = 'www';
-        expect(Items.filter(items, query)).not.to.deep.include(matchingItem);
-        expect(Items.filter(items, query)).not.to.deep.include(otherItem);
+        const result = Items.filter(items, query);
+        expect(result).not.to.deep.include(matchingItem);
+        expect(result).not.to.deep.include(otherItem);
       });
 
       it('http is not taken into account', () => {
         const query = 'https';
-        expect(Items.filter(items, query)).not.to.deep.include(matchingItem);
-        expect(Items.filter(items, query)).not.to.deep.include(otherItem);
+        const result = Items.filter(items, query);
+        expect(result).not.to.deep.include(matchingItem);
+        expect(result).not.to.deep.include(otherItem);
       });
     });
 
@@ -85,19 +87,57 @@ describe( 'Items.filter', () => {
   });
 
     context('query on favorites', () => {
-      it('returns favorite items if query contains is:faved')
-      it('returns non-favorite items if query contains is:unfaved')
+      it('returns favorite items if query contains is:faved', () => {
+        const query = 'is:faved';
+        expect(Items.filter(items, query)).to.deep.include(favedItem);
+      });
+
+      it('does not return unfaved items if query contains is:faved', () => {
+        const query = 'is:faved';
+        const result = Items.filter(items, query);
+        expect(result).not.to.include(matchingItem);
+        expect(result).not.to.include(otherItem);
+      });
+
+      it('returns non-favorite items if query contains is:unfaved', () => {
+        const query = 'is:unfaved';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingItem);
+        expect(result).to.deep.include(otherItem);
+      });
+
+      it('does not return favorite items if query contains is:unfaved', () => {
+        const query = 'is:unfaved';
+        expect(Items.filter(items, query)).not.to.include(favedItem);
+      });
     })
 
     context('query on favorites + text', () => {
-      // `is:faved|unfaved` is excluded from the text query
-      // `is:faved|unfaved` + text apply both filters on title
-      // `is:faved|unfaved` + text apply both filters on url
+      const matchingTextAndFav = { resolved_title: 'matching text', resolved_url: 'https://favorite.com', fav: '1' };
+      const matchingTextNotFav = { resolved_title: 'matching text', resolved_url: 'https://favorite.com', fav: '0' };
+      const matchingFavNotText = { resolved_title: 'other text', resolved_url: 'https://other.com', fav: '1' }
+      const items = JSON.stringify([matchingTextAndFav, matchingTextNotFav, matchingFavNotText]);
+
+      it('returns items matching on title and favorited if query contains is:faved', () => {
+        const query = 'is:faved favorite';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextAndFav);
+        expect(result).not.to.include(matchingTextNotFav);
+        expect(result).not.to.include(matchingFavNotText);
+      });
+
+      it('returns items matching on url and favorited if query contains is:faved', () => {
+        const query = 'is:faved favorite.com';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextAndFav);
+        expect(result).not.to.include(matchingTextNotFav);
+        expect(result).not.to.include(matchingFavNotText);
+      });
     })
 });
 
 
-describe( 'Items.paginate', () => {
+describe('Items.paginate', () => {
   const item_1 = { resolved_title: 'item_1', resolved_url: 'www.site_1.com', created_at: new Date("2018-01-01 12:12").valueOf() };
   const item_2 = { resolved_title: 'item_2', resolved_url: 'www.site_2.com', created_at: new Date("2018-01-02 12:12").valueOf() };
   const item_3 = { resolved_title: 'item_3', resolved_url: 'www.site_3.com', created_at: new Date("2018-01-03 12:12").valueOf() };
