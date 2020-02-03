@@ -22,15 +22,6 @@ const PopupTopFilter = ( function() {
       clearSearchBoxButton.classList.add('hidden');
     }
 
-    const currentFilterState = PopupTopFilter.getFavoriteFilterState();
-    if(currentFilterState == FavoriteFilterState.ON) {
-      filterFavoriteIcon.style.color = '#12bc00';
-    } else if(currentFilterState == FavoriteFilterState.OFF) {
-      filterFavoriteIcon.style.color = '#d70022';
-    } else if(currentFilterState == FavoriteFilterState.UNSET) {
-      filterFavoriteIcon.style.color = 'grey';
-    }
-
     // Save query to localStorage 'display' variable
     browser.storage.local.get('display').then( ({ display }) => {
       const parsedDisplay  = Utility.parseJson(display) || {};
@@ -38,9 +29,10 @@ const PopupTopFilter = ( function() {
       browser.storage.local.set({ display: JSON.stringify(displayOptions) });
     });
 
-    // Draw the items lists
+    // Draw the items lists and update visual state
     Logger.log(`(onFilterChanged) will draw list with query=${query}`);
     PopupUI.drawList({ page: 1, query: query });
+    PopupTopFilter.updateFavoriteFilterIcon();
     PopupMainLoader.disable(true);
   }
 
@@ -61,6 +53,18 @@ const PopupTopFilter = ( function() {
         clearSearchBoxButton.classList.add('hidden');
       } else {
         clearSearchBoxButton.classList.remove('hidden');
+      }
+    },
+
+    updateFavoriteFilterIcon: function() {
+      const currentFilterState = PopupTopFilter.getFavoriteFilterState();
+      console.log(currentFilterState);
+      if(currentFilterState == FavoriteFilterState.ON) {
+        filterFavoriteIcon.style.color = '#12bc00';
+      } else if(currentFilterState == FavoriteFilterState.OFF) {
+        filterFavoriteIcon.style.color = '#d70022';
+      } else if(currentFilterState == FavoriteFilterState.UNSET) {
+        filterFavoriteIcon.style.color = 'grey';
       }
     },
 

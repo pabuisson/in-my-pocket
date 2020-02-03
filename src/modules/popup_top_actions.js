@@ -26,9 +26,9 @@ const PopupTopActions = ( function() {
       });
 
       filterFavoriteIcon.addEventListener('click', function() {
+        const currentFilterState = PopupTopFilter.getFavoriteFilterState();
         const previousQuery = filterItemsInput.value;
         let newQuery = '';
-        const currentFilterState = PopupTopFilter.getFavoriteFilterState();
 
         if(currentFilterState == FavoriteFilterState.ON) {
           newQuery = previousQuery.replace('is:faved', 'is:unfaved').trim();

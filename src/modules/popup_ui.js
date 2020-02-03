@@ -59,6 +59,7 @@ const PopupUI = ( function() {
 
       // Set initial filter value in the PopupUI and focus the field
       PopupTopFilter.setValue(displayOptions.query);
+      PopupTopFilter.updateFavoriteFilterIcon();
       PopupTopFilter.focusSearchField();
 
       // Updates display.displayedAt and page + query if they have been reset
