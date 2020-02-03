@@ -10,6 +10,7 @@ import { FavoriteFilterState } from './constants.js';
 
 const PopupTopFilter = ( function() {
   const filterItemsInput     = document.querySelector('.filter-items');
+  const filterFavoriteIcon   = document.querySelector('.filter-faved');
   const clearSearchBoxButton = document.querySelector('.clear-search-box');
 
   function onFilterChanged() {
@@ -19,6 +20,15 @@ const PopupTopFilter = ( function() {
       clearSearchBoxButton.classList.remove('hidden');
     } else {
       clearSearchBoxButton.classList.add('hidden');
+    }
+
+    const currentFilterState = PopupTopFilter.getFavoriteFilterState();
+    if(currentFilterState == FavoriteFilterState.ON) {
+      filterFavoriteIcon.style.color = '#12bc00';
+    } else if(currentFilterState == FavoriteFilterState.OFF) {
+      filterFavoriteIcon.style.color = '#d70022';
+    } else if(currentFilterState == FavoriteFilterState.UNSET) {
+      filterFavoriteIcon.style.color = 'grey';
     }
 
     // Save query to localStorage 'display' variable
