@@ -58,7 +58,7 @@ const PopupTopFilter = ( function() {
 
     updateFavoriteFilterIcon: function() {
       const currentFilterState = PopupTopFilter.getFavoriteFilterState();
-      currentFilterState.remove('on', 'off')
+      filterFavoriteIcon.classList.remove('on', 'off')
       if(currentFilterState == FavoriteFilterState.ON) {
         filterFavoriteIcon.classList.add('on')
         filterFavoriteIcon.classList.remove('off')

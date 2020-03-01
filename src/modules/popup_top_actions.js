@@ -36,8 +36,7 @@ const PopupTopActions = ( function() {
           filterFavoriteIcon.classList.remove('on')
         } else if(currentFilterState == FavoriteFilterState.OFF) {
           newQuery = previousQuery.replace('is:unfaved', '').trim();
-          filterFavoriteIcon.classList.remove('off')
-          filterFavoriteIcon.classList.remove('off')
+          filterFavoriteIcon.classList.remove('on', 'off')
         } else if(currentFilterState == FavoriteFilterState.UNSET) {
           newQuery = `${previousQuery} is:faved`;
           filterFavoriteIcon.classList.add('on')
