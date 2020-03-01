@@ -275,12 +275,40 @@ html, body, .authenticated, .authentication {
       font-weight: bold;
     }
 
+    // This icon is separated from the other "item lists" action
+    // hence a large right margin
     &.filter-faved {
+      position: relative;
+      margin-right: 2rem;
+
       &.on {
-        color: $ff-green-60;
+        .badge-on {
+          display: block;
+        }
       }
       &.off {
-        color: $pocket-red;
+        .badge-off {
+          display: block;
+        }
+      }
+
+      .badge-wrapper {
+        display: none;
+
+        position: absolute;
+        right: 0.2rem;
+        bottom: 0.2rem;
+
+        color: white;
+        border-radius: 50% 50%;
+        height: 1.0rem;
+        width: 1.0rem;
+        line-height: 1.0rem;
+        font-size: 0.9rem;
+        text-align: center;
+
+        &.badge-on { background-color: $ff-green-60; }
+        &.badge-off { background-color: $pocket-red; }
       }
     }
   }
@@ -288,7 +316,7 @@ html, body, .authenticated, .authentication {
   .filter-items-container {
     position: relative;
     flex: 1;
-    margin-right: 1.5rem;
+    margin-right: 0.2rem;
 
     .clear-search-box {
       position: absolute;
@@ -305,8 +333,8 @@ html, body, .authenticated, .authentication {
       padding: 0.4rem 1rem;
       height: 2rem;
 
-      background-color: transparentize( white, 0.3 );
-      border-radius: 2rem;
+      background-color: transparentize(white, 0.3);
+      border-radius: 1rem;
       border: 0px transparent;
       color: $ff-grey-80;
       font-size: 1.1rem;
