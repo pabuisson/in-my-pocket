@@ -53,7 +53,7 @@ const PopupTopActions = ( function() {
           browser.storage.local.set({ display: JSON.stringify(displayOptions) });
         });
 
-        PopupUI.drawList();
+        PopupUI.drawList({ page: 1, query: newQuery });
       });
 
       addCurrentPageButton.addEventListener('click', function() {
