@@ -83,15 +83,15 @@ const PopupItemList = ( function() {
 
     actionContainer.className = 'actions-container';
 
-    favoriteAction.className = 'favorite-action';
-    favoriteIconFont.classList.add('icon', 'ion-md-star');
-    favoriteElement.className  = 'favorite';
-    favoriteLoadElement.classList.add('loader', 'hidden');
-
     tickAction.className = 'tick-action';
     tickIconFont.classList.add('icon', 'ion-md-checkmark');
     tickElement.className  = 'tick';
     tickLoadElement.classList.add('loader', 'hidden');
+
+    favoriteAction.className = 'favorite-action';
+    favoriteIconFont.classList.add('icon', 'ion-md-star');
+    favoriteElement.className  = 'favorite';
+    favoriteLoadElement.classList.add('loader', 'hidden');
 
     deleteAction.className = 'delete-action';
     trashIconFont.classList.add('icon', 'ion-md-trash');
@@ -117,8 +117,8 @@ const PopupItemList = ( function() {
     deleteAction.appendChild(trashElement);
     deleteAction.appendChild(trashLoadElement);
 
-    actionContainer.appendChild(favoriteAction);
     actionContainer.appendChild(tickAction);
+    actionContainer.appendChild(favoriteAction);
     actionContainer.appendChild(deleteAction);
 
     liElement.appendChild(actionContainer);
