@@ -45,8 +45,8 @@ const PopupUI = ( function() {
     setupEventListeners();
 
     browser.storage.local.get('display').then(({ display }) => {
-      const currentTimestamp = ( Date.now() / 1000 | 0 );
-      const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
+      const currentTimestamp = (Date.now() / 1000 | 0);
+      const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting;
       const lastDisplay   = parsedDisplay.displayedAt;
 
       const displayOptions = Object.assign({}, parsedDisplay);
