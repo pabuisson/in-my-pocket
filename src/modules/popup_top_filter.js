@@ -58,13 +58,13 @@ const PopupTopFilter = ( function() {
 
     updateFavoriteFilterIcon: function() {
       const currentFilterState = PopupTopFilter.getFavoriteFilterState();
-      console.log(currentFilterState);
+      currentFilterState.remove('on', 'off')
       if(currentFilterState == FavoriteFilterState.ON) {
-        filterFavoriteIcon.style.color = '#12bc00';
+        filterFavoriteIcon.classList.add('on')
+        filterFavoriteIcon.classList.remove('off')
       } else if(currentFilterState == FavoriteFilterState.OFF) {
-        filterFavoriteIcon.style.color = '#d70022';
-      } else if(currentFilterState == FavoriteFilterState.UNSET) {
-        filterFavoriteIcon.style.color = 'grey';
+        filterFavoriteIcon.classList.add('off')
+        filterFavoriteIcon.classList.remove('on')
       }
     },
 

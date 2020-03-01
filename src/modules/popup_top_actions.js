@@ -32,13 +32,16 @@ const PopupTopActions = ( function() {
 
         if(currentFilterState == FavoriteFilterState.ON) {
           newQuery = previousQuery.replace('is:faved', 'is:unfaved').trim();
-          filterFavoriteIcon.style.color = '#d70022';
+          filterFavoriteIcon.classList.add('off')
+          filterFavoriteIcon.classList.remove('on')
         } else if(currentFilterState == FavoriteFilterState.OFF) {
           newQuery = previousQuery.replace('is:unfaved', '').trim();
-          filterFavoriteIcon.style.color = 'grey';
+          filterFavoriteIcon.classList.remove('off')
+          filterFavoriteIcon.classList.remove('off')
         } else if(currentFilterState == FavoriteFilterState.UNSET) {
           newQuery = `${previousQuery} is:faved`;
-          filterFavoriteIcon.style.color = '#12bc00';
+          filterFavoriteIcon.classList.add('on')
+          filterFavoriteIcon.classList.remove('off')
         }
 
         // Set the new search query in the UI

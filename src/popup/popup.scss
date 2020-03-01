@@ -276,8 +276,12 @@ html, body, .authenticated, .authentication {
     }
 
     &.filter-faved {
-      position: relative;
-      margin-right: 0.8rem;
+      &.on {
+        color: $ff-green-60;
+      }
+      &.off {
+        color: $pocket-red;
+      }
     }
   }
 
