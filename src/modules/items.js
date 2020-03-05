@@ -178,6 +178,15 @@ const Items = ( function() {
   }
 
   return {
+    formatPocketItemForStorage: function(itemFromApi) {
+      return {
+        resolved_title: itemFromApi.given_title || itemFromApi.resolved_title,
+        resolved_url:   itemFromApi.given_url || itemFromApi.resolved_url,
+        fav:            itemFromApi.favorite,
+        created_at:     itemFromApi.time_added
+      };
+    },
+
     filter: function(rawItems, query) {
       const parsedItems = parseItems(rawItems);
       let filteredItems = undefined;

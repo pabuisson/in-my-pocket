@@ -48,25 +48,16 @@ function retrieveAll() {
       detailType: 'simple',
     };
 
+    // https://getpocket.com/developer/docs/v3/retrieve
     new Request('POST', 'https://getpocket.com/v3/get', requestParams)
       .fetch()
       .then(response => {
         Logger.log(Object.keys(response.list).length + ' items in the response');
 
-        const itemsList = [];
-        for(const itemId in response.list) {
+        const itemsList = Object.keys(response.list).map(itemId => {
           const item = response.list[itemId];
-
-          // https://getpocket.com/developer/docs/v3/retrieve
-          // given_url should be used if the user wants to view the item
-          itemsList.push({
-            id:             item.item_id,
-            resolved_title: item.given_title || item.resolved_title,
-            resolved_url:   item.given_url || item.resolved_url,
-            fav:            item.favorite,
-            created_at:     item.time_added
-          });
-        }
+          return { id: item.item_id, ...Items.formatPocketItemForStorage(item) };
+        });
 
         // Save item list in storage and update badge count
         browser.storage.local.set({ items: JSON.stringify(itemsList) });
@@ -88,7 +79,6 @@ function retrieveAll() {
       });
   });
 }
-
 
 function retrieveDiff() {
   Logger.log('(bg.retrieveDiff)');
@@ -115,7 +105,6 @@ function retrieveDiff() {
             switch(item.status) {
               case PocketApiStatus.ARCHIVED:
               case PocketApiStatus.DELETED:
-                // Archived or deleted: we remove it from the items list
                 Logger.log(`(bg.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.resolved_title})`);
                 const removedItemIdx = allItems.findIndex(item => item.id === itemId);
 
@@ -125,32 +114,17 @@ function retrieveDiff() {
                 } else {
                   Logger.warn('(bg.retrieveDiff) Could not find the item to archive in the stored items');
                 }
-
                 break;
 
               case PocketApiStatus.CREATED:
                 const itemIdx = allItems.findIndex(item => item.id === itemId);
 
                 if(itemIdx >= 0) {
-                  // Item already exists in the list (added by this current extension),
-                  // we just update the missing fields
                   Logger.log(`(bg.retriveDiff) Existing item ${itemId} (${item.resolved_title}) will be updated`);
-                  allItems[itemIdx] = Object.assign(allItems[itemIdx], {
-                    resolved_title: item.given_title || item.resolved_title,
-                    resolved_url:   item.given_url || item.resolved_url,
-                    fav:            item.favorite,
-                    created_at:     item.time_added
-                  });
+                  allItems[itemIdx] = Object.assign(allItems[itemIdx], Items.formatPocketItemForStorage(item));
                 } else {
-                  // Item does not exist in the item list, we just add it
                   Logger.log(`(bg.retriveDiff) Add new item: ${itemId} (${item.resolved_title})`);
-                  allItems.push({
-                    id:             item.item_id,
-                    resolved_title: item.given_title || item.resolved_title,
-                    resolved_url:   item.given_url || item.resolved_url,
-                    fav:            item.favorite,
-                    created_at:     item.time_added
-                  });
+                  allItems.push({ id: item.item_id, ...Items.formatPocketItemForStorage(item) });
                 }
                 break;
 
