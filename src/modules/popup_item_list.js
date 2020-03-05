@@ -49,28 +49,70 @@ const PopupItemList = ( function() {
     itemsContainer.innerHTML = '';
   }
 
+  function buildFavoriteAction() {
+    const favoriteAction      = document.createElement('div');
+    const favoriteElement     = document.createElement('div');
+    const favoriteIconFont    = document.createElement('i');
+    const favoriteLoadElement = document.createElement('div');
+    favoriteAction.className = 'favorite-action';
+    favoriteIconFont.classList.add('icon', 'ion-md-star');
+    favoriteElement.className  = 'favorite';
+    favoriteLoadElement.classList.add('loader', 'hidden');
+    favoriteElement.appendChild(favoriteIconFont);
+    favoriteAction.appendChild(favoriteElement);
+    favoriteAction.appendChild(favoriteLoadElement);
+
+    return favoriteAction;
+  }
+
+  function buildTickAction() {
+    const tickAction       = document.createElement('div');
+    const tickElement      = document.createElement('div');
+    const tickIconFont     = document.createElement('i');
+    const tickLoadElement  = document.createElement('div');
+    tickAction.className = 'tick-action';
+    tickIconFont.classList.add('icon', 'ion-md-checkmark');
+    tickElement.className  = 'tick';
+    tickLoadElement.classList.add('loader', 'hidden');
+    tickElement.appendChild(tickIconFont);
+    tickAction.appendChild(tickElement);
+    tickAction.appendChild(tickLoadElement);
+
+    return tickAction;
+  }
+
+  function buildDeleteAction() {
+    const deleteAction     = document.createElement('div');
+    const trashElement     = document.createElement('div');
+    const trashIconFont    = document.createElement('i');
+    const trashLoadElement = document.createElement('div');
+    deleteAction.className = 'delete-action';
+    trashIconFont.classList.add('icon', 'ion-md-trash');
+    trashElement.className = 'trash';
+    trashLoadElement.classList.add('loader', 'hidden');
+    trashElement.appendChild(trashIconFont);
+    deleteAction.appendChild(trashElement);
+    deleteAction.appendChild(trashLoadElement);
+
+    return deleteAction;
+  }
+
+  function buildActionsContainer() {
+    const actionContainer  = document.createElement('div');
+    actionContainer.className = 'actions-container';
+
+    actionContainer.appendChild(buildTickAction());
+    actionContainer.appendChild(buildFavoriteAction());
+    actionContainer.appendChild(buildDeleteAction());
+
+    return actionContainer;
+  }
+
   function buildItemElement(item) {
     const liElement        = document.createElement('li');
     const faviconElement   = document.createElement('img');
     const titleContent     = document.createElement('span');
     const urlContent       = document.createElement('span');
-
-    const actionContainer  = document.createElement('div');
-
-    const favoriteAction      = document.createElement('div');
-    const favoriteElement     = document.createElement('div');
-    const favoriteIconFont    = document.createElement('i');
-    const favoriteLoadElement = document.createElement('div');
-
-    const tickAction       = document.createElement('div');
-    const tickElement      = document.createElement('div');
-    const tickIconFont     = document.createElement('i');
-    const tickLoadElement  = document.createElement('div');
-
-    const deleteAction     = document.createElement('div');
-    const trashElement     = document.createElement('div');
-    const trashIconFont    = document.createElement('i');
-    const trashLoadElement = document.createElement('div');
 
     liElement.className = 'item';
     if(item.fav == 1) {
@@ -81,23 +123,6 @@ const PopupItemList = ( function() {
     titleContent.className   = 'title';
     urlContent.className     = 'url';
 
-    actionContainer.className = 'actions-container';
-
-    tickAction.className = 'tick-action';
-    tickIconFont.classList.add('icon', 'ion-md-checkmark');
-    tickElement.className  = 'tick';
-    tickLoadElement.classList.add('loader', 'hidden');
-
-    favoriteAction.className = 'favorite-action';
-    favoriteIconFont.classList.add('icon', 'ion-md-star');
-    favoriteElement.className  = 'favorite';
-    favoriteLoadElement.classList.add('loader', 'hidden');
-
-    deleteAction.className = 'delete-action';
-    trashIconFont.classList.add('icon', 'ion-md-trash');
-    trashElement.className = 'trash';
-    trashLoadElement.classList.add('loader', 'hidden');
-
     faviconElement.setAttribute('src', faviconUrl(item.resolved_url));
 
     titleContent.appendChild(faviconElement);
@@ -105,23 +130,7 @@ const PopupItemList = ( function() {
 
     urlContent.appendChild(document.createTextNode( formatUrl(item.resolved_url) ));
 
-    favoriteElement.appendChild(favoriteIconFont);
-    favoriteAction.appendChild(favoriteElement);
-    favoriteAction.appendChild(favoriteLoadElement);
-
-    tickElement.appendChild(tickIconFont);
-    tickAction.appendChild(tickElement);
-    tickAction.appendChild(tickLoadElement);
-
-    trashElement.appendChild(trashIconFont);
-    deleteAction.appendChild(trashElement);
-    deleteAction.appendChild(trashLoadElement);
-
-    actionContainer.appendChild(tickAction);
-    actionContainer.appendChild(favoriteAction);
-    actionContainer.appendChild(deleteAction);
-
-    liElement.appendChild(actionContainer);
+    liElement.appendChild(buildActionsContainer());
     liElement.appendChild(titleContent);
     liElement.appendChild(document.createElement('br'));
     liElement.appendChild(urlContent);

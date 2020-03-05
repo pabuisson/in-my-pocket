@@ -44,7 +44,7 @@ const Items = ( function() {
 
   function matchText(item, textToMatch) {
     if(textToMatch === '')
-      return true
+      return true;
 
     const protocolsToRemove = concealedProtocols.join('|');
     const protocolsRemovalRegex = new RegExp(`^(${protocolsToRemove})://(www.)?`, 'gi');
@@ -251,8 +251,8 @@ const Items = ( function() {
 
     // ---------------
 
-    favoriteItem: function(itemId) { setFavorite(itemId, 'favorite') },
-    unfavoriteItem: function(itemId) { setFavorite(itemId, 'unfavorite') },
+    favoriteItem: function(itemId) { setFavorite(itemId, 'favorite'); },
+    unfavoriteItem: function(itemId) { setFavorite(itemId, 'unfavorite'); },
 
     addItem: function(itemsToAdd) {
       Logger.log('(Items.addItem)');
