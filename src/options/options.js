@@ -58,33 +58,36 @@ const UI = (function() {
     }, 2000 );
   }
 
+  function initializeUIFromSettings() {
+    // If user is not connected, hide the "disconnect" link
+    Authentication.isAuthenticated().catch( function() {
+      disconnectRow.style.display = 'none';
+    });
+
+    // Initialize the state of all UI elements
+    Settings.init().then(function() {
+      const settings = Settings.get();
+
+      displayBadgeCountCheckbox.checked    = settings['showBadge'];
+      displayPageActionCheckbox.checked    = settings['showPageAction'];
+      enableDebugModeCheckbox.checked      = settings['debugMode'];
+      openInNewTabCheckbox.checked         = settings['openInNewTab'];
+      archiveWhenOpenedCheckbox.checked    = settings['archiveWhenOpened'];
+      closeTabWhenAddedCheckbox.checked    = settings['closeTabWhenAdded'];
+      closeTabWhenReadCheckbox.checked     = settings['closeTabWhenRead'];
+      paginationPerPageSelector.value      = settings['perPage'] || '';
+      zoomLevelSelector.value              = settings['zoomLevel'];
+
+      keyboardOpenPopupShortcut.value      = settings['keyboardOpenPopup'];
+      keyboardToggleShortcut.value         = settings['keyboardToggle'];
+      keyboardOpenFirstItemShortcut.value  = settings['keyboardOpenFirstItem'];
+      keyboardOpenRandomItemShortcut.value = settings['keyboardOpenRandomItem'];
+    });
+  }
 
   return {
     setup: function() {
-      // If user is not connected, we hide the "disconnect" link
-      Authentication.isAuthenticated().catch( function() {
-        disconnectRow.style.display = 'none';
-      });
-
-      // Load the other settings values
-      Settings.init().then( function() {
-        const settings = Settings.get();
-
-        displayBadgeCountCheckbox.checked    = settings['showBadge'];
-        displayPageActionCheckbox.checked    = settings['showPageAction'];
-        enableDebugModeCheckbox.checked      = settings['debugMode'];
-        openInNewTabCheckbox.checked         = settings['openInNewTab'];
-        archiveWhenOpenedCheckbox.checked    = settings['archiveWhenOpened'];
-        closeTabWhenAddedCheckbox.checked    = settings['closeTabWhenAdded'];
-        closeTabWhenReadCheckbox.checked     = settings['closeTabWhenRead'];
-        paginationPerPageSelector.value      = settings['perPage'] || '';
-        zoomLevelSelector.value              = settings['zoomLevel'];
-
-        keyboardOpenPopupShortcut.value      = settings['keyboardOpenPopup'];
-        keyboardToggleShortcut.value         = settings['keyboardToggle'];
-        keyboardOpenFirstItemShortcut.value  = settings['keyboardOpenFirstItem'];
-        keyboardOpenRandomItemShortcut.value = settings['keyboardOpenRandomItem'];
-      });
+      initializeUIFromSettings();
 
       // Event: "Display count badge" checkbox
       displayBadgeCountCheckbox.addEventListener('change', function() {

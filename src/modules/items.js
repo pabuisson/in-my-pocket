@@ -46,7 +46,7 @@ const Items = ( function() {
 
   function matchText(item, textToMatch) {
     if(textToMatch === '')
-      return true
+      return true;
 
     const protocolsToRemove = concealedProtocols.join('|');
     // TODO: create the Regex only once, it never changes
@@ -181,6 +181,15 @@ const Items = ( function() {
   }
 
   return {
+    formatPocketItemForStorage: function(itemFromApi) {
+      return {
+        resolved_title: itemFromApi.given_title || itemFromApi.resolved_title,
+        resolved_url:   itemFromApi.given_url || itemFromApi.resolved_url,
+        fav:            itemFromApi.favorite,
+        created_at:     itemFromApi.time_added
+      };
+    },
+
     filter: function(rawItems, query) {
       const parsedItems = parseItems(rawItems);
       let filteredItems = undefined;
@@ -254,8 +263,8 @@ const Items = ( function() {
 
     // ---------------
 
-    favoriteItem: function(itemId) { setFavorite(itemId, 'favorite') },
-    unfavoriteItem: function(itemId) { setFavorite(itemId, 'unfavorite') },
+    favoriteItem: function(itemId) { setFavorite(itemId, 'favorite'); },
+    unfavoriteItem: function(itemId) { setFavorite(itemId, 'unfavorite'); },
 
     addItem: function(itemsToAdd) {
       Logger.log('(Items.addItem)');

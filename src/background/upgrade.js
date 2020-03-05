@@ -33,7 +33,7 @@ browser.runtime.onInstalled.addListener( details => {
 });
 
 
-browser.notifications.onClicked.addListener( notificationId => {
+browser.notifications.onClicked.addListener(notificationId => {
   switch(notificationId) {
     case installNotificationId:
       browser.notifications.clear( notificationId );
