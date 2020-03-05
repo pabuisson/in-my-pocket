@@ -15,8 +15,6 @@ const PopupTopActions = ( function() {
   const readRandomItemButton = document.querySelector('.random-item');
   const retrieveItemsButton  = document.querySelector('.retrieve-items');
   const filterFavoriteIcon   = document.querySelector('.filter-faved');
-  const filterFavoriteIconOn = document.querySelector('.filter-faved-on');
-  const filterFavoriteIconOff = document.querySelector('.filter-faved-off');
 
   return {
     setupEventListeners: function() {
@@ -32,15 +30,15 @@ const PopupTopActions = ( function() {
 
         if(currentFilterState == FavoriteFilterState.ON) {
           newQuery = previousQuery.replace('is:faved', 'is:unfaved').trim();
-          filterFavoriteIcon.classList.add('off')
-          filterFavoriteIcon.classList.remove('on')
+          filterFavoriteIcon.classList.add('off');
+          filterFavoriteIcon.classList.remove('on');
         } else if(currentFilterState == FavoriteFilterState.OFF) {
           newQuery = previousQuery.replace('is:unfaved', '').trim();
-          filterFavoriteIcon.classList.remove('on', 'off')
+          filterFavoriteIcon.classList.remove('on', 'off');
         } else if(currentFilterState == FavoriteFilterState.UNSET) {
           newQuery = `${previousQuery} is:faved`;
-          filterFavoriteIcon.classList.add('on')
-          filterFavoriteIcon.classList.remove('off')
+          filterFavoriteIcon.classList.add('on');
+          filterFavoriteIcon.classList.remove('off');
         }
 
         // Set the new search query in the UI
