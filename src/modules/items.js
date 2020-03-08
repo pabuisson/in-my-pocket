@@ -43,7 +43,7 @@ const Items = ( function() {
   }
 
   function matchText(item, textToMatch) {
-    if ( textToMatch === '' )
+    if (textToMatch === '')
       return true;
 
     const protocolsToRemove = concealedProtocols.join( '|' );
