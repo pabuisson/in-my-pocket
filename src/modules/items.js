@@ -43,26 +43,25 @@ const Items = ( function() {
   }
 
   function matchText(item, textToMatch) {
-    if(textToMatch === '')
+    if ( textToMatch === '' )
       return true;
 
-    const protocolsToRemove = concealedProtocols.join('|');
-    const protocolsRemovalRegex = new RegExp(`^(${protocolsToRemove})://(www.)?`, 'gi');
+    const protocolsToRemove = concealedProtocols.join( '|' );
+    const protocolsRemovalRegex = new RegExp( `^(${protocolsToRemove})://(www.)?`, 'gi' );
 
-    const lowerUrl = (item.resolved_url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
+    const lowerText = textToMatch.toLowerCase();
+    const lowerUrl = (item.resolved_url.replace( protocolsRemovalRegex, '' ) || '').toLowerCase();
     const lowerTitle = (item.resolved_title || '').toLowerCase();
 
-    return lowerTitle.includes(textToMatch) || lowerUrl.includes(textToMatch);
-  }
-    const lowerTitle   = (item.resolved_title || '').toLowerCase();
-    const lowerUrl     = (item.resolved_url   || '').toLowerCase();
-    const tags = item.tags.map((tag)=>{
-        return tag.toLowerCase();
-    });
+    const tags = item.tags.map( ( tag ) => {
+      return tag.toLowerCase();
+    } );
 
-    return lowerTitle.includes(lowerQuery) || lowerUrl.includes(lowerQuery) || tags.find((tag)=>{
-        return tag.includes(lowerQuery);
-    });
+    return lowerTitle.includes( lowerText ) || lowerUrl.includes( lowerText ) || tags.find( ( tag ) => {
+      return tag.includes( lowerText );
+    } );
+
+  }
   function matchFavedUnfaved(item, keepFaved, keepUnfaved) {
     if(keepFaved) {
       return item.fav === "1";
@@ -178,20 +177,25 @@ const Items = ( function() {
         // Display an indicator on the badge that everything went well
         Badge.flashSuccess();
       })
-      .catch(error => {
-        Logger.error(`(Items.setFavorite) Error for action ${action} : ${JSON.stringify(error)}`);
-        Badge.flashError();
-      });
+        .catch(error => {
+          Logger.error(`(Items.setFavorite) Error for action ${action} : ${JSON.stringify(error)}`);
+          Badge.flashError();
+        });
     });
   }
 
   return {
     formatPocketItemForStorage: function(itemFromApi) {
+      const tags = [];
+      for(const tag in itemFromApi.tags){
+        tags.push(tag);
+      }
       return {
         resolved_title: itemFromApi.given_title || itemFromApi.resolved_title,
         resolved_url:   itemFromApi.given_url || itemFromApi.resolved_url,
         fav:            itemFromApi.favorite,
-        created_at:     itemFromApi.time_added
+        created_at:     itemFromApi.time_added,
+        tags: tags,
       };
     },
 

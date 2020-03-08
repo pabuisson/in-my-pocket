@@ -58,25 +58,6 @@ function retrieveAll() {
           const item = response.list[itemId];
           return { id: item.item_id, ...Items.formatPocketItemForStorage(item) };
         });
-        ////
-        let itemsList = [];
-        for( let itemId in response.list ) {
-          let item = response.list[ itemId ];
-          let tags = [];
-          for(let tag in item.tags){
-              tags.push(tag);
-          }
-
-          // https://getpocket.com/developer/docs/v3/retrieve
-          // given_url should be used if the user wants to view the item.
-          itemsList.push({
-            id:             item.item_id,
-            resolved_title: item.given_title || item.resolved_title,
-            resolved_url:   item.given_url || item.resolved_url,
-            created_at:     item.time_added,
-            tags: tags
-          });
-        }
 
         // Save item list in storage and update badge count
         browser.storage.local.set({ items: JSON.stringify(itemsList) });
@@ -107,26 +88,10 @@ function retrieveDiff() {
       const requestParams = {
         consumer_key: consumerKey,
         access_token: access_token,
-        detailType: 'simple',
+        detailType: 'complete',
         state: 'all',
         since: last_retrieve
       };
-      /////
-  const pocketApiStatus = {
-    CREATED:  '0',
-    ARCHIVED: '1',
-    DELETED:  '2'
-  };
-
-  browser.storage.local.get(['access_token', 'last_retrieve', 'items']).then( ({ access_token, last_retrieve, items }) => {
-    let requestParams = {
-      consumer_key: consumerKey,
-      access_token: access_token,
-      detailType: 'complete',
-      state: 'all',
-      since: last_retrieve
-    };
-
       new Request('POST', 'https://getpocket.com/v3/get', requestParams)
         .fetch()
         .then( function(response) {
@@ -151,14 +116,7 @@ function retrieveDiff() {
                 break;
 
               case PocketApiStatus.CREATED:
-                const itemIdx = allItems.findIndex(item => item.id === itemId);
-            case pocketApiStatus.CREATED:
-              let itemIdx = allItems.findIndex( item => item.id === itemId );
-              let tags = [];
-              for(let tag in item.tags){
-                  tags.push(tag);
-              }
-
+                const itemIdx = allItems.findIndex( item => item.id === itemId );
                 if(itemIdx >= 0) {
                   Logger.log(`(bg.retriveDiff) Existing item ${itemId} (${item.resolved_title}) will be updated`);
                   allItems[itemIdx] = Object.assign(allItems[itemIdx], Items.formatPocketItemForStorage(item));
@@ -167,30 +125,6 @@ function retrieveDiff() {
                   allItems.push({ id: item.item_id, ...Items.formatPocketItemForStorage(item) });
                 }
                 break;
-                ////
-              if( itemIdx >= 0 ) {
-                // Item already exists in the list (added by this current extension),
-                // we just update the missing fields
-                Logger.log("(bg.retriveDiff) Item " + itemId + "(" + item.resolved_title + ") already present, will be updated" );
-                allItems[ itemIdx ] = Object.assign( allItems[ itemIdx ], {
-                  resolved_title: item.given_title || item.resolved_title,
-                  resolved_url:   item.given_url || item.resolved_url,
-                  created_at:     item.time_added,
-                  tags: tags
-                });
-              } else {
-                // Item does not exist in the item list, we just add it
-                Logger.log("(bg.retriveDiff) Add new item: " + itemId + ' (' + item.resolved_title + ')' );
-                allItems.push({
-                  id:             item.item_id,
-                  resolved_title: item.given_title || item.resolved_title,
-                  resolved_url:   item.given_url || item.resolved_url,
-                  created_at:     item.time_added,
-                  tags: tags
-                });
-              }
-              break;
-
               default:
                 Logger.log(`(bg.retriveDiff) Unknown item status: ${item.status}`);
                 break;
