@@ -6,41 +6,41 @@ import Logger from './logger.js';
 // -------------------------------------
 
 
-var Utility = ( function() {
-  let defaultTimeout = 1000;
+const Utility = (function() {
+  const defaultTimeout = 1000;
 
   return {
     debounce: ( func, delay ) => {
-      var timerId;
+      let timerId;
 
       return function() {
-        let context = this;
-        let args    = arguments;
+        const context = this;
+        const args    = arguments;
 
-        if( timerId ) {
-          clearTimeout( timerId);
+        if(timerId) {
+          clearTimeout(timerId);
         }
 
-        timerId = setTimeout( function() {
-          func.apply( context, args );
+        timerId = setTimeout(function() {
+          func.apply(context, args);
           timerId = null;
-        }, ( delay || defaultTimeout ) );
+        }, (delay || defaultTimeout) );
       };
     },
 
-    parseJson: ( json ) => {
+    parseJson: (json) => {
       let parsedResponse = undefined;
 
       try {
-        parsedResponse = JSON.parse( json );
-      } catch( e ) {
-        Logger.warn( 'Invalid JSON: could not parse ' + json );
+        parsedResponse = JSON.parse(json);
+      } catch(e) {
+        Logger.warn('Invalid JSON: could not parse ' + json);
       }
 
       return parsedResponse;
     },
 
-    isMajorOrMinorUpdate: ( previousVersion ) => {
+    isMajorOrMinorUpdate: (previousVersion) => {
       const currentVersion = browser.runtime.getManifest().version;
       const currentMinor   = currentVersion.split('.').slice( 0, 2 ).join('');
       const previousMinor  = previousVersion.split('.').slice( 0, 2 ).join('');
@@ -56,7 +56,7 @@ var Utility = ( function() {
     },
 
     hasParent: function(node, selector) {
-      return ( Utility.getParent(node, selector) ? true : false );
+      return (Utility.getParent(node, selector) ? true : false);
     },
 
     matchesOrHasParent: function(node, selector) {

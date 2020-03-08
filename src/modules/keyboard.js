@@ -48,7 +48,7 @@ const Keyboard = ( function() {
     // NOTE: technically, Firefox accepts 2-modifiers keyboard shortcuts, but not for every version
     //       we won't be supporting this kind of shortcuts for the moment (Ctrl-Alt-A for instance)
     isValidCombination: function(ev) {
-      const hasOnlyOneBaseModifier = [ev.altKey, ev.ctrlKey].filter(i=>i).length == 1;
+      const hasOnlyOneBaseModifier = [ev.altKey, ev.ctrlKey].filter(i=>i).length === 1;
       const isValidMainKey = isValidKey(ev);
       return hasOnlyOneBaseModifier && isValidMainKey;
     }

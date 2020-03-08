@@ -4,6 +4,7 @@ import Logger   from './logger.js';
 import PopupUI  from './popup_ui.js';
 import Settings from './settings.js';
 import Utility  from './utility.js';
+import { parseIntBase } from './constants.js';
 
 // ---------------
 
@@ -36,7 +37,7 @@ const PopupPagination = ( function() {
   }
 
   function changePageEventListener(event) {
-    const pageToLoad = parseInt(event.target.value);
+    const pageToLoad = parseInt(event.target.value, parseIntBase);
 
     Logger.log(`(PopupPagination) Load page ${pageToLoad}`);
     PopupUI.drawList({ page: pageToLoad });

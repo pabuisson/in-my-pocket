@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="584px" height="584px" viewBox="0 0 584 584" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>Artboard theme dark</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#0E2FD0" stop-opacity="0.5" offset="0%"></stop>
+            <stop stop-color="#000000" stop-opacity="0.5" offset="100%"></stop>
+        </linearGradient>
+        <path d="M302.541644,-37.4648104 L443.416478,103.410024 L443.416478,103.410024 L443.557115,609.065472 C443.558651,614.588319 439.082743,619.066717 433.559896,619.068253 C430.906768,619.068991 428.362092,618.015366 426.486047,616.139321 L294.782624,484.435898 C290.877381,480.530655 284.545731,480.530655 280.640488,484.435898 L165.151236,599.92515 C161.245993,603.830393 154.914344,603.830393 151.009101,599.92515 C149.139855,598.055904 148.086801,595.522557 148.0802,592.879052 L146.859644,104.075054 L146.859644,104.075054 L288.399508,-37.4648104 C292.304751,-41.3700533 298.636401,-41.3700533 302.541644,-37.4648104 Z" id="path-2"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard-theme-dark" transform="translate(-56.000000, -55.000000)">
+            <path d="M605,95 L605,605 L95,605 L95,95 L605,95 Z" id="Polygon" stroke="#E5E5E5" stroke-width="80" fill="#E5E5E5" stroke-linejoin="round" transform="translate(350.000000, 350.000000) rotate(-180.000000) translate(-350.000000, -350.000000) "></path>
+            <mask id="mask-3" fill="white">
+                <use xlink:href="#path-2"></use>
+            </mask>
+            <g id="Rectangle" transform="translate(295.211738, 294.340614) rotate(-45.000000) translate(-295.211738, -294.340614) ">
+                <use fill="#0C74E4" xlink:href="#path-2"></use>
+                <use fill-opacity="0.4" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+            </g>
+        </g>
+    </g>
+</svg>
