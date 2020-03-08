@@ -6,25 +6,25 @@ import Logger from './logger.js';
 // -------------------------------------
 
 
-const Utility = (function() {
+const Utility = (function () {
   const defaultTimeout = 1000;
 
   return {
-    debounce: ( func, delay ) => {
+    debounce: (func, delay) => {
       let timerId;
 
-      return function() {
+      return function () {
         const context = this;
-        const args    = arguments;
+        const args = arguments;
 
-        if(timerId) {
+        if (timerId) {
           clearTimeout(timerId);
         }
 
-        timerId = setTimeout(function() {
+        timerId = setTimeout(function () {
           func.apply(context, args);
           timerId = null;
-        }, (delay || defaultTimeout) );
+        }, (delay || defaultTimeout));
       };
     },
 
@@ -33,7 +33,7 @@ const Utility = (function() {
 
       try {
         parsedResponse = JSON.parse(json);
-      } catch(e) {
+      } catch (e) {
         Logger.warn('Invalid JSON: could not parse ' + json);
       }
 
@@ -42,26 +42,53 @@ const Utility = (function() {
 
     isMajorOrMinorUpdate: (previousVersion) => {
       const currentVersion = browser.runtime.getManifest().version;
-      const currentMinor   = currentVersion.split('.').slice( 0, 2 ).join('');
-      const previousMinor  = previousVersion.split('.').slice( 0, 2 ).join('');
+      const currentMinor = currentVersion.split('.').slice(0, 2).join('');
+      const previousMinor = previousVersion.split('.').slice(0, 2).join('');
 
       return currentMinor != previousMinor;
     },
 
-    getParent: function(node, selector) {
-      while(node && !node.matches(selector))
+    getParent: function (node, selector) {
+      while (node && !node.matches(selector))
         node = node.parentElement;
 
       return node;
     },
 
-    hasParent: function(node, selector) {
+    hasParent: function (node, selector) {
       return (Utility.getParent(node, selector) ? true : false);
     },
 
-    matchesOrHasParent: function(node, selector) {
+    matchesOrHasParent: function (node, selector) {
       return node.matches(selector) || Utility.hasParent(node, selector);
+    },
+
+    getQuery(url) {
+      if (url.startsWith('about:reader?'))
+        return {url: decodeURIComponent(url.replace('about:reader?url=', ''))};
+      if (url.startsWith('https://app.getpocket.com/read/'))
+        return {id: url.replace('https://app.getpocket.com/read/', '')};
+      // is there still a way to use old webapp? if not it's unnecessary
+      if (url.startsWith('https://getpocket.com/a/read/'))
+        return {id: url.replace('https://getpocket.com/a/read/', '')};
+      return {url: url};
+    },
+
+    getPossibleUrls(item) {
+      return [
+        item.url,
+        'about:reader?url=' + encodeURIComponent(item.url),
+        'https://app.getpocket.com/read/' + item.url,
+        'https://app.getpocket.com/read/' + item.id,
+        // is there still a way to use old webapp? if not it's unnecessary
+        'https://getpocket.com/a/read/' + item.url,
+        'https://getpocket.com/a/read/' + item.id,
+      ];
+
+
     }
+
+
   };
 })();
 
