@@ -287,7 +287,6 @@ const Items = (function () {
       });
 
       Logger.log('(Items.addItem)');
-      Badge.startLoadingSpinner();
 
       browser.storage.local.get(['access_token', 'items']).then(({access_token, items}) => {
         const newItemsToAdd = itemsToAdd.filter(item => !Items.contains(items, {url: item.url}));
