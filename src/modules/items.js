@@ -6,25 +6,25 @@ import PageAction from './page_action.js';
 import PocketApiRequester from './pocket_api_requester.js';
 import Settings from './settings.js';
 import Utility from './utility.js';
-import { PocketNotice, concealedProtocols } from './constants.js';
+import {PocketNotice, concealedProtocols} from './constants.js';
 
 
 // ---------------
 
 
-const Items = ( function() {
+const Items = (function () {
   let currentChecksum = null;
-  let parsedItems     = null;
+  let parsedItems = null;
 
   function parseItems(rawItems) {
     const rawItemsChecksum = rawItems ? rawItems.length : 0;
     Logger.log(`(Items.parseItems) checksum: ${currentChecksum} ; new: ${rawItemsChecksum}`);
 
-    if( rawItemsChecksum != currentChecksum ) {
+    if (rawItemsChecksum != currentChecksum) {
       Logger.log('(Items.parsedItems) checksum not defined, parse those items for the first time');
 
       currentChecksum = rawItemsChecksum;
-      parsedItems = Utility.parseJson( rawItems );
+      parsedItems = Utility.parseJson(rawItems);
     }
 
     return parsedItems || [];
@@ -34,16 +34,16 @@ const Items = ( function() {
   function matchQuery(item, query) {
     const lowerQuery = query.toLowerCase();
 
-    const isFavedCriteria   = lowerQuery.includes('is:faved');
+    const isFavedCriteria = lowerQuery.includes('is:faved');
     const isUnfavedCriteria = lowerQuery.includes('is:unfaved');
-    const textCriteria      = lowerQuery.replace(/is:(faved|unfaved)/, '').trim();
+    const textCriteria = lowerQuery.replace(/is:(faved|unfaved)/, '').trim();
 
     return matchFavedUnfaved(item, isFavedCriteria, isUnfavedCriteria) &&
       matchText(item, textCriteria);
   }
 
   function matchText(item, textToMatch) {
-    if(textToMatch === '')
+    if (textToMatch === '')
       return true;
 
     const protocolsToRemove = concealedProtocols.join('|');
@@ -56,9 +56,9 @@ const Items = ( function() {
   }
 
   function matchFavedUnfaved(item, keepFaved, keepUnfaved) {
-    if(keepFaved) {
+    if (keepFaved) {
       return item.fav === "1";
-    } else if(keepUnfaved) {
+    } else if (keepUnfaved) {
       return item.fav === "0" || !item.fav;
     }
 
@@ -68,41 +68,41 @@ const Items = ( function() {
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module
   function removeItem(itemId, method, tabId) {
-    Logger.log('(Items.removeItem) id to remove: ' + itemId );
+    Logger.log('(Items.removeItem) id to remove: ' + itemId);
     Badge.startLoadingSpinner();
 
-    browser.storage.local.get([ 'access_token', 'items' ]).then( ({ access_token, items }) => {
+    browser.storage.local.get(['access_token', 'items']).then(({access_token, items}) => {
       const apiRequester = new PocketApiRequester(access_token);
       const callbackAction = method == 'archive' ? 'marked-as-read' : 'deleted';
       const removalPromise = method == 'archive' ? apiRequester.archive(itemId) : apiRequester.delete(itemId);
 
       removalPromise.then(response => {
-        const parsedItems    = Utility.parseJson(items) || [];
-        const removedItemIdx = parsedItems.findIndex( item => item.id === itemId );
-        const removedItem    = parsedItems[removedItemIdx];
+        const parsedItems = Utility.parseJson(items) || [];
+        const removedItemIdx = parsedItems.findIndex(item => item.id === itemId);
+        const removedItem = parsedItems[removedItemIdx];
 
-        if(removedItemIdx >= 0) {
+        if (removedItemIdx >= 0) {
           Logger.log(`(Items.removeItem) item ${itemId} has been found and removed`);
 
           // Remove the archived item from the list and save list in storage
           parsedItems.splice(removedItemIdx, 1);
-          browser.storage.local.set({ items: JSON.stringify(parsedItems) });
+          browser.storage.local.set({items: JSON.stringify(parsedItems)});
 
           // Send a message back to the UI
-          browser.runtime.sendMessage({ action: callbackAction, id: itemId });
+          browser.runtime.sendMessage({action: callbackAction, id: itemId});
 
           // Display an indicator on the badge that everything went well and update badge count
-          Badge.flashSuccess().then( () => {
+          Badge.flashSuccess().then(() => {
             // Close the current tab if setting closeTabWhenAdded is "on"
             // and if its url matches the deleted item
-            if(tabId) {
+            if (tabId) {
               browser.tabs.get(tabId).then(currentTab => {
-                if(currentTab.url == removedItem.resolved_url) {
-                  Settings.init().then( () => {
+                if (currentTab.url == removedItem.resolved_url) {
+                  Settings.init().then(() => {
                     const closeTabWhenRead = Settings.get('closeTabWhenRead');
-                    if(closeTabWhenRead) {
+                    if (closeTabWhenRead) {
                       Logger.log('(Items.removeItem) automatically close tab');
-                      setTimeout( () => {
+                      setTimeout(() => {
                         browser.tabs.remove(currentTab.id);
                       }, 200);
                     }
@@ -113,21 +113,12 @@ const Items = ( function() {
 
             // Disable page actions for removed items
             Logger.log('(Items.removeItem) item removed, update matching pageActions');
-            browser.tabs.query({ url: removedItem.resolved_url }).then(tabs => {
-              const tabIds = tabs.map(tab => tab.id);
-              PageAction.drawDisabled(...tabIds);
-            });
-            browser.tabs.query({ url: 'https://app.getpocket.com/read/' + removedItem.id }).then( (tabs) => {
-              for(const tab of tabs) {
-                Logger.log('(Items.removeItem) draw disabled page action for ' + tab.url);
-                PageAction.drawDisabled(tab.id);
-              }
-            });
-            browser.tabs.query({ url: 'https://getpocket.com/a/read/' + removedItem.id }).then( (tabs) => {
-              for(const tab of tabs) {
-                Logger.log('(Items.removeItem) draw disabled page action for ' + tab.url);
-                PageAction.drawDisabled(tab.id);
-              }
+            const urlsToCheck = Utility.getPossibleUrls(removedItem.resolved_url);
+            urlsToCheck.forEach((url)=>{
+              browser.tabs.query({url: url}).then(tabs => {
+                const tabIds = tabs.map(tab => tab.id);
+                PageAction.drawDisabled(...tabIds);
+              });
             });
           });
         } else {
@@ -146,7 +137,7 @@ const Items = ( function() {
   // parsedItems = items returned by Pocket API
   function enrichParsedItems(parsedItems, rawItems) {
     return parsedItems.map(parsedItem => {
-      if(!parsedItem.title) {
+      if (!parsedItem.title) {
         const rawItem = rawItems.find(item => parsedItem.given_url == item.url);
         parsedItem.title = rawItem ? rawItem.title : '—';
       }
@@ -158,7 +149,7 @@ const Items = ( function() {
   function setFavorite(itemId, action) {
     Logger.log('(Items.setFavorite)');
 
-    browser.storage.local.get(['access_token', 'items']).then(({ access_token, items }) => {
+    browser.storage.local.get(['access_token', 'items']).then(({access_token, items}) => {
       Badge.startLoadingSpinner();
       const requester = new PocketApiRequester(access_token);
       const request = action === 'favorite' ?
@@ -173,37 +164,37 @@ const Items = ( function() {
         updatedItem.fav = (action === 'favorite' ? 1 : 0);
 
         // Save item list in storage and update badge count
-        browser.storage.local.set({ items: JSON.stringify(parsedItems) });
+        browser.storage.local.set({items: JSON.stringify(parsedItems)});
 
         // Send a message back to the UI: favorited/unfavorited
         const actionOver = `${action}d`;
-        browser.runtime.sendMessage({ action: actionOver, id: itemId });
+        browser.runtime.sendMessage({action: actionOver, id: itemId});
 
         // Display an indicator on the badge that everything went well
         Badge.flashSuccess();
       })
-      .catch(error => {
-        Logger.error(`(Items.setFavorite) Error for action ${action} : ${JSON.stringify(error)}`);
-        Badge.flashError();
-      });
+        .catch(error => {
+          Logger.error(`(Items.setFavorite) Error for action ${action} : ${JSON.stringify(error)}`);
+          Badge.flashError();
+        });
     });
   }
 
   return {
-    formatPocketItemForStorage: function(itemFromApi) {
+    formatPocketItemForStorage: function (itemFromApi) {
       return {
         resolved_title: itemFromApi.given_title || itemFromApi.resolved_title,
-        resolved_url:   itemFromApi.given_url || itemFromApi.resolved_url,
-        fav:            itemFromApi.favorite,
-        created_at:     itemFromApi.time_added
+        resolved_url: itemFromApi.given_url || itemFromApi.resolved_url,
+        fav: itemFromApi.favorite,
+        created_at: itemFromApi.time_added
       };
     },
 
-    filter: function(rawItems, query) {
+    filter: function (rawItems, query) {
       const parsedItems = parseItems(rawItems);
       let filteredItems = undefined;
 
-      if(query == '' || !query) {
+      if (query == '' || !query) {
         filteredItems = parsedItems;
       } else {
         filteredItems = parsedItems.filter(item => matchQuery(item, query));
@@ -212,37 +203,45 @@ const Items = ( function() {
       return filteredItems;
     },
 
-    contains: function(rawItems, searchedItem = {}) {
-      if(!searchedItem.hasOwnProperty('id') && !searchedItem.hasOwnProperty('url')) {
+    contains: function (rawItems, searchedItem = {}) {
+      if (!searchedItem.hasOwnProperty('id') && !searchedItem.hasOwnProperty('url')) {
         return false;
       }
 
-      const id  = searchedItem.id;
+      const id = searchedItem.id;
       const url = searchedItem.url;
       const parsedItems = parseItems(rawItems);
 
-      return parsedItems.some( item => {
+      return parsedItems.some(item => {
         let itemMatching = false;
-        if(id)  { itemMatching = itemMatching || item.id == id; }
-        if(url) { itemMatching = itemMatching || item.resolved_url == url; }
+        if (id) {
+          itemMatching = itemMatching || item.id == id;
+        }
+        if (url) {
+          itemMatching = itemMatching || item.resolved_url == url;
+        }
 
         return itemMatching;
       });
     },
 
-    find: function(rawItems, searchedItem = {}) {
-      if( !searchedItem.hasOwnProperty('id') && !searchedItem.hasOwnProperty('url') ) {
+    find: function (rawItems, searchedItem = {}) {
+      if (!searchedItem.hasOwnProperty('id') && !searchedItem.hasOwnProperty('url')) {
         return null;
       }
 
-      const id  = searchedItem.id;
+      const id = searchedItem.id;
       const url = searchedItem.url;
       const parsedItems = parseItems(rawItems || []);
 
-      return parsedItems.find( item => {
+      return parsedItems.find(item => {
         let itemMatching = false;
-        if(id)  { itemMatching = itemMatching || item.id == id; }
-        if(url) { itemMatching = itemMatching || item.resolved_url == url; }
+        if (id) {
+          itemMatching = itemMatching || item.id == id;
+        }
+        if (url) {
+          itemMatching = itemMatching || item.resolved_url == url;
+        }
 
         return itemMatching;
       });
@@ -250,21 +249,21 @@ const Items = ( function() {
 
     // TODO: I call both filter and paginate most of the time...but for consistency, I should
     //       call paginate with raw items as well?
-    paginate: function(parsedItems, page, perPage) {
+    paginate: function (parsedItems, page, perPage) {
       const itemsCount = parsedItems.length;
-      const sortedItems = parsedItems.sort( (a, b) => b.created_at - a.created_at );
+      const sortedItems = parsedItems.sort((a, b) => b.created_at - a.created_at);
 
-      if(!perPage || itemsCount === 0) {
+      if (!perPage || itemsCount === 0) {
         return sortedItems;
       }
 
       const pagesCount = Math.ceil(itemsCount / perPage);
 
-      if(page <= 0 || page > pagesCount) {
+      if (page <= 0 || page > pagesCount) {
         Logger.warn(`Could not get page ${page} (${itemsCount} items, asked ${perPage} per page)`);
       } else {
         const fromIndex = (page - 1) * perPage;
-        const toIndex   = (page * perPage) - 1;
+        const toIndex = (page * perPage) - 1;
 
         return sortedItems.slice(fromIndex, toIndex + 1);
       }
@@ -272,18 +271,29 @@ const Items = ( function() {
 
     // ---------------
 
-    favoriteItem: function(itemId) { setFavorite(itemId, 'favorite'); },
-    unfavoriteItem: function(itemId) { setFavorite(itemId, 'unfavorite'); },
+    favoriteItem: function (itemId) {
+      setFavorite(itemId, 'favorite');
+    },
+    unfavoriteItem: function (itemId) {
+      setFavorite(itemId, 'unfavorite');
+    },
 
-    addItem: function(itemsToAdd) {
+    addItem: function (itemsToAdd) {
+      itemsToAdd = itemsToAdd.map((item) => {
+        item.url = item.url.startsWith('about:reader?')
+          ? decodeURIComponent(item.url.replace('about:reader?url=', ''))
+          : item.url;
+        return item;
+      });
+
       Logger.log('(Items.addItem)');
       Badge.startLoadingSpinner();
 
-      browser.storage.local.get(['access_token', 'items']).then(({ access_token, items }) => {
-        const newItemsToAdd = itemsToAdd.filter(item => !Items.contains(items, { url: item.url }));
-        if(newItemsToAdd.length === 0) {
+      browser.storage.local.get(['access_token', 'items']).then(({access_token, items}) => {
+        const newItemsToAdd = itemsToAdd.filter(item => !Items.contains(items, {url: item.url}));
+        if (newItemsToAdd.length === 0) {
           // Instead of just logging, send an event back to the UI and exit
-          browser.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST });
+          browser.runtime.sendMessage({notice: PocketNotice.ALREADY_IN_LIST});
           return;
         }
 
@@ -296,32 +306,35 @@ const Items = ( function() {
         request.then(response => {
           const parsedItems = Utility.parseJson(items) || [];
           const addedItems = (response.item ? [response.item] : response.action_results);
-          const enrichedAddedItems  = enrichParsedItems(addedItems, newItemsToAdd);
+          const enrichedAddedItems = enrichParsedItems(addedItems, newItemsToAdd);
 
           enrichedAddedItems.forEach(newItem => {
             parsedItems.push({
-              id:             newItem.item_id,
+              id: newItem.item_id,
               resolved_title: newItem.title,
-              resolved_url:   newItem.given_url,
-              created_at:     (Date.now()/1000 | 0)
+              resolved_url: newItem.given_url,
+              created_at: (Date.now() / 1000 | 0)
             });
           });
 
           // Save item list in storage and update badge count
-          browser.storage.local.set({ items: JSON.stringify(parsedItems) });
+          browser.storage.local.set({items: JSON.stringify(parsedItems)});
 
           // Send a message back to the UI
           // TODO: send multiple ids? what are they used for?
-          browser.runtime.sendMessage({ action: 'added-item', id: addedItems.map(item => item.item_id) });
+          browser.runtime.sendMessage({
+            action: 'added-item',
+            id: addedItems.map(item => item.item_id)
+          });
 
           // Display an indicator on the badge that everything went well
           Badge.flashSuccess().then(() => {
             // Close the given tab if setting closeTabWhenAdded is "on"
-            Settings.init().then( () => {
+            Settings.init().then(() => {
               const closeTabWhenAdded = Settings.get('closeTabWhenAdded');
-              if(closeTabWhenAdded) {
+              if (closeTabWhenAdded) {
                 const tabIdsToClose = newItemsToAdd.map(item => item.tabId);
-                setTimeout( () => {
+                setTimeout(() => {
                   browser.tabs.remove(tabIdsToClose);
                 }, 200);
               }
@@ -329,7 +342,7 @@ const Items = ( function() {
 
             // Redraw every page pageAction
             Logger.log('(Items.addItem) new items added, update matching pageActions');
-            browser.tabs.query({ url: enrichedAddedItems.map(item => item.given_url) }).then(tabs => {
+            browser.tabs.query({url: enrichedAddedItems.map(item => item.given_url)}).then(tabs => {
               const tabIds = tabs.map(tab => tab.id);
               PageAction.drawEnabled(...tabIds);
             });
@@ -342,47 +355,51 @@ const Items = ( function() {
       });
     },
 
-    markAsRead : function(itemId, tabId) { removeItem(itemId, 'archive', tabId); },
-    deleteItem:  function(itemId, tabId) { removeItem(itemId, 'delete', tabId); },
+    markAsRead: function (itemId, tabId) {
+      removeItem(itemId, 'archive', tabId);
+    },
+    deleteItem: function (itemId, tabId) {
+      removeItem(itemId, 'delete', tabId);
+    },
 
-    open: function(itemId, forceNewTab = false) {
-      Settings.init().then( () => {
-        const openInNewTab      = Settings.get('openInNewTab') || forceNewTab;
+    open: function (itemId, forceNewTab = false) {
+      Settings.init().then(() => {
+        const openInNewTab = Settings.get('openInNewTab') || forceNewTab;
         const archiveWhenOpened = Settings.get('archiveWhenOpened');
 
-        browser.storage.local.get('items').then( ({ items }) => {
-          const item = Items.find(items, { id: itemId });
+        browser.storage.local.get('items').then(({items}) => {
+          const item = Items.find(items, {id: itemId});
 
-          if(openInNewTab) {
-            browser.tabs.create({ url: item.resolved_url });
+          if (openInNewTab) {
+            browser.tabs.create({url: item.resolved_url});
           } else {
-            browser.tabs.update({ url: item.resolved_url });
+            browser.tabs.update({url: item.resolved_url});
           }
 
-          if(archiveWhenOpened) {
+          if (archiveWhenOpened) {
             Items.markAsRead(item.id);
           }
         });
       });
     },
 
-    openRandom: function(query = '') {
-      browser.storage.local.get('items').then( ({ items }) => {
+    openRandom: function (query = '') {
+      browser.storage.local.get('items').then(({items}) => {
         const filteredItems = Items.filter(items, query);
 
-        if(filteredItems.length > 0) {
-          const item = filteredItems[ Math.floor( Math.random() * filteredItems.length ) ];
+        if (filteredItems.length > 0) {
+          const item = filteredItems[Math.floor(Math.random() * filteredItems.length)];
           Items.open(item.id);
         }
       });
     },
 
-    openFirst: function(query = '') {
-      browser.storage.local.get('items').then( ({ items }) => {
+    openFirst: function (query = '') {
+      browser.storage.local.get('items').then(({items}) => {
         const filteredItems = Items.filter(items, query);
 
-        if(filteredItems.length > 0) {
-          const sortedItems = filteredItems.sort( (a, b) => b.created_at - a.created_at );
+        if (filteredItems.length > 0) {
+          const sortedItems = filteredItems.sort((a, b) => b.created_at - a.created_at);
           const firstItem = sortedItems[0];
           Items.open(firstItem.id);
         }
