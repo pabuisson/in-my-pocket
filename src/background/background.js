@@ -38,14 +38,18 @@ function retrieveItems(force) {
 }
 
 
-function retrieveAll() {
+function retrieveAll(offset = 0) {
   Logger.log('(retrieve all items)');
 
-  browser.storage.local.get('access_token').then( ({ access_token }) => {
+  browser.storage.local.get(['access_token', 'items']).then( ({ access_token, items }) => {
+    const itemsList = Utility.parseJson(items) || [];
     const requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
       detailType: 'complete',
+      offset: offset,
+      count: 1000,
+      sort: 'oldest',
     };
 
     // https://getpocket.com/developer/docs/v3/retrieve
@@ -54,23 +58,34 @@ function retrieveAll() {
       .then(response => {
         Logger.log(Object.keys(response.list).length + ' items in the response');
 
-        const itemsList = Object.keys(response.list).map(itemId => {
-          const item = response.list[itemId];
-          return { id: item.item_id, ...Items.formatPocketItemForStorage(item) };
-        });
+        const retrievedItemsCount = Object.keys(response.list).length;
+        for( const itemId in response.list ) {
+          const item = response.list[ itemId ];
+
+          // https://getpocket.com/developer/docs/v3/retrieve
+          // given_url should be used if the user wants to view the item.
+          itemsList.push(Items.formatPocketItemForStorage(item));
+        }
 
         // Save item list in storage and update badge count
-        browser.storage.local.set({ items: JSON.stringify(itemsList) });
-        Badge.updateCount( itemsList );
+        browser.storage.local.set({ items: JSON.stringify( itemsList ) }).then(()=>{
+          Badge.updateCount( itemsList );
 
-        // Save timestamp to database as "last_retrieve", so that next time we just update the diff
-        browser.storage.local.set({ last_retrieve: response.since });
+          // Save timestamp into database as "last_retrieve", so that next time we just update the diff
+          // FIXME: use camelCase
+          browser.storage.local.set({ last_retrieve: response.since });
 
-        // Send a message back to the UI
-        browser.runtime.sendMessage({ action: 'retrieved-items' });
+          if(retrievedItemsCount > 0){
+            retrieveAll(retrievedItemsCount + offset);
+            return;
+          }
 
-        // Updates the tabs page actions
-        PageAction.redrawAllTabs();
+          // Send a message back to the UI
+          browser.runtime.sendMessage({ action: 'retrieved-items' });
+
+          // Updates the tabs page actions
+          PageAction.redrawAllTabs();
+        });
       })
       .catch( error => {
         Logger.warn('(bg.retrieveAll) something went wrong...');
