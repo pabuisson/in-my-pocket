@@ -41,11 +41,9 @@ function retrieveItems(force) {
 function retrieveAll(offset = 0) {
   Logger.log('(retrieve all items)');
 
-  browser.storage.local.get('access_token').then( ({ access_token }) => {
-    const requestParams = {
   browser.storage.local.get(['access_token', 'items']).then( ({ access_token, items }) => {
     const itemsList = Utility.parseJson(items) || [];
-    let requestParams = {
+    const requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
       detailType: 'simple',
@@ -61,8 +59,8 @@ function retrieveAll(offset = 0) {
         Logger.log(Object.keys(response.list).length + ' items in the response');
 
         const retrievedItemsCount = Object.keys(response.list).length;
-        for( let itemId in response.list ) {
-          let item = response.list[ itemId ];
+        for( const itemId in response.list ) {
+          const item = response.list[ itemId ];
 
           // https://getpocket.com/developer/docs/v3/retrieve
           // given_url should be used if the user wants to view the item.
@@ -73,25 +71,17 @@ function retrieveAll(offset = 0) {
             created_at:     item.time_added
           });
         }
-        const itemsList = Object.keys(response.list).map(itemId => {
-          const item = response.list[itemId];
-          return { id: item.item_id, ...Items.formatPocketItemForStorage(item) };
-        });
 
         // Save item list in storage and update badge count
-        browser.storage.local.set({ items: JSON.stringify(itemsList) });
-        Badge.updateCount( itemsList );
         browser.storage.local.set({ items: JSON.stringify( itemsList ) }).then(()=>{
           Badge.updateCount( itemsList );
 
-        // Save timestamp to database as "last_retrieve", so that next time we just update the diff
-        browser.storage.local.set({ last_retrieve: response.since });
           // Save timestamp into database as "last_retrieve", so that next time we just update the diff
           // FIXME: use camelCase
           browser.storage.local.set({ last_retrieve: response.since });
 
           if(retrievedItemsCount > 0){
-            retrieveFirst(retrievedItemsCount + offset);
+            retrieveAll(retrievedItemsCount + offset);
             return;
           }
 
