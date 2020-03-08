@@ -187,9 +187,11 @@ const Items = ( function() {
   return {
     formatPocketItemForStorage: function(itemFromApi) {
       const tags = [];
+
       for(const tag in itemFromApi.tags){
         tags.push(tag);
       }
+
       return {
         resolved_title: itemFromApi.given_title || itemFromApi.resolved_title,
         resolved_url:   itemFromApi.given_url || itemFromApi.resolved_url,
