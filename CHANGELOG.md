@@ -1,5 +1,18 @@
 # Changelog
 
+## Not released yet
+
+* DESIGN: here comes a new shining icon for the InMyPocket project, to get away from the original Pocket one. Hope you'll like it!
+* FEATURE: you can now use right-click to add a bunch of tabs to your pocket list! If you select several tabs and right-click another tab, this one will get added to the pocket list. You'll need to select several tab and right-click one of them. This plays nicely with "close tab after adding to pocket" setting.
+* FEATURE: a new automation completes the two existing ones! You can now set IMP to automatically close your tab when you mark the as read / delete it from your pocket list.
+* FIX: stop filtering on the protocols of the links, which is not visible in the UI and could therefore provide unexpected results. Searching for "ftp", will return links containing "ftp" in their title or url, and not the "ftp://" links.
+
+
+## 0.10.6 - June 2019
+
+* FIX: fix middle-clicking and ctrl-clicking on popup items, that was not forcing new tab opening ([contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/141), thank you for your help!)
+
+
 ## 0.10.5 - April 2019
 
 * FEATURE: 2 new keyboard shortcuts are now available: "open first item" and "open random item", so that you can be even faster to get through your reading list!

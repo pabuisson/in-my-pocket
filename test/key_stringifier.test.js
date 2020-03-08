@@ -24,22 +24,24 @@ describe('KeyStringifier.stringifyCtrlKey', () => {
 
 
 describe('KeyStringifier.stringifyKey', () => {
-  const key_a = 65;
-  const key_2 = 50;
-  const key_f4 = 115;
+  const keycodes = {
+    'a': 65,
+    '2': 50,
+    'f4': 115
+  };
 
   it('return uppercase letter if letter', () => {
-    const ev = { which: key_a, keyCode: key_a };
+    const ev = { which: keycodes['a'], keyCode: keycodes['a'] };
     expect(KeyStringifier.stringifyKey(ev) ).to.equal('A');
   });
 
   it('return digit if digit', () => {
-    const ev = { which: key_2, keyCode: key_2 };
+    const ev = { which: keycodes['2'], keyCode: keycodes['2'] };
     expect(KeyStringifier.stringifyKey(ev) ).to.equal('2');
   });
 
   it('return uppercase fkey if fkey', () => {
-    const ev = { which: key_f4, keyCode: key_f4, key: 'F4' };
+    const ev = { which: keycodes['f4'], keyCode: keycodes['f4'], key: 'F4' };
     expect(KeyStringifier.stringifyKey(ev) ).to.equal('F4');
   });
 });

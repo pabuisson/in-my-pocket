@@ -1,78 +1,143 @@
 import Items from '../src/modules/items.js';
 
 describe( 'Items.filter', () => {
-  const matchingItem = { resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
-  const otherItem = { resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
-  const items = JSON.stringify([ matchingItem, otherItem ]);
+  const matchingItem = { resolved_title: 'french', resolved_url: 'https://www.quelquepart.fr' };
+  const otherItem = { resolved_title: 'other',    resolved_url: 'https://www.somewherelse.com', fav: '0' };
+  const favedItem = { resolved_title: 'favorite', resolved_url: 'https://somefavoriteitem.com', fav: '1' };
+  const items = JSON.stringify([ matchingItem, otherItem, favedItem ]);
 
-  it( 'returns all items if query is empty', () => {
-    expect( Items.filter( items, '' ).length ).to.equal( 2 );
+  it('returns all items if query is empty', () => {
+    expect(Items.filter(items, '').length).to.equal(3);
   });
 
-  it( 'returns all items if query is undefined', () => {
-    expect( Items.filter( items, undefined ).length ).to.equal( 2 );
+  it('returns all items if query is undefined', () => {
+    expect(Items.filter(items, undefined).length).to.equal(3);
   });
 
-  it( 'returns all items if query is null', () => {
-    expect( Items.filter( items, null ).length ).to.equal( 2 );
+  it('returns all items if query is null', () => {
+    expect(Items.filter(items, null).length).to.equal(3);
   });
 
-  context( 'query on title', () => {
-    context( 'with same case', () => {
-      it( 'returns matching items', () => {
+  context('query on title', () => {
+    context('with same case', () => {
+      it('returns matching items', () => {
         const query = matchingItem.resolved_title;
-        expect( Items.filter( items, query ) ).to.deep.include( matchingItem );
+        expect(Items.filter(items, query)).to.deep.include(matchingItem);
       });
 
-      it( 'filters out non-matching items', () => {
+      it('filters out non-matching items', () => {
         const query = matchingItem.resolved_title;
-        expect( Items.filter( items, query ) ).not.to.include( otherItem );
+        expect(Items.filter(items, query)).not.to.include(otherItem);
       });
     });
 
-    context( 'with different case', () => {
-      it( 'returns matching items', () => {
+    context('with different case', () => {
+      it('returns matching items', () => {
         const query = matchingItem.resolved_title.toUpperCase();
-        expect( Items.filter( items, query ) ).to.deep.include( matchingItem );
+        expect(Items.filter(items, query)).to.deep.include(matchingItem);
       });
 
-      it( 'does not return non-matching items', () => {
+      it('does not return non-matching items', () => {
         const query = matchingItem.resolved_title;
-        expect( Items.filter( items, query ) ).not.to.include( otherItem );
+        expect(Items.filter(items, query)).not.to.include(otherItem);
       });
     });
   });
 
-
-  context( 'query on url', () => {
-    context( 'with same case', () => {
-      it( 'returns matching items', () => {
-        const query = matchingItem.resolved_url;
-        expect( Items.filter( items, query ) ).to.deep.include( matchingItem );
+  context('query on url', () => {
+    context( 'query on protocol', () => {
+      it('www is not taken into account', () => {
+        const query = 'www';
+        const result = Items.filter(items, query);
+        expect(result).not.to.deep.include(matchingItem);
+        expect(result).not.to.deep.include(otherItem);
       });
 
-      it( 'does not return non-matching items', () => {
-        const query = matchingItem.resolved_url;
-        expect( Items.filter( items, query ) ).not.to.include( otherItem );
+      it('http is not taken into account', () => {
+        const query = 'https';
+        const result = Items.filter(items, query);
+        expect(result).not.to.deep.include(matchingItem);
+        expect(result).not.to.deep.include(otherItem);
+      });
+    });
+
+    context('with same case', () => {
+      it('returns matching items', () => {
+        const query = 'quelquepart';
+        expect(Items.filter(items, query)).to.deep.include(matchingItem);
+      });
+
+      it('does not return non-matching items', () => {
+        const query = 'quelquepart';
+        expect(Items.filter(items, query)).not.to.include(otherItem);
+      });
+    });
+
+    context('query different case', () => {
+      it('returns matching items', () => {
+        const query = 'QUELQUEPART';
+        expect(Items.filter(items, query).length).to.equal(1);
+      });
+
+      it('does not return non-matching items', () => {
+        const query = 'QUELQUEPART';
+        expect(Items.filter(items, query)).not.to.include(otherItem);
       });
     });
   });
 
-  context( 'query different case', () => {
-    it( 'returns matching items', () => {
-      const query = matchingItem.resolved_url.toUpperCase();
-      expect( Items.filter( items, query ).length ).to.equal( 1 );
-    });
+    context('query on favorites', () => {
+      it('returns favorite items if query contains is:faved', () => {
+        const query = 'is:faved';
+        expect(Items.filter(items, query)).to.deep.include(favedItem);
+      });
 
-    it( 'does not return non-matching items', () => {
-      const query = matchingItem.resolved_url;
-      expect( Items.filter( items, query ) ).not.to.include( otherItem );
-    });
-  });
+      it('does not return unfaved items if query contains is:faved', () => {
+        const query = 'is:faved';
+        const result = Items.filter(items, query);
+        expect(result).not.to.include(matchingItem);
+        expect(result).not.to.include(otherItem);
+      });
+
+      it('returns non-favorite items if query contains is:unfaved', () => {
+        const query = 'is:unfaved';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingItem);
+        expect(result).to.deep.include(otherItem);
+      });
+
+      it('does not return favorite items if query contains is:unfaved', () => {
+        const query = 'is:unfaved';
+        expect(Items.filter(items, query)).not.to.include(favedItem);
+      });
+    })
+
+    context('query on favorites + text', () => {
+      const matchingTextAndFav = { resolved_title: 'matching text', resolved_url: 'https://favorite.com', fav: '1' };
+      const matchingTextNotFav = { resolved_title: 'matching text', resolved_url: 'https://favorite.com', fav: '0' };
+      const matchingFavNotText = { resolved_title: 'other text', resolved_url: 'https://other.com', fav: '1' }
+      const items = JSON.stringify([matchingTextAndFav, matchingTextNotFav, matchingFavNotText]);
+
+      it('returns items matching on title and favorited if query contains is:faved', () => {
+        const query = 'is:faved favorite';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextAndFav);
+        expect(result).not.to.include(matchingTextNotFav);
+        expect(result).not.to.include(matchingFavNotText);
+      });
+
+      it('returns items matching on url and favorited if query contains is:faved', () => {
+        const query = 'is:faved favorite.com';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextAndFav);
+        expect(result).not.to.include(matchingTextNotFav);
+        expect(result).not.to.include(matchingFavNotText);
+      });
+    })
 });
 
 
-describe( 'Items.paginate', () => {
+describe('Items.paginate', () => {
   const item_1 = { resolved_title: 'item_1', resolved_url: 'www.site_1.com', created_at: new Date("2018-01-01 12:12").valueOf() };
   const item_2 = { resolved_title: 'item_2', resolved_url: 'www.site_2.com', created_at: new Date("2018-01-02 12:12").valueOf() };
   const item_3 = { resolved_title: 'item_3', resolved_url: 'www.site_3.com', created_at: new Date("2018-01-03 12:12").valueOf() };
