@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="584px" height="585px" viewBox="0 0 584 585" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>Artboard theme light</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="559 136 559 558 229.365328 558 137 558 137 136"></polygon>
+        <filter x="-19.4%" y="-19.4%" width="138.9%" height="138.9%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#0E2FD0" stop-opacity="0.5" offset="0%"></stop>
+            <stop stop-color="#000000" stop-opacity="0.5" offset="100%"></stop>
+        </linearGradient>
+        <path d="M302.541644,-37.4648104 L443.416478,103.410024 L443.416478,103.410024 L443.557115,609.065472 C443.558651,614.588319 439.082743,619.066717 433.559896,619.068253 C430.906768,619.068991 428.362092,618.015366 426.486047,616.139321 L294.782624,484.435898 C290.877381,480.530655 284.545731,480.530655 280.640488,484.435898 L165.151236,599.92515 C161.245993,603.830393 154.914344,603.830393 151.009101,599.92515 C149.139855,598.055904 148.086801,595.522557 148.0802,592.879052 L146.859644,104.075054 L146.859644,104.075054 L288.399508,-37.4648104 C292.304751,-41.3700533 298.636401,-41.3700533 302.541644,-37.4648104 Z" id="path-4"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard-theme-light" transform="translate(-56.000000, -55.000000)">
+            <g id="Polygon" stroke-linejoin="round" transform="translate(348.000000, 347.000000) rotate(-180.000000) translate(-348.000000, -347.000000) ">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                <path stroke="#A5AFBA" stroke-width="80" d="M599,96 L599,598 L97,598 L97,96 L599,96 Z"></path>
+            </g>
+            <rect id="Rectangle" fill="#FFFFFF" x="113" y="111" width="470" height="470" rx="21"></rect>
+            <mask id="mask-5" fill="white">
+                <use xlink:href="#path-4"></use>
+            </mask>
+            <g id="Rectangle" transform="translate(295.211738, 294.340614) rotate(-45.000000) translate(-295.211738, -294.340614) ">
+                <use fill="#0C74E4" xlink:href="#path-4"></use>
+                <use fill-opacity="0.4" fill="url(#linearGradient-3)" xlink:href="#path-4"></use>
+            </g>
+        </g>
+    </g>
+</svg>

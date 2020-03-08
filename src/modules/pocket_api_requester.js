@@ -9,7 +9,7 @@ import { consumerKey } from './constants.js';
 
 
 class PocketApiRequester {
-  constructor( accessToken ) {
+  constructor(accessToken) {
     this.accessToken = accessToken;
   }
 
@@ -23,7 +23,7 @@ class PocketApiRequester {
       title: item.title
     };
 
-    const request = new Request( 'POST', requestUrl, requestParams );
+    const request = new Request('POST', requestUrl, requestParams);
     return request.fetch();
   }
 
@@ -38,15 +38,15 @@ class PocketApiRequester {
           action: 'add',
           url: item.url,
           title: item.title
-        }
+        };
       })
     };
 
-    const request = new Request( 'POST', requestUrl, requestParams );
+    const request = new Request('POST', requestUrl, requestParams);
     return request.fetch();
   }
 
-  archive( itemId ) {
+  archive(itemId) {
     Logger.log('(PocketApiRequester.archive)');
     const requestUrl = 'https://getpocket.com/v3/send';
     const requestParams = {
@@ -57,11 +57,11 @@ class PocketApiRequester {
       ]
     };
 
-    const request = new Request( 'POST', requestUrl, requestParams );
+    const request = new Request('POST', requestUrl, requestParams);
     return request.fetch();
   }
 
-  delete( itemId ) {
+  delete(itemId) {
     Logger.log('(PocketApiRequester.delete)');
     const requestUrl = 'https://getpocket.com/v3/send';
     const requestParams = {
@@ -72,7 +72,37 @@ class PocketApiRequester {
       ]
     };
 
-    const request = new Request( 'POST', requestUrl, requestParams );
+    const request = new Request('POST', requestUrl, requestParams);
+    return request.fetch();
+  }
+
+  favorite(itemId) {
+    Logger.log('(PocketApiRequester.favorite)');
+    const requestUrl = 'https://getpocket.com/v3/send';
+    const requestParams = {
+      consumer_key: consumerKey,
+      access_token: this.accessToken,
+      actions: [
+        { action: 'favorite', item_id: itemId }
+      ]
+    };
+
+    const request = new Request('POST', requestUrl, requestParams);
+    return request.fetch();
+  }
+
+  unfavorite(itemId) {
+    Logger.log('(PocketApiRequester.unfavorite)');
+    const requestUrl = 'https://getpocket.com/v3/send';
+    const requestParams = {
+      consumer_key: consumerKey,
+      access_token: this.accessToken,
+      actions: [
+        { action: 'unfavorite', item_id: itemId }
+      ]
+    };
+
+    const request = new Request('POST', requestUrl, requestParams);
     return request.fetch();
   }
 }

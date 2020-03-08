@@ -4,7 +4,7 @@ import Settings from './settings.js';
 
 // Info and warning are only displayed if debug mode is enabled
 // Errors on the other hand are *ALWAYS* displayed in the browser console
-var Logger = ( function() {
+const Logger = (function() {
   const prefix = "IMP | ";
 
   function isLoggingEnabled() {
@@ -22,7 +22,7 @@ var Logger = ( function() {
   return {
     log: function( message ) {
       isLoggingEnabled().then( () => {
-        console.log( prefix + message );
+        console.log(prefix + message);
       }).catch( function() {
         // Debug mode is disabled
         // 'catch' needed to avoid throwing error because of unhandled rejected promise
@@ -30,14 +30,14 @@ var Logger = ( function() {
     },
     warn: function( message ) {
       isLoggingEnabled().then( () => {
-        console.warn( prefix + message );
+        console.warn(prefix + message);
       }).catch( function() {
         // Debug mode is disabled
         // 'catch' needed to avoid throwing error because of unhandled rejected promise
       });
     },
-    error: function( message ) {
-      console.error( prefix + message );
+    error: function(message) {
+      console.error(prefix + message);
     }
   };
 })();

@@ -7,7 +7,7 @@ import Logger from './logger.js';
 // also in other browsers.
 // To use this API you need to have the "menus"  permission (or "contextMenus" for the alias)
 
-var ContextMenu = ( function() {
+const ContextMenu = (function() {
   function enable(id) {
     Logger.log(`(ContextMenu.enable) enable ${id} context menu`);
 
@@ -29,7 +29,7 @@ var ContextMenu = ( function() {
   // "tab" context does not exist for chrome and older firefoxes, feature will be broken for them
   function getAvaiableContexts() {
     const availabeContexts = browser.contextMenus.ContextType;
-    let contexts = [
+    const contexts = [
       availabeContexts.PAGE,
       availabeContexts.LINK
     ];

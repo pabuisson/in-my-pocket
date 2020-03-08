@@ -6,8 +6,8 @@
   "description": "For all those who are missing the old Firefox Pocket addon, here is an unofficial client for the excellent Pocket service. Goal is to provide a useful, but still lightweight means to access your Pocket account from your browser. Enjoy!",
   "homepage_url": "https://bitbucket.org/pabuisson/in-my-pocket",
   "icons": {
-    "48": "assets/icons/inmypocket-48.png",
-    "96": "assets/icons/inmypocket-96.png"
+    "48": "assets/icons/icon-48.png",
+    "96": "assets/icons/icon-96.png"
   },
 
   "applications": {
@@ -33,7 +33,8 @@
       "./background/upgrade.js",
       "./background/context_menus.js",
       "./background/page_actions.js",
-      "./background/keyboard.js"
+      "./background/keyboard.js",
+      "./background/uninstall.js"
     ]
   },
 
@@ -42,14 +43,14 @@
   },
 
   "browser_action": {
-    "default_icon": "assets/icons/inmypocket-flat-grey-dark.svg",
+    "default_icon": "assets/icons/browser-action-light.svg",
     "theme_icons": [{
-      "light": "assets/icons/inmypocket-flat-grey-light.svg",
-      "dark": "assets/icons/inmypocket-flat-grey-dark.svg",
+      "light": "assets/icons/browser-action-dark.svg",
+      "dark": "assets/icons/browser-action-light.svg",
       "size": 16
     }, {
-      "light": "assets/icons/inmypocket-flat-grey-light.svg",
-      "dark": "assets/icons/inmypocket-flat-grey-dark.svg",
+      "light": "assets/icons/browser-action-dark.svg",
+      "dark": "assets/icons/browser-action-light.svg",
       "size": 32
     }],
     "default_popup": "./popup/popup.html",
@@ -57,7 +58,7 @@
   },
 
   "page_action": {
-    "default_icon": "assets/icons/inmypocket-flat-grey-dark.svg",
+    "default_icon": "assets/icons/page-action-disabled.svg",
     "default_title": "Add to pocket"
   },
 
