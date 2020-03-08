@@ -66,10 +66,11 @@ const Utility = (function () {
     getQuery(url) {
       if (url.startsWith('about:reader?'))
         return {url: decodeURIComponent(url.replace('about:reader?url=', ''))};
-      if (url.startsWith('https://app.getpocket.com'))
-        return {id: url.replace('https://app.getpocket.com/read/', '').toString()};
-      if (url.startsWith('https://getpocket.com'))
-        return {id: url.replace('https://getpocket.com/a/read/', '').toString()};
+      if (url.startsWith('https://app.getpocket.com/read/'))
+        return {id: url.replace('https://app.getpocket.com/read/', '')};
+      // is there still a way to use old webapp? if not it's unnecessary
+      if (url.startsWith('https://getpocket.com/a/read/'))
+        return {id: url.replace('https://getpocket.com/a/read/', '')};
       return {url: url};
     },
 
@@ -79,6 +80,7 @@ const Utility = (function () {
         'about:reader?url=' + encodeURIComponent(item.url),
         'https://app.getpocket.com/read/' + item.url,
         'https://app.getpocket.com/read/' + item.id,
+        // is there still a way to use old webapp? if not it's unnecessary
         'https://getpocket.com/a/read/' + item.url,
         'https://getpocket.com/a/read/' + item.id,
       ];
