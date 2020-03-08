@@ -64,12 +64,7 @@ function retrieveAll(offset = 0) {
 
           // https://getpocket.com/developer/docs/v3/retrieve
           // given_url should be used if the user wants to view the item.
-          itemsList.push({
-            id:             item.item_id,
-            resolved_title: item.given_title || item.resolved_title,
-            resolved_url:   item.given_url || item.resolved_url,
-            created_at:     item.time_added
-          });
+          itemsList.push(Items.formatPocketItemForStorage(item));
         }
 
         // Save item list in storage and update badge count
