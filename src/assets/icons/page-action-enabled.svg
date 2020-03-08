@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="624px" height="624px" viewBox="0 0 624 624" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>Artboard enabled</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#778096" stop-opacity="0.5" offset="0%"></stop>
+            <stop stop-color="#000000" stop-opacity="0.5" offset="100%"></stop>
+        </linearGradient>
+        <path d="M331.468843,-43.3223305 L520.050903,145.259729 C524.668534,149.877361 527.296068,156.118502 527.371563,162.648382 L532.290683,588.125254 C532.450303,601.93145 521.387566,613.25298 507.58137,613.412599 C500.851197,613.49041 494.373953,610.851209 489.614684,606.09194 L331.753338,448.230594 C321.990231,438.467486 306.161107,438.467486 296.397999,448.230594 L137.725189,606.903404 C127.962082,616.666511 112.132958,616.666511 102.36985,606.903404 C97.6766223,602.210176 95.0423068,595.843294 95.0475276,589.206069 L95.3790412,167.747814 C95.3842513,161.124218 98.0177727,154.773401 102.701364,150.08981 L296.113504,-43.3223305 C305.876611,-53.0854378 321.705736,-53.0854378 331.468843,-43.3223305 Z" id="path-2"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard-enabled" transform="translate(-62, -42)">
+            <mask id="mask-3" fill="white">
+                <use xlink:href="#path-2"></use>
+            </mask>
+            <g id="Rectangle" transform="translate(314, 294) rotate(315) translate(-314, -294) ">
+                <use fill="#218DFF" xlink:href="#path-2"></use>
+                <use fill-opacity="0.2" fill="url(#linearGradient-1)" xlink:href="#path-2"></use>
+            </g>
+        </g>
+    </g>
+</svg>

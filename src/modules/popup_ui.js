@@ -113,7 +113,7 @@ const PopupUI = ( function() {
 
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth
-    // TODO: reduce duplication with drawList !?
+    // TODO: reduce duplication with updateList !?
     drawList: function(opts = {}) {
       Settings.init().then( function() {
         return Settings.get('perPage');
@@ -150,30 +150,32 @@ const PopupUI = ( function() {
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth
     // TODO: reduce duplication with drawList !?
-    updateList: function( opts = {} ) {
+    updateList: function(opts = {}) {
       Settings.init().then( function() {
-        return Settings.get( 'perPage' );
-      }).then( function( perPage ) {
+        return Settings.get('perPage');
+      }).then( function(perPage) {
         browser.storage.local.get([ 'items', 'display' ]).then( ({ items, display }) => {
-          const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
+          const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting;
           const query         = opts.query || parsedDisplay.query;
-          const pageToDisplay   = opts.page  || parsedDisplay.currentPage;
+          const pageToDisplay = opts.page  || parsedDisplay.currentPage;
 
           // Parse and filter the item list
-          const filteredItems    = Items.filter( items, query );
-          const itemsToRender    = Items.paginate( filteredItems, pageToDisplay, perPage );
-          const itemsToRenderIds = itemsToRender.map( item => item.id );
+          const filteredItems    = Items.filter(items, query);
+          const itemsToRender    = Items.paginate(filteredItems, pageToDisplay, perPage);
+          const itemsToRenderIds = itemsToRender.map(item => item.id);
 
           // Display the "no results" message or hide it
           togglePlaceholderVisibility(itemsToRender.length);
 
           // Rebuild all items
           const visibleItemsIds = PopupItemList.getVisibleItemsIds();
-          const itemIdsToKeep     = visibleItemsIds.filter( id => itemsToRenderIds.includes(id) );
-          const itemIdsToDelete   = visibleItemsIds.filter( id => !itemsToRenderIds.includes(id) );
+          const itemIdsToKeep     = visibleItemsIds.filter(id => itemsToRenderIds.includes(id));
+          const itemIdsToDelete   = visibleItemsIds.filter(id => !itemsToRenderIds.includes(id));
 
           // First step: all removed items still visible must disappear
           PopupUI.fadeOutItem(...itemIdsToDelete);
+
+          // TODO: do I need to add a step to set faved/unfaved items?
 
           // Second step: prepare the insertion of all missing items
           // Generate a table of all predecessors, to use insertBefore/appendChild to build the DOM
@@ -185,7 +187,7 @@ const PopupUI = ( function() {
               if(predecessorTable[nextVisibleItemId])
                 predecessorTable[nextVisibleItemId].push(itemToRender);
               else
-                predecessorTable[nextVisibleItemId] = [ itemToRender ];
+                predecessorTable[nextVisibleItemId] = [itemToRender];
             } else {
               nextVisibleItemId = itemIdsToKeep.shift() || 'last';
             }
@@ -217,22 +219,38 @@ const PopupUI = ( function() {
       return;
     },
 
-    markAsRead: ( itemId ) => {
-      const item = document.querySelector( ".item[data-id='" + itemId + "']");
-      item.classList.add('removing');
-      item.querySelector('.tick-action .tick'   ).classList.add(    'hidden' );
-      item.querySelector('.tick-action .loader' ).classList.remove( 'hidden' );
+    toggleFavorite: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
+      const isFaved = item.dataset.fav;
+      item.querySelector('.favorite-action .favorite').classList.add(   'hidden');
+      item.querySelector('.favorite-action .loader'  ).classList.remove('hidden');
 
-      browser.runtime.sendMessage({ action: 'mark-as-read', id: itemId });
+      browser.runtime.sendMessage({
+        action: (isFaved === '1' ? 'unfavorite' : 'favorite'),
+        id: itemId
+      });
     },
 
-    deleteItem: ( itemId ) => {
-      const item = document.querySelector( ".item[data-id='" + itemId + "']");
+    markAsRead: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
       item.classList.add('removing');
-      item.querySelector('.delete-action .trash'  ).classList.add(   'hidden' );
-      item.querySelector('.delete-action .loader' ).classList.remove( 'hidden' );
+      item.querySelector('.tick-action .tick'  ).classList.add(   'hidden');
+      item.querySelector('.tick-action .loader').classList.remove('hidden');
 
-      browser.runtime.sendMessage({ action: 'delete-item', id: itemId });
+      browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+        browser.runtime.sendMessage({ action: 'mark-as-read', id: itemId, tabId: currentTab.id });
+      });
+    },
+
+    deleteItem: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
+      item.classList.add('removing');
+      item.querySelector('.delete-action .trash' ).classList.add(   'hidden');
+      item.querySelector('.delete-action .loader').classList.remove('hidden');
+
+      browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
+        browser.runtime.sendMessage({ action: 'delete-item', id: itemId, tabId: currentTab.id });
+      });
     },
 
     fadeOutItem: (...itemIds) => {
@@ -240,6 +258,21 @@ const PopupUI = ( function() {
         Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list`);
         document.querySelector(`.item[data-id='${itemId}']`).classList.add('disappearing');
       });
+    },
+
+    favoriteItem: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
+      item.querySelector('.favorite-action .favorite').classList.remove('hidden');
+      item.querySelector('.favorite-action .loader'  ).classList.add('hidden');
+      item.classList.add('favorite');
+      item.dataset.fav = '1';
+    },
+    unfavoriteItem: (itemId) => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`);
+      item.querySelector('.favorite-action .favorite').classList.remove('hidden');
+      item.querySelector('.favorite-action .loader'  ).classList.add('hidden');
+      item.classList.remove('favorite');
+      item.dataset.fav = '0';
     }
   };
 })();

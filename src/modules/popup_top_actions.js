@@ -4,7 +4,7 @@ import PopupMainLoader from './popup_main_loader.js';
 
 // ----------------
 
-var PopupTopActions = ( function() {
+const PopupTopActions = ( function() {
   const addCurrentPageButton = document.querySelector('.add-current');
   const filterItemsInput     = document.querySelector('.filter-items');
   const openSettingsButton   = document.querySelector('.open-settings');
@@ -21,9 +21,9 @@ var PopupTopActions = ( function() {
       addCurrentPageButton.addEventListener( 'click', function() {
         PopupMainLoader.enable();
         browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
-          let currentUrl   = currentTab.url;
-          let currentTitle = currentTab.title;
-          const addItemOptions = { action: 'add-item', url: currentUrl, title: currentTitle, closeTabId: currentTab.id };
+          const currentUrl   = currentTab.url;
+          const currentTitle = currentTab.title;
+          const addItemOptions = { action: 'add-item', url: currentUrl, title: currentTitle, tabId: currentTab.id };
           browser.runtime.sendMessage(addItemOptions);
         });
       });

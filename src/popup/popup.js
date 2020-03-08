@@ -110,6 +110,14 @@ document.addEventListener('DOMContentLoaded', function() {
           PopupUI.updateList();
           break;
 
+        case 'favorited':
+          PopupUI.favoriteItem(eventData.id);
+          break;
+
+        case 'unfavorited':
+          PopupUI.unfavoriteItem(eventData.id);
+          break;
+
         case 'retrieved-items':
           PopupUI.updateList();
           Badge.updateCount();
