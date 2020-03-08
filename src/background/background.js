@@ -48,7 +48,7 @@ function retrieveAll(offset = 0) {
       access_token: access_token,
       detailType: 'simple',
       offset: offset,
-      count: 1000,
+      count: 2000,
       sort: 'oldest',
     };
 
@@ -56,26 +56,24 @@ function retrieveAll(offset = 0) {
     new Request('POST', 'https://getpocket.com/v3/get', requestParams)
       .fetch()
       .then(response => {
-        Logger.log(Object.keys(response.list).length + ' items in the response');
-
         const retrievedItemsCount = Object.keys(response.list).length;
-        for( const itemId in response.list ) {
-          const item = response.list[ itemId ];
+        Logger.log(`${retrievedItemsCount} items in the response`);
 
-          // https://getpocket.com/developer/docs/v3/retrieve
-          // given_url should be used if the user wants to view the item.
-          itemsList.push(Items.formatPocketItemForStorage(item));
-        }
+        const newItems = Object.keys(response.list).map(itemId => {
+          return { id: itemId, ...Items.formatPocketItemForStorage(response.list[itemId]) };
+        });
+
+        const allItems = [...itemsList, ...newItems];
 
         // Save item list in storage and update badge count
-        browser.storage.local.set({ items: JSON.stringify( itemsList ) }).then(()=>{
-          Badge.updateCount( itemsList );
+        browser.storage.local.set({ items: JSON.stringify(allItems) }).then(() => {
+          Badge.updateCount(allItems);
 
           // Save timestamp into database as "last_retrieve", so that next time we just update the diff
-          // FIXME: use camelCase
           browser.storage.local.set({ last_retrieve: response.since });
 
-          if(retrievedItemsCount > 0){
+          // Fetch next page
+          if(retrievedItemsCount > 0) {
             retrieveAll(retrievedItemsCount + offset);
             return;
           }
@@ -87,9 +85,8 @@ function retrieveAll(offset = 0) {
           PageAction.redrawAllTabs();
         });
       })
-      .catch( error => {
-        Logger.warn('(bg.retrieveAll) something went wrong...');
-        Logger.warn(`(bg.retrieveAll) ${ JSON.stringify(error) }`);
+      .catch(error => {
+        Logger.error(`(bg.retrieveAll) Error: ${ JSON.stringify(error) }`);
         Badge.flashError();
       });
   });
