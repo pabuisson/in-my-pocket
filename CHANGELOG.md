@@ -2,6 +2,7 @@
 
 ## Not released yet
 
+* FEATURE: the first time you fetch your Pocket list, max number of items was capped to 5,000 items. From now on, subsequent requests will be made to make sure all items are fetched ([contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/143), thank you for your help!).
 * DESIGN: here comes a new shining icon for the InMyPocket project, to get away from the original Pocket one. Hope you'll like it!
 * FEATURE: you can now use right-click to add a bunch of tabs to your pocket list! If you select several tabs and right-click another tab, this one will get added to the pocket list. You'll need to select several tab and right-click one of them. This plays nicely with "close tab after adding to pocket" setting.
 * FEATURE: a new automation completes the two existing ones! You can now set IMP to automatically close your tab when you mark the as read / delete it from your pocket list.
