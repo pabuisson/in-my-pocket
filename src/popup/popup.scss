@@ -87,6 +87,10 @@ html, body, .authenticated, .authentication {
     border-bottom: 1px solid #eee;
     height: 3.5rem;
 
+    &.favorite {
+      background-color: $favorite-bg;
+    }
+
     span {
       display: inline-block;
       width: 95%;
@@ -165,15 +169,15 @@ html, body, .authenticated, .authentication {
       position: absolute;
       top: 0;
       right: 0;
-      width: 7rem;
+      width: 10rem;
       height: 100%;
-      background-color: transparentize( $ff-grey-20, 0.2 );
+      background-color: transparentize($ff-grey-20, 0.2);
       border-left: 1px solid #ddd;
 
       display: flex;
       flex-direction: row;
 
-      .tick-action, .delete-action {
+      .favorite-action, .tick-action, .delete-action {
         cursor: pointer;
         flex: 1;
         opacity: 0.8;
@@ -196,30 +200,22 @@ html, body, .authenticated, .authentication {
           height: $loader-size;
           width: $loader-size;
           animation: rotate 0.8s infinite linear;
+          border: 0.3rem solid #444;
           border-radius: 50%;
-        }
-      }
-
-      .tick-action {
-        &:hover {
-          background-color: transparentize( $pocket-aqua, 0.4 );
-        }
-
-        .loader {
-          border: 0.3rem solid #444;
           border-right-color: transparent;
         }
       }
 
-      .delete-action {
-        &:hover {
-          background-color: transparentize( $pocket-red, 0.4 );
-        }
+      .favorite-action:hover {
+        background-color: $favorite-action;
+      }
 
-        .loader {
-          border: 0.3rem solid #444;
-          border-right-color: transparent;
-        }
+      .tick-action:hover {
+        background-color: transparentize($pocket-aqua, 0.4);
+      }
+
+      .delete-action:hover {
+        background-color: transparentize($pocket-red, 0.4);
       }
     }
   }
@@ -253,7 +249,7 @@ html, body, .authenticated, .authentication {
   background-color: $ff-ink-90;
   background-color: $my-dark-blue;
 
-  .icon {
+  .top-icon {
     flex: initial;
     display: inline-block;
     cursor: pointer;
@@ -288,8 +284,8 @@ html, body, .authenticated, .authentication {
 
     .clear-search-box {
       position: absolute;
-      top: -0.2rem;
-      right: 0.2rem;
+      top: -0.35rem;
+      right: -0.45rem;
       color: black;
       opacity: 0.2;
       font-size: 2.2rem;

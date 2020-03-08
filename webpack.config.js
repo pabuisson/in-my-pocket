@@ -11,7 +11,8 @@ module.exports = {
     'background/upgrade'       : './background/upgrade.js',
     'background/keyboard'      : './background/keyboard.js',
     'background/page_actions'  : './background/page_actions.js',
-    'background/context_menus' : './background/context_menus.js'
+    'background/context_menus' : './background/context_menus.js',
+    'background/uninstall'     : './background/uninstall.js'
   },
   output: {
     path: __dirname + '/build',

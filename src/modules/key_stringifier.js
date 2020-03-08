@@ -5,7 +5,7 @@ import KeyIdentifier from './key_identifier.js';
 
 // ---------------
 
-var KeyStringifier = ( function() {
+const KeyStringifier = ( function() {
   return {
     stringifyCtrlKey: function(ev) {
       if(ev.ctrlKey === false)

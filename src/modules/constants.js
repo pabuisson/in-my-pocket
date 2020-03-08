@@ -10,6 +10,12 @@ const PocketError = {
   RATE_LIMIT:   'user_rate_limit_reached'
 };
 
+const PocketApiStatus = {
+  CREATED:  '0',
+  ARCHIVED: '1',
+  DELETED:  '2'
+};
+
 const PocketNotice = {
   ALREADY_IN_LIST: 'already_in_list'
 };
@@ -28,5 +34,18 @@ const KeyboardShortcuts = {
   openRandomItem: 'open-random-item'
 };
 
-export { KeyboardShortcuts, PocketError, PocketNotice, MouseButtons, consumerKey };
+const parseIntBase = 10;
+
+const concealedProtocols = ['http', 'https', 'ftp', 'ftps'];
+
+export {
+  KeyboardShortcuts,
+  PocketApiStatus,
+  PocketError,
+  PocketNotice,
+  MouseButtons,
+  consumerKey,
+  parseIntBase,
+  concealedProtocols
+};
 

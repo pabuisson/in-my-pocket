@@ -8,6 +8,7 @@
     },
     "extends": "eslint:recommended",
     "parserOptions": {
+      "ecmaVersion": 9,
       "sourceType": "module"
     },
     "globals": {
@@ -16,19 +17,27 @@
       "sinon": true
     },
     "rules": {
-      "linebreak-style": ["error", "unix"],
-      "no-trailing-spaces": "error",
-      "no-var": "error",
-      "semi": ["error", "always"],
-      "indent": ["warn", 2, { "SwitchCase": 1 }],
-      "prefer-const": "error",
-      "camelcase": "warn",
+      "camelcase": ["warn", {
+          "allow": [
+            "item_id", "resolved_title", "resolved_url", "given_title", "given_url", "created_at",
+            "access_token", "consumer_key",
+            "last_retrieve"
+          ]
+        }
+      ],
       "complexity": "error",
+      "indent": ["warn", 2, { "SwitchCase": 1 }],
+      "linebreak-style": ["error", "unix"],
       "max-depth": "error",
-      "max-params": "error",
-      "max-lines-per-function": [ "error", { "skipBlankLines": true, "skipComments": true }],
+      "max-len": ["warn", { "code": 120 }],
       "max-lines": "error",
-      "max-len": ["warn", { "code": 100 }],
-      "quotes": ["off", "double"]
+      "max-lines-per-function": [ "error", { "skipBlankLines": true, "skipComments": true }],
+      "max-params": "error",
+      "no-trailing-spaces": "error",
+      "no-prototype-builtins": "off",
+      "no-var": "error",
+      "prefer-const": "error",
+      "quotes": ["off", "double"],
+      "semi": ["error", "always"]
     }
 }
