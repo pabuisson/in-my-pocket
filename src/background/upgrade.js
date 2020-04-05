@@ -8,8 +8,8 @@ const upgradeNotificationId = '0002';
 
 
 function mustShowUpdateNotification( details ) {
-  const isUpdate = ( details.reason == 'update' );
-  const isMajorOrMinorUpdate = Utility.isMajorOrMinorUpdate( details.previousVersion );
+  const isUpdate = (details.reason == 'update');
+  const isMajorOrMinorUpdate = Utility.isMajorOrMinorUpdate(details.previousVersion);
 
   return isUpdate && isMajorOrMinorUpdate;
 }

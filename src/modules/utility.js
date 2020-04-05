@@ -40,12 +40,18 @@ const Utility = (function () {
       return parsedResponse;
     },
 
-    isMajorOrMinorUpdate: (previousVersion) => {
+    isMajorOrMinorUpdate: (baseVersion) => {
       const currentVersion = browser.runtime.getManifest().version;
-      const currentMinor = currentVersion.split('.').slice(0, 2).join('');
-      const previousMinor = previousVersion.split('.').slice(0, 2).join('');
+      const [currentMajor, currentMinor] = currentVersion.split('.').slice(0, 2);
+      const [baseMajor, baseMinor] = baseVersion.split('.').slice(0, 2);
 
-      return currentMinor != previousMinor;
+      if(currentMajor > baseMajor) {
+        return true;
+      } else if(currentMajor < baseMajor) {
+        return false;
+      } else {
+        return currentMinor > baseMinor;
+      }
     },
 
     getParent: function (node, selector) {
