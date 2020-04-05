@@ -2,9 +2,7 @@
 
 import Logger from './logger.js';
 
-
 // -------------------------------------
-
 
 const Utility = (function () {
   const defaultTimeout = 1000;
@@ -40,20 +38,6 @@ const Utility = (function () {
       return parsedResponse;
     },
 
-    isMajorOrMinorUpdate: (baseVersion) => {
-      const currentVersion = browser.runtime.getManifest().version;
-      const [currentMajor, currentMinor] = currentVersion.split('.').slice(0, 2);
-      const [baseMajor, baseMinor] = baseVersion.split('.').slice(0, 2);
-
-      if(currentMajor > baseMajor) {
-        return true;
-      } else if(currentMajor < baseMajor) {
-        return false;
-      } else {
-        return currentMinor > baseMinor;
-      }
-    },
-
     getParent: function (node, selector) {
       while (node && !node.matches(selector))
         node = node.parentElement;
@@ -69,7 +53,7 @@ const Utility = (function () {
       return node.matches(selector) || Utility.hasParent(node, selector);
     },
 
-    getQuery(url) {
+    getQuery: function(url) {
       if (url.startsWith('about:reader?'))
         return {url: decodeURIComponent(url.replace('about:reader?url=', ''))};
       if (url.startsWith('https://app.getpocket.com/read/'))
@@ -80,7 +64,7 @@ const Utility = (function () {
       return {url: url};
     },
 
-    getPossibleUrls(item) {
+    getPossibleUrls: function(item) {
       return [
         item.url,
         'about:reader?url=' + encodeURIComponent(item.url),
@@ -90,13 +74,8 @@ const Utility = (function () {
         'https://getpocket.com/a/read/' + item.url,
         'https://getpocket.com/a/read/' + item.id,
       ];
-
-
     }
-
-
   };
 })();
-
 
 export default Utility;
