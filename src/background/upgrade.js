@@ -1,15 +1,15 @@
 "use strict";
 
 import Logger  from '../modules/logger.js';
-import Utility from '../modules/utility.js';
+import { VersionManager, VERSION_LEVELS } from '../modules/version_manager.js';
 
 const installNotificationId = '0001';
 const upgradeNotificationId = '0002';
 
 
 function mustShowUpdateNotification( details ) {
-  const isUpdate = ( details.reason == 'update' );
-  const isMajorOrMinorUpdate = Utility.isMajorOrMinorUpdate( details.previousVersion );
+  const isUpdate = (details.reason == 'update');
+  const isMajorOrMinorUpdate = VersionManager.isUpdate(details.previousVersion, VERSION_LEVELS.MINOR);
 
   return isUpdate && isMajorOrMinorUpdate;
 }

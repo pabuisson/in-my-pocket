@@ -16,7 +16,7 @@ import { consumerKey, PocketApiStatus } from '../modules/constants.js';
 
 function retrieveItems(force) {
   const intervalWithoutReload = 15*60;
-  const currentTimestamp      = ( Date.now()/1000 | 0 );
+  const currentTimestamp      = (Date.now()/1000 | 0);
 
   browser.storage.local.get(['items', 'last_retrieve']).then( ({ items, last_retrieve }) => {
     const timeSinceLastRetrieve = currentTimestamp - last_retrieve;
@@ -38,43 +38,56 @@ function retrieveItems(force) {
 }
 
 
-function retrieveAll() {
+function retrieveAll(offset = 0) {
   Logger.log('(retrieve all items)');
+  const isRetrievingFirstPage = (offset === 0);
 
-  browser.storage.local.get('access_token').then( ({ access_token }) => {
+  browser.storage.local.get(['access_token', 'items']).then( ({ access_token, items }) => {
+    const itemsList = (items && !isRetrievingFirstPage ? Utility.parseJson(items) : []);
     const requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
       detailType: 'simple',
+      offset: offset,
+      count: 2000,
+      sort: 'oldest',
     };
 
     // https://getpocket.com/developer/docs/v3/retrieve
     new Request('POST', 'https://getpocket.com/v3/get', requestParams)
       .fetch()
       .then(response => {
-        Logger.log(Object.keys(response.list).length + ' items in the response');
+        const retrievedItemsCount = Object.keys(response.list).length;
+        Logger.log(`${retrievedItemsCount} items in the response`);
 
-        const itemsList = Object.keys(response.list).map(itemId => {
-          const item = response.list[itemId];
-          return { id: item.item_id, ...Items.formatPocketItemForStorage(item) };
+        const newItems = Object.keys(response.list).map(itemId => {
+          return { id: itemId, ...Items.formatPocketItemForStorage(response.list[itemId]) };
         });
 
+        const allItems = [...itemsList, ...newItems];
+
         // Save item list in storage and update badge count
-        browser.storage.local.set({ items: JSON.stringify(itemsList) });
-        Badge.updateCount( itemsList );
+        browser.storage.local.set({ items: JSON.stringify(allItems) }).then(() => {
+          Badge.updateCount(allItems);
 
-        // Save timestamp to database as "last_retrieve", so that next time we just update the diff
-        browser.storage.local.set({ last_retrieve: response.since });
+          // Save timestamp into database as "last_retrieve", so that next time we just update the diff
+          browser.storage.local.set({ last_retrieve: response.since });
 
-        // Send a message back to the UI
-        browser.runtime.sendMessage({ action: 'retrieved-items' });
+          // Fetch next page
+          if(retrievedItemsCount > 0) {
+            retrieveAll(retrievedItemsCount + offset);
+            return;
+          }
 
-        // Updates the tabs page actions
-        PageAction.redrawAllTabs();
+          // Send a message back to the UI
+          browser.runtime.sendMessage({ action: 'retrieved-items' });
+
+          // Updates the tabs page actions
+          PageAction.redrawAllTabs();
+        });
       })
-      .catch( error => {
-        Logger.warn('(bg.retrieveAll) something went wrong...');
-        Logger.warn(`(bg.retrieveAll) ${ JSON.stringify(error) }`);
+      .catch(error => {
+        Logger.error(`(bg.retrieveAll) Error: ${ JSON.stringify(error) }`);
         Badge.flashError();
       });
   });

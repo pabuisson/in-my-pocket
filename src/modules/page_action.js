@@ -3,6 +3,7 @@
 import Logger from './logger.js';
 import Settings from './settings.js';
 import Items from './items.js';
+import Utility from "./utility";
 
 
 // -------------------------------------
@@ -102,14 +103,15 @@ const PageAction = ( function() {
     toggle: function( tab ) {
       pageActionEnabled().then( () => {
         browser.storage.local.get('items').then( ({ items }) => {
-          const matchingItem = Items.find( items, { url: tab.url });
+          const query = Utility.getQuery(tab.url);
+          const matchingItem = Items.find( items, query);
 
           if( matchingItem ) {
             browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
               Items.markAsRead(matchingItem.id, currentTab.id);
             });
           } else {
-            Items.addItem([{ url: tab.url, title: tab.title, tabId: tab.id }]);
+            Items.addItem([{ url: query.url, title: tab.title, tabId: tab.id }]);
           }
         });
       });
