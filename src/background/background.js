@@ -16,7 +16,7 @@ import { consumerKey, PocketApiStatus } from '../modules/constants.js';
 
 function retrieveItems(force) {
   const intervalWithoutReload = 15*60;
-  const currentTimestamp      = ( Date.now()/1000 | 0 );
+  const currentTimestamp      = (Date.now()/1000 | 0);
 
   browser.storage.local.get(['items', 'last_retrieve']).then( ({ items, last_retrieve }) => {
     const timeSinceLastRetrieve = currentTimestamp - last_retrieve;
@@ -40,9 +40,10 @@ function retrieveItems(force) {
 
 function retrieveAll(offset = 0) {
   Logger.log('(retrieve all items)');
+  const isRetrievingFirstPage = (offset === 0);
 
   browser.storage.local.get(['access_token', 'items']).then( ({ access_token, items }) => {
-    const itemsList = Utility.parseJson(items) || [];
+    const itemsList = (items && !isRetrievingFirstPage ? Utility.parseJson(items) : []);
     const requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
