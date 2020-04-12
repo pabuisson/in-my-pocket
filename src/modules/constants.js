@@ -38,6 +38,13 @@ const parseIntBase = 10;
 
 const concealedProtocols = ['http', 'https', 'ftp', 'ftps'];
 
+const FavoriteFilterState = {
+  ON: 0,
+  OFF: 1,
+  UNSET: 2
+};
+
+
 export {
   KeyboardShortcuts,
   PocketApiStatus,
@@ -46,6 +53,7 @@ export {
   MouseButtons,
   consumerKey,
   parseIntBase,
-  concealedProtocols
+  concealedProtocols,
+  FavoriteFilterState
 };
 

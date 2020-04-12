@@ -38,8 +38,10 @@ const Items = (function () {
     const isUnfavedCriteria = lowerQuery.includes('is:unfaved');
     const textCriteria = lowerQuery.replace(/is:(faved|unfaved)/, '').trim();
 
-    return matchFavedUnfaved(item, isFavedCriteria, isUnfavedCriteria) &&
-      matchText(item, textCriteria);
+    return(
+      matchFavedUnfaved(item, isFavedCriteria, isUnfavedCriteria) &&
+      matchText(item, textCriteria)
+    );
   }
 
   function matchText(item, textToMatch) {
@@ -47,6 +49,7 @@ const Items = (function () {
       return true;
 
     const protocolsToRemove = concealedProtocols.join('|');
+    // TODO: create the Regex only once, it never changes
     const protocolsRemovalRegex = new RegExp(`^(${protocolsToRemove})://(www.)?`, 'gi');
 
     const lowerUrl = (item.resolved_url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
@@ -147,7 +150,7 @@ const Items = (function () {
   }
 
   function setFavorite(itemId, action) {
-    Logger.log('(Items.setFavorite)');
+    Logger.log(`(Items.setFavorite) action='${action}'`);
 
     browser.storage.local.get(['access_token', 'items']).then(({access_token, items}) => {
       Badge.startLoadingSpinner();
@@ -161,7 +164,7 @@ const Items = (function () {
 
         // Update item in parsedItems
         const updatedItem = parsedItems.find(item => item.id == itemId);
-        updatedItem.fav = (action === 'favorite' ? 1 : 0);
+        updatedItem.fav = (action === 'favorite' ? '1' : '0');
 
         // Save item list in storage and update badge count
         browser.storage.local.set({items: JSON.stringify(parsedItems)});
