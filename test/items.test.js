@@ -1,9 +1,9 @@
 import Items from '../src/modules/items.js';
 
 describe( 'Items.filter', () => {
-  const matchingItem = { resolved_title: 'french', resolved_url: 'https://www.quelquepart.fr' };
-  const otherItem = { resolved_title: 'other',    resolved_url: 'https://www.somewherelse.com', fav: '0' };
-  const favedItem = { resolved_title: 'favorite', resolved_url: 'https://somefavoriteitem.com', fav: '1' };
+  const matchingItem = { title: 'french', url: 'https://www.quelquepart.fr' };
+  const otherItem = { title: 'other',    url: 'https://www.somewherelse.com', fav: '0' };
+  const favedItem = { title: 'favorite', url: 'https://somefavoriteitem.com', fav: '1' };
   const items = JSON.stringify([ matchingItem, otherItem, favedItem ]);
 
   it('returns all items if query is empty', () => {
@@ -21,24 +21,24 @@ describe( 'Items.filter', () => {
   context('query on title', () => {
     context('with same case', () => {
       it('returns matching items', () => {
-        const query = matchingItem.resolved_title;
+        const query = matchingItem.title;
         expect(Items.filter(items, query)).to.deep.include(matchingItem);
       });
 
       it('filters out non-matching items', () => {
-        const query = matchingItem.resolved_title;
+        const query = matchingItem.title;
         expect(Items.filter(items, query)).not.to.include(otherItem);
       });
     });
 
     context('with different case', () => {
       it('returns matching items', () => {
-        const query = matchingItem.resolved_title.toUpperCase();
+        const query = matchingItem.title.toUpperCase();
         expect(Items.filter(items, query)).to.deep.include(matchingItem);
       });
 
       it('does not return non-matching items', () => {
-        const query = matchingItem.resolved_title;
+        const query = matchingItem.title;
         expect(Items.filter(items, query)).not.to.include(otherItem);
       });
     });
@@ -113,9 +113,9 @@ describe( 'Items.filter', () => {
     })
 
     context('query on favorites + text', () => {
-      const matchingTextAndFav = { resolved_title: 'matching text', resolved_url: 'https://favorite.com', fav: '1' };
-      const matchingTextNotFav = { resolved_title: 'matching text', resolved_url: 'https://favorite.com', fav: '0' };
-      const matchingFavNotText = { resolved_title: 'other text', resolved_url: 'https://other.com', fav: '1' }
+      const matchingTextAndFav = { title: 'matching text', url: 'https://favorite.com', fav: '1' };
+      const matchingTextNotFav = { title: 'matching text', url: 'https://favorite.com', fav: '0' };
+      const matchingFavNotText = { title: 'other text', url: 'https://other.com', fav: '1' }
       const items = JSON.stringify([matchingTextAndFav, matchingTextNotFav, matchingFavNotText]);
 
       it('returns items matching on title and favorited if query contains is:faved', () => {
@@ -138,11 +138,11 @@ describe( 'Items.filter', () => {
 
 
 describe('Items.paginate', () => {
-  const item_1 = { resolved_title: 'item_1', resolved_url: 'www.site_1.com', created_at: new Date("2018-01-01 12:12").valueOf() };
-  const item_2 = { resolved_title: 'item_2', resolved_url: 'www.site_2.com', created_at: new Date("2018-01-02 12:12").valueOf() };
-  const item_3 = { resolved_title: 'item_3', resolved_url: 'www.site_3.com', created_at: new Date("2018-01-03 12:12").valueOf() };
-  const item_4 = { resolved_title: 'item_4', resolved_url: 'www.site_4.com', created_at: new Date("2018-01-04 12:12").valueOf() };
-  const item_5 = { resolved_title: 'item_5', resolved_url: 'www.site_5.com', created_at: new Date("2018-01-05 12:12").valueOf() };
+  const item_1 = { title: 'item_1', url: 'www.site_1.com', created_at: new Date("2018-01-01 12:12").valueOf() };
+  const item_2 = { title: 'item_2', url: 'www.site_2.com', created_at: new Date("2018-01-02 12:12").valueOf() };
+  const item_3 = { title: 'item_3', url: 'www.site_3.com', created_at: new Date("2018-01-03 12:12").valueOf() };
+  const item_4 = { title: 'item_4', url: 'www.site_4.com', created_at: new Date("2018-01-04 12:12").valueOf() };
+  const item_5 = { title: 'item_5', url: 'www.site_5.com', created_at: new Date("2018-01-05 12:12").valueOf() };
   const items = [ item_1, item_2, item_3, item_4, item_5 ];
   const perPage = 4;
 
@@ -263,8 +263,8 @@ describe('Items.paginate', () => {
 
 
 describe( 'Items.contains', () => {
-  const matchingItem = { id: '1234', resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
-  const otherItem = { id: '5678', resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
+  const matchingItem = { id: '1234', title: 'french', url: 'www.quelquepart.fr' };
+  const otherItem = { id: '5678', title: 'other', url: 'www.somewherelse.com' };
   const items = JSON.stringify([ matchingItem, otherItem ]);
 
   context('invalid searchedItem', () => {
@@ -314,7 +314,7 @@ describe( 'Items.contains', () => {
       });
 
       it( 'exactly matches one item returns the item', () => {
-        const searchFor = { url: matchingItem.resolved_url };
+        const searchFor = { url: matchingItem.url };
         // NOTE: deep matching
         expect( Items.contains( items, searchFor ) ).to.equal(true);
       });
@@ -327,7 +327,7 @@ describe( 'Items.contains', () => {
       });
 
       it('both match the same item returns the item', () => {
-        const searchFor = { id: matchingItem.id, url: matchingItem.resolved_url };
+        const searchFor = { id: matchingItem.id, url: matchingItem.url };
         expect( Items.contains( items, searchFor ) ).to.equal(true);
       });
 
@@ -337,7 +337,7 @@ describe( 'Items.contains', () => {
       });
 
       it('id matches nothing, url exactly matches something returns the item', () => {
-        const searchFor = { id: '1111', url: matchingItem.resolved_url };
+        const searchFor = { id: '1111', url: matchingItem.url };
         expect( Items.contains( items, searchFor ) ).to.equal(true);
       });
     });
@@ -345,8 +345,8 @@ describe( 'Items.contains', () => {
 });
 
 describe( 'Items.find', () => {
-  const matchingItem = { id: '1234', resolved_title: 'french', resolved_url: 'www.quelquepart.fr' };
-  const otherItem = { id: '5678', resolved_title: 'other', resolved_url: 'www.somewherelse.com' };
+  const matchingItem = { id: '1234', title: 'french', url: 'www.quelquepart.fr' };
+  const otherItem = { id: '5678', title: 'other', url: 'www.somewherelse.com' };
   const items = JSON.stringify([ matchingItem, otherItem ]);
 
   context('invalid searchedItem', () => {
@@ -396,7 +396,7 @@ describe( 'Items.find', () => {
       });
 
       it( 'exactly matches one item returns the item', () => {
-        const searchFor = { url: matchingItem.resolved_url };
+        const searchFor = { url: matchingItem.url };
         // NOTE: deep matching
         expect( Items.find( items, searchFor ) ).to.eql( matchingItem );
       });
@@ -409,7 +409,7 @@ describe( 'Items.find', () => {
       });
 
       it('both match the same item returns the item', () => {
-        const searchFor = { id: matchingItem.id, url: matchingItem.resolved_url };
+        const searchFor = { id: matchingItem.id, url: matchingItem.url };
         expect( Items.find( items, searchFor ) ).to.eql( matchingItem );
       });
 
@@ -419,7 +419,7 @@ describe( 'Items.find', () => {
       });
 
       it('id matches nothing, url exactly matches something returns the item', () => {
-        const searchFor = { id: '1111', url: matchingItem.resolved_url };
+        const searchFor = { id: '1111', url: matchingItem.url };
         expect( Items.find( items, searchFor ) ).to.eql( matchingItem );
       });
     });

@@ -36,7 +36,6 @@ function retrieveItems(force) {
   });
 }
 
-
 function retrieveAll(offset = 0) {
   Logger.log('(bg.retrieveAll) Retrieve all items');
   const isRetrievingFirstPage = (offset === 0);
@@ -120,7 +119,7 @@ function retrieveDiff() {
             switch(item.status) {
               case PocketApiStatus.ARCHIVED:
               case PocketApiStatus.DELETED:
-                Logger.log(`(bg.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.resolved_title})`);
+                Logger.log(`(bg.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.title})`);
                 const removedItemIdx = allItems.findIndex(item => item.id === itemId);
 
                 if(removedItemIdx >= 0) {
@@ -135,10 +134,10 @@ function retrieveDiff() {
                 const itemIdx = allItems.findIndex(item => item.id === itemId);
 
                 if(itemIdx >= 0) {
-                  Logger.log(`(bg.retriveDiff) Existing item ${itemId} (${item.resolved_title}) will be updated`);
+                  Logger.log(`(bg.retriveDiff) Existing item ${itemId} (${item.title}) will be updated`);
                   allItems[itemIdx] = Object.assign(allItems[itemIdx], Items.formatPocketItemForStorage(item));
                 } else {
-                  Logger.log(`(bg.retriveDiff) Add new item: ${itemId} (${item.resolved_title})`);
+                  Logger.log(`(bg.retriveDiff) Add new item: ${itemId} (${item.title})`);
                   allItems.push({ id: item.item_id, ...Items.formatPocketItemForStorage(item) });
                 }
                 break;

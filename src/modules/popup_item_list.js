@@ -123,12 +123,12 @@ const PopupItemList = ( function() {
     titleContent.className   = 'title';
     urlContent.className     = 'url';
 
-    faviconElement.setAttribute('src', faviconUrl(item.resolved_url));
+    faviconElement.setAttribute('src', faviconUrl(item.url));
 
     titleContent.appendChild(faviconElement);
-    titleContent.appendChild(document.createTextNode( formatTitle(item.resolved_title) ));
+    titleContent.appendChild(document.createTextNode( formatTitle(item.title) ));
 
-    urlContent.appendChild(document.createTextNode( formatUrl(item.resolved_url) ));
+    urlContent.appendChild(document.createTextNode( formatUrl(item.url) ));
 
     liElement.appendChild(buildActionsContainer());
     liElement.appendChild(titleContent);

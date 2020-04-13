@@ -52,8 +52,8 @@ const Items = (function () {
     // TODO: create the Regex only once, it never changes
     const protocolsRemovalRegex = new RegExp(`^(${protocolsToRemove})://(www.)?`, 'gi');
 
-    const lowerUrl = (item.resolved_url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
-    const lowerTitle = (item.resolved_title || '').toLowerCase();
+    const lowerUrl = (item.url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
+    const lowerTitle = (item.title || '').toLowerCase();
 
     return lowerTitle.includes(textToMatch) || lowerUrl.includes(textToMatch);
   }
@@ -100,7 +100,7 @@ const Items = (function () {
             // and if its url matches the deleted item
             if (tabId) {
               browser.tabs.get(tabId).then(currentTab => {
-                if (currentTab.url == removedItem.resolved_url) {
+                if (currentTab.url == removedItem.url) {
                   Settings.init().then(() => {
                     const closeTabWhenRead = Settings.get('closeTabWhenRead');
                     if (closeTabWhenRead) {
@@ -116,7 +116,7 @@ const Items = (function () {
 
             // Disable page actions for removed items
             Logger.log('(Items.removeItem) item removed, update matching pageActions');
-            const urlsToCheck = Utility.getPossibleUrls(removedItem.resolved_url);
+            const urlsToCheck = Utility.getPossibleUrls(removedItem.url);
             urlsToCheck.forEach((url)=>{
               browser.tabs.query({url: url}).then(tabs => {
                 const tabIds = tabs.map(tab => tab.id);
@@ -186,8 +186,8 @@ const Items = (function () {
   return {
     formatPocketItemForStorage: function (itemFromApi) {
       return {
-        resolved_title: itemFromApi.given_title || itemFromApi.resolved_title,
-        resolved_url: itemFromApi.given_url || itemFromApi.resolved_url,
+        title: itemFromApi.given_title || itemFromApi.resolved_title,
+        url: itemFromApi.given_url || itemFromApi.resolved_url,
         fav: itemFromApi.favorite,
         created_at: itemFromApi.time_added
       };
@@ -221,7 +221,7 @@ const Items = (function () {
           itemMatching = itemMatching || item.id == id;
         }
         if (url) {
-          itemMatching = itemMatching || item.resolved_url == url;
+          itemMatching = itemMatching || item.url == url;
         }
 
         return itemMatching;
@@ -243,7 +243,7 @@ const Items = (function () {
           itemMatching = itemMatching || item.id == id;
         }
         if (url) {
-          itemMatching = itemMatching || item.resolved_url == url;
+          itemMatching = itemMatching || item.url == url;
         }
 
         return itemMatching;
@@ -311,10 +311,11 @@ const Items = (function () {
           const enrichedAddedItems = enrichParsedItems(addedItems, newItemsToAdd);
 
           enrichedAddedItems.forEach(newItem => {
+            // TODO: use formatPocketItemForStorage or a variant of this
             parsedItems.push({
               id: newItem.item_id,
-              resolved_title: newItem.title,
-              resolved_url: newItem.given_url,
+              title: newItem.title,
+              url: newItem.given_url,
               created_at: (Date.now() / 1000 | 0)
             });
           });
@@ -373,9 +374,9 @@ const Items = (function () {
           const item = Items.find(items, {id: itemId});
 
           if (openInNewTab) {
-            browser.tabs.create({url: item.resolved_url});
+            browser.tabs.create({url: item.url});
           } else {
-            browser.tabs.update({url: item.resolved_url});
+            browser.tabs.update({url: item.url});
           }
 
           if (archiveWhenOpened) {
