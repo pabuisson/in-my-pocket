@@ -11,8 +11,6 @@ import Utility from '../modules/utility.js';
 import { VersionManager } from '../modules/version_manager.js';
 import { consumerKey, PocketApiStatus } from '../modules/constants.js';
 
-// ----------------
-
 // - - - API ACCESS : LIST MANAGEMENT - - -
 
 function retrieveItems(force) {
