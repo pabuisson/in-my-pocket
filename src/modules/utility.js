@@ -64,15 +64,15 @@ const Utility = (function () {
       return {url: url};
     },
 
-    getPossibleUrls: function(item) {
+    getPossibleUrls: function({ id, url }) {
       return [
-        item.url,
-        'about:reader?url=' + encodeURIComponent(item.url),
-        'https://app.getpocket.com/read/' + item.url,
-        'https://app.getpocket.com/read/' + item.id,
+        url,
+        'about:reader?url=' + encodeURIComponent(url),
+        'https://app.getpocket.com/read/' + url,
+        'https://app.getpocket.com/read/' + id,
         // is there still a way to use old webapp? if not it's unnecessary
-        'https://getpocket.com/a/read/' + item.url,
-        'https://getpocket.com/a/read/' + item.id,
+        'https://getpocket.com/a/read/' + url,
+        'https://getpocket.com/a/read/' + id,
       ];
     }
   };

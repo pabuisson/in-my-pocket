@@ -221,7 +221,8 @@ const Items = (function () {
           itemMatching = itemMatching || item.id == id;
         }
         if (url) {
-          itemMatching = itemMatching || item.url == url;
+          const possibleUrls = Utility.getPossibleUrls(item);
+          itemMatching = itemMatching || possibleUrls.includes(url);
         }
 
         return itemMatching;
@@ -243,7 +244,8 @@ const Items = (function () {
           itemMatching = itemMatching || item.id == id;
         }
         if (url) {
-          itemMatching = itemMatching || item.url == url;
+          const possibleUrls = Utility.getPossibleUrls(item);
+          itemMatching = itemMatching || possibleUrls.includes(url);
         }
 
         return itemMatching;
@@ -345,7 +347,14 @@ const Items = (function () {
 
             // Redraw every page pageAction
             Logger.log('(Items.addItem) new items added, update matching pageActions');
-            browser.tabs.query({url: enrichedAddedItems.map(item => item.given_url)}).then(tabs => {
+            const addedUrls = enrichedAddedItems.flatMap(item => {
+              return Utility.getPossibleUrls({
+                id: item.id,
+                url: item.given_url
+              });
+            });
+
+            browser.tabs.query({ url: addedUrls }).then(tabs => {
               const tabIds = tabs.map(tab => tab.id);
               PageAction.drawEnabled(...tabIds);
             });
