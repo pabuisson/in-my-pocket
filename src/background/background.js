@@ -76,7 +76,7 @@ function retrieveAll(offset = 0) {
             retrieveAll(retrievedItemsCount + offset);
             return;
           } else if (retrievedItemsCount === 0) {
-            Logger.log(`(bg.retrieveAll) All items have been fetched succesfully`);
+            Logger.log(`(bg.retrieveAll) 0 item in this page, all pages have been fetched succesfully`);
 
             // Save timestamp where we retrieved items for the last time
             // Save addon version that did the last full sync
@@ -117,7 +117,7 @@ function retrieveDiff() {
           const allItems = Utility.parseJson(items) || [];
 
           for(const itemId in response.list) {
-            const item = response.list[ itemId ];
+            const item = response.list[itemId];
 
             switch(item.status) {
               case PocketApiStatus.ARCHIVED:
