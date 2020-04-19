@@ -6,7 +6,6 @@ import { VersionManager } from '../modules/version_manager.js';
 const installNotificationId = '0001';
 const upgradeNotificationId = '0002';
 
-
 browser.runtime.onInstalled.addListener(details => {
   if(details.reason === 'install') {
     Logger.log('Fresh install! Welcome on board :)');
@@ -28,6 +27,7 @@ browser.runtime.onInstalled.addListener(details => {
     browser.storage.local.get(['access_token', 'lastFullSyncAtVersion'])
       .then(({ access_token, lastFullSyncAtVersion }) => {
         if (access_token && VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)) {
+          Logger.log('IMP version needs a resync');
           browser.runtime.sendMessage({ action: 'retrieve-items', force: true });
         }
       });
