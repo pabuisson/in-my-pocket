@@ -9,7 +9,7 @@ const VERSION_LEVELS = {
 };
 
 const VersionManager = (function() {
-  const forceResyncVersion = undefined;
+  const forceResyncVersion = '0.11.0';
 
   // eslint-disable-next-line max-params
   function isGreater(newVersion, baseVersion, granularity = VERSION_LEVELS.PATCH, currentGranularity = VERSION_LEVELS.MAJOR) {

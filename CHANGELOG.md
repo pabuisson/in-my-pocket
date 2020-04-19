@@ -1,10 +1,11 @@
 # Changelog
 
-## Not released yet
+## 0.11.0 - April 2020
 
-* FEATURE: you can now save pages from Firefox reader mode, thanks to this [contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/145). Thanks a lot to JJ for his help!
-* FEATURE: the first time you fetch your Pocket list, max number of items was capped to 5,000 items. From now on, subsequent requests will be made to make sure all items are fetched ([contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/143), thank you for your help!).
 * DESIGN: here comes a new shining icon for the InMyPocket project, to get away from the original Pocket one. Hope you'll like it!
+* FEATURE: you can now mark items as favorites ⭐️ They will be shown differently in the items list so that they stand out from the items list. Also, I've added a dedicated icon to the popup to show only favorite items from your list, or only not-favorite items. You can also type `is:faved` or `is:unfaved` in the search box to do the same!
+* FEATURE: you can now save pages from Firefox reader mode & from the getpocket.com website, thanks to this [contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/145). Thanks a lot to JJ for his help!
+* FEATURE: the first time you fetch your Pocket list, max number of items was capped to 5,000 items due to API restrictions. From now on, subsequent requests will be made to make sure all your items are fetched ([contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/143), thank you for your help!).
 * FEATURE: you can now use right-click to add a bunch of tabs to your pocket list! If you select several tabs and right-click another tab, this one will get added to the pocket list. You'll need to select several tab and right-click one of them. This plays nicely with "close tab after adding to pocket" setting.
 * FEATURE: a new automation completes the two existing ones! You can now set IMP to automatically close your tab when you mark the as read / delete it from your pocket list.
 * FIX: stop filtering on the protocols of the links, which is not visible in the UI and could therefore provide unexpected results. Searching for "ftp", will return links containing "ftp" in their title or url, and not the "ftp://" links.
