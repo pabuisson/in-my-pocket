@@ -12,7 +12,7 @@ import Utility         from '../modules/utility.js';
 
 // ----------------
 
-const PopupUI = ( function() {
+const PopupUI = (function() {
   const intervalWithoutOpening = 5*60;
   const defaultDisplaySetting  = { currentPage: 1, query: '' };
 
@@ -111,6 +111,7 @@ const PopupUI = ( function() {
         setupUnauthenticatedUI();
       });
     },
+
 
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth

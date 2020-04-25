@@ -82,7 +82,7 @@ function retrieveAll(offset = 0) {
               lastFullSyncAtVersion: VersionManager.getCurrentVersion()
             });
 
-            browser.runtime.sendMessage({ action: 'retrieved-items' });
+            browser.runtime.sendMessage({ action: 'retrieved-items', full: true });
             PageAction.redrawAllTabs();
           }
         });
