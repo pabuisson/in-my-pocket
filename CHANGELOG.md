@@ -9,6 +9,7 @@
 * FEATURE: you can now use right-click to add a bunch of tabs to your pocket list! If you select several tabs and right-click another tab, this one will get added to the pocket list. You'll need to select several tab and right-click one of them. This plays nicely with "close tab after adding to pocket" setting.
 * FEATURE: a new automation completes the two existing ones! You can now set IMP to automatically close your tab when you mark the as read / delete it from your pocket list.
 * FIX: stop filtering on the protocols of the links, which is not visible in the UI and could therefore provide unexpected results. Searching for "ftp", will return links containing "ftp" in their title or url, and not the "ftp://" links.
+* FIX: actions in the items list must be triggered only when left-clicking
 
 
 ## 0.10.6 - June 2019

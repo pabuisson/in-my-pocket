@@ -178,8 +178,8 @@ const PopupItemList = ( function() {
   return {
     setupEventListeners: function() {
       itemsContainer.addEventListener('mouseup', function(ev) {
-        if(!ev.target)
-          return;
+        if(!ev.target) return;
+        if(ev.button !== MouseButtons.LEFT) return;
 
         ev.preventDefault();
 
