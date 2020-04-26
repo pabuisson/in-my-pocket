@@ -179,7 +179,6 @@ const PopupItemList = ( function() {
     setupEventListeners: function() {
       itemsContainer.addEventListener('mouseup', function(ev) {
         if(!ev.target) return;
-        if(ev.button !== MouseButtons.LEFT) return;
 
         ev.preventDefault();
 
@@ -187,14 +186,20 @@ const PopupItemList = ( function() {
         const targetItemId = targetItem.dataset.id;
 
         if(Utility.matchesOrHasParent(ev.target, '.delete-action')) {
-          Logger.log(`(PopupItemList.eventListener) Clicked .delete-action for item ${targetItemId}`);
-          PopupUI.deleteItem(targetItemId);
+          if(ev.button === MouseButtons.LEFT) {
+            Logger.log(`(PopupItemList.eventListener) Clicked .delete-action for item ${targetItemId}`);
+            PopupUI.deleteItem(targetItemId);
+          }
         } else if(Utility.matchesOrHasParent(ev.target, '.tick-action')) {
-          Logger.log(`(PopupItemList.eventListener) Clicked .tick-action for item ${targetItemId}`);
-          PopupUI.markAsRead(targetItemId);
+          if(ev.button === MouseButtons.LEFT) {
+            Logger.log(`(PopupItemList.eventListener) Clicked .tick-action for item ${targetItemId}`);
+            PopupUI.markAsRead(targetItemId);
+          }
         } else if(Utility.matchesOrHasParent(ev.target, '.favorite-action')) {
-          Logger.log(`(PopupItemList.eventListener) Clicked .favorite-action for item ${targetItemId}`);
-          PopupUI.toggleFavorite(targetItemId);
+          if(ev.button === MouseButtons.LEFT) {
+            Logger.log(`(PopupItemList.eventListener) Clicked .favorite-action for item ${targetItemId}`);
+            PopupUI.toggleFavorite(targetItemId);
+          }
         } else if(ev.target.matches('.title') || ev.target.matches('.url')) {
           const openInNewTab = true;
           switch(ev.button) {
@@ -216,11 +221,11 @@ const PopupItemList = ( function() {
       });
     },
 
-    buildAll: function( items ) {
+    buildAll: function(items) {
       Logger.log('(PopupItemList.buildAll)');
 
       // Remove previous "requestAnimationFrame" registered in case
-      cancelAnimationFrame( buildBatch );
+      cancelAnimationFrame(buildBatch);
 
       // Reset list component content
       resetUI();
@@ -232,7 +237,7 @@ const PopupItemList = ( function() {
 
       // Build the dom
       Logger.log('(PopupItemList.buildAll) Request a 1st animation frame for buildBatch method');
-      requestAnimationFrame( buildBatch );
+      requestAnimationFrame(buildBatch);
     },
 
     // Will build DOM for items and insert it before the item whose id=beforeItemId
@@ -254,10 +259,10 @@ const PopupItemList = ( function() {
       const visibleItems = itemsContainer.querySelectorAll('.item:not(.disappearing)');
       const visibleItemsIds = [];
 
-      Logger.log(`(PopupItemList.getVisibleItems) ${ visibleItems.length } visible items`);
+      Logger.log(`(PopupItemList.getVisibleItems) ${visibleItems.length} visible items`);
 
-      for( let i = 0; i < visibleItems.length; i++ ) {
-        visibleItemsIds.push( visibleItems[ i ].dataset.id );
+      for(let i = 0; i < visibleItems.length; i++) {
+        visibleItemsIds.push(visibleItems[i].dataset.id);
       }
 
       return visibleItemsIds;
