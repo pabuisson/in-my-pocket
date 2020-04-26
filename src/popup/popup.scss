@@ -401,14 +401,18 @@ $top-actions-height: 2.8rem;
   }
 
   &.hidden {
-    /* Needed to counter the 'display:none' of the .hidden class. Without this, the overlay
-     * display goes from block to none, and is hidden all at once */
+    // Needed to counter the 'display:none' of the .hidden class. Without this, the overlay
+    // display goes from block to none, and is hidden all at once
     display: block !important;
 
     height: 0px;
-    padding: 0px;
     opacity: 0;
     transition: height 250ms ease-out, opacity 0 250ms ease-out;
+
+    // Let's make sure the item really takes no space in the popup, or it will
+    // prevent clicking on the first item of the list
+    padding: 0px;
+    line-height: 0;
   }
 }
 
