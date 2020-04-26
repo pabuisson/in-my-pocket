@@ -55,22 +55,44 @@ describe('VersionManager.isMajorOrMinorUpdate', () => {
 });
 
 describe('VersionManager.mustTriggerFullResync', () => {
-  beforeEach( () => { sinon.stub(VersionManager, 'forceResyncVersion').returns('2.0.0'); });
-  afterEach( () => { VersionManager.forceResyncVersion.restore(); });
+  describe('forceResyncVersion is defined', () => {
+    beforeEach( () => { sinon.stub(VersionManager, 'forceResyncVersion').returns('2.0.0'); });
+    afterEach( () => { VersionManager.forceResyncVersion.restore(); });
 
-  it('returns false if last full sync is more recent than forceResyncVersion', () => {
-    const lastFullSyncAtVersion = '2.2.2';
-    expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.false;
+    it('returns false if last full sync is more recent than forceResyncVersion', () => {
+      const lastFullSyncAtVersion = '2.2.2';
+      expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.false;
+    });
+
+    it('returns false if last full sync is same as forceResyncVersion', () => {
+      const lastFullSyncAtVersion = '2.0.0';
+      expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.false;
+    });
+
+    it('returns true if last full sync is older than forceResyncVersion', () => {
+      const lastFullSyncAtVersion = '1.0.0';
+      expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.true;
+    });
+
+    it('returns true if lastFullSyncAtVersion does not exist', () => {
+      const lastFullSyncAtVersion = undefined;
+      expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.true;
+    });
   });
 
-  it('returns false if last full sync is same as forceResyncVersion', () => {
-    const lastFullSyncAtVersion = '2.0.0';
-    expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.false;
-  });
+  describe('forceResyncVersion is undefined', () => {
+    beforeEach( () => { sinon.stub(VersionManager, 'forceResyncVersion').returns(undefined); });
+    afterEach( () => { VersionManager.forceResyncVersion.restore(); });
 
-  it('returns true if last full sync is older than forceResyncVersion', () => {
-    const lastFullSyncAtVersion = '1.0.0';
-    expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.true;
+    it('returns false if lastFullSyncAtVersion does not exist', () => {
+      const lastFullSyncAtVersion = undefined;
+      expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.false;
+    });
+
+    it('returns false if lastFullSyncAtVersion exists', () => {
+      const lastFullSyncAtVersion = '1.0.0';
+      expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.false;
+    });
   });
 });
 
