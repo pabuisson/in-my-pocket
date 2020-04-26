@@ -1,6 +1,6 @@
 "use strict";
 
-import retrieveItems from '../background/background.js';
+import ItemsFetcher from '../modules/items_fetcher.js';
 import Logger  from '../modules/logger.js';
 import { VersionManager } from '../modules/version_manager.js';
 
@@ -29,7 +29,7 @@ browser.runtime.onInstalled.addListener(details => {
       .then(({ access_token, lastFullSyncAtVersion }) => {
         if (access_token && VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)) {
           Logger.log('IMP version needs a resync');
-          retrieveItems(true);
+          ItemsFetcher.retrieveItems(true);
         }
       });
   }
