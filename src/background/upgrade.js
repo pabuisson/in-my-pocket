@@ -1,5 +1,6 @@
 "use strict";
 
+import retrieveItems from '../background/background.js';
 import Logger  from '../modules/logger.js';
 import { VersionManager } from '../modules/version_manager.js';
 
@@ -28,7 +29,7 @@ browser.runtime.onInstalled.addListener(details => {
       .then(({ access_token, lastFullSyncAtVersion }) => {
         if (access_token && VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)) {
           Logger.log('IMP version needs a resync');
-          browser.runtime.sendMessage({ action: 'retrieve-items', force: true });
+          retrieveItems(true);
         }
       });
   }
@@ -38,11 +39,11 @@ browser.notifications.onClicked.addListener(notificationId => {
   switch(notificationId) {
     case installNotificationId:
       browser.notifications.clear(notificationId);
-      browser.tabs.create({ 'url': 'https://inmypocketaddon.com/faq.html?utm_source=addon&utm_medium=notification&utm_campaign=install' });
+      browser.tabs.create({ url: 'https://inmypocketaddon.com/faq.html?utm_source=addon&utm_medium=notification&utm_campaign=install' });
       break;
     case upgradeNotificationId:
       browser.notifications.clear(notificationId);
-      browser.tabs.create({ 'url': 'https://inmypocketaddon.com/changelog.html?utm_source=addon&utm_medium=notification&utm_campaign=upgrade' });
+      browser.tabs.create({ url: 'https://inmypocketaddon.com/changelog.html?utm_source=addon&utm_medium=notification&utm_campaign=upgrade' });
       break;
   }
 });

@@ -19,7 +19,7 @@ function retrieveItems(force) {
 
   browser.storage.local.get(['items', 'last_retrieve']).then( ({ items, last_retrieve }) => {
     const timeSinceLastRetrieve = currentTimestamp - last_retrieve;
-    Logger.log(`(retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`);
+    Logger.log(`(bg.retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`);
 
     if (force || !items || !last_retrieve) {
       // If force == true, we always reload the whole list
@@ -179,7 +179,7 @@ function retrieveDiff() {
 
 // - - - MESSAGES - - -
 
-browser.runtime.onMessage.addListener( function(eventData) {
+browser.runtime.onMessage.addListener(function(eventData) {
   Logger.log( `(bg.onMessage) eventData.action: ${eventData.action}` );
   switch(eventData.action) {
     case 'authenticate':
@@ -234,3 +234,5 @@ Authentication.isAuthenticated().then( function() {
   ContextMenu.createEntries();
   Badge.updateCount();
 });
+
+export default retrieveItems;
