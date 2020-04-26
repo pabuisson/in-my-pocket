@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11.1 - April 2020
+
+* FIX: woopsie, the first item of the list was not clickable anymore!
+
+
 ## 0.11.0 - April 2020
 
 * DESIGN: here comes a new shining icon for the InMyPocket project, to get away from the original Pocket one. Hope you'll like it!
