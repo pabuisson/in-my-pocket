@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 0.11.2 - April 2020
+
+* FIX: OK, I said I prevented middle-click / right-click to trigger the archive/delete/favorite actions in the popup list. But it also broke the "middle-click opens in a new tab" feature. All is back to normal!
+* FIX: left-clicking an item would open it twice. But looks like you want to read your items only once 🙃
+
+
 ## 0.11.1 - April 2020
 
 * FIX: woopsie, the first item of the list was not clickable anymore!
