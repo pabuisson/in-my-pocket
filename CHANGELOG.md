@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.3 - April 2020
+
+* FIX: the first item of the list was still partially covered by an element preventing the click. It is now definitely fixed and can be clicked wherever you want to!
+
 
 ## 0.11.2 - April 2020
 
