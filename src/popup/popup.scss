@@ -406,6 +406,7 @@ $top-actions-height: 2.8rem;
     display: block !important;
 
     height: 0px;
+    padding: 0px;
     opacity: 0;
     transition: height 250ms ease-out, opacity 0 250ms ease-out;
   }
