@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11.4 - May 2020
+
+* FIX: when coupling search and favoriting/unfavoriting items, you could sometimes add inconsistent highlighting of your favorite items, due to an incorrect way of caching the items. I updated the way I compute the cache key, and this problem is now fixed!
+
+
 ## 0.11.3 - April 2020
 
 * FIX: the first item of the list was still partially covered by an element preventing the click. It is now definitely fixed and can be clicked wherever you want to!
