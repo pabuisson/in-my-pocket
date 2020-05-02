@@ -74,6 +74,19 @@ const Utility = (function () {
         'https://getpocket.com/a/read/' + url,
         'https://getpocket.com/a/read/' + id,
       ];
+    },
+
+    // Source: https://stackoverflow.com/a/7616484/85076
+    // Source: https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+    hashCode: function(s) {
+      let hash = 0;
+      for (let i = 0; i < s.length; i++) {
+        hash = ((hash << 5) - hash) + s.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+      }
+
+      // Make it always > 0
+      return hash >>> 0;
     }
   };
 })();

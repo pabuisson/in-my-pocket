@@ -17,11 +17,11 @@ const Items = (function () {
   let parsedItems = null;
 
   function parseItems(rawItems) {
-    const rawItemsChecksum = rawItems ? rawItems.length : 0;
-    Logger.log(`(Items.parseItems) checksum: ${currentChecksum} ; new: ${rawItemsChecksum}`);
+    const rawItemsChecksum = rawItems ? Utility.hashCode(rawItems) : 0;
+    Logger.log(`(Items.parseItems) checksum: "${currentChecksum}"; new: "${rawItemsChecksum}"`);
 
     if (rawItemsChecksum != currentChecksum) {
-      Logger.log('(Items.parsedItems) checksum not defined, parse those items for the first time');
+      Logger.log('(Items.parsedItems) checksum changed, parse the items');
 
       currentChecksum = rawItemsChecksum;
       parsedItems = Utility.parseJson(rawItems);
