@@ -11,6 +11,20 @@ import Utility from '../modules/utility.js';
 import { VersionManager } from '../modules/version_manager.js';
 import { consumerKey, PocketApiStatus } from '../modules/constants.js';
 
+
+// - - - SENTRY INIT - - -
+import { init } from '@sentry/browser';
+
+// TODO: how to correctly set development/production mode?
+init({
+  dsn: 'https://1207d464a72f4c788936641a73b872a2@o153528.ingest.sentry.io/1206746',
+  environment: 'development',
+  release: VersionManager.getCurrentVersion(),
+});
+
+callUnknowMethod();
+
+
 // - - - API ACCESS : LIST MANAGEMENT - - -
 
 function retrieveItems(force) {

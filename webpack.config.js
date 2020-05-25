@@ -1,5 +1,6 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin    = require('copy-webpack-plugin');
+const SentryWebpackPlugin = require('@sentry/webpack-plugin');
 
 module.exports = {
   context: __dirname + '/src',
@@ -47,8 +48,16 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin(),
     new CopyWebpackPlugin([
-      { from: 'assets/', to: 'assets/',  ignore: [ '.DS_Store' ] },
+      { from: 'assets/', to: 'assets/',  ignore: ['.DS_Store'] },
       { from: 'manifest.json', to: 'manifest.json' }
-    ])
+    ]),
+    // TODO: I'd need this only when generating a new production build
+    // https://docs.sentry.io/platforms/javascript/sourcemaps/#uploading-source-maps-to-sentry
+    // new SentryWebpackPlugin({
+    //   include: '.',
+    //   ignoreFile: '.sentrycliignore',
+    //   ignore: ['node_modules', 'webpack.config.js'],
+    //   configFile: 'sentry.properties'
+    // })
   ]
 };
