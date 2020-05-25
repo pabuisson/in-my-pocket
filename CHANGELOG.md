@@ -1,6 +1,6 @@
 # Changelog
 
-## Not released yet
+## 0.11.5 - May 2020
 
 * UPDATE: the options page was always bright. Even if you were using a dark theme on your OS... and we don't like that! From now on, the addon "Preferences" page should respect the dark theme setting.
 
