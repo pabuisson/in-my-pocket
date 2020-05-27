@@ -12,7 +12,7 @@ import Utility         from '../modules/utility.js';
 
 // ----------------
 
-const PopupUI = ( function() {
+const PopupUI = (function() {
   const intervalWithoutOpening = 5*60;
   const defaultDisplaySetting  = { currentPage: 1, query: '' };
 
@@ -45,8 +45,8 @@ const PopupUI = ( function() {
     setupEventListeners();
 
     browser.storage.local.get('display').then(({ display }) => {
-      const currentTimestamp = ( Date.now() / 1000 | 0 );
-      const parsedDisplay = Utility.parseJson( display ) || defaultDisplaySetting;
+      const currentTimestamp = (Date.now() / 1000 | 0);
+      const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting;
       const lastDisplay   = parsedDisplay.displayedAt;
 
       const displayOptions = Object.assign({}, parsedDisplay);
@@ -59,6 +59,7 @@ const PopupUI = ( function() {
 
       // Set initial filter value in the PopupUI and focus the field
       PopupTopFilter.setValue(displayOptions.query);
+      PopupTopFilter.updateFavoriteFilterIcon();
       PopupTopFilter.focusSearchField();
 
       // Updates display.displayedAt and page + query if they have been reset
@@ -110,6 +111,7 @@ const PopupUI = ( function() {
         setupUnauthenticatedUI();
       });
     },
+
 
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth

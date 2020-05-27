@@ -3,6 +3,7 @@
 import Items  from '../modules/items.js';
 import Logger from '../modules/logger.js';
 import PageAction from '../modules/page_action.js';
+import Utility from "../modules/utility";
 
 
 // ---------------
@@ -20,14 +21,15 @@ browser.tabs.onUpdated.addListener( (tabId, changeInfo) => {
     browser.tabs.get( tabId ).then( tab => {
       if(tab.active) {
         browser.storage.local.get("items").then( ({ items }) => {
-          const containsItem = Items.contains(items, { url: tab.url });
+          const query = Utility.getQuery(tab.url);
+          const containsItem = Items.contains(items, query);
 
           if(containsItem) {
-            Logger.log(`(pageAction.tabsOnUpdated) loading ${changeInfo.url} that IS in my list`);
+            Logger.log(`(pageAction.tabsOnUpdated) loading ${tab.url} that IS in my list`);
             PageAction.drawEnabled(tabId);
             PageAction.show(tabId);
           } else {
-            Logger.log(`(pageAction.tabsOnUpdated) loading ${changeInfo.url}, NOT in my list yet`);
+            Logger.log(`(pageAction.tabsOnUpdated) loading ${tab.url}, NOT in my list yet`);
             PageAction.drawDisabled(tabId);
             PageAction.show(tabId);
           }
@@ -43,7 +45,8 @@ browser.tabs.onActivated.addListener( ({ tabId }) => {
     return tab.url;
   }).then( currentUrl => {
     browser.storage.local.get("items").then( ({ items }) => {
-      const containsItem = Items.contains(items, { url: currentUrl });
+      const query = Utility.getQuery(currentUrl);
+      const containsItem = Items.contains(items, query);
 
       if(containsItem) {
         Logger.log(`(pageAction.tabsOnActivated) switch to tab ${currentUrl} that IS in my list`);

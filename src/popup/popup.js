@@ -6,25 +6,34 @@ import'./popup.scss';
 import Authentication from '../modules/authentication.js';
 import Badge from '../modules/badge.js';
 import Logger from '../modules/logger.js';
+import { PopupFlash, FlashKind } from '../modules/popup_flash.js';
 import PopupMainLoader from '../modules/popup_main_loader.js';
 import PopupUI from '../modules/popup_ui.js';
+import { VersionManager } from '../modules/version_manager.js';
 import { PocketError, PocketNotice, MouseButtons } from '../modules/constants.js';
 
 
 // --- EVENTS ---
 
 // prevent general.autoScroll
-document.body.onmousedown = ( e ) => {
-  if (e.button === MouseButtons.MIDDLE )
+document.body.onmousedown = e => {
+  if (e.button === MouseButtons.MIDDLE)
     return false;
 };
-
 
 // - - - MAIN LOGIC LOOP - - -
 
 document.addEventListener('DOMContentLoaded', function() {
   // Setup the UI and draw the list with items already in memory
   PopupUI.setup();
+
+  // Show message if need a full resync
+  browser.storage.local.get(['access_token', 'lastFullSyncAtVersion'])
+    .then(({ access_token, lastFullSyncAtVersion }) => {
+      if (access_token && VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)) {
+        PopupFlash.showNeedResyncMessage();
+      }
+    });
 
   Authentication.isAuthenticated().then( () => {
     PopupUI.drawList();
@@ -42,18 +51,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if(eventData.error || eventData.notice) {
       Logger.warn('(popup onMessage) : ' + eventData);
 
-      const flashContainer = document.querySelector('.flash-overlay');
-      const errorClass     = 'error';
-      const noticeClass    = 'notice';
-      let flashMessage = '';
-
-      flashContainer.classList.remove(errorClass);
-      flashContainer.classList.remove(noticeClass);
-
       if(eventData.error) {
-        flashContainer.classList.add(errorClass);
-        flashMessage = 'An error occurred: ';
-
+        let flashMessage = 'An error occurred: ';
         switch(eventData.error) {
           case PocketError.UNREACHABLE:
             flashMessage += 'could not reach the server';
@@ -66,33 +65,21 @@ document.addEventListener('DOMContentLoaded', function() {
             break;
           case PocketError.RATE_LIMIT:
             flashMessage += 'max requests reached for this hour';
-            flashMessage += ' (reset in ' + eventData.resetDelay + ')';
+            flashMessage += ` (reset in ${eventData.resetDelay})`;
             break;
         }
 
-        // Flash the badge if an error occured
+        // Show flash message + Flash the badge if an error occured
+        PopupFlash.show(flashMessage, FlashKind.ERROR, 5000);
         browser.runtime.sendMessage({ action: 'flash-error' });
-
       } else if(eventData.notice) {
-        flashContainer.classList.add(noticeClass);
-
-        switch(eventData.notice) {
-          case PocketNotice.ALREADY_IN_LIST:
-            flashMessage = 'This page is already in your Pocket :)';
-            break;
+        if(eventData.notice === PocketNotice.ALREADY_IN_LIST) {
+          PopupFlash.show('This page is already in your Pocket :)', FlashKind.NOTICE, 5000);
         }
       }
 
-      flashContainer.innerHTML = flashMessage;
-      flashContainer.classList.remove('hidden');
-
-      // Hide the error message after 5 seconds and reset the class list
-      setTimeout( () => {
-        flashContainer.classList.add('hidden');
-      }, 5000 );
-
     } else {
-      Logger.log('(popup onMessage) : ' + eventData.action);
+      Logger.log(`(popup onMessage) : ${eventData.action}`);
 
       switch(eventData.action) {
         case 'authenticated':
@@ -121,6 +108,16 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'retrieved-items':
           PopupUI.updateList();
           Badge.updateCount();
+
+          if(eventData.full) {
+            if (PopupFlash.isNeedResyncMessageVisibleDisplayed()) {
+              PopupFlash.show(
+                '<strong>All your items have been resynced, thank you!<strong> 🤗',
+                FlashKind.SUCCESS,
+                5000
+              );
+            }
+          }
           break;
       }
     }

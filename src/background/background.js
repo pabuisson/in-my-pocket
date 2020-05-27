@@ -8,19 +8,18 @@ import Logger from '../modules/logger.js';
 import PageAction from '../modules/page_action.js';
 import Request from '../modules/request.js';
 import Utility from '../modules/utility.js';
+import { VersionManager } from '../modules/version_manager.js';
 import { consumerKey, PocketApiStatus } from '../modules/constants.js';
-
-// ----------------
 
 // - - - API ACCESS : LIST MANAGEMENT - - -
 
 function retrieveItems(force) {
   const intervalWithoutReload = 15*60;
-  const currentTimestamp      = ( Date.now()/1000 | 0 );
+  const currentTimestamp      = (Date.now()/1000 | 0);
 
   browser.storage.local.get(['items', 'last_retrieve']).then( ({ items, last_retrieve }) => {
     const timeSinceLastRetrieve = currentTimestamp - last_retrieve;
-    Logger.log(`(retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`);
+    Logger.log(`(bg.retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`);
 
     if (force || !items || !last_retrieve) {
       // If force == true, we always reload the whole list
@@ -37,44 +36,59 @@ function retrieveItems(force) {
   });
 }
 
+function retrieveAll(offset = 0) {
+  Logger.log('(bg.retrieveAll) Retrieve all items');
+  const isRetrievingFirstPage = (offset === 0);
 
-function retrieveAll() {
-  Logger.log('(retrieve all items)');
-
-  browser.storage.local.get('access_token').then( ({ access_token }) => {
+  browser.storage.local.get(['access_token', 'items']).then( ({ access_token, items }) => {
+    const itemsList = (items && !isRetrievingFirstPage ? Utility.parseJson(items) : []);
     const requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
       detailType: 'simple',
+      offset: offset,
+      count: 2000,
+      sort: 'oldest',
     };
 
     // https://getpocket.com/developer/docs/v3/retrieve
     new Request('POST', 'https://getpocket.com/v3/get', requestParams)
       .fetch()
       .then(response => {
-        Logger.log(Object.keys(response.list).length + ' items in the response');
+        const retrievedItemsCount = Object.keys(response.list).length;
+        Logger.log(`(bg.retrieveAll) ${retrievedItemsCount} items in the response`);
 
-        const itemsList = Object.keys(response.list).map(itemId => {
-          const item = response.list[itemId];
-          return { id: item.item_id, ...Items.formatPocketItemForStorage(item) };
+        const newItems = Object.keys(response.list).map(itemId => {
+          return { id: itemId, ...Items.formatPocketItemForStorage(response.list[itemId]) };
         });
 
-        // Save item list in storage and update badge count
-        browser.storage.local.set({ items: JSON.stringify(itemsList) });
-        Badge.updateCount( itemsList );
+        const allItems = [...itemsList, ...newItems];
 
-        // Save timestamp to database as "last_retrieve", so that next time we just update the diff
-        browser.storage.local.set({ last_retrieve: response.since });
+        // Save item list in storage
+        browser.storage.local.set({ items: JSON.stringify(allItems) }).then(() => {
+          Badge.updateCount(allItems);
 
-        // Send a message back to the UI
-        browser.runtime.sendMessage({ action: 'retrieved-items' });
+          if(retrievedItemsCount > 0) {
+            Logger.log(`(bg.retrieveAll) Fetch next page: offset=${offset}`);
+            retrieveAll(retrievedItemsCount + offset);
+            return;
+          } else if (retrievedItemsCount === 0) {
+            Logger.log(`(bg.retrieveAll) 0 item in this page, all pages have been fetched succesfully`);
 
-        // Updates the tabs page actions
-        PageAction.redrawAllTabs();
+            // Save timestamp where we retrieved items for the last time
+            // Save addon version that did the last full sync
+            browser.storage.local.set({
+              last_retrieve: response.since,
+              lastFullSyncAtVersion: VersionManager.getCurrentVersion()
+            });
+
+            browser.runtime.sendMessage({ action: 'retrieved-items', full: true });
+            PageAction.redrawAllTabs();
+          }
+        });
       })
-      .catch( error => {
-        Logger.warn('(bg.retrieveAll) something went wrong...');
-        Logger.warn(`(bg.retrieveAll) ${ JSON.stringify(error) }`);
+      .catch(error => {
+        Logger.error(`(bg.retrieveAll) Error: ${ JSON.stringify(error) }`);
         Badge.flashError();
       });
   });
@@ -100,12 +114,12 @@ function retrieveDiff() {
           const allItems = Utility.parseJson(items) || [];
 
           for(const itemId in response.list) {
-            const item = response.list[ itemId ];
+            const item = response.list[itemId];
 
             switch(item.status) {
               case PocketApiStatus.ARCHIVED:
               case PocketApiStatus.DELETED:
-                Logger.log(`(bg.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.resolved_title})`);
+                Logger.log(`(bg.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.title})`);
                 const removedItemIdx = allItems.findIndex(item => item.id === itemId);
 
                 if(removedItemIdx >= 0) {
@@ -120,10 +134,10 @@ function retrieveDiff() {
                 const itemIdx = allItems.findIndex(item => item.id === itemId);
 
                 if(itemIdx >= 0) {
-                  Logger.log(`(bg.retriveDiff) Existing item ${itemId} (${item.resolved_title}) will be updated`);
+                  Logger.log(`(bg.retriveDiff) Existing item ${itemId} (${item.title}) will be updated`);
                   allItems[itemIdx] = Object.assign(allItems[itemIdx], Items.formatPocketItemForStorage(item));
                 } else {
-                  Logger.log(`(bg.retriveDiff) Add new item: ${itemId} (${item.resolved_title})`);
+                  Logger.log(`(bg.retriveDiff) Add new item: ${itemId} (${item.title})`);
                   allItems.push({ id: item.item_id, ...Items.formatPocketItemForStorage(item) });
                 }
                 break;
@@ -165,7 +179,7 @@ function retrieveDiff() {
 
 // - - - MESSAGES - - -
 
-browser.runtime.onMessage.addListener( function(eventData) {
+browser.runtime.onMessage.addListener(function(eventData) {
   Logger.log( `(bg.onMessage) eventData.action: ${eventData.action}` );
   switch(eventData.action) {
     case 'authenticate':
@@ -220,3 +234,5 @@ Authentication.isAuthenticated().then( function() {
   ContextMenu.createEntries();
   Badge.updateCount();
 });
+
+export default retrieveItems;

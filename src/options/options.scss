@@ -32,6 +32,8 @@ body {
 
 h2 {
   font-weight: normal;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
 .row {
@@ -79,3 +81,31 @@ h2 {
     font-weight: bold;
   }
 }
+
+
+/**
+ * Light / Dark
+ * MacOS: this refers to the system setting
+ */
+
+@media (prefers-color-scheme: dark) {
+  $ff-dark-options-background: #202023;
+  $ff-dark-options-foreground: #dadada;
+  body {
+    background-color: $ff-dark-options-background;
+    color: $ff-dark-options-foreground;
+  }
+
+  h2, h3 {
+    color: white;
+  }
+
+  .row {
+    border-top-color: transparentize($ff-dark-options-foreground, 0.8);
+
+    img {
+      border-color: transparentize($ff-dark-options-foreground, 0.5);
+    }
+  }
+}
+

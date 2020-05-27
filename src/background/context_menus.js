@@ -37,8 +37,8 @@ browser.contextMenus.onClicked.addListener( (info, tab) => {
       break;
 
     case ContextMenu.archiveId:
-      browser.storage.local.get("items").then( ({ items }) => {
-        const item = Items.find(items, { url: info.linkUrl || info.pageUrl });
+      browser.storage.local.get('items').then( ({ items }) => {
+        const item = Items.find(items, { url: info.linkUrl || tab.url });
         if(item) {
           browser.tabs.query({ active: true, currentWindow: true }).then( ([currentTab]) => {
             Items.markAsRead(item.id, currentTab.id);
@@ -70,7 +70,7 @@ browser.contextMenus.onClicked.addListener( (info, tab) => {
 // browser.contextMenus.onShown available for FF 60+ only
 if(browser.contextMenus.onShown) {
   browser.contextMenus.onShown.addListener( (info, tab) => {
-    const url = info.linkUrl ? info.linkUrl : info.pageUrl;
+    const url = info.linkUrl ? info.linkUrl : tab.url;
 
     // If several tabs selected and user right-clicked one of them, we'll handle them differently
     browser.tabs.query({currentWindow: true, highlighted: true}).then( highlightedTabs => {
@@ -87,17 +87,17 @@ if(browser.contextMenus.onShown) {
       } else {
         // If only one tab clicked OR tab clicked is outside the several highlighted tabs,
         // we'll only deal with this tab
-        browser.storage.local.get("items").then( ({ items }) => {
-          const containsItem = Items.contains( items, { url: url });
+        browser.storage.local.get('items').then( ({ items }) => {
+          const containsItem = Items.contains(items, { url: url });
 
           if(containsItem) {
             Logger.log(`(background.onShown) update contextMenu for ${url} that IS in my list`);
-            ContextMenu.setState( ContextMenu.pageAlreadyInPocket ).then( () => {
+            ContextMenu.setState(ContextMenu.pageAlreadyInPocket).then( () => {
               browser.contextMenus.refresh();
             });
           } else {
             Logger.log(`(background.onShown) update contextMenu for ${url} that ISN'T in my list`);
-            ContextMenu.setState( ContextMenu.pageNotInPocket ).then( () => {
+            ContextMenu.setState(ContextMenu.pageNotInPocket).then( () => {
               browser.contextMenus.refresh();
             });
           }
@@ -129,10 +129,10 @@ if(browser.contextMenus.onShown) {
 
   // 2. When I switch to another tab, check if I need to update the state of context menus
   browser.tabs.onActivated.addListener( ({ tabId }) => {
-    browser.tabs.get(tabId).then( tab => {
+    browser.tabs.get(tabId).then(tab => {
       return tab.url;
-    }).then( currentUrl => {
-      browser.storage.local.get("items").then( ({ items }) => {
+    }).then(currentUrl => {
+      browser.storage.local.get('items').then( ({ items }) => {
         const containsItem = Items.contains(items, { url: currentUrl });
 
         if(containsItem) {
