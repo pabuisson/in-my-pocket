@@ -12,23 +12,18 @@ const Authentication = ( function() {
   const redirectIntermediate = 'https://oauth.pabuisson.com';
   const redirectAuthFinished = 'https://oauth.pabuisson.com';
 
-  function authenticateStep2( requestToken ) {
+  function authenticateStep2(requestToken) {
     Logger.log('(Authentication.authenticateStep2) Request API authorize to finish authentication');
     const requestParams = {
       consumer_key: consumerKey,
       code: requestToken
     };
 
-    return new Request( 'POST', 'https://getpocket.com/v3/oauth/authorize', requestParams )
+    return new Request('POST', 'https://getpocket.com/v3/oauth/authorize', requestParams)
       .fetch()
-      .then( function( response ) {
+      .then( function(response) {
         Logger.log('(Authentication.authenticateStep2) Got the access_token, we are all good!');
-        const username = response.username;
-        const access_token = response.access_token;
-
-        // Store the access_token in local storage
-        browser.storage.local.set({ access_token: access_token });
-        browser.storage.local.set({ username: username });
+        browser.storage.local.set({ access_token: response.access_token });
 
         return true;
       });

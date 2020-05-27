@@ -2,9 +2,7 @@
 
 import Logger from './logger.js';
 
-
 // -------------------------------------
-
 
 const Utility = (function () {
   const defaultTimeout = 1000;
@@ -40,14 +38,6 @@ const Utility = (function () {
       return parsedResponse;
     },
 
-    isMajorOrMinorUpdate: (previousVersion) => {
-      const currentVersion = browser.runtime.getManifest().version;
-      const currentMinor = currentVersion.split('.').slice(0, 2).join('');
-      const previousMinor = previousVersion.split('.').slice(0, 2).join('');
-
-      return currentMinor != previousMinor;
-    },
-
     getParent: function (node, selector) {
       while (node && !node.matches(selector))
         node = node.parentElement;
@@ -63,7 +53,7 @@ const Utility = (function () {
       return node.matches(selector) || Utility.hasParent(node, selector);
     },
 
-    getQuery(url) {
+    getQuery: function(url) {
       if (url.startsWith('about:reader?'))
         return {url: decodeURIComponent(url.replace('about:reader?url=', ''))};
       if (url.startsWith('https://app.getpocket.com/read/'))
@@ -74,23 +64,31 @@ const Utility = (function () {
       return {url: url};
     },
 
-    getPossibleUrls(item) {
+    getPossibleUrls: function({ id, url }) {
       return [
-        item.url,
-        'about:reader?url=' + encodeURIComponent(item.url),
-        'https://app.getpocket.com/read/' + item.url,
-        'https://app.getpocket.com/read/' + item.id,
+        url,
+        'about:reader?url=' + encodeURIComponent(url),
+        'https://app.getpocket.com/read/' + url,
+        'https://app.getpocket.com/read/' + id,
         // is there still a way to use old webapp? if not it's unnecessary
-        'https://getpocket.com/a/read/' + item.url,
-        'https://getpocket.com/a/read/' + item.id,
+        'https://getpocket.com/a/read/' + url,
+        'https://getpocket.com/a/read/' + id,
       ];
+    },
 
+    // Source: https://stackoverflow.com/a/7616484/85076
+    // Source: https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+    hashCode: function(s) {
+      let hash = 0;
+      for (let i = 0; i < s.length; i++) {
+        hash = ((hash << 5) - hash) + s.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+      }
 
+      // Make it always > 0
+      return hash >>> 0;
     }
-
-
   };
 })();
-
 
 export default Utility;

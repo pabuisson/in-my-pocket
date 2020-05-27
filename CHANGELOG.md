@@ -1,13 +1,41 @@
 # Changelog
 
-## Not released yet
+## 0.11.5 - May 2020
 
-* FEATURE: you can now save pages from Firefox reader mode, thanks to this [contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/145). Thanks a lot to JJ for his help!
-* FEATURE: the first time you fetch your Pocket list, max number of items was capped to 5,000 items. From now on, subsequent requests will be made to make sure all items are fetched ([contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/143), thank you for your help!).
+* UPDATE: the options page was always bright. Even if you were using a dark theme on your OS... and we don't like that! From now on, the addon "Preferences" page should respect the dark theme setting.
+
+
+## 0.11.4 - May 2020
+
+* FIX: when coupling search and favoriting/unfavoriting items, you could sometimes add inconsistent highlighting of your favorite items, due to an incorrect way of caching the items. I updated the way I compute the cache key, and this problem is now fixed!
+
+
+## 0.11.3 - April 2020
+
+* FIX: the first item of the list was still partially covered by an element preventing the click. It is now definitely fixed and can be clicked wherever you want to!
+
+
+## 0.11.2 - April 2020
+
+* FIX: OK, I said I prevented middle-click / right-click to trigger the archive/delete/favorite actions in the popup list. But it also broke the "middle-click opens in a new tab" feature. All is back to normal!
+* FIX: left-clicking an item would open it twice. But looks like you want to read your items only once 🙃
+
+
+## 0.11.1 - April 2020
+
+* FIX: woopsie, the first item of the list was not clickable anymore!
+
+
+## 0.11.0 - April 2020
+
 * DESIGN: here comes a new shining icon for the InMyPocket project, to get away from the original Pocket one. Hope you'll like it!
+* FEATURE: you can now mark items as favorites ⭐️ They will be shown differently in the items list so that they stand out from the items list. Also, I've added a dedicated icon to the popup to show only favorite items from your list, or only not-favorite items. You can also type `is:faved` or `is:unfaved` in the search box to do the same!
+* FEATURE: you can now save pages from Firefox reader mode & from the getpocket.com website, thanks to this [contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/145). Thanks a lot to JJ for his help!
+* FEATURE: the first time you fetch your Pocket list, max number of items was capped to 5,000 items due to API restrictions. From now on, subsequent requests will be made to make sure all your items are fetched ([contribution from JJ](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/143), thank you for your help!).
 * FEATURE: you can now use right-click to add a bunch of tabs to your pocket list! If you select several tabs and right-click another tab, this one will get added to the pocket list. You'll need to select several tab and right-click one of them. This plays nicely with "close tab after adding to pocket" setting.
 * FEATURE: a new automation completes the two existing ones! You can now set IMP to automatically close your tab when you mark the as read / delete it from your pocket list.
 * FIX: stop filtering on the protocols of the links, which is not visible in the UI and could therefore provide unexpected results. Searching for "ftp", will return links containing "ftp" in their title or url, and not the "ftp://" links.
+* FIX: actions in the items list must be triggered only when left-clicking
 
 
 ## 0.10.6 - June 2019
