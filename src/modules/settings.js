@@ -31,7 +31,7 @@ const Settings = ( function() {
       _loaded  = true;
 
       settings = Object.assign(settings, defaultSettings);
-      if( data.settings ) {
+      if(data.settings) {
         settings = Object.assign(settings, (Utility.parseJson(data.settings) || {}));
       }
     });

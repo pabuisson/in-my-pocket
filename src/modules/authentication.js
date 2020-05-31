@@ -47,7 +47,7 @@ const Authentication = ( function() {
             const authorizeUrl =
               `https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectIntermediate}`;
 
-            browser.tabs.create({ 'url': authorizeUrl }).then( tab => {
+            browser.tabs.create({ 'url': authorizeUrl }).then(tab => {
               browser.tabs.onUpdated.addListener( (tabId, changeInfo, updatedTab) => {
                 // callback url has been loaded
                 if (changeInfo.status == 'complete' && updatedTab.url.indexOf(redirectIntermediate) === 0) {
@@ -68,7 +68,7 @@ const Authentication = ( function() {
 
 
     isAuthenticated: function() {
-      const promise = new Promise( (resolve, reject) => {
+      const promise = new Promise((resolve, reject) => {
         browser.storage.local.get('access_token').then( ({ access_token }) => {
           if(access_token) {
             Logger.log('(Authentication.isAuthenticated) access_token present, authenticated');

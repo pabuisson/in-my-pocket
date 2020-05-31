@@ -85,7 +85,7 @@ const PageAction = (function() {
     //       to manually call this each time I draw some page actions
     show: function(tabId) {
       pageActionEnabled().then( () => {
-        browser.pageAction.show( tabId );
+        browser.pageAction.show(tabId);
       });
     },
 

@@ -254,9 +254,10 @@ const UI = (function() {
 
           browser.storage.local.remove(keysToRemove);
 
-          // Remove the badge and destroy all right-click entries
+          // Remove the badge, destroy all right-click entries, and hides pageActions
           Badge.hide();
           ContextMenu.destroyEntries();
+          PageAction.hideAllTabs();
 
           disconnectRow.classList.add('hidden');
         });
