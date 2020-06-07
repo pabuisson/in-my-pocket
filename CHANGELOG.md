@@ -3,6 +3,7 @@
 ## Not released yet - June 2020
 
 * UPDATE: the websites favicon are now high-resolution! And also, they're fetched through HTTPS now. And they're not coming from Google anymore, but from [DuckDuckGo](https://duckduckgo.com/) instead!
+* UPDATE: when you open the popup and the favorite status of an item has changed since last sync, it will immediately reflect in the popup (no need to close and reopen the popup anymore).
 * FIX: remove blue outline that just appeared around the "search" field
 * FIX: only show the icon in the address bar once you're authenticated. If you're not authenticated, there's no need to show this.
 

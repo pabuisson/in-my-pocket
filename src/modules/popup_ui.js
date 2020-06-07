@@ -155,8 +155,8 @@ const PopupUI = (function() {
     updateList: function(opts = {}) {
       Settings.init().then( function() {
         return Settings.get('perPage');
-      }).then( function(perPage) {
-        browser.storage.local.get([ 'items', 'display' ]).then( ({ items, display }) => {
+      }).then(function(perPage) {
+        browser.storage.local.get(['items', 'display']).then( ({ items, display }) => {
           const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting;
           const query         = opts.query || parsedDisplay.query;
           const pageToDisplay = opts.page  || parsedDisplay.currentPage;
@@ -176,8 +176,6 @@ const PopupUI = (function() {
 
           // First step: all removed items still visible must disappear
           PopupUI.fadeOutItem(...itemIdsToDelete);
-
-          // TODO: do I need to add a step to set faved/unfaved items?
 
           // Second step: prepare the insertion of all missing items
           // Generate a table of all predecessors, to use insertBefore/appendChild to build the DOM
@@ -206,6 +204,9 @@ const PopupUI = (function() {
               PopupItemList.appendItems(itemsToInject);
             }
           }
+
+          // Last step: update faved/unfaved items
+          PopupUI.updateFavoriteStatus(itemsToRender);
 
           // Record currentPage and query, in case they've been "forced" through the opts param
           // `displayedAt` value must remain the same (that's why we assign `parsedDisplay`)
@@ -259,6 +260,19 @@ const PopupUI = (function() {
       itemIds.forEach(itemId => {
         Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list`);
         document.querySelector(`.item[data-id='${itemId}']`).classList.add('disappearing');
+      });
+    },
+
+    updateFavoriteStatus: (items) => {
+      items.forEach(item => {
+        const itemElement = document.querySelector(`.item[data-id='${item.id}']`);
+        if(item.fav === "1") {
+          itemElement.classList.add('favorite');
+          itemElement.dataset.fav = '1';
+        } else if(item.fav === "0") {
+          itemElement.classList.remove('favorite');
+          itemElement.dataset.fav = '0';
+        }
       });
     },
 
