@@ -86,64 +86,64 @@ describe('Items.filter', () => {
     });
   });
 
-    context('query on favorites', () => {
-      it('returns favorite items if query contains is:faved', () => {
-        const query = 'is:faved';
-        expect(Items.filter(items, query)).to.deep.include(favedItem);
-      });
-
-      it('does not return unfaved items if query contains is:faved', () => {
-        const query = 'is:faved';
-        const result = Items.filter(items, query);
-        expect(result).not.to.include(matchingItem);
-        expect(result).not.to.include(otherItem);
-      });
-
-      it('returns non-favorite items if query contains is:unfaved', () => {
-        const query = 'is:unfaved';
-        const result = Items.filter(items, query);
-        expect(result).to.deep.include(matchingItem);
-        expect(result).to.deep.include(otherItem);
-      });
-
-      it('does not return favorite items if query contains is:unfaved', () => {
-        const query = 'is:unfaved';
-        expect(Items.filter(items, query)).not.to.include(favedItem);
-      });
+  context('query on favorites', () => {
+    it('returns favorite items if query contains is:faved', () => {
+      const query = 'is:faved';
+      expect(Items.filter(items, query)).to.deep.include(favedItem);
     });
 
-    context('query on favorites + text', () => {
-      const matchingTextAndFav = { title: 'matching text', url: 'https://favorite.com', fav: '1' };
-      const matchingTextNotFav = { title: 'matching text', url: 'https://favorite.com', fav: '0' };
-      const matchingFavNotText = { title: 'other text', url: 'https://other.com', fav: '1' };
-      const items = JSON.stringify([matchingTextAndFav, matchingTextNotFav, matchingFavNotText]);
-
-      it('returns items matching on title and favorited if query contains is:faved', () => {
-        const query = 'is:faved favorite';
-        const result = Items.filter(items, query);
-        expect(result).to.deep.include(matchingTextAndFav);
-        expect(result).not.to.include(matchingTextNotFav);
-        expect(result).not.to.include(matchingFavNotText);
-      });
-
-      it('returns items matching on url and favorited if query contains is:faved', () => {
-        const query = 'is:faved favorite.com';
-        const result = Items.filter(items, query);
-        expect(result).to.deep.include(matchingTextAndFav);
-        expect(result).not.to.include(matchingTextNotFav);
-        expect(result).not.to.include(matchingFavNotText);
-      });
+    it('does not return unfaved items if query contains is:faved', () => {
+      const query = 'is:faved';
+      const result = Items.filter(items, query);
+      expect(result).not.to.include(matchingItem);
+      expect(result).not.to.include(otherItem);
     });
+
+    it('returns non-favorite items if query contains is:unfaved', () => {
+      const query = 'is:unfaved';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(matchingItem);
+      expect(result).to.deep.include(otherItem);
+    });
+
+    it('does not return favorite items if query contains is:unfaved', () => {
+      const query = 'is:unfaved';
+      expect(Items.filter(items, query)).not.to.include(favedItem);
+    });
+  });
+
+  context('query on favorites + text', () => {
+    const matchingTextAndFav = { title: 'matching text', url: 'https://favorite.com', fav: '1' };
+    const matchingTextNotFav = { title: 'matching text', url: 'https://favorite.com', fav: '0' };
+    const matchingFavNotText = { title: 'other text', url: 'https://other.com', fav: '1' };
+    const items = JSON.stringify([matchingTextAndFav, matchingTextNotFav, matchingFavNotText]);
+
+    it('returns items matching on title and favorited if query contains is:faved', () => {
+      const query = 'is:faved favorite';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(matchingTextAndFav);
+      expect(result).not.to.include(matchingTextNotFav);
+      expect(result).not.to.include(matchingFavNotText);
+    });
+
+    it('returns items matching on url and favorited if query contains is:faved', () => {
+      const query = 'is:faved favorite.com';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(matchingTextAndFav);
+      expect(result).not.to.include(matchingTextNotFav);
+      expect(result).not.to.include(matchingFavNotText);
+    });
+  });
 });
 
 
 describe('Items.paginate', () => {
-  const item_1 = { title: 'item_1', url: 'www.site_1.com', created_at: new Date("2018-01-01 12:12").valueOf() };
-  const item_2 = { title: 'item_2', url: 'www.site_2.com', created_at: new Date("2018-01-02 12:12").valueOf() };
-  const item_3 = { title: 'item_3', url: 'www.site_3.com', created_at: new Date("2018-01-03 12:12").valueOf() };
-  const item_4 = { title: 'item_4', url: 'www.site_4.com', created_at: new Date("2018-01-04 12:12").valueOf() };
-  const item_5 = { title: 'item_5', url: 'www.site_5.com', created_at: new Date("2018-01-05 12:12").valueOf() };
-  const items = [ item_1, item_2, item_3, item_4, item_5 ];
+  const item1 = { title: 'item1', url: 'www.site_1.com', created_at: new Date("2018-01-01 12:12").valueOf() };
+  const item2 = { title: 'item2', url: 'www.site_2.com', created_at: new Date("2018-01-02 12:12").valueOf() };
+  const item3 = { title: 'item3', url: 'www.site_3.com', created_at: new Date("2018-01-03 12:12").valueOf() };
+  const item4 = { title: 'item4', url: 'www.site_4.com', created_at: new Date("2018-01-04 12:12").valueOf() };
+  const item5 = { title: 'item5', url: 'www.site_5.com', created_at: new Date("2018-01-05 12:12").valueOf() };
+  const items = [ item1, item2, item3, item4, item5 ];
   const perPage = 4;
 
   context('pagination disabled', () => {
@@ -154,11 +154,11 @@ describe('Items.paginate', () => {
 
       it('returns all items sorted by antechronological created_at', () => {
         const output = Items.paginate(items, 1, undefined );
-        expect(output[0]).to.equal(item_5);
-        expect(output[1]).to.equal(item_4);
-        expect(output[2]).to.equal(item_3);
-        expect(output[3]).to.equal(item_2);
-        expect(output[4]).to.equal(item_1);
+        expect(output[0]).to.equal(item5);
+        expect(output[1]).to.equal(item4);
+        expect(output[2]).to.equal(item3);
+        expect(output[3]).to.equal(item2);
+        expect(output[4]).to.equal(item1);
       });
     });
 
@@ -169,11 +169,11 @@ describe('Items.paginate', () => {
 
       it('returns all items sorted by antechronological created_at', () => {
         const output = Items.paginate(items, 1, null );
-        expect(output[0]).to.equal(item_5);
-        expect(output[1]).to.equal(item_4);
-        expect(output[2]).to.equal(item_3);
-        expect(output[3]).to.equal(item_2);
-        expect(output[4]).to.equal(item_1);
+        expect(output[0]).to.equal(item5);
+        expect(output[1]).to.equal(item4);
+        expect(output[2]).to.equal(item3);
+        expect(output[3]).to.equal(item2);
+        expect(output[4]).to.equal(item1);
       });
     });
 
@@ -184,11 +184,11 @@ describe('Items.paginate', () => {
 
       it('returns all items sorted by antechronological created_at', () => {
         const output = Items.paginate(items, 1, 0 );
-        expect(output[0]).to.equal(item_5);
-        expect(output[1]).to.equal(item_4);
-        expect(output[2]).to.equal(item_3);
-        expect(output[3]).to.equal(item_2);
-        expect(output[4]).to.equal(item_1);
+        expect(output[0]).to.equal(item5);
+        expect(output[1]).to.equal(item4);
+        expect(output[2]).to.equal(item3);
+        expect(output[3]).to.equal(item2);
+        expect(output[4]).to.equal(item1);
       });
     });
   });
@@ -221,24 +221,24 @@ describe('Items.paginate', () => {
 
     it('sorts the items by antechronological created_at (newest first)', () => {
       const paginatedItems = Items.paginate(items, 1, perPage);
-      expect(paginatedItems[0]).to.equal(item_5);
-      expect(paginatedItems[1]).to.equal(item_4);
-      expect(paginatedItems[2]).to.equal(item_3);
-      expect(paginatedItems[3]).to.equal(item_2);
+      expect(paginatedItems[0]).to.equal(item5);
+      expect(paginatedItems[1]).to.equal(item4);
+      expect(paginatedItems[2]).to.equal(item3);
+      expect(paginatedItems[3]).to.equal(item2);
     });
 
     context('given page=1', () => {
       it('returns the items of the 1st page', () => {
         const paginatedItems = Items.paginate(items, 1, perPage);
-        expect(paginatedItems).to.include(item_5);
-        expect(paginatedItems).to.include(item_4);
-        expect(paginatedItems).to.include(item_3);
-        expect(paginatedItems).to.include(item_2);
+        expect(paginatedItems).to.include(item5);
+        expect(paginatedItems).to.include(item4);
+        expect(paginatedItems).to.include(item3);
+        expect(paginatedItems).to.include(item2);
       });
 
       it('does not returns items of other pages', () => {
         const paginatedItems = Items.paginate(items, 1, perPage);
-        expect(paginatedItems).not.to.include(item_1);
+        expect(paginatedItems).not.to.include(item1);
       });
     });
 
@@ -246,16 +246,16 @@ describe('Items.paginate', () => {
       it('returns the items of the page', () => {
         const secondPage = 2;
         const paginatedItems = Items.paginate(items, secondPage, perPage);
-        expect(paginatedItems).to.include(item_1);
+        expect(paginatedItems).to.include(item1);
       });
 
       it('does not returns items of other pages', () => {
         const secondPage = 2;
         const paginatedItems = Items.paginate(items, secondPage, perPage);
-        expect(paginatedItems).not.to.include(item_5);
-        expect(paginatedItems).not.to.include(item_4);
-        expect(paginatedItems).not.to.include(item_3);
-        expect(paginatedItems).not.to.include(item_2);
+        expect(paginatedItems).not.to.include(item5);
+        expect(paginatedItems).not.to.include(item4);
+        expect(paginatedItems).not.to.include(item3);
+        expect(paginatedItems).not.to.include(item2);
       });
     });
   });
