@@ -1,5 +1,12 @@
 # Changelog
 
+## Not released yet - June 2020
+
+* UPDATE: the websites favicon are now high-resolution! And also, they're fetched through HTTPS now. And they're not coming from Google anymore, but from [DuckDuckGo](https://duckduckgo.com/) instead!
+* FIX: remove blue outline that just appeared around the "search" field
+* FIX: only show the icon in the address bar once you're authenticated. If you're not authenticated, there's no need to show this.
+
+
 ## 0.11.5 - May 2020
 
 * UPDATE: the options page was always bright. Even if you were using a dark theme on your OS... and we don't like that! From now on, the addon "Preferences" page should respect the dark theme setting.
