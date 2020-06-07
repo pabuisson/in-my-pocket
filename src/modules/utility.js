@@ -87,6 +87,12 @@ const Utility = (function () {
 
       // Make it always > 0
       return hash >>> 0;
+    },
+
+    domain: function(url) {
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      return link.hostname;
     }
   };
 })();

@@ -22,7 +22,7 @@ const PopupItemList = ( function() {
   }
 
   function faviconUrl(url) {
-    return "https://www.google.com/s2/favicons?domain_url=" + encodeURIComponent(url);
+    return `https://external-content.duckduckgo.com/ip3/${Utility.domain(url)}.ico`
   }
 
   function formatUrl(url) {
