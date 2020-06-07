@@ -86,54 +86,54 @@ describe('Items.filter', () => {
     });
   });
 
-    context('query on favorites', () => {
-      it('returns favorite items if query contains is:faved', () => {
-        const query = 'is:faved';
-        expect(Items.filter(items, query)).to.deep.include(favedItem);
-      });
-
-      it('does not return unfaved items if query contains is:faved', () => {
-        const query = 'is:faved';
-        const result = Items.filter(items, query);
-        expect(result).not.to.include(matchingItem);
-        expect(result).not.to.include(otherItem);
-      });
-
-      it('returns non-favorite items if query contains is:unfaved', () => {
-        const query = 'is:unfaved';
-        const result = Items.filter(items, query);
-        expect(result).to.deep.include(matchingItem);
-        expect(result).to.deep.include(otherItem);
-      });
-
-      it('does not return favorite items if query contains is:unfaved', () => {
-        const query = 'is:unfaved';
-        expect(Items.filter(items, query)).not.to.include(favedItem);
-      });
+  context('query on favorites', () => {
+    it('returns favorite items if query contains is:faved', () => {
+      const query = 'is:faved';
+      expect(Items.filter(items, query)).to.deep.include(favedItem);
     });
 
-    context('query on favorites + text', () => {
-      const matchingTextAndFav = { title: 'matching text', url: 'https://favorite.com', fav: '1' };
-      const matchingTextNotFav = { title: 'matching text', url: 'https://favorite.com', fav: '0' };
-      const matchingFavNotText = { title: 'other text', url: 'https://other.com', fav: '1' };
-      const items = JSON.stringify([matchingTextAndFav, matchingTextNotFav, matchingFavNotText]);
-
-      it('returns items matching on title and favorited if query contains is:faved', () => {
-        const query = 'is:faved favorite';
-        const result = Items.filter(items, query);
-        expect(result).to.deep.include(matchingTextAndFav);
-        expect(result).not.to.include(matchingTextNotFav);
-        expect(result).not.to.include(matchingFavNotText);
-      });
-
-      it('returns items matching on url and favorited if query contains is:faved', () => {
-        const query = 'is:faved favorite.com';
-        const result = Items.filter(items, query);
-        expect(result).to.deep.include(matchingTextAndFav);
-        expect(result).not.to.include(matchingTextNotFav);
-        expect(result).not.to.include(matchingFavNotText);
-      });
+    it('does not return unfaved items if query contains is:faved', () => {
+      const query = 'is:faved';
+      const result = Items.filter(items, query);
+      expect(result).not.to.include(matchingItem);
+      expect(result).not.to.include(otherItem);
     });
+
+    it('returns non-favorite items if query contains is:unfaved', () => {
+      const query = 'is:unfaved';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(matchingItem);
+      expect(result).to.deep.include(otherItem);
+    });
+
+    it('does not return favorite items if query contains is:unfaved', () => {
+      const query = 'is:unfaved';
+      expect(Items.filter(items, query)).not.to.include(favedItem);
+    });
+  });
+
+  context('query on favorites + text', () => {
+    const matchingTextAndFav = { title: 'matching text', url: 'https://favorite.com', fav: '1' };
+    const matchingTextNotFav = { title: 'matching text', url: 'https://favorite.com', fav: '0' };
+    const matchingFavNotText = { title: 'other text', url: 'https://other.com', fav: '1' };
+    const items = JSON.stringify([matchingTextAndFav, matchingTextNotFav, matchingFavNotText]);
+
+    it('returns items matching on title and favorited if query contains is:faved', () => {
+      const query = 'is:faved favorite';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(matchingTextAndFav);
+      expect(result).not.to.include(matchingTextNotFav);
+      expect(result).not.to.include(matchingFavNotText);
+    });
+
+    it('returns items matching on url and favorited if query contains is:faved', () => {
+      const query = 'is:faved favorite.com';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(matchingTextAndFav);
+      expect(result).not.to.include(matchingTextNotFav);
+      expect(result).not.to.include(matchingFavNotText);
+    });
+  });
 });
 
 
