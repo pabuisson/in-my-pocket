@@ -45,7 +45,7 @@ function retrieveAll(offset = 0) {
     const requestParams = {
       consumer_key: consumerKey,
       access_token: access_token,
-      detailType: 'simple',
+      detailType: 'complete',
       offset: offset,
       count: 2000,
       sort: 'oldest',
@@ -102,11 +102,10 @@ function retrieveDiff() {
       const requestParams = {
         consumer_key: consumerKey,
         access_token: access_token,
-        detailType: 'simple',
+        detailType: 'complete',
         state: 'all',
         since: last_retrieve
       };
-
       new Request('POST', 'https://getpocket.com/v3/get', requestParams)
         .fetch()
         .then( function(response) {
@@ -131,8 +130,7 @@ function retrieveDiff() {
                 break;
 
               case PocketApiStatus.CREATED:
-                const itemIdx = allItems.findIndex(item => item.id === itemId);
-
+                const itemIdx = allItems.findIndex( item => item.id === itemId );
                 if(itemIdx >= 0) {
                   Logger.log(`(bg.retriveDiff) Existing item ${itemId} (${item.title}) will be updated`);
                   allItems[itemIdx] = Object.assign(allItems[itemIdx], Items.formatPocketItemForStorage(item));
@@ -141,7 +139,6 @@ function retrieveDiff() {
                   allItems.push({ id: item.item_id, ...Items.formatPocketItemForStorage(item) });
                 }
                 break;
-
               default:
                 Logger.log(`(bg.retriveDiff) Unknown item status: ${item.status}`);
                 break;

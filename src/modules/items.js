@@ -55,7 +55,14 @@ const Items = (function () {
     const lowerUrl = (item.url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
     const lowerTitle = (item.title || '').toLowerCase();
 
-    return lowerTitle.includes(textToMatch) || lowerUrl.includes(textToMatch);
+    const tags = item.tags ? item.tags.map( ( tag ) => {
+      return tag.toLowerCase();
+    } ) : [];
+
+    return lowerTitle.includes( textToMatch ) || lowerUrl.includes( textToMatch ) || tags.find( ( tag ) => {
+      return tag.includes( textToMatch );
+    } );
+
   }
 
   function matchFavedUnfaved(item, keepFaved, keepUnfaved) {
@@ -184,12 +191,19 @@ const Items = (function () {
   }
 
   return {
-    formatPocketItemForStorage: function (itemFromApi) {
+    formatPocketItemForStorage: function(itemFromApi) {
+      const tags = [];
+
+      for(const tag in itemFromApi.tags){
+        tags.push(tag);
+      }
+
       return {
         title: itemFromApi.given_title || itemFromApi.resolved_title,
         url: itemFromApi.given_url || itemFromApi.resolved_url,
         fav: itemFromApi.favorite,
-        created_at: itemFromApi.time_added
+        created_at: itemFromApi.time_added,
+        tags: tags
       };
     },
 
