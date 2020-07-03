@@ -179,6 +179,7 @@ const PopupItemList = ( function() {
     setupEventListeners: function() {
       itemsContainer.addEventListener('mouseup', function(ev) {
         if(!ev.target) return;
+        if(ev.detail > 1) return;
 
         ev.preventDefault();
 
