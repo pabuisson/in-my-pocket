@@ -4,18 +4,19 @@ describe('Items.filter', () => {
   const matchingItem = { title: 'french', url: 'https://www.quelquepart.fr' };
   const otherItem = { title: 'other',    url: 'https://www.somewherelse.com', fav: '0' };
   const favedItem = { title: 'favorite', url: 'https://somefavoriteitem.com', fav: '1' };
-  const items = JSON.stringify([ matchingItem, otherItem, favedItem ]);
+  const taggedItem = { title: 'tagged', url: 'https://sometaggeditem.com', tags: ['some-tag']};
+  const items = JSON.stringify([matchingItem, otherItem, favedItem, taggedItem]);
 
   it('returns all items if query is empty', () => {
-    expect(Items.filter(items, '').length).to.equal(3);
+    expect(Items.filter(items, '').length).to.equal(4);
   });
 
   it('returns all items if query is undefined', () => {
-    expect(Items.filter(items, undefined).length).to.equal(3);
+    expect(Items.filter(items, undefined).length).to.equal(4);
   });
 
   it('returns all items if query is null', () => {
-    expect(Items.filter(items, null).length).to.equal(3);
+    expect(Items.filter(items, null).length).to.equal(4);
   });
 
   context('query on title', () => {
@@ -86,52 +87,142 @@ describe('Items.filter', () => {
     });
   });
 
-  context('query on favorites', () => {
-    it('returns favorite items if query contains is:faved', () => {
-      const query = 'is:faved';
-      expect(Items.filter(items, query)).to.deep.include(favedItem);
+  context('favorites', () => {
+    context('query on favorites', () => {
+      it('returns favorite items if query contains is:faved', () => {
+        const query = 'is:faved';
+        expect(Items.filter(items, query)).to.deep.include(favedItem);
+      });
+
+      it('does not return unfaved items if query contains is:faved', () => {
+        const query = 'is:faved';
+        const result = Items.filter(items, query);
+        expect(result).not.to.include(matchingItem);
+        expect(result).not.to.include(otherItem);
+      });
+
+      it('returns non-favorite items if query contains is:unfaved', () => {
+        const query = 'is:unfaved';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingItem);
+        expect(result).to.deep.include(otherItem);
+      });
+
+      it('does not return favorite items if query contains is:unfaved', () => {
+        const query = 'is:unfaved';
+        expect(Items.filter(items, query)).not.to.include(favedItem);
+      });
     });
 
-    it('does not return unfaved items if query contains is:faved', () => {
-      const query = 'is:faved';
-      const result = Items.filter(items, query);
-      expect(result).not.to.include(matchingItem);
-      expect(result).not.to.include(otherItem);
-    });
+    context('query on favorites + text', () => {
+      const matchingTextAndFav = { title: 'matching text', url: 'https://favorite.com', fav: '1' };
+      const matchingTextNotFav = { title: 'matching text', url: 'https://favorite.com', fav: '0' };
+      const matchingFavNotText = { title: 'other text', url: 'https://other.com', fav: '1' };
+      const items = JSON.stringify([matchingTextAndFav, matchingTextNotFav, matchingFavNotText]);
 
-    it('returns non-favorite items if query contains is:unfaved', () => {
-      const query = 'is:unfaved';
-      const result = Items.filter(items, query);
-      expect(result).to.deep.include(matchingItem);
-      expect(result).to.deep.include(otherItem);
-    });
+      it('returns items matching on title and favorited if query contains is:faved', () => {
+        const query = 'is:faved favorite';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextAndFav);
+        expect(result).not.to.include(matchingTextNotFav);
+        expect(result).not.to.include(matchingFavNotText);
+      });
 
-    it('does not return favorite items if query contains is:unfaved', () => {
-      const query = 'is:unfaved';
-      expect(Items.filter(items, query)).not.to.include(favedItem);
+      it('returns items matching on url and favorited if query contains is:faved', () => {
+        const query = 'is:faved favorite.com';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextAndFav);
+        expect(result).not.to.include(matchingTextNotFav);
+        expect(result).not.to.include(matchingFavNotText);
+      });
     });
   });
 
-  context('query on favorites + text', () => {
-    const matchingTextAndFav = { title: 'matching text', url: 'https://favorite.com', fav: '1' };
-    const matchingTextNotFav = { title: 'matching text', url: 'https://favorite.com', fav: '0' };
-    const matchingFavNotText = { title: 'other text', url: 'https://other.com', fav: '1' };
-    const items = JSON.stringify([matchingTextAndFav, matchingTextNotFav, matchingFavNotText]);
+  context('tags', () => {
+    context('query on tagged status', () => {
+      it('returns tagged items if query contains is:tagged', () => {
+        const query = 'is:tagged';
+        expect(Items.filter(items, query)).to.deep.include(taggedItem);
+      });
 
-    it('returns items matching on title and favorited if query contains is:faved', () => {
-      const query = 'is:faved favorite';
-      const result = Items.filter(items, query);
-      expect(result).to.deep.include(matchingTextAndFav);
-      expect(result).not.to.include(matchingTextNotFav);
-      expect(result).not.to.include(matchingFavNotText);
+      it('does not return untagged items if query contains is:tagged', () => {
+        const query = 'is:tagged';
+        const result = Items.filter(items, query);
+        expect(result).not.to.include(otherItem);
+      });
+
+      it('returns non-tagged items if query contains is:untagged', () => {
+        const query = 'is:untagged';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(otherItem);
+      });
+
+      it('does not return tagged items if query contains is:untagged', () => {
+        const query = 'is:untagged';
+        const result = Items.filter(items, query);
+        expect(Items.filter(items, query)).not.to.include(taggedItem);
+      });
     });
 
-    it('returns items matching on url and favorited if query contains is:faved', () => {
-      const query = 'is:faved favorite.com';
-      const result = Items.filter(items, query);
-      expect(result).to.deep.include(matchingTextAndFav);
-      expect(result).not.to.include(matchingTextNotFav);
-      expect(result).not.to.include(matchingFavNotText);
+    context('query on tagged status + text', () => {
+      const matchingTextWithTag = { title: 'matching text', url: 'https://tagged.com', tags: ['matching-tag'] };
+      const matchingTextNoTag = { title: 'matching text', url: 'https://tagged.com', tags: [] };
+      const nonMatchingTextWithTag = { title: 'other text', url: 'https://something.com', tags: ['matching-tag'] };
+      const items = JSON.stringify([matchingTextWithTag, matchingTextNoTag, nonMatchingTextWithTag]);
+
+      it('returns items matching on title and tagged if query contains is:tagged', () => {
+        const query = 'is:tagged matching';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextWithTag);
+        expect(result).not.to.include(matchingTextNoTag);
+        expect(result).not.to.include(nonMatchingTextWithTag);
+      });
+
+      it('returns items matching on url and tagged if query contains is:tagged', () => {
+        const query = 'is:tagged tagged.com';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextWithTag);
+        expect(result).not.to.include(matchingTextNoTag);
+        expect(result).not.to.include(nonMatchingTextWithTag);
+      });
+
+      it('returns item matching on text and untagged if query contains is:untagged', () => {
+        const query = 'is:untagged matching';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextNoTag);
+        expect(result).not.to.include(matchingTextWithTag);
+        expect(result).not.to.include(nonMatchingTextWithTag);
+      });
+
+      it('returns item matching on url and untagged if query contains is:untagged', () => {
+        const query = 'is:untagged tagged.com';
+        const result = Items.filter(items, query);
+        expect(result).to.deep.include(matchingTextNoTag);
+        expect(result).not.to.include(matchingTextWithTag);
+        expect(result).not.to.include(nonMatchingTextWithTag);
+      })
+    });
+
+    context('query on item text and tag text', () => {
+      const matchingTextAndTag = { title: 'matching text', url: 'https://matching.com', tags: ['matching-tag'] };
+      const matchingTextNotTag = { title: 'matching text', url: 'https://matching.com', tags: ['other-tag'] };
+      const matchingTagNotText = { title: 'other text', url: 'https://other.com', tags: ['matching-tag'] };
+      const notMatchingAnything = { title: 'other text', url: 'https://other.com', tags:['other-tag']};
+      const items = JSON.stringify([
+        matchingTextAndTag, matchingTextNotTag, matchingTagNotText, notMatchingAnything
+      ]);
+
+      it('returns items matching on title or tag', () => {
+        const query = 'matching';
+        const result = Items.filter(items, query);
+        // Both
+        expect(result).to.deep.include(matchingTextAndTag);
+        // Text only
+        expect(result).to.deep.include(matchingTextNotTag);
+        // Tag only
+        expect(result).to.deep.include(matchingTagNotText);
+        expect(result).not.to.include(notMatchingAnything);
+      });
     });
   });
 });

@@ -36,10 +36,15 @@ const Items = (function () {
 
     const isFavedCriteria = lowerQuery.includes('is:faved');
     const isUnfavedCriteria = lowerQuery.includes('is:unfaved');
-    const textCriteria = lowerQuery.replace(/is:(faved|unfaved)/, '').trim();
+
+    const isTaggedCriteria = lowerQuery.includes('is:tagged');
+    const isUntaggedCriteria = lowerQuery.includes('is:untagged');
+
+    const textCriteria = lowerQuery.replace(/is:(faved|unfaved|tagged|untagged)/, '').trim();
 
     return(
       matchFavedUnfaved(item, isFavedCriteria, isUnfavedCriteria) &&
+      matchTaggedUntagged(item, isTaggedCriteria, isUntaggedCriteria) &&
       matchText(item, textCriteria)
     );
   }
@@ -55,14 +60,11 @@ const Items = (function () {
     const lowerUrl = (item.url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
     const lowerTitle = (item.title || '').toLowerCase();
 
-    const tags = item.tags ? item.tags.map( ( tag ) => {
-      return tag.toLowerCase();
-    } ) : [];
+    const tags = item.tags ? item.tags.map(tag => tag.toLowerCase()) : [];
 
-    return lowerTitle.includes( textToMatch ) || lowerUrl.includes( textToMatch ) || tags.find( ( tag ) => {
-      return tag.includes( textToMatch );
-    } );
-
+    return lowerTitle.includes(textToMatch) ||
+      lowerUrl.includes(textToMatch) ||
+      tags.find(tag => tag.includes(textToMatch));
   }
 
   function matchFavedUnfaved(item, keepFaved, keepUnfaved) {
@@ -73,6 +75,17 @@ const Items = (function () {
     }
 
     // No faved/unfaved criteria, should not filter the item out
+    return true;
+  }
+
+  function matchTaggedUntagged(item, keepTagged, keepUntagged) {
+    if (keepTagged) {
+      return item.tags && item.tags.length > 0;
+    } else if (keepUntagged) {
+      return !item.tags || item.tags.length === 0;
+    }
+
+    // No tagged/untagged criteria, should not filter the item out
     return true;
   }
 
