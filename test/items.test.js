@@ -225,6 +225,52 @@ describe('Items.filter', () => {
       });
     });
   });
+
+  context('combinining tagged and favorited status', () => {
+    const favoritedAndTagged = { title: 'some text', url: 'https://url.com', fav: '1', tags: ['some-tag'] };
+    const favoritedNotTagged = { title: 'some text', url: 'https://url.com', fav: '1', tags: [] };
+    const unfavedAndTagged = { title: 'some text', url: 'https://url.com', fav: '0', tags: ['some-tag'] };
+    const unfavedNotTagged = { title: 'some text', url: 'https://url.com', fav: '0', tags:[]};
+    const items = JSON.stringify([
+      favoritedAndTagged, favoritedNotTagged, unfavedAndTagged, unfavedNotTagged
+    ]);
+
+    it('is:faved is:tagged returns items matching both', () => {
+      const query = 'is:faved is:tagged';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(favoritedAndTagged);
+      expect(result).not.to.include(favoritedNotTagged);
+      expect(result).not.to.include(unfavedAndTagged);
+      expect(result).not.to.include(unfavedNotTagged);
+    });
+
+    it('is:faved is:untagged returns items faved but no tagged', () => {
+      const query = 'is:faved is:untagged';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(favoritedNotTagged);
+      expect(result).not.to.include(favoritedAndTagged);
+      expect(result).not.to.include(unfavedAndTagged);
+      expect(result).not.to.include(unfavedNotTagged);
+    });
+
+    it('is:unfaved is:tagged returns items unfaved but tagged', () => {
+      const query = 'is:unfaved is:tagged';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(unfavedAndTagged);
+      expect(result).not.to.include(favoritedAndTagged);
+      expect(result).not.to.include(favoritedNotTagged);
+      expect(result).not.to.include(unfavedNotTagged);
+    });
+
+    it('is:unfaved is:untagged returns items neither faved nor tagged', () => {
+      const query = 'is:unfaved is:untagged';
+      const result = Items.filter(items, query);
+      expect(result).to.deep.include(unfavedNotTagged);
+      expect(result).not.to.include(favoritedAndTagged);
+      expect(result).not.to.include(favoritedNotTagged);
+      expect(result).not.to.include(unfavedAndTagged);
+    });
+  });
 });
 
 

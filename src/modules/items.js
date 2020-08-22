@@ -40,7 +40,7 @@ const Items = (function () {
     const isTaggedCriteria = lowerQuery.includes('is:tagged');
     const isUntaggedCriteria = lowerQuery.includes('is:untagged');
 
-    const textCriteria = lowerQuery.replace(/is:(faved|unfaved|tagged|untagged)/, '').trim();
+    const textCriteria = lowerQuery.replace(/is:(faved|unfaved|tagged|untagged)/g, '').trim();
 
     return(
       matchFavedUnfaved(item, isFavedCriteria, isUnfavedCriteria) &&
