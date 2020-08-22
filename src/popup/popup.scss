@@ -85,18 +85,24 @@ html, body, .authenticated, .authentication {
     position: relative;
     padding: 0.5rem 0.1rem 0.2rem 0.1rem;
     border-bottom: 1px solid #eee;
+
+    color: $ff-grey-70;
+
+    // If I don't specify a height, I can't animate the disappearing of the item
+    // So I'm fucked, basically
     height: 3.5rem;
 
     &.favorite {
       background-color: $favorite-bg;
     }
 
-    span {
+    & > span {
       display: inline-block;
       width: 95%;
       margin-left: 0.5rem;
+
       white-space: nowrap;
-      overflow: hidden;
+      overflow-x: hidden;
       text-overflow: ellipsis;
       line-height: 1.1;
     }
@@ -116,24 +122,40 @@ html, body, .authenticated, .authentication {
     .title {
       height: 1.5rem;
 
-      color: $ff-grey-70;
       font-size: 1.2rem;
       font-weight: bold;
 
       cursor: pointer;
     }
 
-    .url {
+    .url-and-tags {
       height: 1.1rem;
       position: relative;
       top: -2px;
-
       font-size: 0.75rem;
-      color: $ff-secondary-text;
 
-      cursor: pointer;
+      display: flex;
+
+      .url {
+        flex: 1;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        color: $ff-secondary-text;
+        cursor: pointer;
+      }
+
+      .tags {
+        flex: initial;
+        margin-left: 1rem;
+
+        .tag:before {
+          content: '⭓ ';
+        }
+      }
     }
-
 
     &:hover .title {
       color: $ff-grey-90;

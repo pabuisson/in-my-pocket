@@ -113,6 +113,9 @@ const PopupItemList = ( function() {
     const faviconElement   = document.createElement('img');
     const titleContent     = document.createElement('span');
     const urlContent       = document.createElement('span');
+    const tagsContent      = document.createElement('span');
+
+    const urlAndTagsContent = document.createElement('span');
 
     liElement.className = 'item';
     if(item.fav == 1) {
@@ -122,18 +125,32 @@ const PopupItemList = ( function() {
     faviconElement.className = 'favicon';
     titleContent.className   = 'title';
     urlContent.className     = 'url';
+    tagsContent.className    = 'tags';
+    urlAndTagsContent.className = 'url-and-tags';
 
     faviconElement.setAttribute('src', faviconUrl(item.url));
 
     titleContent.appendChild(faviconElement);
-    titleContent.appendChild(document.createTextNode( formatTitle(item.title) ));
+    titleContent.appendChild(document.createTextNode(formatTitle(item.title)));
 
-    urlContent.appendChild(document.createTextNode( formatUrl(item.url) ));
+    urlContent.appendChild(document.createTextNode(formatUrl(item.url)));
+    urlAndTagsContent.appendChild(urlContent);
+
+    if(item.tags.length > 0) {
+      for(let tag of item.tags) {
+        const tagElement = document.createElement('span');
+        tagElement.className = 'tag';
+        tagElement.appendChild(document.createTextNode(tag));
+        tagsContent.appendChild(tagElement);
+      }
+      urlAndTagsContent.appendChild(tagsContent);
+    }
 
     liElement.appendChild(buildActionsContainer());
     liElement.appendChild(titleContent);
     liElement.appendChild(document.createElement('br'));
-    liElement.appendChild(urlContent);
+    // liElement.appendChild(urlContent);
+    liElement.appendChild(urlAndTagsContent);
 
     liElement.dataset.id  = item.id;
     liElement.dataset.fav = item.fav;
