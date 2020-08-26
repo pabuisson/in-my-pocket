@@ -46,9 +46,17 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin(),
-    new CopyWebpackPlugin([
-      { from: 'assets/', to: 'assets/',  ignore: [ '.DS_Store' ] },
-      { from: 'manifest.json', to: 'manifest.json' }
-    ])
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'assets/',
+          to: 'assets/',
+          globOptions: {
+            ignore: ['**/.DS_Store']
+          }
+        },
+        { from: 'manifest.json', to: 'manifest.json' }
+      ],
+    }),
   ]
 };
