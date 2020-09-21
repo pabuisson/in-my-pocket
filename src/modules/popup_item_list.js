@@ -2,6 +2,7 @@
 
 import Logger  from '../modules/logger.js';
 import PopupUI from '../modules/popup_ui.js';
+import TextSelectionHandler from '../modules/text_selection_handler.js';
 import Utility from '../modules/utility.js';
 import { MouseButtons, concealedProtocols } from '../modules/constants.js';
 
@@ -194,11 +195,21 @@ const PopupItemList = ( function() {
 
   return {
     setupEventListeners: function() {
+      itemsContainer.addEventListener('selectstart', function() {
+        TextSelectionHandler.markAsStarted();
+      });
+
       itemsContainer.addEventListener('mouseup', function(ev) {
         if(!ev.target) return;
         if(ev.detail > 1) return;
 
         ev.preventDefault();
+
+        // Don't proceed with click handling if we're mousing-up from a text selection
+        if(TextSelectionHandler.isInProgress()) {
+          TextSelectionHandler.markAsFinished();
+          return;
+        }
 
         const targetItem = Utility.getParent(ev.target, '.item');
         const targetItemId = targetItem.dataset.id;
