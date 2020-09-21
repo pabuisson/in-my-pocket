@@ -44,16 +44,22 @@ const FavoriteFilterState = {
   UNSET: 2
 };
 
+const TextSelectionState = {
+  NOT_STARTED: 0,
+  IN_PROGRESS: 1
+};
+
 
 export {
+  FavoriteFilterState,
   KeyboardShortcuts,
+  MouseButtons,
   PocketApiStatus,
   PocketError,
   PocketNotice,
-  MouseButtons,
+  TextSelectionState,
+  concealedProtocols,
   consumerKey,
   parseIntBase,
-  concealedProtocols,
-  FavoriteFilterState
 };
 

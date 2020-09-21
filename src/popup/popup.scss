@@ -124,6 +124,7 @@ html, body, .authenticated, .authentication {
 
       font-size: 1.2rem;
       font-weight: bold;
+      user-select: text;
 
       cursor: pointer;
     }
@@ -139,9 +140,11 @@ html, body, .authenticated, .authentication {
       .url {
         flex: 1;
 
-        white-space: nowrap;
-        text-overflow: ellipsis;
         overflow: hidden;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        user-select: text;
+        white-space: nowrap;
 
         color: $ff-secondary-text;
         cursor: pointer;
