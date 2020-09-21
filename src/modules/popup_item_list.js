@@ -22,7 +22,7 @@ const PopupItemList = ( function() {
   }
 
   function faviconUrl(url) {
-    return `https://external-content.duckduckgo.com/ip3/${Utility.domain(url)}.ico`
+    return `https://external-content.duckduckgo.com/ip3/${Utility.domain(url)}.ico`;
   }
 
   function formatUrl(url) {
@@ -137,7 +137,7 @@ const PopupItemList = ( function() {
     urlAndTagsContent.appendChild(urlContent);
 
     if(item.tags.length > 0) {
-      for(let tag of item.tags) {
+      for(const tag of item.tags) {
         const tagElement = document.createElement('span');
         tagElement.className = 'tag';
         tagElement.appendChild(document.createTextNode(tag));
