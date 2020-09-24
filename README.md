@@ -56,3 +56,4 @@ Special thanks to the developers who helped me and contributed to the project:
 * [bobi32](https://bitbucket.org/bobi32/)
 * [kEINnAMER](https://bitbucket.org/kEINnAMER/)
 * [JJ](https://bitbucket.org/jjzakius/)
+* [danielrozenberg](https://github.com/danielrozenberg)
