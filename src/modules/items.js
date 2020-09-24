@@ -1,6 +1,7 @@
 "use strict";
 
 import Badge from './badge.js';
+import FeatureSwitches from './feature_switches.js';
 import Logger from './logger.js';
 import PageAction from './page_action.js';
 import PocketApiRequester from './pocket_api_requester.js';
@@ -40,7 +41,9 @@ const Items = (function () {
     const isTaggedCriteria = lowerQuery.includes('is:tagged');
     const isUntaggedCriteria = lowerQuery.includes('is:untagged');
 
-    const textCriteria = lowerQuery.replace(/is:(faved|unfaved|tagged|untagged)/g, '').trim();
+    const keywordsToStripRegexp =
+      FeatureSwitches.TAGS_ENABLED ? /is:(faved|unfaved|tagged|untagged)/g : /is:(faved|unfaved)/g;
+    const textCriteria = lowerQuery.replace(keywordsToStripRegexp, '').trim();
 
     return(
       matchFavedUnfaved(item, isFavedCriteria, isUnfavedCriteria) &&
@@ -60,7 +63,7 @@ const Items = (function () {
     const lowerUrl = (item.url.replace(protocolsRemovalRegex, '') || '').toLowerCase();
     const lowerTitle = (item.title || '').toLowerCase();
 
-    const tags = item.tags ? item.tags.map(tag => tag.toLowerCase()) : [];
+    const tags = FeatureSwitches.TAGS_ENABLED && item.tags ? item.tags.map(tag => tag.toLowerCase()) : [];
 
     return lowerTitle.includes(textToMatch) ||
       lowerUrl.includes(textToMatch) ||
@@ -79,6 +82,8 @@ const Items = (function () {
   }
 
   function matchTaggedUntagged(item, keepTagged, keepUntagged) {
+    if(FeatureSwitches.TAGS_ENABLED) return true
+
     if (keepTagged) {
       return item.tags && item.tags.length > 0;
     } else if (keepUntagged) {
@@ -207,8 +212,10 @@ const Items = (function () {
     formatPocketItemForStorage: function(itemFromApi) {
       const tags = [];
 
-      for(const tag in itemFromApi.tags){
-        tags.push(tag);
+      if(FeatureSwitches.TAGS_ENABLED) {
+        for(const tag in itemFromApi.tags){
+          tags.push(tag);
+        }
       }
 
       return {

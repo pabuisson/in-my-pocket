@@ -1,5 +1,6 @@
 "use strict";
 
+import FeatureSwitches from './feature_switches.js';
 import Logger  from '../modules/logger.js';
 import PopupUI from '../modules/popup_ui.js';
 import TextSelectionHandler from '../modules/text_selection_handler.js';
@@ -137,7 +138,7 @@ const PopupItemList = ( function() {
     urlContent.appendChild(document.createTextNode(formatUrl(item.url)));
     urlAndTagsContent.appendChild(urlContent);
 
-    if(item.tags.length > 0) {
+    if(FeatureSwitches.TAGS_ENABLED && item.tags.length > 0) {
       for(const tag of item.tags) {
         const tagElement = document.createElement('span');
         tagElement.className = 'tag';
@@ -150,7 +151,6 @@ const PopupItemList = ( function() {
     liElement.appendChild(buildActionsContainer());
     liElement.appendChild(titleContent);
     liElement.appendChild(document.createElement('br'));
-    // liElement.appendChild(urlContent);
     liElement.appendChild(urlAndTagsContent);
 
     liElement.dataset.id  = item.id;
