@@ -39,5 +39,14 @@
       "prefer-const": "error",
       "quotes": ["off", "double"],
       "semi": ["error", "always"]
-    }
+    },
+    "overrides": [
+        {
+            "files": ["*.test.js"],
+            "rules": {
+                "max-lines-per-function": "off",
+                "max-lines": "off"
+            }
+        }
+    ]
 }
