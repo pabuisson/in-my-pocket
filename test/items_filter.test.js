@@ -204,7 +204,7 @@ describe('Items.filter', () => {
         expect(result).to.deep.include(matchingTextNoTag);
         expect(result).not.to.include(matchingTextWithTag);
         expect(result).not.to.include(nonMatchingTextWithTag);
-      })
+      });
     });
 
     context('query on item text and tag text', () => {
