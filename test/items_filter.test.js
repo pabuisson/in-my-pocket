@@ -140,9 +140,8 @@ describe('Items.filter', () => {
   });
 
   context('tags (if FeatureSwitch.TAGS_ENABLED)', () => {
-    before(function() {
-      FeatureSwitch.TAGS_ENABLED = true;
-    });
+    before(function() { FeatureSwitch.TAGS_ENABLED = true; });
+    after(function() { FeatureSwitch.TAGS_ENABLED = false; });
 
     context('query on tagged status', () => {
       it('returns tagged items if query contains is:tagged', () => {
@@ -208,7 +207,6 @@ describe('Items.filter', () => {
       })
     });
 
-    // TODO: mock FeatureSwitch.TAGS_ENABLED
     context('query on item text and tag text', () => {
       const matchingTextAndTag = { title: 'matching text', url: 'https://matching.com', tags: ['matching-tag'] };
       const matchingTextNotTag = { title: 'matching text', url: 'https://matching.com', tags: ['other-tag'] };
@@ -232,8 +230,10 @@ describe('Items.filter', () => {
     });
   });
 
-  // TODO: mock FeatureSwitch.TAGS_ENABLED
-  context('combinining tagged and favorited status', () => {
+  context('combinining tagged and favorited status (if FeatureSwitch.TAGS_ENABLED)', () => {
+    before(function() { FeatureSwitch.TAGS_ENABLED = true; });
+    after(function() { FeatureSwitch.TAGS_ENABLED = false; });
+
     const favoritedAndTagged = { title: 'some text', url: 'https://url.com', fav: '1', tags: ['some-tag'] };
     const favoritedNotTagged = { title: 'some text', url: 'https://url.com', fav: '1', tags: [] };
     const unfavedAndTagged = { title: 'some text', url: 'https://url.com', fav: '0', tags: ['some-tag'] };
