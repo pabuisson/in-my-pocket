@@ -1,6 +1,6 @@
 # Changelog
 
-## Not released yet
+## 0.11.6 - November 2020
 
 * UPDATE: the websites favicon are now high-resolution! And also, they're fetched through HTTPS now. And they're not coming from Google anymore, but from [DuckDuckGo](https://duckduckgo.com/) instead!
 * UPDATE: when you open the popup and the favorite status of an item has changed since last sync, it will immediately reflect in the popup (no need to close and reopen the popup anymore).
