@@ -2,6 +2,7 @@
 
 import Authentication from '../modules/authentication.js';
 import Badge from '../modules/badge.js';
+import BugReporter from '../modules/bug_reporter.js';
 import ContextMenu from '../modules/context_menu.js';
 import Items from '../modules/items.js';
 import Logger from '../modules/logger.js';
@@ -88,6 +89,7 @@ function retrieveAll(offset = 0) {
         });
       })
       .catch(error => {
+        BugReporter.captureException(error);
         Logger.error(`(bg.retrieveAll) Error: ${ JSON.stringify(error) }`);
         Badge.flashError();
       });
@@ -159,6 +161,8 @@ function retrieveDiff() {
           PageAction.redrawAllTabs();
         })
         .catch(error => {
+          BugReporter.captureException(error);
+
           // Even if something went wrong while retrieving diff, we still can display the current
           // items, so we send the `retrieved-items` event back to popup to build the item list
           Logger.warn(`(bg.retrieveDiff) something went wrong: ${JSON.stringify(error)}`);

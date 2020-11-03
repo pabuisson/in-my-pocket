@@ -7,6 +7,7 @@ module.exports = {
   entry: {
     'popup/popup'              : './popup/popup.js',
     'options/options'          : './options/options.js',
+    'background/sentry'        : './background/sentry.js',
     'background/background'    : './background/background.js',
     'background/upgrade'       : './background/upgrade.js',
     'background/keyboard'      : './background/keyboard.js',

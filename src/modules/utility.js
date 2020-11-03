@@ -1,5 +1,6 @@
 "use strict";
 
+import BugReporter from './bug_reporter.js';
 import Logger from './logger.js';
 
 // -------------------------------------
@@ -31,7 +32,8 @@ const Utility = (function () {
 
       try {
         parsedResponse = JSON.parse(json);
-      } catch (e) {
+      } catch (error) {
+        BugReporter.captureException(error);
         Logger.warn('Invalid JSON: could not parse ' + json);
       }
 

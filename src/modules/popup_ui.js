@@ -27,8 +27,8 @@ const PopupUI = (function() {
   }
 
   function setZoomLevel() {
-    Settings.init().then( function() {
-      const zoomLevel = Settings.get( 'zoomLevel' );
+    Settings.init().then(function() {
+      const zoomLevel = Settings.get('zoomLevel');
       document.documentElement.style.fontSize = zoomLevel;
     });
   }

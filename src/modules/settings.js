@@ -9,6 +9,7 @@ const Settings = ( function() {
   let settings = {};
   const defaultSettings = {
     debugMode:      false,
+    bugReport:      false,
     openInNewTab:   true,
     perPage:        '50',
     showBadge:      true,

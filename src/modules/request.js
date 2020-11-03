@@ -1,11 +1,10 @@
 "use strict";
 
+import BugReporter from './bug_reporter.js';
 import Logger from './logger.js';
 import { PocketError } from './constants.js';
 
-
 // -----------------------------------
-
 
 class Request {
   constructor(action, url, params) {
@@ -81,7 +80,9 @@ class Request {
             browser.runtime.sendMessage(errorObject);
             reject(errorObject);
           }
-        }).catch( () => {
+        }).catch(error => {
+          BugReporter.captureException(error);
+
           Logger.error('(Request.fetch) error while reaching the server');
           const errorObject = { error: PocketError.UNREACHABLE };
 

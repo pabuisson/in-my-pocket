@@ -21,6 +21,7 @@ const disconnectActionStep2Cancel    = document.querySelector('.disconnect-secon
 const displayBadgeCountCheckbox      = document.querySelector('.display-badge-count');
 const displayPageActionCheckbox      = document.querySelector('.display-page-action');
 const enableDebugModeCheckbox        = document.querySelector('.enable-debug-mode');
+const enableBugReportCheckbox        = document.querySelector('.enable-bug-report');
 const openInNewTabCheckbox           = document.querySelector('.open-in-new-tab');
 const paginationPerPageSelector      = document.querySelector('.pagination-per-page');
 const zoomLevelSelector              = document.querySelector('.zoom-level');
@@ -71,6 +72,7 @@ const UI = (function() {
       displayBadgeCountCheckbox.checked    = settings['showBadge'];
       displayPageActionCheckbox.checked    = settings['showPageAction'];
       enableDebugModeCheckbox.checked      = settings['debugMode'];
+      enableBugReportCheckbox.checked      = settings['bugReport'];
       openInNewTabCheckbox.checked         = settings['openInNewTab'];
       archiveWhenOpenedCheckbox.checked    = settings['archiveWhenOpened'];
       closeTabWhenAddedCheckbox.checked    = settings['closeTabWhenAdded'];
@@ -120,6 +122,13 @@ const UI = (function() {
       // Event: "Enable debug mode" checkbox
       enableDebugModeCheckbox.addEventListener('change', function() {
         Settings.set('debugMode', this.checked);
+        Settings.save();
+        flashSavedNotification(this.parentNode);
+      });
+
+      // Event: "Enable bug reoprt" checkbox
+      enableBugReportCheckbox.addEventListener('change', function() {
+        Settings.set('bugReport', this.checked);
         Settings.save();
         flashSavedNotification(this.parentNode);
       });

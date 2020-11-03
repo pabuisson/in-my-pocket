@@ -1,6 +1,7 @@
 "use strict";
 
 import Badge from './badge.js';
+import BugReporter from './bug_reporter.js';
 import FeatureSwitches from './feature_switches.js';
 import Logger from './logger.js';
 import PageAction from './page_action.js';
@@ -9,9 +10,7 @@ import Settings from './settings.js';
 import Utility from './utility.js';
 import {PocketNotice, concealedProtocols} from './constants.js';
 
-
 // ---------------
-
 
 const Items = (function () {
   let currentChecksum = null;
@@ -155,6 +154,7 @@ const Items = (function () {
           Badge.updateCount();
         }
       }).catch(error => {
+        BugReporter.captureException(error);
         Logger.error(`(Items.removeItem) Error while removing item: ${JSON.stringify(error)}`);
         Badge.flashError();
       });
@@ -202,6 +202,7 @@ const Items = (function () {
         Badge.flashSuccess();
       })
         .catch(error => {
+          BugReporter.captureException(error);
           Logger.error(`(Items.setFavorite) Error for action ${action} : ${JSON.stringify(error)}`);
           Badge.flashError();
         });
@@ -395,6 +396,7 @@ const Items = (function () {
           });
         })
           .catch(error => {
+            BugReporter.captureException(error);
             Logger.error(`(Items.addItem) Error while adding item: ${JSON.stringify(error)}`);
             Badge.flashError();
           });
