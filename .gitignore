@@ -5,3 +5,4 @@ web-ext-artifacts/
 .nyc_output/
 .cache/
 .DS_Store
+.env
