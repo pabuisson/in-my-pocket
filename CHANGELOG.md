@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11.7 - November 2020
+
+* FEATURE: add an opt-in setting for automated bug reporting. This is disabled by default but if you want to help me understand what may not be working on your installations of the addon, then you can turn this new setting on!
+
+
 ## 0.11.6 - November 2020
 
 * UPDATE: the websites favicon are now high-resolution! And also, they're fetched through HTTPS now. And they're not coming from Google anymore, but from [DuckDuckGo](https://duckduckgo.com/) instead!
