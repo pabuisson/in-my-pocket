@@ -11,7 +11,6 @@ Settings.init().then(() => {
 
     // To set your release version
     release: "in-my-pocket@" + VersionManager.getCurrentVersion(),
-    integrations: [new Integrations.BrowserTracing()],
 
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
