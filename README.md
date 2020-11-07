@@ -38,6 +38,8 @@ If you have suggestions on how to improve this extension or encounter some bugs,
 
 If you want to, `eslint` is configured and can help you in the development process. You'll need to set it up with `npm install -g eslint` and then setup your text editor of choice so that it's able to display the linter warnings.
 
+`prettier` is also configured, you can run it to have your JS code correctly formatted. There is no git hook yet to enforce it, but it will happen someday soon.
+
 
 ### Workflow
 
