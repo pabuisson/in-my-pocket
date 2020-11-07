@@ -6,10 +6,14 @@
 
 // -----------
 
-html,
-body {
-  width: 470px;
+html {
   min-height: 300px;
+  height: 100%;
+}
+
+body {
+  width: 500px;
+  height: 550px;
 
   font-size: 12px;
   padding: 0;
@@ -17,18 +21,34 @@ body {
   overflow: hidden;
   font-family: sans-serif;
   background-color: $ff-grey-10;
+
+  display: flex;
+  .authenticated,
+  .authentication {
+    flex: 1;
+  }
+
+  &.sidebar {
+    height: 100%;
+    width: 100%;
+
+    .authenticated,
+    .authentication {
+      height: 100%;
+      width: 100%;
+    }
+  }
 }
 
-html,
-body,
-.authenticated,
-.authentication {
+.authenticated, .authentication {
   height: 100%;
-}
+  width: 100%;
 
-.authentication {
   display: flex;
   flex-direction: column;
+}
+
+.authentication {
   justify-content: space-between;
   align-items: center;
 
@@ -65,11 +85,6 @@ body,
       }
     }
   }
-}
-
-.authenticated {
-  display: flex;
-  flex-direction: column;
 }
 
 .list-component {

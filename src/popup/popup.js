@@ -22,6 +22,9 @@ document.body.onmousedown = e => {
 // - - - MAIN LOGIC LOOP - - -
 
 document.addEventListener("DOMContentLoaded", function () {
+  // Add dedicated class to body if opened in sidebar
+  if (PopupUI.inSidebar()) document.body.classList.add("sidebar")
+
   // Setup the UI and draw the list with items already in memory
   PopupUI.setup()
 
@@ -81,7 +84,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       switch (eventData.action) {
         case "authenticated":
-          window.close()
+          window.location.reload() // For sidebar mode
+          window.close() // For popup (but doesn't close a sidebar)
           browser.runtime.sendMessage({ action: "update-badge-count" })
           break
 

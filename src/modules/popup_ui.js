@@ -117,6 +117,9 @@ const PopupUI = (function () {
       )
     },
 
+    inSidebar: () => window.location.search.includes("ui=sidebar"),
+    inPopup: () => window.location.search.includes("ui=popup"),
+
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth
     // TODO: reduce duplication with updateList !?

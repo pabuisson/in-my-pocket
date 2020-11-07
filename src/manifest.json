@@ -43,6 +43,12 @@
     "page": "./options/options.html"
   },
 
+  "sidebar_action": {
+    "default_panel": "popup/popup.html?ui=sidebar",
+    "default_icon": "assets/icons/browser-action-light.svg",
+    "open_at_install": false
+  },
+
   "browser_action": {
     "default_icon": "assets/icons/browser-action-light.svg",
     "theme_icons": [
@@ -57,7 +63,7 @@
         "size": 32
       }
     ],
-    "default_popup": "./popup/popup.html",
+    "default_popup": "./popup/popup.html?ui=popup",
     "browser_style": true
   },
 
