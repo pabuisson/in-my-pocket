@@ -65,7 +65,8 @@ h2 {
     margin-left: 2rem;
   }
 
-  input, pre {
+  input,
+  pre {
     display: inline-block;
   }
 
@@ -83,7 +84,6 @@ h2 {
   }
 }
 
-
 /**
  * Light / Dark
  * MacOS: this refers to the system setting
@@ -97,7 +97,8 @@ h2 {
     color: $ff-dark-options-foreground;
   }
 
-  h2, h3 {
+  h2,
+  h3 {
     color: white;
   }
 
@@ -109,4 +110,3 @@ h2 {
     }
   }
 }
-

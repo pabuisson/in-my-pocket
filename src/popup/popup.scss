@@ -1,10 +1,13 @@
 @import "../assets/shared";
 
-.hidden { display: none !important; }
+.hidden {
+  display: none !important;
+}
 
 // -----------
 
-html, body {
+html,
+body {
   width: 470px;
   min-height: 300px;
 
@@ -16,7 +19,10 @@ html, body {
   background-color: $ff-grey-10;
 }
 
-html, body, .authenticated, .authentication {
+html,
+body,
+.authenticated,
+.authentication {
   height: 100%;
 }
 
@@ -155,7 +161,7 @@ html, body, .authenticated, .authentication {
         margin-left: 1rem;
 
         .tag:before {
-          content: '⭓ ';
+          content: "⭓ ";
         }
       }
     }
@@ -202,7 +208,9 @@ html, body, .authenticated, .authentication {
       display: flex;
       flex-direction: row;
 
-      .favorite-action, .tick-action, .delete-action {
+      .favorite-action,
+      .tick-action,
+      .delete-action {
         cursor: pointer;
         flex: 1;
         opacity: 0.8;
@@ -246,7 +254,6 @@ html, body, .authenticated, .authentication {
   }
 }
 
-
 $top-actions-height: 2.8rem;
 
 .search-no-results {
@@ -261,7 +268,6 @@ $top-actions-height: 2.8rem;
   font-weight: bold;
   color: $ff-grey-80;
 }
-
 
 .top-actions {
   flex: initial;
@@ -328,14 +334,18 @@ $top-actions-height: 2.8rem;
 
         color: white;
         border-radius: 50% 50%;
-        height: 1.0rem;
-        width: 1.0rem;
-        line-height: 1.0rem;
+        height: 1rem;
+        width: 1rem;
+        line-height: 1rem;
         font-size: 0.9rem;
         text-align: center;
 
-        &.badge-on { background-color: $ff-green-60; }
-        &.badge-off { background-color: $pocket-red; }
+        &.badge-on {
+          background-color: $ff-green-60;
+        }
+        &.badge-off {
+          background-color: $pocket-red;
+        }
       }
     }
   }
@@ -370,7 +380,6 @@ $top-actions-height: 2.8rem;
   }
 }
 
-
 /*
  * Thanks to Che for this example: http://codepen.io/code_dependant/pen/ciGLA?editors=1100
  */
@@ -384,7 +393,7 @@ $top-actions-height: 2.8rem;
   background-color: transparent;
 
   &.loading:after {
-    content: '';
+    content: "";
     position: absolute;
     display: block;
     height: 100%;
@@ -442,8 +451,6 @@ $top-actions-height: 2.8rem;
   }
 }
 
-
-
 .pagination {
   flex: initial;
 
@@ -456,7 +463,8 @@ $top-actions-height: 2.8rem;
   font-weight: bold;
   color: $ff-grey-80;
 
-  .pagination-previous, .pagination-next {
+  .pagination-previous,
+  .pagination-next {
     flex: 1;
     text-align: center;
     cursor: pointer;
@@ -465,7 +473,8 @@ $top-actions-height: 2.8rem;
       background-color: $ff-grey-20;
     }
 
-    &.disabled, &.disabled:hover {
+    &.disabled,
+    &.disabled:hover {
       opacity: 0.4;
     }
   }
@@ -475,12 +484,11 @@ $top-actions-height: 2.8rem;
     display: none;
 
     flex: initial;
-    padding-left:  0.5rem;
+    padding-left: 0.5rem;
     padding-right: 0.5rem;
     text-align: center;
   }
 }
-
 
 // -----------------------
 
@@ -488,7 +496,8 @@ $top-actions-height: 2.8rem;
 // Apparently, overflow menu width must be around 425px atm
 
 @media (max-width: 400px) {
-  html, body {
+  html,
+  body {
     max-width: 100%;
   }
 }

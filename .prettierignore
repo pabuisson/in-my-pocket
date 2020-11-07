@@ -1,0 +1,13 @@
+*.md
+.eslintrc.json
+.prettierrc.json
+babel.config.js
+package.json
+package-lock.json
+webpack.config.js
+
+assets
+build
+coverage
+node_modules
+web-ext-artifacts

@@ -1,3 +1,3 @@
-"use strict";
+"use strict"
 
-browser.runtime.setUninstallURL('https://bit.ly/inmypocketuninstall');
+browser.runtime.setUninstallURL("https://bit.ly/inmypocketuninstall")

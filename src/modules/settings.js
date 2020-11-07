@@ -1,82 +1,80 @@
-"use strict";
+"use strict"
 
-import Utility from './utility.js';
+import Utility from "./utility.js"
 
 // --------------------------
 
-const Settings = ( function() {
-  let _loaded  = false;
-  let settings = {};
+const Settings = (function () {
+  let _loaded = false
+  let settings = {}
   const defaultSettings = {
-    debugMode:      false,
-    bugReport:      false,
-    openInNewTab:   true,
-    perPage:        '50',
-    showBadge:      true,
+    debugMode: false,
+    bugReport: false,
+    openInNewTab: true,
+    perPage: "50",
+    showBadge: true,
     showPageAction: true,
-    zoomLevel:      '12px',
+    zoomLevel: "12px",
     // Automations
     archiveWhenOpened: false,
     closeTabWhenAdded: false,
     closeTabWhenRead: false,
     // Keyboard shortcuts
     // TODO: can I retrieve default from the manifest JSON?
-    keyboardOpenPopup: 'Alt+Q',
-    keyboardToggle: 'Alt+W',
-    keyboardOpenFirstItem: 'Alt+F',
-    keyboardOpenRandomItem: 'Alt+R'
-  };
-
-  function load() {
-    return browser.storage.local.get('settings').then(data => {
-      _loaded  = true;
-
-      settings = Object.assign(settings, defaultSettings);
-      if(data.settings) {
-        settings = Object.assign(settings, (Utility.parseJson(data.settings) || {}));
-      }
-    });
+    keyboardOpenPopup: "Alt+Q",
+    keyboardToggle: "Alt+W",
+    keyboardOpenFirstItem: "Alt+F",
+    keyboardOpenRandomItem: "Alt+R",
   }
 
+  function load() {
+    return browser.storage.local.get("settings").then(data => {
+      _loaded = true
+
+      settings = Object.assign(settings, defaultSettings)
+      if (data.settings) {
+        settings = Object.assign(settings, Utility.parseJson(data.settings) || {})
+      }
+    })
+  }
 
   return {
-    init: function() {
-      return load();
+    init: function () {
+      return load()
     },
 
-    get: function(key) {
-      if(_loaded) {
-        if(key) {
-          return settings[key];
+    get: function (key) {
+      if (_loaded) {
+        if (key) {
+          return settings[key]
         } else {
-          return settings;
+          return settings
         }
       }
 
-      return undefined;
+      return undefined
     },
 
-    set: function(key, value) {
-      if(_loaded) {
-        settings[key] = value;
-        return true;
+    set: function (key, value) {
+      if (_loaded) {
+        settings[key] = value
+        return true
       }
 
-      return false;
+      return false
     },
 
-    save: function() {
+    save: function () {
       // If settings not yet loaded, we don't need to save them (they can't have
       // been modified since they've not even been loaded
-      if(_loaded) {
-        browser.storage.local.set({ settings: JSON.stringify(settings) });
-        return true;
+      if (_loaded) {
+        browser.storage.local.set({ settings: JSON.stringify(settings) })
+        return true
       }
 
-      return false;
-    }
-  };
-})();
+      return false
+    },
+  }
+})()
 
-
-export default Settings;
+export default Settings

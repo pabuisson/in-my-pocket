@@ -1,102 +1,101 @@
-"use strict";
+"use strict"
 
-import BugReporter from './bug_reporter.js';
-import Logger from './logger.js';
+import BugReporter from "./bug_reporter.js"
+import Logger from "./logger.js"
 
 // -------------------------------------
 
 const Utility = (function () {
-  const defaultTimeout = 1000;
+  const defaultTimeout = 1000
 
   return {
     debounce: (func, delay) => {
-      let timerId;
+      let timerId
 
       return function () {
-        const context = this;
-        const args = arguments;
+        const context = this
+        const args = arguments
 
         if (timerId) {
-          clearTimeout(timerId);
+          clearTimeout(timerId)
         }
 
         timerId = setTimeout(function () {
-          func.apply(context, args);
-          timerId = null;
-        }, (delay || defaultTimeout));
-      };
+          func.apply(context, args)
+          timerId = null
+        }, delay || defaultTimeout)
+      }
     },
 
-    parseJson: (json) => {
-      let parsedResponse = undefined;
+    parseJson: json => {
+      let parsedResponse = undefined
 
       try {
-        parsedResponse = JSON.parse(json);
+        parsedResponse = JSON.parse(json)
       } catch (error) {
-        BugReporter.captureException(error);
-        Logger.warn('Invalid JSON: could not parse ' + json);
+        BugReporter.captureException(error)
+        Logger.warn("Invalid JSON: could not parse " + json)
       }
 
-      return parsedResponse;
+      return parsedResponse
     },
 
     getParent: function (node, selector) {
-      while (node && !node.matches(selector))
-        node = node.parentElement;
+      while (node && !node.matches(selector)) node = node.parentElement
 
-      return node;
+      return node
     },
 
     hasParent: function (node, selector) {
-      return (Utility.getParent(node, selector) ? true : false);
+      return Utility.getParent(node, selector) ? true : false
     },
 
     matchesOrHasParent: function (node, selector) {
-      return node.matches(selector) || Utility.hasParent(node, selector);
+      return node.matches(selector) || Utility.hasParent(node, selector)
     },
 
-    getQuery: function(url) {
-      if (url.startsWith('about:reader?'))
-        return {url: decodeURIComponent(url.replace('about:reader?url=', ''))};
-      if (url.startsWith('https://app.getpocket.com/read/'))
-        return {id: url.replace('https://app.getpocket.com/read/', '')};
+    getQuery: function (url) {
+      if (url.startsWith("about:reader?"))
+        return { url: decodeURIComponent(url.replace("about:reader?url=", "")) }
+      if (url.startsWith("https://app.getpocket.com/read/"))
+        return { id: url.replace("https://app.getpocket.com/read/", "") }
       // is there still a way to use old webapp? if not it's unnecessary
-      if (url.startsWith('https://getpocket.com/a/read/'))
-        return {id: url.replace('https://getpocket.com/a/read/', '')};
-      return {url: url};
+      if (url.startsWith("https://getpocket.com/a/read/"))
+        return { id: url.replace("https://getpocket.com/a/read/", "") }
+      return { url: url }
     },
 
-    getPossibleUrls: function({ id, url }) {
+    getPossibleUrls: function ({ id, url }) {
       return [
         url,
-        'about:reader?url=' + encodeURIComponent(url),
-        'https://app.getpocket.com/read/' + url,
-        'https://app.getpocket.com/read/' + id,
+        "about:reader?url=" + encodeURIComponent(url),
+        "https://app.getpocket.com/read/" + url,
+        "https://app.getpocket.com/read/" + id,
         // is there still a way to use old webapp? if not it's unnecessary
-        'https://getpocket.com/a/read/' + url,
-        'https://getpocket.com/a/read/' + id,
-      ];
+        "https://getpocket.com/a/read/" + url,
+        "https://getpocket.com/a/read/" + id,
+      ]
     },
 
     // Source: https://stackoverflow.com/a/7616484/85076
     // Source: https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-    hashCode: function(s) {
-      let hash = 0;
+    hashCode: function (s) {
+      let hash = 0
       for (let i = 0; i < s.length; i++) {
-        hash = ((hash << 5) - hash) + s.charCodeAt(i);
-        hash |= 0; // Convert to 32bit integer
+        hash = (hash << 5) - hash + s.charCodeAt(i)
+        hash |= 0 // Convert to 32bit integer
       }
 
       // Make it always > 0
-      return hash >>> 0;
+      return hash >>> 0
     },
 
-    domain: function(url) {
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      return link.hostname;
-    }
-  };
-})();
+    domain: function (url) {
+      const link = document.createElement("a")
+      link.setAttribute("href", url)
+      return link.hostname
+    },
+  }
+})()
 
-export default Utility;
+export default Utility

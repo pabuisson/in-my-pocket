@@ -45,15 +45,18 @@
 
   "browser_action": {
     "default_icon": "assets/icons/browser-action-light.svg",
-    "theme_icons": [{
-      "light": "assets/icons/browser-action-dark.svg",
-      "dark": "assets/icons/browser-action-light.svg",
-      "size": 16
-    }, {
-      "light": "assets/icons/browser-action-dark.svg",
-      "dark": "assets/icons/browser-action-light.svg",
-      "size": 32
-    }],
+    "theme_icons": [
+      {
+        "light": "assets/icons/browser-action-dark.svg",
+        "dark": "assets/icons/browser-action-light.svg",
+        "size": 16
+      },
+      {
+        "light": "assets/icons/browser-action-dark.svg",
+        "dark": "assets/icons/browser-action-light.svg",
+        "size": 32
+      }
+    ],
     "default_popup": "./popup/popup.html",
     "browser_style": true
   },
