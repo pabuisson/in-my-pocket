@@ -37,8 +37,7 @@
       "no-prototype-builtins": "off",
       "no-var": "error",
       "prefer-const": "error",
-      "quotes": ["off", "double"],
-      "semi": ["error", "always"]
+      "quotes": ["off", "double"]
     },
     "overrides": [
         {
