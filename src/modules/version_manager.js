@@ -1,64 +1,71 @@
-"use strict";
+"use strict"
 
 // -------------------------------------
 
 const VERSION_LEVELS = {
-  'MAJOR': 0,
-  'MINOR': 1,
-  'PATCH': 2
-};
+  MAJOR: 0,
+  MINOR: 1,
+  PATCH: 2,
+}
 
-const VersionManager = (function() {
-  const forceResyncVersion = '0.11.0';
+const VersionManager = (function () {
+  const forceResyncVersion = "0.11.0"
 
   // eslint-disable-next-line max-params
-  function isGreater(newVersion, baseVersion, granularity = VERSION_LEVELS.PATCH, currentGranularity = VERSION_LEVELS.MAJOR) {
-    newVersion = newVersion || VersionManager.getCurrentVersion();
-    const newVersionPart = newVersion.split('.')[currentGranularity];
-    const baseVersionPart = baseVersion.split('.')[currentGranularity];
+  function isGreater(
+    newVersion,
+    baseVersion,
+    granularity = VERSION_LEVELS.PATCH,
+    currentGranularity = VERSION_LEVELS.MAJOR
+  ) {
+    newVersion = newVersion || VersionManager.getCurrentVersion()
+    const newVersionPart = newVersion.split(".")[currentGranularity]
+    const baseVersionPart = baseVersion.split(".")[currentGranularity]
 
-    if(newVersionPart > baseVersionPart) {
-      return true;
-    } else if(newVersionPart < baseVersionPart) {
-      return false;
+    if (newVersionPart > baseVersionPart) {
+      return true
+    } else if (newVersionPart < baseVersionPart) {
+      return false
     } else {
-      if(currentGranularity < granularity && currentGranularity < VERSION_LEVELS.PATCH)
-        return isGreater(newVersion, baseVersion, granularity, currentGranularity + 1);
-      else
-        return false;
+      if (currentGranularity < granularity && currentGranularity < VERSION_LEVELS.PATCH)
+        return isGreater(newVersion, baseVersion, granularity, currentGranularity + 1)
+      else return false
     }
   }
 
   return {
-    getCurrentVersion: function() {
-      return browser.runtime.getManifest().version;
+    getCurrentVersion: function () {
+      return browser.runtime.getManifest().version
     },
 
-    forceResyncVersion: function() {
-      return forceResyncVersion;
+    forceResyncVersion: function () {
+      return forceResyncVersion
     },
 
-    isMajorOrMinorUpdate: function(newVersion, baseVersion) {
-      return isGreater(newVersion, baseVersion, VERSION_LEVELS.MINOR);
+    isMajorOrMinorUpdate: function (newVersion, baseVersion) {
+      return isGreater(newVersion, baseVersion, VERSION_LEVELS.MINOR)
     },
 
-    mustShowUpdateNotification: function(details) {
-      if (details.reason !== 'update') return false;
+    mustShowUpdateNotification: function (details) {
+      if (details.reason !== "update") return false
 
-      const currentVersion = VersionManager.getCurrentVersion();
-      const isMajorOrMinorUpdate = VersionManager.isMajorOrMinorUpdate(currentVersion, details.previousVersion);
+      const currentVersion = VersionManager.getCurrentVersion()
+      const isMajorOrMinorUpdate = VersionManager.isMajorOrMinorUpdate(
+        currentVersion,
+        details.previousVersion
+      )
 
-      return isMajorOrMinorUpdate;
+      return isMajorOrMinorUpdate
     },
 
     // Don't trigger resync if there's no forceResyncVersion defined
     // If defined, only trigger resync if last full resync is older
-    mustTriggerFullResync: function(lastFullSyncAtVersion) {
-      if (typeof VersionManager.forceResyncVersion() === 'undefined') return false;
-      if (typeof lastFullSyncAtVersion === 'undefined') return true;
-      return isGreater(VersionManager.forceResyncVersion(), lastFullSyncAtVersion);
-    }
-  };
-})();
+    mustTriggerFullResync: function (lastFullSyncAtVersion) {
+      if (typeof VersionManager.forceResyncVersion() === "undefined") return false
+      if (typeof lastFullSyncAtVersion === "undefined") return true
+      return isGreater(VersionManager.forceResyncVersion(), lastFullSyncAtVersion)
+    },
+  }
+})()
 
-export { VERSION_LEVELS, VersionManager };
+export { VERSION_LEVELS, VersionManager }

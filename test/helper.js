@@ -1,18 +1,18 @@
 // globals
-global.expect = require('chai').expect;
-global.sinon  = require('sinon');
+global.expect = require("chai").expect
+global.sinon = require("sinon")
 global.browser = {
   storage: {
     local: {
-      get: () => Promise.resolve()
-    }
+      get: () => Promise.resolve(),
+    },
   },
   runtime: {
-    getManifest: () => {}
-  }
-};
+    getManifest: () => {},
+  },
+}
 global.window = {
   navigator: {
-    platform: ''
-  }
-};
+    platform: "",
+  },
+}

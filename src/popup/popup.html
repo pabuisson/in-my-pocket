@@ -1,73 +1,76 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="./popup.css"/>
-  <link rel="stylesheet" href="../assets/fonts/ionicons.min.css"/>
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="./popup.css" />
+    <link rel="stylesheet" href="../assets/fonts/ionicons.min.css" />
+  </head>
 
-<body>
-  <section class='authentication'>
-    <button>Authenticate with Pocket</button>
-    <div class='bottom grey'>
-      ⓘ You need a Pocket account to use this addon. If you don't have one, <a class='signup' href='https://getpocket.com/signup/' alt='Pocket - Signup'>go to the official pocket website</a> to create an account.
-    </div>
-  </section>
-
-
-  <section class='authenticated hidden'>
-    <header class='top-actions'>
-      <div class='top-icon open-settings'>
-        <i class='icon ion-md-settings' title="Open settings page"></i>
+  <body>
+    <section class="authentication">
+      <button>Authenticate with Pocket</button>
+      <div class="bottom grey">
+        ⓘ You need a Pocket account to use this addon. If you don't have one,
+        <a class="signup" href="https://getpocket.com/signup/" alt="Pocket - Signup"
+          >go to the official pocket website</a
+        >
+        to create an account.
       </div>
+    </section>
 
-      <div class='filter-items-container'>
-        <input class='filter-items' type='text' placeholder='Find...' />
-        <i class='icon ion-md-close-circle clear-search-box hidden' title="Clear search box"></i>
+    <section class="authenticated hidden">
+      <header class="top-actions">
+        <div class="top-icon open-settings">
+          <i class="icon ion-md-settings" title="Open settings page"></i>
+        </div>
+
+        <div class="filter-items-container">
+          <input class="filter-items" type="text" placeholder="Find..." />
+          <i class="icon ion-md-close-circle clear-search-box hidden" title="Clear search box"></i>
+        </div>
+
+        <div class="top-icon filter-faved">
+          <i class="icon ion-md-star" title="Filter by 'favorite' status"></i>
+          <span class="badge-wrapper badge-on">
+            <i class="icon ion-md-checkmark"></i>
+          </span>
+          <span class="badge-wrapper badge-off">
+            <i class="icon ion-md-close"></i>
+          </span>
+        </div>
+
+        <div class="top-icon random-item">
+          <span title="Open a random page">R</span>
+        </div>
+
+        <div class="top-icon retrieve-items">
+          <i class="icon ion-md-sync" title="Refresh items list"></i>
+        </div>
+
+        <div class="top-icon add-current">
+          <i class="icon ion-md-add-circle" title="Add current page to list"></i>
+        </div>
+      </header>
+
+      <div class="main-loader"></div>
+
+      <ul class="list-component"></ul>
+
+      <div class="search-no-results hidden">
+        <i class="icon ion-md-sad"></i>
+        Oh my! Nothing matches this search.
       </div>
+      <footer class="flash-overlay hidden">A message</footer>
 
-      <div class='top-icon filter-faved'>
-        <i class='icon ion-md-star' title="Filter by 'favorite' status"></i>
-        <span class='badge-wrapper badge-on'>
-          <i class='icon ion-md-checkmark'></i>
-        </span>
-        <span class='badge-wrapper badge-off'>
-          <i class='icon ion-md-close'></i>
-        </span>
-      </div>
+      <nav class="pagination">
+        <div class="pagination-previous">« Previous page</div>
+        <form>
+          <select name="pagination-page-selector" class="pagination-page-selector"></select>
+        </form>
+        <div class="pagination-next">Next page »</div>
+      </nav>
+    </section>
 
-      <div class='top-icon random-item'>
-        <span title="Open a random page">R</span>
-      </div>
-
-      <div class='top-icon retrieve-items'>
-        <i class='icon ion-md-sync' title="Refresh items list"></i>
-      </div>
-
-      <div class='top-icon add-current'>
-        <i class='icon ion-md-add-circle' title="Add current page to list"></i>
-      </div>
-    </header>
-
-    <div class='main-loader'></div>
-
-    <ul class='list-component'> </ul>
-
-    <div class='search-no-results hidden'>
-      <i class='icon ion-md-sad'></i>
-      Oh my! Nothing matches this search.
-    </div>
-    <footer class='flash-overlay hidden'>A message</footer>
-
-    <nav class='pagination'>
-      <div class='pagination-previous'>« Previous page</div>
-      <form>
-        <select name='pagination-page-selector' class='pagination-page-selector'></select>
-      </form>
-      <div class='pagination-next'>Next page »</div>
-    </nav>
-  </section>
-
-  <script src="./popup.js"></script>
-</body>
+    <script src="./popup.js"></script>
+  </body>
 </html>

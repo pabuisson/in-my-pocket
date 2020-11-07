@@ -1,7 +1,7 @@
-"use strict";
+"use strict"
 
 const FeatureSwitches = {
-  TAGS_ENABLED: false
-};
+  TAGS_ENABLED: false,
+}
 
-export default FeatureSwitches;
+export default FeatureSwitches
