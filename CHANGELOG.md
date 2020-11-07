@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 0.11.9 - November 2020
+
+* FIX: normalized paths in stacktrace for better debugging capabilities
+
+
 ## 0.11.8 - November 2020
 
 * FIX: no need for transactions tracing in bug reporting tool. It's now disabled.
