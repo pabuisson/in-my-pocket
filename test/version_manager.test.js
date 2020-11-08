@@ -73,13 +73,13 @@ describe("VersionManager.mustTriggerFullResync", () => {
       expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.false
     })
 
-    it("returns true if last full sync is older than forceResyncVersion", () => {
-      const lastFullSyncAtVersion = "1.0.0"
-      expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.true
+    it("returns false if lastFullSyncAtVersion does not exist (never synced completely)", () => {
+      const lastFullSyncAtVersion = undefined
+      expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.false
     })
 
-    it("returns true if lastFullSyncAtVersion does not exist", () => {
-      const lastFullSyncAtVersion = undefined
+    it("returns true if last full sync is older than forceResyncVersion", () => {
+      const lastFullSyncAtVersion = "1.0.0"
       expect(VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)).to.be.true
     })
   })

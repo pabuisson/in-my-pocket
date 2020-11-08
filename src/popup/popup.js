@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Setup the UI and draw the list with items already in memory
   PopupUI.setup()
 
-  // Show message if need a full resync
   browser.storage.local
     .get(["access_token", "lastFullSyncAtVersion"])
     .then(({ access_token, lastFullSyncAtVersion }) => {

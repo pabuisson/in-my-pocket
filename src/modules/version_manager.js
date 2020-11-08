@@ -58,11 +58,9 @@ const VersionManager = (function () {
       return isMajorOrMinorUpdate
     },
 
-    // Don't trigger resync if there's no forceResyncVersion defined
-    // If defined, only trigger resync if last full resync is older
     mustTriggerFullResync: function (lastFullSyncAtVersion) {
+      if (typeof lastFullSyncAtVersion === "undefined") return false
       if (typeof VersionManager.forceResyncVersion() === "undefined") return false
-      if (typeof lastFullSyncAtVersion === "undefined") return true
       return isGreater(VersionManager.forceResyncVersion(), lastFullSyncAtVersion)
     },
   }
