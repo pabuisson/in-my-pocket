@@ -11,6 +11,13 @@ import PopupMainLoader from "../modules/popup_main_loader.js"
 import PopupUI from "../modules/popup_ui.js"
 import { VersionManager } from "../modules/version_manager.js"
 import { PocketError, PocketNotice, MouseButtons } from "../modules/constants.js"
+import SentryLoader from "../modules/sentry_loader.js"
+
+// -------------
+
+SentryLoader.init()
+
+// -------------
 
 // --- EVENTS ---
 

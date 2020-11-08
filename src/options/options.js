@@ -9,7 +9,12 @@ import ContextMenu from "../modules/context_menu.js"
 import Keyboard from "../modules/keyboard.js"
 import PageAction from "../modules/page_action.js"
 import Settings from "../modules/settings.js"
+import SentryLoader from "../modules/sentry_loader.js"
 import { KeyboardShortcuts, parseIntBase } from "../modules/constants.js"
+
+// -------------
+
+SentryLoader.init()
 
 // -------------
 
