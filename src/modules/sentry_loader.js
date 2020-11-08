@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/browser"
 import Settings from "../modules/settings.js"
 import { VersionManager } from "../modules/version_manager.js"
 
-const SentryLoader = function () {
+const SentryLoader = (function () {
   const normalizePath = path => {
     const basePath = browser.runtime.getURL("")
     return path.replace(basePath, "~/")
@@ -40,6 +40,6 @@ const SentryLoader = function () {
       })
     },
   }
-}
+})()
 
 export default SentryLoader
