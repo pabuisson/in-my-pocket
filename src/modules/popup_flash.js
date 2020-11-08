@@ -16,7 +16,7 @@ const PopupFlash = (function () {
       return !flashContainer.classList.contains("hidden")
     },
 
-    isNeedResyncMessageVisibleDisplayed: function () {
+    isNeedResyncMessageDisplayed: function () {
       return PopupFlash.isVisible() && flashContainer.innerHTML.includes("refresh")
     },
 
@@ -37,7 +37,7 @@ const PopupFlash = (function () {
       const flashMessage = `
         This version of IMP needs to refresh all your items.
         To make sure everythings works smoothly,
-        <strong>please click the 🔄 icon above this message.</strong>
+        <strong>please click the 🔄 icon above this message</strong>
       `
 
       PopupFlash.show(flashMessage, FlashKind.ERROR)

@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
           Badge.updateCount()
 
           if (eventData.full) {
-            if (PopupFlash.isNeedResyncMessageVisibleDisplayed()) {
+            if (PopupFlash.isNeedResyncMessageDisplayed()) {
               PopupFlash.show(
                 "<strong>All your items have been resynced, thank you!<strong> 🤗",
                 FlashKind.SUCCESS,
