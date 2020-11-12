@@ -1,6 +1,12 @@
 # Changelog
 
 
+## Not released yet
+
+* FEATURE: InMyPocket now has a sidebar mode! You'll find InMyPocket in the addons list in the sidebar, and can now browse while keeping your pocket list conveniently displayed at all times!
+* FIX: "close tab when mark as read" automation was actually not closing the tab if item was displayed in reader mode or in the getpocket.com webapp.
+
+
 ## 0.11.9 - November 2020
 
 * FIX: normalized paths in stacktrace for better debugging capabilities
