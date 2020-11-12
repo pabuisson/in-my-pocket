@@ -59,9 +59,6 @@ const Utility = (function () {
         return { url: decodeURIComponent(url.replace("about:reader?url=", "")) }
       if (url.startsWith("https://app.getpocket.com/read/"))
         return { id: url.replace("https://app.getpocket.com/read/", "") }
-      // is there still a way to use old webapp? if not it's unnecessary
-      if (url.startsWith("https://getpocket.com/a/read/"))
-        return { id: url.replace("https://getpocket.com/a/read/", "") }
       return { url: url }
     },
 
@@ -71,9 +68,6 @@ const Utility = (function () {
         "about:reader?url=" + encodeURIComponent(url),
         "https://app.getpocket.com/read/" + url,
         "https://app.getpocket.com/read/" + id,
-        // is there still a way to use old webapp? if not it's unnecessary
-        "https://getpocket.com/a/read/" + url,
-        "https://getpocket.com/a/read/" + id,
       ]
     },
 
