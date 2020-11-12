@@ -103,7 +103,6 @@ const Items = (function () {
 
     browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
       const apiRequester = new PocketApiRequester(access_token)
-      const callbackAction = method == "archive" ? "marked-as-read" : "deleted"
       const removalPromise =
         method == "archive" ? apiRequester.archive(itemId) : apiRequester.delete(itemId)
 
@@ -121,15 +120,16 @@ const Items = (function () {
             browser.storage.local.set({ items: JSON.stringify(parsedItems) })
 
             // Send a message back to the UI
+            const callbackAction = method == "archive" ? "marked-as-read" : "deleted"
             browser.runtime.sendMessage({ action: callbackAction, id: itemId })
 
             // Display an indicator on the badge that everything went well and update badge count
             Badge.flashSuccess().then(() => {
-              // Close the current tab if setting closeTabWhenAdded is "on"
-              // and if its url matches the deleted item
+              // Close the current tab if setting closeTabWhenAdded is "on" and url matches the deleted item
               if (tabId) {
                 browser.tabs.get(tabId).then(currentTab => {
-                  if (currentTab.url == removedItem.url) {
+                  const urlsToCheck = Utility.getPossibleUrls(removedItem)
+                  if (urlsToCheck.includes(currentTab.url)) {
                     Settings.init().then(() => {
                       const closeTabWhenRead = Settings.get("closeTabWhenRead")
                       if (closeTabWhenRead) {
@@ -145,7 +145,7 @@ const Items = (function () {
 
               // Disable page actions for removed items
               Logger.log("(Items.removeItem) item removed, update matching pageActions")
-              const urlsToCheck = Utility.getPossibleUrls(removedItem.url)
+              const urlsToCheck = Utility.getPossibleUrls(removedItem)
               urlsToCheck.forEach(url => {
                 browser.tabs.query({ url: url }).then(tabs => {
                   const tabIds = tabs.map(tab => tab.id)
