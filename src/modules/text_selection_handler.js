@@ -1,29 +1,17 @@
 "use strict"
 
-import { TextSelectionState } from "../modules/constants.js"
-
 const TextSelectionHandler = (function () {
-  let textSelectionState = TextSelectionState.NOT_STARTED
-
-  function setTextSelectionStatus(value) {
-    textSelectionState = value
-  }
-
-  function getTextSelectionStatus() {
-    return textSelectionState
-  }
+  let _selection = ""
 
   return {
-    markAsStarted: function () {
-      setTextSelectionStatus(TextSelectionState.IN_PROGRESS)
+    storeSelection: function (selection) {
+      _selection = selection
     },
-
-    markAsFinished: function () {
-      setTextSelectionStatus(TextSelectionState.NOT_STARTED)
+    hasChanged: function (selection) {
+      return selection !== "" && selection !== _selection
     },
-
     isInProgress: function () {
-      return getTextSelectionStatus() === TextSelectionState.IN_PROGRESS
+      return !!window.getSelection().toString()
     },
   }
 })()

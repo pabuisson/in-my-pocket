@@ -194,19 +194,18 @@ const PopupItemList = (function () {
 
   return {
     setupEventListeners: function () {
-      itemsContainer.addEventListener("selectstart", function () {
-        TextSelectionHandler.markAsStarted()
-      })
-
       itemsContainer.addEventListener("mouseup", function (ev) {
         if (!ev.target) return
         if (ev.detail > 1) return
 
         ev.preventDefault()
 
-        // Don't proceed with click handling if we're mousing-up from a text selection
-        if (TextSelectionHandler.isInProgress()) {
-          TextSelectionHandler.markAsFinished()
+        // Don't proceed with click handling if we're changing the selection
+        // selectstart event can't be used, has he behaves differently in Chrome and Firefox
+        // In Firefox: click does not trigger selectstart
+        // In Chrome: click does trigger selectstart
+        if (TextSelectionHandler.hasChanged(window.getSelection().toString())) {
+          TextSelectionHandler.storeSelection(window.getSelection().toString())
           return
         }
 
@@ -215,23 +214,17 @@ const PopupItemList = (function () {
 
         if (Utility.matchesOrHasParent(ev.target, ".delete-action")) {
           if (ev.button === MouseButtons.LEFT) {
-            Logger.log(
-              `(PopupItemList.eventListener) Clicked .delete-action for item ${targetItemId}`
-            )
+            Logger.log(`(PopupItemList.eventListener) Clicked delete for item ${targetItemId}`)
             PopupUI.deleteItem(targetItemId)
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".tick-action")) {
           if (ev.button === MouseButtons.LEFT) {
-            Logger.log(
-              `(PopupItemList.eventListener) Clicked .tick-action for item ${targetItemId}`
-            )
+            Logger.log(`(PopupItemList.eventListener) Clicked tick for item ${targetItemId}`)
             PopupUI.markAsRead(targetItemId)
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".favorite-action")) {
           if (ev.button === MouseButtons.LEFT) {
-            Logger.log(
-              `(PopupItemList.eventListener) Clicked .favorite-action for item ${targetItemId}`
-            )
+            Logger.log(`(PopupItemList.eventListener) Clicked favorite for item ${targetItemId}`)
             PopupUI.toggleFavorite(targetItemId)
           }
         } else if (ev.target.matches(".title") || ev.target.matches(".url")) {

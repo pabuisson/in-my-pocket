@@ -44,11 +44,6 @@ const FavoriteFilterState = {
   UNSET: 2,
 }
 
-const TextSelectionState = {
-  NOT_STARTED: 0,
-  IN_PROGRESS: 1,
-}
-
 export {
   FavoriteFilterState,
   KeyboardShortcuts,
@@ -56,7 +51,6 @@ export {
   PocketApiStatus,
   PocketError,
   PocketNotice,
-  TextSelectionState,
   concealedProtocols,
   consumerKey,
   parseIntBase,
