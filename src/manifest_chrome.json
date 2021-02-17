@@ -39,8 +39,7 @@
 
   "browser_action": {
     "default_icon": "assets/icons/browser-action-48.png",
-    "default_popup": "./popup/popup.html?ui=popup",
-    "browser_style": true
+    "default_popup": "./popup/popup.html?ui=popup"
   },
 
   "commands": {

@@ -63,8 +63,7 @@
         "size": 32
       }
     ],
-    "default_popup": "./popup/popup.html?ui=popup",
-    "browser_style": true
+    "default_popup": "./popup/popup.html?ui=popup"
   },
 
   "page_action": {

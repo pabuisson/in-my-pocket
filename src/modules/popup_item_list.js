@@ -150,7 +150,6 @@ const PopupItemList = (function () {
 
     liElement.appendChild(buildActionsContainer())
     liElement.appendChild(titleContent)
-    liElement.appendChild(document.createElement("br"))
     liElement.appendChild(urlAndTagsContent)
 
     liElement.dataset.id = item.id

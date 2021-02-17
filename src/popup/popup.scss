@@ -104,7 +104,7 @@ body {
   .item {
     margin: 0;
     position: relative;
-    padding: 0.5rem 0.1rem 0.2rem 0.1rem;
+    padding: 0.3rem;
     border-bottom: 1px solid #eee;
 
     color: $ff-grey-70;
@@ -113,47 +113,43 @@ body {
     // So I'm fucked, basically
     height: 3.5rem;
 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
     &.favorite {
       background-color: $favorite-bg;
     }
 
     & > span {
-      display: inline-block;
-      width: 95%;
       margin-left: 0.5rem;
-
       white-space: nowrap;
       overflow-x: hidden;
       text-overflow: ellipsis;
-      line-height: 1.1;
+      line-height: 1.2;
     }
 
     .favicon {
-      height: 1.3rem;
-      width: 1.3rem;
-      max-height: 16px;
-      max-width: 16px;
+      height: 16px;
+      width: 16px;
       margin-right: 0.5rem;
       vertical-align: middle;
       position: relative;
-      top: -0.1rem;
       border-radius: 2px;
     }
 
     .title {
-      height: 1.5rem;
-
-      font-size: 1.2rem;
+      min-height: 20px;
+      font-size: 1.25rem;
       font-weight: bold;
       user-select: text;
+      vertical-align: middle;
 
       cursor: pointer;
     }
 
     .url-and-tags {
-      height: 1.1rem;
       position: relative;
-      top: -2px;
       font-size: 0.75rem;
 
       display: flex;
@@ -269,7 +265,7 @@ body {
   }
 }
 
-$top-actions-height: 2.8rem;
+$top-actions-height: 2.2rem;
 
 .search-no-results {
   flex: 1;
@@ -292,7 +288,7 @@ $top-actions-height: 2.8rem;
   align-items: center;
 
   height: $top-actions-height;
-  padding: 0.5rem 0;
+  padding: 0.4rem 0;
 
   background-color: $ff-ink-90;
   background-color: $my-dark-blue;
@@ -327,7 +323,6 @@ $top-actions-height: 2.8rem;
     // hence a large right margin
     &.filter-faved {
       position: relative;
-      margin-right: 2rem;
 
       &.on {
         .badge-on {
@@ -368,12 +363,12 @@ $top-actions-height: 2.8rem;
   .filter-items-container {
     position: relative;
     flex: 1;
-    margin-right: 0.2rem;
+    margin-right: 2rem;
 
     .clear-search-box {
       position: absolute;
-      top: -0.1rem;
-      right: 0.15rem;
+      top: -0.2rem;
+      right: -1rem;
       color: black;
       opacity: 0.2;
       font-size: 2.2rem;
@@ -382,8 +377,8 @@ $top-actions-height: 2.8rem;
 
     .filter-items {
       width: 100%;
-      padding: 0.4rem 1rem;
-      height: 2rem;
+      padding: 0.3rem 0.6rem;
+      height: 1.6rem;
 
       background-color: transparentize(white, 0.3);
       border-radius: 1rem;
