@@ -1,0 +1,73 @@
+{
+
+  "manifest_version": 2,
+  "name": "In My Pocket",
+  "version": "0.11.9",
+
+  "description": "For all those who are missing the old Firefox Pocket addon, here is an unofficial client for the excellent Pocket service. Goal is to provide a useful, but still lightweight means to access your Pocket account from your browser. Enjoy!",
+  "homepage_url": "https://bitbucket.org/pabuisson/in-my-pocket",
+  "icons": {
+    "48": "assets/icons/icon-48.png",
+    "96": "assets/icons/icon-96.png"
+  },
+
+  "permissions": [
+    "<all_urls>",
+    "activeTab",
+    "contextMenus",
+    "notifications",
+    "storage",
+    "tabs",
+    "webRequest"
+  ],
+
+  "background": {
+    "scripts": [
+      "./assets/browser-polyfill.js",
+      "./background/background.js",
+      "./background/upgrade.js",
+      "./background/context_menus.js",
+      "./background/page_actions.js",
+      "./background/keyboard.js",
+      "./background/uninstall.js"
+    ]
+  },
+
+  "options_ui": {
+    "page": "./options/options.html"
+  },
+
+  "browser_action": {
+    "default_icon": "assets/icons/browser-action-48.png",
+    "default_popup": "./popup/popup.html?ui=popup",
+    "browser_style": true
+  },
+
+  "commands": {
+    "toggle-page-status": {
+      "suggested_key": {
+        "default": "Alt+W"
+      },
+      "description": "Send a 'toggle-page-status' event: adds the page to the item list, or archive it if it's already there"
+    },
+
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Alt+Q"
+      },
+      "description": "Open the popup containing pocket items"
+    },
+    "open-first-item": {
+      "suggested_key": {
+        "default": "Alt+F"
+      },
+      "description": "Send a 'open-first-item' event: opens the first item of the list"
+    },
+    "open-random-item": {
+      "suggested_key": {
+        "default": "Alt+R"
+      },
+      "description": "Send a 'open-random-item' event: opens a random item of the list"
+    }
+  }
+}
