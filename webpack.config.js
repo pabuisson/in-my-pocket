@@ -92,6 +92,10 @@ const chromeSpecific = {
         {
           from: 'manifest_chrome.json',
           to: 'manifest.json'
+        },
+        {
+          from: '../node_modules/webextension-polyfill/dist/browser-polyfill.min.js',
+          to: 'assets/'
         }
       ]
     })
