@@ -6,6 +6,7 @@ module.exports = {
   mode: 'production',
   devtool: 'source-map',
   entry: {
+    'content_script'           : './content_script.js',
     'popup/popup'              : './popup/popup.js',
     'options/options'          : './options/options.js',
     'background/sentry'        : './background/sentry.js',

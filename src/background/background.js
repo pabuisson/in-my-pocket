@@ -15,7 +15,8 @@ import { consumerKey, PocketApiStatus } from "../modules/constants.js"
 // - - - API ACCESS : LIST MANAGEMENT - - -
 
 function retrieveItems(force) {
-  const intervalWithoutReload = 15 * 60
+  // const intervalWithoutReload = 15 * 60
+  const intervalWithoutReload = 5
   const currentTimestamp = (Date.now() / 1000) | 0
 
   browser.storage.local.get(["items", "last_retrieve"]).then(({ items, last_retrieve }) => {
@@ -23,10 +24,8 @@ function retrieveItems(force) {
     Logger.log(`(bg.retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`)
 
     if (force || !items || !last_retrieve) {
-      // If force == true, we always reload the whole list
       retrieveAll()
     } else if (timeSinceLastRetrieve > intervalWithoutReload) {
-      // If we already have sync, check if intervalWithoutReload is past, then we can reload
       retrieveDiff()
     } else {
       // Do this to stop the main-loader component
