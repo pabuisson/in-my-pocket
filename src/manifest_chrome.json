@@ -23,7 +23,7 @@
 
   "background": {
     "scripts": [
-      "./assets/browser-polyfill.min.js",
+      "./assets/browser-polyfill.js",
       "./background/background.js",
       "./background/upgrade.js",
       "./background/context_menus.js",
