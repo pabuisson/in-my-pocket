@@ -8,7 +8,9 @@
 
 html {
   min-height: 300px;
-  height: 100%;
+  &.sidebar {
+    height: 100%;
+  }
 }
 
 body {

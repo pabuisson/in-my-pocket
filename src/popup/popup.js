@@ -30,7 +30,10 @@ document.body.onmousedown = e => {
 
 document.addEventListener("DOMContentLoaded", function () {
   // Add dedicated class to body if opened in sidebar
-  if (PopupUI.inSidebar()) document.body.classList.add("sidebar")
+  if (PopupUI.inSidebar()) {
+    document.body.classList.add("sidebar")
+    document.documentElement.classList.add("sidebar")
+  }
 
   // Setup the UI and draw the list with items already in memory
   PopupUI.setup()
