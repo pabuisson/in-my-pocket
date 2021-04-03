@@ -59,8 +59,8 @@ const VersionManager = (function () {
     },
 
     mustTriggerFullResync: function (lastFullSyncAtVersion) {
-      if (typeof lastFullSyncAtVersion === "undefined") return false
-      if (typeof VersionManager.forceResyncVersion() === "undefined") return false
+      if (!lastFullSyncAtVersion) return false
+      if (!VersionManager.forceResyncVersion()) return false
       return isGreater(VersionManager.forceResyncVersion(), lastFullSyncAtVersion)
     },
   }
