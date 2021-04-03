@@ -5,6 +5,7 @@ import "./options.scss"
 
 import Authentication from "../modules/authentication.js"
 import Badge from "../modules/badge.js"
+import BrowserDetector from "../modules/browser_detector.js"
 import ContextMenu from "../modules/context_menu.js"
 import PageAction from "../modules/page_action.js"
 import Settings from "../modules/settings.js"
@@ -32,10 +33,7 @@ const zoomLevelSelector = document.querySelector(".zoom-level")
 const archiveWhenOpenedCheckbox = document.querySelector(".archive-when-opened")
 const closeTabWhenAddedCheckbox = document.querySelector(".close-tab-when-added")
 const closeTabWhenReadCheckbox = document.querySelector(".close-tab-when-read")
-const keyboardOpenPopupShortcut = document.querySelector(".keyboard-open-popup")
-const keyboardToggleShortcut = document.querySelector(".keyboard-toggle")
-const keyboardOpenFirstItemShortcut = document.querySelector(".keyboard-open-first-item")
-const keyboardOpenRandomItemShortcut = document.querySelector(".keyboard-open-random-item")
+const chromeShortcutsPageLink = document.querySelector(".chrome-shortcuts-page")
 
 const savedNotificationElement = document.querySelector(".saved-notification")
 
@@ -62,7 +60,7 @@ const UI = (function () {
     }, 2000)
   }
 
-  function initializeUIFromSettings() {
+  async function initializeUIFromSettings() {
     // If user is not connected, hide the "disconnect" link
     Authentication.isAuthenticated().catch(function () {
       disconnectRow.style.display = "none"
@@ -82,16 +80,18 @@ const UI = (function () {
       closeTabWhenReadCheckbox.checked = settings["closeTabWhenRead"]
       paginationPerPageSelector.value = settings["perPage"] || ""
       zoomLevelSelector.value = settings["zoomLevel"]
-
-      keyboardOpenPopupShortcut.value = settings["keyboardOpenPopup"]
-      keyboardToggleShortcut.value = settings["keyboardToggle"]
-      keyboardOpenFirstItemShortcut.value = settings["keyboardOpenFirstItem"]
-      keyboardOpenRandomItemShortcut.value = settings["keyboardOpenRandomItem"]
     })
+
+    // Displays the proper message for addon keyboard shortcuts
+    if ((await BrowserDetector.browserName()) === "Firefox") {
+      document.querySelector(".keyboard .chrome").style.display = "none"
+    } else {
+      document.querySelector(".keyboard .firefox").style.display = "none"
+    }
   }
 
   return {
-    setup: function () {
+    setup: async function () {
       initializeUIFromSettings()
 
       // Event: "Display count badge" checkbox
@@ -175,6 +175,14 @@ const UI = (function () {
         Settings.save()
         flashSavedNotification(this.parentNode)
       })
+
+      // Event: click on "chrome addon shortcuts" link
+      if ((await BrowserDetector.browserName()) !== "Firefox") {
+        chromeShortcutsPageLink.addEventListener("click", function (ev) {
+          ev.preventDefault()
+          browser.tabs.update({ url: "chrome://extensions/shortcuts" })
+        })
+      }
 
       // Event : "Disconnect" from the Pocket account click
       disconnectActionStep1.addEventListener("click", function (ev) {
