@@ -5,6 +5,7 @@ import "./popup.scss"
 
 import Authentication from "../modules/authentication.js"
 import Badge from "../modules/badge.js"
+import BugReporter from "../modules/bug_reporter.js"
 import Logger from "../modules/logger.js"
 import { PopupFlash, FlashKind } from "../modules/popup_flash.js"
 import PopupMainLoader from "../modules/popup_main_loader.js"
@@ -80,9 +81,10 @@ document.addEventListener("DOMContentLoaded", function () {
             break
         }
 
-        // Show flash message + Flash the badge if an error occured
+        // Show flash message + flash the badge if an error occured
         PopupFlash.show(flashMessage, FlashKind.ERROR, 5000)
         browser.runtime.sendMessage({ action: "flash-error" })
+        BugReporter.captureException({ error: eventData.error })
       } else if (eventData.notice) {
         if (eventData.notice === PocketNotice.ALREADY_IN_LIST) {
           PopupFlash.show("This page is already in your Pocket :)", FlashKind.NOTICE, 5000)
