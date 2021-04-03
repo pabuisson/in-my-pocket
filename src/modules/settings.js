@@ -19,12 +19,6 @@ const Settings = (function () {
     archiveWhenOpened: false,
     closeTabWhenAdded: false,
     closeTabWhenRead: false,
-    // Keyboard shortcuts
-    // TODO: can I retrieve default from the manifest JSON?
-    keyboardOpenPopup: "Alt+Q",
-    keyboardToggle: "Alt+W",
-    keyboardOpenFirstItem: "Alt+F",
-    keyboardOpenRandomItem: "Alt+R",
   }
 
   function load() {
