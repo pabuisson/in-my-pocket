@@ -9,7 +9,7 @@ const BugReporter = (function () {
   return {
     captureException: function (error) {
       Settings.init().then(() => {
-        if (Settings.get("openInNewTab")) {
+        if (Settings.get("bugReport")) {
           Sentry.captureException(error)
         }
       })
