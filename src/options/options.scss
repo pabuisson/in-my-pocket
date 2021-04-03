@@ -38,10 +38,17 @@ h2 {
 
 .row {
   margin: 0px;
-  margin-left: -5px;
   padding: 6px 0px 6px 6px;
   line-height: 16px;
   border-top: 1px solid #e1e1e1;
+
+  &.notice {
+    padding: 0.5rem 1rem;
+    margin: 1rem 0rem;
+    color: #444;
+    border-radius: 4px;
+    background-color: #bae1f2;
+  }
 
   label {
     display: inline-block;

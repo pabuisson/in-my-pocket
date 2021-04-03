@@ -6,11 +6,10 @@ import "./options.scss"
 import Authentication from "../modules/authentication.js"
 import Badge from "../modules/badge.js"
 import ContextMenu from "../modules/context_menu.js"
-import Keyboard from "../modules/keyboard.js"
 import PageAction from "../modules/page_action.js"
 import Settings from "../modules/settings.js"
 import SentryLoader from "../modules/sentry_loader.js"
-import { KeyboardShortcuts, parseIntBase } from "../modules/constants.js"
+import { parseIntBase } from "../modules/constants.js"
 
 // -------------
 
@@ -176,73 +175,6 @@ const UI = (function () {
         Settings.save()
         flashSavedNotification(this.parentNode)
       })
-
-      //
-      // Only register keyboard update events if browser is able to to upgrade keyboard shortcuts
-      // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/commands/update
-      //
-      if (browser.commands.update) {
-        // Event: updating "toggle page state" keyboard shortcut
-        keyboardToggleShortcut.addEventListener("keydown", function (ev) {
-          ev.preventDefault()
-          this.value = Keyboard.stringifyCombination(ev)
-
-          if (Keyboard.isValidCombination(ev)) {
-            Settings.set("keyboardToggle", this.value)
-            Settings.save()
-            Keyboard.registerShortcut(KeyboardShortcuts.toggle, this.value)
-            flashSavedNotification(this.parentNode)
-            this.blur()
-          }
-        })
-
-        // Event: updating "open popup" keyboard shortcut
-        keyboardOpenPopupShortcut.addEventListener("keydown", function (ev) {
-          ev.preventDefault()
-          this.value = Keyboard.stringifyCombination(ev)
-
-          if (Keyboard.isValidCombination(ev)) {
-            Settings.set("keyboardOpenPopup", this.value)
-            Settings.save()
-            Keyboard.registerShortcut(KeyboardShortcuts.openPopup, this.value)
-            flashSavedNotification(this.parentNode)
-            this.blur()
-          }
-        })
-
-        // Event: updating "open first item" keyboard shortcut
-        keyboardOpenFirstItemShortcut.addEventListener("keydown", function (ev) {
-          ev.preventDefault()
-          this.value = Keyboard.stringifyCombination(ev)
-
-          if (Keyboard.isValidCombination(ev)) {
-            Settings.set("keyboardOpenFirstItem", this.value)
-            Settings.save()
-            Keyboard.registerShortcut(KeyboardShortcuts.openFirstItem, this.value)
-            flashSavedNotification(this.parentNode)
-            this.blur()
-          }
-        })
-
-        // Event: updating "open random item" keyboard shortcut
-        keyboardOpenRandomItemShortcut.addEventListener("keydown", function (ev) {
-          ev.preventDefault()
-          this.value = Keyboard.stringifyCombination(ev)
-
-          if (Keyboard.isValidCombination(ev)) {
-            Settings.set("keyboardOpenRandomItem", this.value)
-            Settings.save()
-            Keyboard.registerShortcut(KeyboardShortcuts.openRandomItem, this.value)
-            flashSavedNotification(this.parentNode)
-            this.blur()
-          }
-        })
-      } else {
-        keyboardToggleShortcut.setAttribute("disabled", "disabled")
-        keyboardOpenPopupShortcut.setAttribute("disabled", "disabled")
-        keyboardOpenFirstItemShortcut.setAttribute("disabled", "disabled")
-        keyboardOpenRandomItemShortcut.setAttribute("disabled", "disabled")
-      }
 
       // Event : "Disconnect" from the Pocket account click
       disconnectActionStep1.addEventListener("click", function (ev) {
