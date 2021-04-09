@@ -138,7 +138,7 @@ const PopupItemList = (function () {
     urlContent.appendChild(document.createTextNode(formatUrl(item.url)))
     urlAndTagsContent.appendChild(urlContent)
 
-    if (FeatureSwitches.TAGS_ENABLED && item.tags.length > 0) {
+    if (FeatureSwitches.TAGS_ENABLED && item.tags && item.tags.length > 0) {
       for (const tag of item.tags) {
         const tagElement = document.createElement("span")
         tagElement.className = "tag"
