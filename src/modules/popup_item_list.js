@@ -110,18 +110,21 @@ const PopupItemList = (function () {
     return actionContainer
   }
 
-  function buildItemElement(item) {
+  async function buildItemElement(item) {
     const liElement = document.createElement("li")
     const faviconElement = document.createElement("img")
     const titleContent = document.createElement("span")
     const urlContent = document.createElement("span")
     const tagsContent = document.createElement("span")
-
     const urlAndTagsContent = document.createElement("span")
+    const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
 
     liElement.className = "item"
     if (item.fav == 1) {
       liElement.classList.add("favorite")
+    }
+    if (currentTab.url === item.url) {
+      liElement.classList.add("current-page")
     }
 
     faviconElement.className = "favicon"
@@ -158,17 +161,17 @@ const PopupItemList = (function () {
     return liElement
   }
 
-  function buildDomFragment(items) {
+  async function buildDomFragment(items) {
     const fragment = document.createDocumentFragment()
     for (let i = 0; i < items.length; i++) {
-      const newDomElement = buildItemElement(items[i])
+      const newDomElement = await buildItemElement(items[i])
       fragment.appendChild(newDomElement)
     }
 
     return fragment
   }
 
-  function buildBatch() {
+  async function buildBatch() {
     Logger.log(`(PopupItemList.buildBatch) build a new batch of ${ITEMS_PER_BATCH} items`)
 
     for (let i = 0; i < ITEMS_PER_BATCH; i++) {
@@ -179,7 +182,7 @@ const PopupItemList = (function () {
       }
 
       const itemToCreate = itemsToCreate[createdItemsCount]
-      itemsContainer.appendChild(buildItemElement(itemToCreate))
+      itemsContainer.appendChild(await buildItemElement(itemToCreate))
 
       createdItemsCount++
     }
@@ -274,7 +277,7 @@ const PopupItemList = (function () {
     },
 
     // Will build DOM for items and insert it before the item whose id=beforeItemId
-    insertItems: function (items, beforeItemId) {
+    insertItems: async function (items, beforeItemId) {
       const beforeNode = document.querySelector(
         `.item:not(.disappearing)[data-id='${beforeItemId}']`
       )
@@ -282,13 +285,13 @@ const PopupItemList = (function () {
         `(PopupItemList.insertItems) Insert ${items.length} items before item ${beforeItemId}`
       )
       Logger.log(`(PopupItemList.insertItems) Insert before ${beforeNode}`)
-      const domToInsert = buildDomFragment(items)
+      const domToInsert = await buildDomFragment(items)
       itemsContainer.insertBefore(domToInsert, beforeNode)
     },
 
     // Will build DOM for items and insert it at the end of the list container
-    appendItems: function (items) {
-      const domToAppend = buildDomFragment(items)
+    appendItems: async function (items) {
+      const domToAppend = await buildDomFragment(items)
       itemsContainer.appendChild(domToAppend)
     },
 
