@@ -198,7 +198,7 @@ describe("Items.filter", () => {
       it("does not return tagged items if query contains is:untagged", () => {
         const query = "is:untagged"
         const result = Items.filter(items, query)
-        expect(Items.filter(items, query)).not.to.include(taggedItem)
+        expect(result).not.to.include(taggedItem)
       })
     })
 
