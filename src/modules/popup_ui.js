@@ -136,9 +136,10 @@ const PopupUI = (function () {
             const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
 
             // Parse and filter the item list
-            const currentPageItem = (Utility.parseJson(items) || []).find(
-              item => item.url == currentTab.url
-            )
+            const currentPageItem = (Utility.parseJson(items) || []).find(item => {
+              const possibleUrls = Utility.getPossibleUrls(item)
+              return possibleUrls.includes(currentTab.url)
+            })
             const filteredItems = Items.filter(items, query, currentTab.url)
             const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
 
