@@ -11,6 +11,7 @@ import { MouseButtons, concealedProtocols } from "../modules/constants.js"
 
 const PopupItemList = (function () {
   const ITEMS_PER_BATCH = 50
+  const CURRENT_ITEM_CLASS = "current-page"
   let itemsToCreate = undefined
   let totalItemsCount = undefined
   let createdItemsCount = undefined
@@ -110,21 +111,20 @@ const PopupItemList = (function () {
     return actionContainer
   }
 
-  async function buildItemElement(item) {
+  function buildItemElement(item, opts = { current: false }) {
     const liElement = document.createElement("li")
     const faviconElement = document.createElement("img")
     const titleContent = document.createElement("span")
     const urlContent = document.createElement("span")
     const tagsContent = document.createElement("span")
     const urlAndTagsContent = document.createElement("span")
-    const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
 
     liElement.className = "item"
     if (item.fav == 1) {
       liElement.classList.add("favorite")
     }
-    if (currentTab.url === item.url) {
-      liElement.classList.add("current-page")
+    if (opts.current) {
+      liElement.classList.add(CURRENT_ITEM_CLASS)
     }
 
     faviconElement.className = "favicon"
@@ -161,14 +161,19 @@ const PopupItemList = (function () {
     return liElement
   }
 
-  async function buildDomFragment(items) {
+  function buildDomFragment(items) {
     const fragment = document.createDocumentFragment()
     for (let i = 0; i < items.length; i++) {
-      const newDomElement = await buildItemElement(items[i])
+      const newDomElement = buildItemElement(items[i])
       fragment.appendChild(newDomElement)
     }
 
     return fragment
+  }
+
+  async function buildCurrentItem(currentItem) {
+    Logger.log(`(buildCurrentItem) adding current item at the top of the list / ${currentItem.url}`)
+    itemsContainer.appendChild(buildItemElement(currentItem, { current: true }))
   }
 
   async function buildBatch() {
@@ -182,7 +187,7 @@ const PopupItemList = (function () {
       }
 
       const itemToCreate = itemsToCreate[createdItemsCount]
-      itemsContainer.appendChild(await buildItemElement(itemToCreate))
+      itemsContainer.appendChild(buildItemElement(itemToCreate))
 
       createdItemsCount++
     }
@@ -257,7 +262,7 @@ const PopupItemList = (function () {
       })
     },
 
-    buildAll: function (items) {
+    buildAll: function (items, currentItem) {
       Logger.log("(PopupItemList.buildAll)")
 
       // Remove previous "requestAnimationFrame" registered in case
@@ -271,7 +276,10 @@ const PopupItemList = (function () {
       totalItemsCount = items.length
       createdItemsCount = 0
 
-      // Build the dom
+      // Build current item
+      if (currentItem) buildCurrentItem(currentItem)
+
+      // Build the other items list
       Logger.log("(PopupItemList.buildAll) Request a 1st animation frame for buildBatch method")
       requestAnimationFrame(buildBatch)
     },
@@ -285,18 +293,20 @@ const PopupItemList = (function () {
         `(PopupItemList.insertItems) Insert ${items.length} items before item ${beforeItemId}`
       )
       Logger.log(`(PopupItemList.insertItems) Insert before ${beforeNode}`)
-      const domToInsert = await buildDomFragment(items)
+      const domToInsert = buildDomFragment(items)
       itemsContainer.insertBefore(domToInsert, beforeNode)
     },
 
     // Will build DOM for items and insert it at the end of the list container
     appendItems: async function (items) {
-      const domToAppend = await buildDomFragment(items)
+      const domToAppend = buildDomFragment(items)
       itemsContainer.appendChild(domToAppend)
     },
 
     getVisibleItemsIds: function () {
-      const visibleItems = itemsContainer.querySelectorAll(".item:not(.disappearing)")
+      const visibleItems = itemsContainer.querySelectorAll(
+        `.item:not(.disappearing):not(.${CURRENT_ITEM_CLASS})`
+      )
       const visibleItemsIds = []
 
       Logger.log(`(PopupItemList.getVisibleItems) ${visibleItems.length} visible items`)

@@ -234,17 +234,14 @@ const Items = (function () {
       }
     },
 
-    filter: function (rawItems, query) {
-      const parsedItems = parseItems(rawItems)
-      let filteredItems = undefined
+    filter: function (rawItems, query, currentUrl) {
+      return parseItems(rawItems).filter(item => {
+        let mustKeep = true
+        if (currentUrl) mustKeep = mustKeep && item.url !== currentUrl
+        if (query !== "") mustKeep = mustKeep && matchQuery(item, query)
 
-      if (query == "" || !query) {
-        filteredItems = parsedItems
-      } else {
-        filteredItems = parsedItems.filter(item => matchQuery(item, query))
-      }
-
-      return filteredItems
+        return mustKeep
+      })
     },
 
     contains: function (rawItems, searchedItem = {}) {

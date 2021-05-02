@@ -124,7 +124,7 @@ body {
     }
 
     &.current-page {
-      background-color: lightskyblue;
+      border-bottom: 4px double $ff-grey-50;
     }
 
     & > span {
