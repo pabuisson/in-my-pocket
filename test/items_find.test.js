@@ -65,6 +65,11 @@ describe("Items.find", () => {
         expect(Items.find(items, searchFor)).to.eql(matchingItem)
       })
 
+      it("url matches the getpocket URL + ID returns the item", () => {
+        const searchFor = { url: "https://getpocket.com/read/" + matchingItem.id }
+        expect(Items.find(items, searchFor)).to.eql(matchingItem)
+      })
+
       it("url matches the firefox reader URL returns the item", () => {
         const searchFor = { url: "about:reader?url=www.quelquepart.fr" }
         expect(Items.find(items, searchFor)).to.eql(matchingItem)

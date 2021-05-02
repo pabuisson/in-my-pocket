@@ -68,6 +68,7 @@ const Utility = (function () {
         "about:reader?url=" + encodeURIComponent(url),
         "https://app.getpocket.com/read/" + url,
         "https://app.getpocket.com/read/" + id,
+        "https://getpocket.com/read/" + id,
       ]
     },
 

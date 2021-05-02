@@ -65,6 +65,11 @@ describe("Items.contains", () => {
         expect(Items.contains(items, searchFor)).to.equal(true)
       })
 
+      it("url matches the getpocket URL + ID returns true", () => {
+        const searchFor = { url: "https://getpocket.com/read/" + matchingItem.id }
+        expect(Items.contains(items, searchFor)).to.equal(true)
+      })
+
       it("url matches the firefox reader URL returns true", () => {
         const searchFor = { url: "about:reader?url=www.quelquepart.fr" }
         expect(Items.contains(items, searchFor)).to.equal(true)
