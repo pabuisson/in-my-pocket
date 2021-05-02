@@ -107,7 +107,7 @@ body {
     margin: 0;
     position: relative;
     padding: 0.3rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $ff-grey-20;
 
     color: $ff-grey-70;
 
@@ -143,9 +143,8 @@ body {
     .title {
       min-height: 20px;
       font-size: 1.25rem;
-      font-weight: bold;
+      color: $ff-primary-text;
       user-select: text;
-      vertical-align: middle;
 
       cursor: pointer;
     }
@@ -171,10 +170,12 @@ body {
 
       .tags {
         flex: initial;
-        margin-left: 1rem;
 
-        .tag:before {
-          content: "⭓ ";
+        .tag {
+          margin-left: 0.5rem;
+          &:before {
+            content: "⭓ ";
+          }
         }
       }
     }
