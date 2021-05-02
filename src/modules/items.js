@@ -237,12 +237,16 @@ const Items = (function () {
     filter: function (rawItems, query, currentUrl) {
       return parseItems(rawItems).filter(item => {
         let mustKeep = true
+
+        // Don't return the currentUrl item, it's handled outside this items list
         if (currentUrl) {
-          const possibleUrls = Utility.getPossibleUrls(item.url)
-          mustKeep = mustKeep && possibleUrls.includes(currentUrl)
+          const possibleUrls = Utility.getPossibleUrls(item)
+          mustKeep = mustKeep && !possibleUrls.includes(currentUrl)
         }
 
-        if (query && query !== "") mustKeep = mustKeep && matchQuery(item, query)
+        if (query && query !== "") {
+          mustKeep = mustKeep && matchQuery(item, query)
+        }
 
         return mustKeep
       })

@@ -28,24 +28,28 @@ describe("Items.filter", () => {
   context("with a given current item", () => {
     it("does not return the item with given currentUrl in the item list", () => {
       const result = Items.filter(items, null, matchingItem.url)
+      expect(result.length).to.equal(3)
       expect(result).not.to.deep.include(matchingItem)
     })
 
     it("does not return the item with given currentUrl in the item list if considering reader url", () => {
       const readerUrl = "about:reader?url=" + encodeURIComponent(matchingItem.url)
       const result = Items.filter(items, null, readerUrl)
+      expect(result.length).to.equal(3)
       expect(result).not.to.deep.include(matchingItem)
     })
 
     it("does not return the item with given currentUrl in the item list if considering getpocket url with item url", () => {
       const getpocketUrl = "https://app.getpocket.com/read/" + matchingItem.url
       const result = Items.filter(items, null, getpocketUrl)
+      expect(result.length).to.equal(3)
       expect(result).not.to.deep.include(matchingItem)
     })
 
     it("does not return the item with given currentUrl in the item list if considering getpocket url with item id", () => {
       const getpocketUrl = "https://app.getpocket.com/read/" + matchingItem.id
       const result = Items.filter(items, null, getpocketUrl)
+      expect(result.length).to.equal(3)
       expect(result).not.to.deep.include(matchingItem)
     })
   })
