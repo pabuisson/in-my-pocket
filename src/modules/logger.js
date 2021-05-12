@@ -20,25 +20,15 @@ const Logger = (function () {
   }
 
   return {
-    log: function (message) {
-      isLoggingEnabled()
-        .then(() => {
-          console.log(prefix + message)
-        })
-        .catch(function () {
-          // Debug mode is disabled
-          // 'catch' needed to avoid throwing error because of unhandled rejected promise
-        })
+    log: async function (message) {
+      if (await isLoggingEnabled()) {
+        console.log(prefix + message)
+      }
     },
-    warn: function (message) {
-      isLoggingEnabled()
-        .then(() => {
-          console.warn(prefix + message)
-        })
-        .catch(function () {
-          // Debug mode is disabled
-          // 'catch' needed to avoid throwing error because of unhandled rejected promise
-        })
+    warn: async function (message) {
+      if (await isLoggingEnabled()) {
+        console.warn(prefix + message)
+      }
     },
     error: function (message) {
       console.error(prefix + message)
