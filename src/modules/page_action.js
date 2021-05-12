@@ -102,6 +102,7 @@ const PageAction = (function () {
 
     // FIXME: this violates SRP, should not be responsible of the PageAction visual state
     //        AND of adding/removing the item from the items list
+    // FIXME: duplication with background/keyboard.js
     toggle: function (tab) {
       pageActionEnabled().then(() => {
         browser.storage.local.get("items").then(({ items }) => {
