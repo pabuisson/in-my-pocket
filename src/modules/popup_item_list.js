@@ -120,12 +120,8 @@ const PopupItemList = (function () {
     const urlAndTagsContent = document.createElement("span")
 
     liElement.className = "item"
-    if (item.fav == 1) {
-      liElement.classList.add("favorite")
-    }
-    if (opts.current) {
-      liElement.classList.add(CURRENT_ITEM_CLASS)
-    }
+    if (item.fav == 1) liElement.classList.add("favorite")
+    if (opts.current) liElement.classList.add(CURRENT_ITEM_CLASS)
 
     faviconElement.className = "favicon"
     titleContent.className = "title"
