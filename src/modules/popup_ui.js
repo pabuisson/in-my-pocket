@@ -129,20 +129,25 @@ const PopupUI = (function () {
           return Settings.get("perPage")
         })
         .then(function (perPage) {
-          browser.storage.local.get(["items", "display"]).then(({ items, display }) => {
+          browser.storage.local.get(["items", "display"]).then(async ({ items, display }) => {
             const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
             const query = opts.query || parsedDisplay.query
             const pageToDisplay = opts.page || parsedDisplay.currentPage
+            const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
 
             // Parse and filter the item list
-            const filteredItems = Items.filter(items, query)
+            const currentPageItem = (Utility.parseJson(items) || []).find(item => {
+              const possibleUrls = Utility.getPossibleUrls(item)
+              return possibleUrls.includes(currentTab.url)
+            })
+            const filteredItems = Items.filter(items, query, currentTab.url)
             const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
 
             // Display the "no results" message or hide it
             togglePlaceholderVisibility(itemsToRender.length)
 
             // Rebuild all items
-            PopupItemList.buildAll(itemsToRender)
+            PopupItemList.buildAll(itemsToRender, currentPageItem)
 
             // Record currentPage and query, in case they've been "forced" through the opts param
             // `displayedAt` value must remain the same (that's why we assign `parsedDisplay`)
@@ -167,13 +172,14 @@ const PopupUI = (function () {
           return Settings.get("perPage")
         })
         .then(function (perPage) {
-          browser.storage.local.get(["items", "display"]).then(({ items, display }) => {
+          browser.storage.local.get(["items", "display"]).then(async ({ items, display }) => {
             const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
             const query = opts.query || parsedDisplay.query
             const pageToDisplay = opts.page || parsedDisplay.currentPage
+            const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
 
             // Parse and filter the item list
-            const filteredItems = Items.filter(items, query)
+            const filteredItems = Items.filter(items, query, currentTab.url)
             const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
             const itemsToRenderIds = itemsToRender.map(item => item.id)
 
@@ -268,7 +274,7 @@ const PopupUI = (function () {
 
     fadeOutItem: (...itemIds) => {
       itemIds.forEach(itemId => {
-        Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list`)
+        Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list}`)
         document.querySelector(`.item[data-id='${itemId}']`).classList.add("disappearing")
       })
     },

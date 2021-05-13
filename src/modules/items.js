@@ -234,17 +234,22 @@ const Items = (function () {
       }
     },
 
-    filter: function (rawItems, query) {
-      const parsedItems = parseItems(rawItems)
-      let filteredItems = undefined
+    filter: function (rawItems, query, currentUrl) {
+      return parseItems(rawItems).filter(item => {
+        let mustKeep = true
 
-      if (query == "" || !query) {
-        filteredItems = parsedItems
-      } else {
-        filteredItems = parsedItems.filter(item => matchQuery(item, query))
-      }
+        // Don't return the currentUrl item, it's handled outside this items list
+        if (currentUrl) {
+          const possibleUrls = Utility.getPossibleUrls(item)
+          mustKeep = mustKeep && !possibleUrls.includes(currentUrl)
+        }
 
-      return filteredItems
+        if (query && query !== "") {
+          mustKeep = mustKeep && matchQuery(item, query)
+        }
+
+        return mustKeep
+      })
     },
 
     contains: function (rawItems, searchedItem = {}) {

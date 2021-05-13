@@ -2,10 +2,15 @@ import FeatureSwitch from "../src/modules/feature_switches.js"
 import Items from "../src/modules/items.js"
 
 describe("Items.filter", () => {
-  const matchingItem = { title: "french", url: "https://www.quelquepart.fr" }
-  const otherItem = { title: "other", url: "https://www.somewherelse.com", fav: "0" }
-  const favedItem = { title: "favorite", url: "https://somefavoriteitem.com", fav: "1" }
-  const taggedItem = { title: "tagged", url: "https://sometaggeditem.com", tags: ["some-tag"] }
+  const matchingItem = { id: 1234, title: "french", url: "https://www.quelquepart.fr" }
+  const otherItem = { id: 2345, title: "other", url: "https://www.somewherelse.com", fav: "0" }
+  const favedItem = { id: 3456, title: "favorite", url: "https://somefavoriteitem.com", fav: "1" }
+  const taggedItem = {
+    id: 4567,
+    title: "tagged",
+    url: "https://sometaggeditem.com",
+    tags: ["some-tag"],
+  }
   const items = JSON.stringify([matchingItem, otherItem, favedItem, taggedItem])
 
   it("returns all items if query is empty", () => {
@@ -18,6 +23,35 @@ describe("Items.filter", () => {
 
   it("returns all items if query is null", () => {
     expect(Items.filter(items, null).length).to.equal(4)
+  })
+
+  context("with a given current item", () => {
+    it("does not return the item with given currentUrl in the item list", () => {
+      const result = Items.filter(items, null, matchingItem.url)
+      expect(result.length).to.equal(3)
+      expect(result).not.to.deep.include(matchingItem)
+    })
+
+    it("does not return the item with given currentUrl if considering reader url", () => {
+      const readerUrl = "about:reader?url=" + encodeURIComponent(matchingItem.url)
+      const result = Items.filter(items, null, readerUrl)
+      expect(result.length).to.equal(3)
+      expect(result).not.to.deep.include(matchingItem)
+    })
+
+    it("does not return the item with given currentUrl if considering getpocket url with item url", () => {
+      const getpocketUrl = "https://app.getpocket.com/read/" + matchingItem.url
+      const result = Items.filter(items, null, getpocketUrl)
+      expect(result.length).to.equal(3)
+      expect(result).not.to.deep.include(matchingItem)
+    })
+
+    it("does not return the item with given currentUrl if considering getpocket url with item id", () => {
+      const getpocketUrl = "https://app.getpocket.com/read/" + matchingItem.id
+      const result = Items.filter(items, null, getpocketUrl)
+      expect(result.length).to.equal(3)
+      expect(result).not.to.deep.include(matchingItem)
+    })
   })
 
   context("query on title", () => {
@@ -168,7 +202,7 @@ describe("Items.filter", () => {
       it("does not return tagged items if query contains is:untagged", () => {
         const query = "is:untagged"
         const result = Items.filter(items, query)
-        expect(Items.filter(items, query)).not.to.include(taggedItem)
+        expect(result).not.to.include(taggedItem)
       })
     })
 

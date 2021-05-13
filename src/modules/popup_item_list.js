@@ -11,6 +11,7 @@ import { MouseButtons, concealedProtocols } from "../modules/constants.js"
 
 const PopupItemList = (function () {
   const ITEMS_PER_BATCH = 50
+  const CURRENT_ITEM_CLASS = "current-page"
   let itemsToCreate = undefined
   let totalItemsCount = undefined
   let createdItemsCount = undefined
@@ -110,18 +111,20 @@ const PopupItemList = (function () {
     return actionContainer
   }
 
-  function buildItemElement(item) {
+  function buildItemElement(item, opts = { current: false }) {
     const liElement = document.createElement("li")
     const faviconElement = document.createElement("img")
     const titleContent = document.createElement("span")
     const urlContent = document.createElement("span")
     const tagsContent = document.createElement("span")
-
     const urlAndTagsContent = document.createElement("span")
 
     liElement.className = "item"
     if (item.fav == 1) {
       liElement.classList.add("favorite")
+    }
+    if (opts.current) {
+      liElement.classList.add(CURRENT_ITEM_CLASS)
     }
 
     faviconElement.className = "favicon"
@@ -168,7 +171,12 @@ const PopupItemList = (function () {
     return fragment
   }
 
-  function buildBatch() {
+  async function buildCurrentItem(currentItem) {
+    Logger.log(`(buildCurrentItem) adding current item at the top of the list / ${currentItem.url}`)
+    itemsContainer.appendChild(buildItemElement(currentItem, { current: true }))
+  }
+
+  async function buildBatch() {
     Logger.log(`(PopupItemList.buildBatch) build a new batch of ${ITEMS_PER_BATCH} items`)
 
     for (let i = 0; i < ITEMS_PER_BATCH; i++) {
@@ -254,7 +262,7 @@ const PopupItemList = (function () {
       })
     },
 
-    buildAll: function (items) {
+    buildAll: function (items, currentItem) {
       Logger.log("(PopupItemList.buildAll)")
 
       // Remove previous "requestAnimationFrame" registered in case
@@ -268,13 +276,16 @@ const PopupItemList = (function () {
       totalItemsCount = items.length
       createdItemsCount = 0
 
-      // Build the dom
+      // Build current item
+      if (currentItem) buildCurrentItem(currentItem)
+
+      // Build the other items list
       Logger.log("(PopupItemList.buildAll) Request a 1st animation frame for buildBatch method")
       requestAnimationFrame(buildBatch)
     },
 
     // Will build DOM for items and insert it before the item whose id=beforeItemId
-    insertItems: function (items, beforeItemId) {
+    insertItems: async function (items, beforeItemId) {
       const beforeNode = document.querySelector(
         `.item:not(.disappearing)[data-id='${beforeItemId}']`
       )
@@ -287,13 +298,15 @@ const PopupItemList = (function () {
     },
 
     // Will build DOM for items and insert it at the end of the list container
-    appendItems: function (items) {
+    appendItems: async function (items) {
       const domToAppend = buildDomFragment(items)
       itemsContainer.appendChild(domToAppend)
     },
 
     getVisibleItemsIds: function () {
-      const visibleItems = itemsContainer.querySelectorAll(".item:not(.disappearing)")
+      const visibleItems = itemsContainer.querySelectorAll(
+        `.item:not(.disappearing):not(.${CURRENT_ITEM_CLASS})`
+      )
       const visibleItemsIds = []
 
       Logger.log(`(PopupItemList.getVisibleItems) ${visibleItems.length} visible items`)

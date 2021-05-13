@@ -123,6 +123,10 @@ body {
       background-color: $favorite-bg;
     }
 
+    &.current-page {
+      border-bottom: 4px double $ff-grey-50;
+    }
+
     & > span {
       margin-left: 0.5rem;
       white-space: nowrap;
