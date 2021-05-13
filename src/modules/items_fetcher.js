@@ -14,6 +14,7 @@ import { consumerKey, PocketApiStatus } from "./constants.js"
 
 const ItemsFetcher = (function () {
   return {
+    // TODO: this is duplicated with background.js code !?
     retrieveItems: function (force) {
       const intervalWithoutReload = 15 * 60
       const currentTimestamp = (Date.now() / 1000) | 0
@@ -21,7 +22,7 @@ const ItemsFetcher = (function () {
       browser.storage.local.get(["items", "last_retrieve"]).then(({ items, last_retrieve }) => {
         const timeSinceLastRetrieve = currentTimestamp - last_retrieve
         Logger.log(
-          `(bg.retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`
+          `(ItemsFetcher.retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`
         )
 
         if (force || !items || !last_retrieve) {
@@ -32,6 +33,8 @@ const ItemsFetcher = (function () {
           ItemsFetcher.retrieveDiff()
         } else {
           // Do this to stop the main-loader component
+          // TODO: send a stop-loaded message instead of retrieved-items, no?
+          //       retrieved-items has side effects on the items list building
           browser.runtime.sendMessage({ action: "retrieved-items" })
           // Update the badge count, in case it wasn't displayed but no items reload happened
           Badge.updateCount()
@@ -40,7 +43,7 @@ const ItemsFetcher = (function () {
     },
 
     retrieveAll: function (offset = 0) {
-      Logger.log("(bg.retrieveAll) Retrieve all items")
+      Logger.log("(ItemsFetcher.retrieveAll) Retrieve all items")
       const isRetrievingFirstPage = offset === 0
 
       browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
@@ -59,7 +62,7 @@ const ItemsFetcher = (function () {
           .fetch()
           .then(response => {
             const retrievedItemsCount = Object.keys(response.list).length
-            Logger.log(`(bg.retrieveAll) ${retrievedItemsCount} items in the response`)
+            Logger.log(`(ItemsFetcher.retrieveAll) ${retrievedItemsCount} items in the response`)
 
             const newItems = Object.keys(response.list).map(itemId => {
               return { id: itemId, ...Items.formatPocketItemForStorage(response.list[itemId]) }
@@ -72,12 +75,12 @@ const ItemsFetcher = (function () {
               Badge.updateCount(allItems)
 
               if (retrievedItemsCount > 0) {
-                Logger.log(`(bg.retrieveAll) Fetch next page: offset=${offset}`)
+                Logger.log(`(ItemsFetcher.retrieveAll) Fetch next page: offset=${offset}`)
                 ItemsFetcher.retrieveAll(retrievedItemsCount + offset)
                 return
               } else if (retrievedItemsCount === 0) {
                 Logger.log(
-                  `(bg.retrieveAll) 0 item in this page, all pages have been fetched succesfully`
+                  `(ItemsFetcher.retrieveAll) 0 item in this page, all pages have been fetched succesfully`
                 )
 
                 // Save timestamp where we retrieved items for the last time
@@ -94,14 +97,14 @@ const ItemsFetcher = (function () {
           })
           .catch(error => {
             BugReporter.captureException(error)
-            Logger.error(`(bg.retrieveAll) Error: ${JSON.stringify(error)}`)
+            Logger.error(`(ItemsFetcher.retrieveAll) Error: ${JSON.stringify(error)}`)
             Badge.flashError()
           })
       })
     },
 
     retrieveDiff: function () {
-      Logger.log("(bg.retrieveDiff)")
+      Logger.log("(ItemsFetcher.retrieveDiff)")
 
       browser.storage.local
         .get(["access_token", "last_retrieve", "items"])
@@ -126,17 +129,19 @@ const ItemsFetcher = (function () {
                 switch (item.status) {
                   case PocketApiStatus.ARCHIVED:
                   case PocketApiStatus.DELETED:
-                    Logger.log(`(bg.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.title})`)
+                    Logger.log(
+                      `(ItemsFetcher.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.title})`
+                    )
                     const removedItemIdx = allItems.findIndex(item => item.id === itemId)
 
                     if (removedItemIdx >= 0) {
                       Logger.log(
-                        "(bg.retrieveDiff) Item found,  will be removed from the stored items"
+                        "(ItemsFetcher.retrieveDiff) Item found,  will be removed from the stored items"
                       )
                       allItems.splice(removedItemIdx, 1)
                     } else {
                       Logger.warn(
-                        "(bg.retrieveDiff) Could not find the item to archive in the stored items"
+                        "(ItemsFetcher.retrieveDiff) Could not find the item to archive in the stored items"
                       )
                     }
                     break
@@ -146,20 +151,22 @@ const ItemsFetcher = (function () {
 
                     if (itemIdx >= 0) {
                       Logger.log(
-                        `(bg.retriveDiff) Existing item ${itemId} (${item.title}) will be updated`
+                        `(ItemsFetcher.retriveDiff) Existing item ${itemId} (${item.title}) will be updated`
                       )
                       allItems[itemIdx] = Object.assign(
                         allItems[itemIdx],
                         Items.formatPocketItemForStorage(item)
                       )
                     } else {
-                      Logger.log(`(bg.retriveDiff) Add new item: ${itemId} (${item.title})`)
+                      Logger.log(
+                        `(ItemsFetcher.retriveDiff) Add new item: ${itemId} (${item.title})`
+                      )
                       allItems.push({ id: item.item_id, ...Items.formatPocketItemForStorage(item) })
                     }
                     break
 
                   default:
-                    Logger.log(`(bg.retriveDiff) Unknown item status: ${item.status}`)
+                    Logger.log(`(ItemsFetcher.retriveDiff) Unknown item status: ${item.status}`)
                     break
                 }
               }
@@ -182,7 +189,9 @@ const ItemsFetcher = (function () {
 
               // Even if something went wrong while retrieving diff, we still can display the current
               // items, so we send the `retrieved-items` event back to popup to build the item list
-              Logger.warn(`(bg.retrieveDiff) something went wrong: ${JSON.stringify(error)}`)
+              Logger.warn(
+                `(ItemsFetcher.retrieveDiff) something went wrong: ${JSON.stringify(error)}`
+              )
 
               // Send a message back to the UI and updates the tabs page actions
               browser.runtime.sendMessage({ action: "retrieved-items" })

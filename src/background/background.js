@@ -14,6 +14,7 @@ import { consumerKey, PocketApiStatus } from "../modules/constants.js"
 
 // - - - API ACCESS : LIST MANAGEMENT - - -
 
+// TODO: this is duplicated with items_fetcher.js code !?
 function retrieveItems(force) {
   const intervalWithoutReload = 15 * 60
   const currentTimestamp = (Date.now() / 1000) | 0
@@ -30,6 +31,8 @@ function retrieveItems(force) {
       retrieveDiff()
     } else {
       // Do this to stop the main-loader component
+      // TODO: send a stop-loaded message instead of retrieved-items, no?
+      //       retrieved-items has side effects on the items list building
       browser.runtime.sendMessage({ action: "retrieved-items" })
       // Update the badge count, in case it wasn't displayed but no items reload happened
       Badge.updateCount()
