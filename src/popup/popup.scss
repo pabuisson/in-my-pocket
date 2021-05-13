@@ -159,6 +159,9 @@ body {
 
       display: flex;
 
+      // Prevent scrolling from being enabled on items with tags
+      overflow-y: hidden;
+
       .url {
         flex: 1;
 
