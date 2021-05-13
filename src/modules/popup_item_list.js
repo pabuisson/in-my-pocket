@@ -16,6 +16,7 @@ const PopupItemList = (function () {
   let totalItemsCount = undefined
   let createdItemsCount = undefined
   const itemsContainer = document.querySelector(".list-component")
+  const itemTemplate = document.querySelector("#item-template")
 
   function areAllItemsBuilt() {
     const isInitialized = totalItemsCount !== undefined && createdItemsCount !== undefined
@@ -111,7 +112,39 @@ const PopupItemList = (function () {
     return actionContainer
   }
 
-  function buildItemElement(item, opts = { current: false }) {
+  function buildItemElementWithHtmlTemplate(item, opts) {
+    const clone = itemTemplate.content.cloneNode(true)
+
+    const li = clone.querySelector("li")
+    if (item.fav == 1) li.classList.add("favorite")
+    if (opts.current) li.classList.add(CURRENT_ITEM_CLASS)
+    li.dataset.id = item.id
+    li.dataset.fav = item.fav
+
+    const title = clone.querySelector(".favicon-and-title .title")
+    title.textContent = formatTitle(item.title)
+
+    const favicon = clone.querySelector(".favicon-and-title .favicon")
+    favicon.setAttribute("src", faviconUrl(item.url))
+
+    const url = clone.querySelector(".url-and-tags .url")
+    url.textContent = formatUrl(item.url)
+
+    if (FeatureSwitches.TAGS_ENABLED && item.tags && item.tags.length > 0) {
+      const tagsElement = clone.querySelector(".url-and-tags .tags")
+      for (const tag of item.tags) {
+        const tagElement = document.createElement("span")
+        tagElement.className = "tag"
+        tagElement.appendChild(document.createTextNode(tag))
+
+        tagsElement.appendChild(tagElement)
+      }
+    }
+
+    return clone
+  }
+
+  function buildItemElementWithJavascript(item, opts) {
     const liElement = document.createElement("li")
     const faviconElement = document.createElement("img")
     const titleContent = document.createElement("span")
@@ -157,6 +190,14 @@ const PopupItemList = (function () {
     return liElement
   }
 
+  function buildItemElement(item, opts = { current: false }) {
+    if (FeatureSwitches.HTML_TEMPLATES) {
+      return buildItemElementWithHtmlTemplate(item, opts)
+    } else {
+      return buildItemElementWithJavascript(item, opts)
+    }
+  }
+
   function buildDomFragment(items) {
     const fragment = document.createDocumentFragment()
     for (let i = 0; i < items.length; i++) {
@@ -167,9 +208,9 @@ const PopupItemList = (function () {
     return fragment
   }
 
-  async function buildCurrentItem(currentItem) {
+  function buildCurrentItem(currentItem) {
     Logger.log(`(buildCurrentItem) adding current item at the top of the list / ${currentItem.url}`)
-    itemsContainer.appendChild(buildItemElement(currentItem, { current: true }))
+    return buildItemElement(currentItem, { current: true })
   }
 
   async function buildBatch() {
@@ -262,7 +303,7 @@ const PopupItemList = (function () {
       Logger.log("(PopupItemList.buildAll)")
 
       // Remove previous "requestAnimationFrame" registered in case
-      cancelAnimationFrame(buildBatch)
+      if (!FeatureSwitches.HTML_TEMPLATES) cancelAnimationFrame(buildBatch)
 
       // Reset list component content
       resetUI()
@@ -272,12 +313,16 @@ const PopupItemList = (function () {
       totalItemsCount = items.length
       createdItemsCount = 0
 
-      // Build current item
-      if (currentItem) buildCurrentItem(currentItem)
+      // Build and append current item
+      if (currentItem) itemsContainer.appendChild(buildCurrentItem(currentItem))
 
-      // Build the other items list
-      Logger.log("(PopupItemList.buildAll) Request a 1st animation frame for buildBatch method")
-      requestAnimationFrame(buildBatch)
+      // Build the rest of the items list
+      if (FeatureSwitches.HTML_TEMPLATES) {
+        itemsContainer.appendChild(buildDomFragment(items))
+      } else {
+        Logger.log("(PopupItemList.buildAll) Request a 1st animation frame for buildBatch method")
+        requestAnimationFrame(buildBatch)
+      }
     },
 
     // Will build DOM for items and insert it before the item whose id=beforeItemId
