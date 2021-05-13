@@ -7,6 +7,7 @@ import Authentication from "../modules/authentication.js"
 import Badge from "../modules/badge.js"
 import BrowserDetector from "../modules/browser_detector.js"
 import ContextMenu from "../modules/context_menu.js"
+import FeatureSwitches from "../modules/feature_switches.js"
 import PageAction from "../modules/page_action.js"
 import Settings from "../modules/settings.js"
 import SentryLoader from "../modules/sentry_loader.js"
@@ -87,6 +88,22 @@ const UI = (function () {
       document.querySelector(".keyboard .chrome").style.display = "none"
     } else {
       document.querySelector(".keyboard .firefox").style.display = "none"
+    }
+
+    const fsContainer = document.querySelector(".enabled-feature-switches-row")
+    const enabledFeatureSwitches = Object.keys(FeatureSwitches)
+      .map(key => (FeatureSwitches[key] ? key : null))
+      .filter(Boolean)
+      .join(", ")
+
+    if (enabledFeatureSwitches.length == 0) {
+      // Really remove from the DOM, otherwise a visible border-bottom remains
+      fsContainer.parentNode.removeChild(fsContainer)
+    } else {
+      fsContainer.classList.remove("hidden")
+      fsContainer
+        .querySelector(".value")
+        .appendChild(document.createTextNode(enabledFeatureSwitches))
     }
   }
 

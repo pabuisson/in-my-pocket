@@ -14,7 +14,6 @@ import { consumerKey, PocketApiStatus } from "./constants.js"
 
 const ItemsFetcher = (function () {
   return {
-    // TODO: use named parameter
     retrieveItems: function (force) {
       const intervalWithoutReload = 15 * 60
       const currentTimestamp = (Date.now() / 1000) | 0
