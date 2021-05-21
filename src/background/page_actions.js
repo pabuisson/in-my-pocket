@@ -52,9 +52,7 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
     .then(() => {
       browser.tabs
         .get(tabId)
-        .then(tab => {
-          return tab.url
-        })
+        .then(tab => tab.url)
         .then(currentUrl => {
           browser.storage.local.get("items").then(({ items }) => {
             const query = Utility.getQuery(currentUrl)
