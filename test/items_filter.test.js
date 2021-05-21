@@ -357,9 +357,9 @@ describe("Items.filter", () => {
       const query = "is:unfaved is:untagged"
       const result = Items.filter(items, query)
       expect(result).to.deep.include(unfavedNotTagged)
-      expect(result).not.to.deep.deep.include(favoritedAndTagged)
-      expect(result).not.to.deep.deep.include(favoritedNotTagged)
-      expect(result).not.to.deep.deep.include(unfavedAndTagged)
+      expect(result).not.to.deep.include(favoritedAndTagged)
+      expect(result).not.to.deep.include(favoritedNotTagged)
+      expect(result).not.to.deep.include(unfavedAndTagged)
     })
   })
 })
