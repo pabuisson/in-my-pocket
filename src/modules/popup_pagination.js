@@ -23,6 +23,7 @@ const PopupPagination = (function () {
 
       Logger.log(`(PopupPagination) Load previous page: from ${currentPage} to ${currentPage - 1}`)
       PopupUI.drawList({ page: currentPage - 1 })
+      PopupUI.scrollToTop()
     })
   }
 
@@ -33,6 +34,7 @@ const PopupPagination = (function () {
 
       Logger.log(`(PopupPagination) Load next page: from ${currentPage} to ${currentPage + 1}`)
       PopupUI.drawList({ page: currentPage + 1 })
+      PopupUI.scrollToTop()
     })
   }
 
@@ -41,6 +43,7 @@ const PopupPagination = (function () {
 
     Logger.log(`(PopupPagination) Load page ${pageToLoad}`)
     PopupUI.drawList({ page: pageToLoad })
+    PopupUI.scrollToTop()
   }
 
   // ---------------

@@ -299,12 +299,21 @@ const PopupUI = (function () {
       item.classList.add("favorite")
       item.dataset.fav = "1"
     },
+
     unfavoriteItem: itemId => {
       const item = document.querySelector(`.item[data-id='${itemId}']`)
       item.querySelector(".favorite-action .favorite").classList.remove("hidden")
       item.querySelector(".favorite-action .loader").classList.add("hidden")
       item.classList.remove("favorite")
       item.dataset.fav = "0"
+    },
+
+    scrollToTop: function () {
+      if (listComponent.scrollTop > 0) {
+        setTimeout(() => {
+          listComponent.scrollTo(0, 0)
+        }, 50)
+      }
     },
   }
 })()
