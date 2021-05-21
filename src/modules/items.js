@@ -84,7 +84,7 @@ const Items = (function () {
   }
 
   function matchTaggedUntagged(item, keepTagged, keepUntagged) {
-    if (FeatureSwitches.TAGS_ENABLED) return true
+    if (!FeatureSwitches.TAGS_ENABLED) return true
 
     if (keepTagged) {
       return item.tags && item.tags.length > 0
