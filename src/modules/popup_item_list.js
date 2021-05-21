@@ -314,7 +314,7 @@ const PopupItemList = (function () {
       createdItemsCount = 0
 
       // Build and append current item
-      if (currentItem) itemsContainer.appendChild(buildCurrentItem(currentItem))
+      if (currentItem) PopupItemList.updateCurrentItem(currentItem)
 
       // Build the rest of the items list
       if (FeatureSwitches.HTML_TEMPLATES) {
@@ -357,6 +357,18 @@ const PopupItemList = (function () {
       }
 
       return visibleItemsIds
+    },
+
+    updateCurrentItem: function (item) {
+      const currentPageItemElement = itemsContainer.querySelector(`.${CURRENT_ITEM_CLASS}`)
+      const newCurrentPageItemElement = buildCurrentItem(item)
+
+      if (currentPageItemElement) {
+        // NOTE: any real life occurrence of this?
+        itemsContainer.replaceChild(newCurrentPageItemElement, currentPageItemElement)
+      } else {
+        itemsContainer.insertBefore(newCurrentPageItemElement, itemsContainer.firstChild)
+      }
     },
   }
 })()

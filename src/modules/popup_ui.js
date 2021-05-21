@@ -193,6 +193,8 @@ const PopupUI = (function () {
             // Display the "no results" message or hide it
             togglePlaceholderVisibility(itemsToRender.length + (currentPageItem ? 1 : 0))
 
+            if (currentPageItem) PopupItemList.updateCurrentItem(currentPageItem)
+
             // Rebuild all items
             const visibleItemsIds = PopupItemList.getVisibleItemsIds()
             const itemIdsToKeep = visibleItemsIds.filter(id => itemsToRenderIds.includes(id))
