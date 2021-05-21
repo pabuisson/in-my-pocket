@@ -223,7 +223,7 @@ describe("Items.filter", () => {
       const items = JSON.stringify([matchingTextWithTag, matchingTextNoTag, nonMatchingTextWithTag])
 
       it("returns items matching on title and tagged if query contains is:tagged", () => {
-        const query = "is:tagged matching"
+        const query = "is:tagged matching text"
         const result = Items.filter(items, query)
         expect(result).to.deep.include(matchingTextWithTag)
         expect(result).not.to.deep.include(matchingTextNoTag)
@@ -292,7 +292,7 @@ describe("Items.filter", () => {
         expect(result).to.deep.include(matchingTextNotTag)
         // Tag only
         expect(result).to.deep.include(matchingTagNotText)
-        expect(result).not.to.dee.include(notMatchingAnything)
+        expect(result).not.to.deep.include(notMatchingAnything)
       })
     })
   })
