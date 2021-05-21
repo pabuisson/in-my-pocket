@@ -10,7 +10,7 @@ import { MouseButtons, concealedProtocols } from "../modules/constants.js"
 // ----------------
 
 const PopupItemList = (function () {
-  const ITEMS_PER_BATCH = 50
+  const ITEMS_PER_BATCH = 200
   const CURRENT_ITEM_CLASS = "current-page"
   let itemsToCreate = undefined
   let totalItemsCount = undefined
@@ -121,21 +121,21 @@ const PopupItemList = (function () {
     li.dataset.id = item.id
     li.dataset.fav = item.fav
 
-    const title = clone.querySelector(".favicon-and-title .title")
+    const title = li.getElementsByClassName("title")[0]
     title.textContent = formatTitle(item.title)
 
-    const favicon = clone.querySelector(".favicon-and-title .favicon")
+    const favicon = li.getElementsByClassName("favicon")[0]
     favicon.setAttribute("src", faviconUrl(item.url))
 
-    const url = clone.querySelector(".url-and-tags .url")
+    const url = li.getElementsByClassName("url")[0]
     url.textContent = formatUrl(item.url)
 
     if (FeatureSwitches.TAGS_ENABLED && item.tags && item.tags.length > 0) {
-      const tagsElement = clone.querySelector(".url-and-tags .tags")
+      const tagsElement = li.getElementsByClassName("tags")[0]
       for (const tag of item.tags) {
         const tagElement = document.createElement("span")
         tagElement.className = "tag"
-        tagElement.appendChild(document.createTextNode(tag))
+        tagElement.textContent = tag
 
         tagsElement.appendChild(tagElement)
       }
@@ -174,7 +174,7 @@ const PopupItemList = (function () {
       for (const tag of item.tags) {
         const tagElement = document.createElement("span")
         tagElement.className = "tag"
-        tagElement.appendChild(document.createTextNode(tag))
+        tagElement.textContent = tag
         tagsContent.appendChild(tagElement)
       }
       urlAndTagsContent.appendChild(tagsContent)
@@ -317,12 +317,9 @@ const PopupItemList = (function () {
       if (currentItem) PopupItemList.updateCurrentItem(currentItem)
 
       // Build the rest of the items list
-      if (FeatureSwitches.HTML_TEMPLATES) {
-        itemsContainer.appendChild(buildDomFragment(items))
-      } else {
-        Logger.log("(PopupItemList.buildAll) Request a 1st animation frame for buildBatch method")
-        requestAnimationFrame(buildBatch)
-      }
+      itemsBuildingStart = new Date()
+      Logger.log("(PopupItemList.buildAll) Request a 1st animation frame for buildBatch method")
+      requestAnimationFrame(buildBatch)
     },
 
     // Will build DOM for items and insert it before the item whose id=beforeItemId
