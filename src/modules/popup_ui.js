@@ -102,6 +102,15 @@ const PopupUI = (function () {
     }
   }
 
+  function getCurrentPageItem(items, currentUrl) {
+    const currentPageItem = (Utility.parseJson(items) || []).find(item => {
+      const possibleUrls = Utility.getPossibleUrls(item)
+      return possibleUrls.includes(currentUrl)
+    })
+
+    return currentPageItem
+  }
+
   return {
     setup: function () {
       // Set default zoom level based on Settings
@@ -136,15 +145,12 @@ const PopupUI = (function () {
             const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
 
             // Parse and filter the item list
-            const currentPageItem = (Utility.parseJson(items) || []).find(item => {
-              const possibleUrls = Utility.getPossibleUrls(item)
-              return possibleUrls.includes(currentTab.url)
-            })
+            const currentPageItem = await getCurrentPageItem(items, currentTab.url)
             const filteredItems = Items.filter(items, query, currentTab.url)
             const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
 
             // Display the "no results" message or hide it
-            togglePlaceholderVisibility(itemsToRender.length)
+            togglePlaceholderVisibility(itemsToRender.length + (currentPageItem ? 1 : 0))
 
             // Rebuild all items
             PopupItemList.buildAll(itemsToRender, currentPageItem)
@@ -179,12 +185,13 @@ const PopupUI = (function () {
             const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
 
             // Parse and filter the item list
+            const currentPageItem = await getCurrentPageItem(items, currentTab.url)
             const filteredItems = Items.filter(items, query, currentTab.url)
             const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
             const itemsToRenderIds = itemsToRender.map(item => item.id)
 
             // Display the "no results" message or hide it
-            togglePlaceholderVisibility(itemsToRender.length)
+            togglePlaceholderVisibility(itemsToRender.length + (currentPageItem ? 1 : 0))
 
             // Rebuild all items
             const visibleItemsIds = PopupItemList.getVisibleItemsIds()
