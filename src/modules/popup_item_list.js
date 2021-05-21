@@ -12,17 +12,24 @@ import { MouseButtons, concealedProtocols } from "../modules/constants.js"
 const PopupItemList = (function () {
   const ITEMS_PER_BATCH = 200
   const CURRENT_ITEM_CLASS = "current-page"
-  let itemsToCreate = undefined
-  let totalItemsCount = undefined
-  let createdItemsCount = undefined
   const itemsContainer = document.querySelector(".list-component")
   const itemTemplate = document.querySelector("#item-template")
+  const itemsBuilding = {
+    itemsToCreate: undefined,
+    createdItemsCount: undefined,
+    startsAt: undefined,
+  }
 
   function areAllItemsBuilt() {
-    const isInitialized = totalItemsCount !== undefined && createdItemsCount !== undefined
-    const areAllItemsBuilt = createdItemsCount === totalItemsCount
+    const isInitialized =
+      itemsBuilding.itemsToCreate !== undefined && itemsBuilding.createdItemsCount !== undefined
+    const areAllItemsBuilt = itemsBuilding.createdItemsCount === itemsBuilding.itemsToCreate.length
 
     return isInitialized && areAllItemsBuilt
+  }
+
+  function getBuildDuration() {
+    return new Date() - itemsBuilding.startsAt
   }
 
   function faviconUrl(url) {
@@ -215,18 +222,16 @@ const PopupItemList = (function () {
 
   async function buildBatch() {
     Logger.log(`(PopupItemList.buildBatch) build a new batch of ${ITEMS_PER_BATCH} items`)
+    if (itemsBuilding.createdItemsCount === 0) {
+      itemsBuilding.startsAt = new Date()
+    }
 
     for (let i = 0; i < ITEMS_PER_BATCH; i++) {
-      // If we've already built all items then get out of this loop
-      if (areAllItemsBuilt() == true) {
-        Logger.log("All items are built -> break out of this loop, now!")
-        break
-      }
+      if (areAllItemsBuilt() == true) break
 
-      const itemToCreate = itemsToCreate[createdItemsCount]
-      itemsContainer.appendChild(buildItemElement(itemToCreate))
-
-      createdItemsCount++
+      const itemToBuild = itemsBuilding.itemsToCreate[itemsBuilding.createdItemsCount]
+      itemsContainer.appendChild(buildItemElement(itemToBuild))
+      itemsBuilding.createdItemsCount++
     }
 
     // if DOM is not all built yet, then ask for another animation frame where
@@ -234,6 +239,9 @@ const PopupItemList = (function () {
     if (areAllItemsBuilt() == false) {
       Logger.log("Will request an animation frame for another run of the buildBatch method")
       requestAnimationFrame(buildBatch)
+    } else {
+      Logger.log(`All items have been built in ${getBuildDuration()}ms`)
+      itemsBuilding.startsAt = undefined
     }
   }
 
@@ -309,15 +317,13 @@ const PopupItemList = (function () {
       resetUI()
 
       // Prepare dom building
-      itemsToCreate = items
-      totalItemsCount = items.length
-      createdItemsCount = 0
+      itemsBuilding.itemsToCreate = items
+      itemsBuilding.createdItemsCount = 0
 
       // Build and append current item
       if (currentItem) PopupItemList.updateCurrentItem(currentItem)
 
       // Build the rest of the items list
-      itemsBuildingStart = new Date()
       Logger.log("(PopupItemList.buildAll) Request a 1st animation frame for buildBatch method")
       requestAnimationFrame(buildBatch)
     },
@@ -345,15 +351,8 @@ const PopupItemList = (function () {
       const visibleItems = itemsContainer.querySelectorAll(
         `.item:not(.disappearing):not(.${CURRENT_ITEM_CLASS})`
       )
-      const visibleItemsIds = []
 
-      Logger.log(`(PopupItemList.getVisibleItems) ${visibleItems.length} visible items`)
-
-      for (let i = 0; i < visibleItems.length; i++) {
-        visibleItemsIds.push(visibleItems[i].dataset.id)
-      }
-
-      return visibleItemsIds
+      return Array.from(visibleItems).map(item => item.dataset.id)
     },
 
     updateCurrentItem: function (item) {
