@@ -190,7 +190,9 @@ describe("Items.filter", () => {
       it("does not return untagged items if query contains is:tagged", () => {
         const query = "is:tagged"
         const result = Items.filter(items, query)
-        expect(result).not.to.include(otherItem)
+        expect(result).not.to.deep.include(matchingItem)
+        expect(result).not.to.deep.include(otherItem)
+        expect(result).not.to.deep.include(favedItem)
       })
 
       it("returns non-tagged items if query contains is:untagged", () => {
@@ -202,7 +204,7 @@ describe("Items.filter", () => {
       it("does not return tagged items if query contains is:untagged", () => {
         const query = "is:untagged"
         const result = Items.filter(items, query)
-        expect(result).not.to.include(taggedItem)
+        expect(result).not.to.deep.include(taggedItem)
       })
     })
 
@@ -224,32 +226,32 @@ describe("Items.filter", () => {
         const query = "is:tagged matching"
         const result = Items.filter(items, query)
         expect(result).to.deep.include(matchingTextWithTag)
-        expect(result).not.to.include(matchingTextNoTag)
-        expect(result).not.to.include(nonMatchingTextWithTag)
+        expect(result).not.to.deep.include(matchingTextNoTag)
+        expect(result).not.to.deep.include(nonMatchingTextWithTag)
       })
 
       it("returns items matching on url and tagged if query contains is:tagged", () => {
         const query = "is:tagged tagged.com"
         const result = Items.filter(items, query)
         expect(result).to.deep.include(matchingTextWithTag)
-        expect(result).not.to.include(matchingTextNoTag)
-        expect(result).not.to.include(nonMatchingTextWithTag)
+        expect(result).not.to.deep.include(matchingTextNoTag)
+        expect(result).not.to.deep.include(nonMatchingTextWithTag)
       })
 
       it("returns item matching on text and untagged if query contains is:untagged", () => {
         const query = "is:untagged matching"
         const result = Items.filter(items, query)
         expect(result).to.deep.include(matchingTextNoTag)
-        expect(result).not.to.include(matchingTextWithTag)
-        expect(result).not.to.include(nonMatchingTextWithTag)
+        expect(result).not.to.deep.include(matchingTextWithTag)
+        expect(result).not.to.deep.include(nonMatchingTextWithTag)
       })
 
       it("returns item matching on url and untagged if query contains is:untagged", () => {
         const query = "is:untagged tagged.com"
         const result = Items.filter(items, query)
         expect(result).to.deep.include(matchingTextNoTag)
-        expect(result).not.to.include(matchingTextWithTag)
-        expect(result).not.to.include(nonMatchingTextWithTag)
+        expect(result).not.to.deep.include(matchingTextWithTag)
+        expect(result).not.to.deep.include(nonMatchingTextWithTag)
       })
     })
 
@@ -290,7 +292,7 @@ describe("Items.filter", () => {
         expect(result).to.deep.include(matchingTextNotTag)
         // Tag only
         expect(result).to.deep.include(matchingTagNotText)
-        expect(result).not.to.include(notMatchingAnything)
+        expect(result).not.to.dee.include(notMatchingAnything)
       })
     })
   })
@@ -328,36 +330,36 @@ describe("Items.filter", () => {
       const query = "is:faved is:tagged"
       const result = Items.filter(items, query)
       expect(result).to.deep.include(favoritedAndTagged)
-      expect(result).not.to.include(favoritedNotTagged)
-      expect(result).not.to.include(unfavedAndTagged)
-      expect(result).not.to.include(unfavedNotTagged)
+      expect(result).not.to.deep.include(favoritedNotTagged)
+      expect(result).not.to.deep.include(unfavedAndTagged)
+      expect(result).not.to.deep.include(unfavedNotTagged)
     })
 
     it("is:faved is:untagged returns items faved but no tagged", () => {
       const query = "is:faved is:untagged"
       const result = Items.filter(items, query)
       expect(result).to.deep.include(favoritedNotTagged)
-      expect(result).not.to.include(favoritedAndTagged)
-      expect(result).not.to.include(unfavedAndTagged)
-      expect(result).not.to.include(unfavedNotTagged)
+      expect(result).not.to.deep.include(favoritedAndTagged)
+      expect(result).not.to.deep.include(unfavedAndTagged)
+      expect(result).not.to.deep.include(unfavedNotTagged)
     })
 
     it("is:unfaved is:tagged returns items unfaved but tagged", () => {
       const query = "is:unfaved is:tagged"
       const result = Items.filter(items, query)
       expect(result).to.deep.include(unfavedAndTagged)
-      expect(result).not.to.include(favoritedAndTagged)
-      expect(result).not.to.include(favoritedNotTagged)
-      expect(result).not.to.include(unfavedNotTagged)
+      expect(result).not.to.deep.include(favoritedAndTagged)
+      expect(result).not.to.deep.include(favoritedNotTagged)
+      expect(result).not.to.deep.include(unfavedNotTagged)
     })
 
     it("is:unfaved is:untagged returns items neither faved nor tagged", () => {
       const query = "is:unfaved is:untagged"
       const result = Items.filter(items, query)
       expect(result).to.deep.include(unfavedNotTagged)
-      expect(result).not.to.include(favoritedAndTagged)
-      expect(result).not.to.include(favoritedNotTagged)
-      expect(result).not.to.include(unfavedAndTagged)
+      expect(result).not.to.deep.deep.include(favoritedAndTagged)
+      expect(result).not.to.deep.deep.include(favoritedNotTagged)
+      expect(result).not.to.deep.deep.include(unfavedAndTagged)
     })
   })
 })
