@@ -119,12 +119,17 @@ body {
     flex-direction: column;
     justify-content: space-evenly;
 
+
     &.favorite {
-      background-color: $favorite-bg;
+      background-color: transparentize($favorite-bg, 0.2);
     }
 
     &.current-page {
       background-color: white;
+      &.favorite {
+        background-color: $favorite-bg;
+      }
+
       border: 2px double $ff-ink-70;
       border-radius: 4px;
       margin: 0.2rem;
@@ -139,6 +144,7 @@ body {
         bottom: 2px;
       }
     }
+
 
     & > span {
       margin-left: 0.5rem;
