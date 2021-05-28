@@ -124,7 +124,20 @@ body {
     }
 
     &.current-page {
-      border-bottom: 4px double $ff-grey-50;
+      background-color: white;
+      border: 2px double $ff-ink-70;
+      border-radius: 4px;
+      margin: 0.2rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      font-weight: bold;
+      box-shadow: 0px 2px 8px 0px $ff-grey-30;
+
+      .tab-icon {
+        height: 20px;
+        width: 20px;
+        bottom: 2px;
+      }
     }
 
     & > span {
@@ -135,7 +148,7 @@ body {
       line-height: 1.2;
     }
 
-    .favicon {
+    .favicon, .tab-icon {
       height: 16px;
       width: 16px;
       margin-right: 0.5rem;
@@ -223,8 +236,8 @@ body {
       right: 0;
       width: 10rem;
       height: 100%;
-      background-color: transparentize($ff-grey-20, 0.2);
-      border-left: 1px solid #ddd;
+      background-color: transparentize($ff-grey-20, 0.25);
+      border-left: 1px solid $ff-grey-20;
 
       display: flex;
       flex-direction: row;

@@ -132,7 +132,14 @@ const PopupItemList = (function () {
     title.textContent = formatTitle(item.title)
 
     const favicon = li.getElementsByClassName("favicon")[0]
-    favicon.setAttribute("src", faviconUrl(item.url))
+    const tabIcon = li.getElementsByClassName("tab-icon")[0]
+    if (opts.current) {
+      favicon.style.display = "none"
+      tabIcon.setAttribute("data", "../assets/images/tab-icon.svg")
+    } else {
+      tabIcon.style.display = "none"
+      favicon.setAttribute("src", faviconUrl(item.url))
+    }
 
     const url = li.getElementsByClassName("url")[0]
     url.textContent = formatUrl(item.url)
@@ -360,8 +367,9 @@ const PopupItemList = (function () {
       const newCurrentPageItemElement = buildCurrentItem(item)
 
       if (currentPageItemElement) {
-        // NOTE: any real life occurrence of this?
-        itemsContainer.replaceChild(newCurrentPageItemElement, currentPageItemElement)
+        if (currentPageItemElement.dataset.id !== item.id) {
+          itemsContainer.replaceChild(newCurrentPageItemElement, currentPageItemElement)
+        }
       } else {
         itemsContainer.insertBefore(newCurrentPageItemElement, itemsContainer.firstChild)
       }
