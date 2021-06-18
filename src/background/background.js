@@ -2,16 +2,10 @@
 
 import Authentication from "../modules/authentication.js"
 import Badge from "../modules/badge.js"
-import BugReporter from "../modules/bug_reporter.js"
 import ContextMenu from "../modules/context_menu.js"
 import Items from "../modules/items.js"
 import ItemsFetcher from "../modules/items_fetcher.js"
 import Logger from "../modules/logger.js"
-import PageAction from "../modules/page_action.js"
-import Request from "../modules/request.js"
-import Utility from "../modules/utility.js"
-import { VersionManager } from "../modules/version_manager.js"
-import { consumerKey, PocketApiStatus } from "../modules/constants.js"
 
 // - - - MESSAGES - - -
 
