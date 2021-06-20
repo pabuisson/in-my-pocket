@@ -17,11 +17,11 @@
     "file-loader": "^6.2.0",
     "mini-css-extract-plugin": "^1.6.0",
     "mocha": "^7.2.0",
-    "nyc": "^15.1.0",
     "prettier": "2.3.0",
     "sass": "^1.33.0",
     "sass-loader": "^11.1.1",
     "sinon": "^10.0.0",
+    "speed-measure-webpack-plugin": "^1.5.0",
     "style-loader": "^2.0.0",
     "webextension-polyfill": "^0.8.0",
     "webpack": "^5.37.1",
@@ -37,8 +37,7 @@
     "package-chrome": "cd ./build/chrome && zip -r -FS ../../web-ext-artifacts/in_my_pocket-chrome.zip * -x .DS_Store -x *.map",
     "zip-source": "zip -r -FS web-ext-artifacts/source.zip CHANGELOG.md README.md LICENSE package.json webpack.config.js src/ -x .DS_Store -x *.map",
     "test": "npx mocha --require @babel/register ./test/helper.js ./test/**/*.test.js",
-    "test-watch": "npx mocha -w ./test/helper/js ./test/**/*.test.js",
-    "cover": "cross-env NODE_ENV=coverage nyc --reporter=lcov --reporter=text npm test"
+    "test-watch": "npx mocha -w ./test/helper/js ./test/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -55,12 +54,5 @@
     "@sentry/browser": "^5.30.0",
     "@sentry/tracing": "^5.30.0",
     "npm": "^6.14.13"
-  },
-  "nyc": {
-    "include": [
-      "src/**/*.js"
-    ],
-    "instrument": false,
-    "sourceMap": false
   }
 }

@@ -1,5 +1,5 @@
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyWebpackPlugin    = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const base = {
   context: __dirname + '/src',
@@ -30,10 +30,13 @@ const base = {
       ]
     }, {
       test: /\.js$/,
-      exclude: /(node_modules|bower_components)/,
-      use: [
-        'babel-loader'
-      ]
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          cacheDirectory: true
+        }
+      }
     },{
       test: /\.scss$/,
       use: [
@@ -44,7 +47,7 @@ const base = {
     }]
   },
   plugins: []
-};
+}
 
 const firefoxSpecific = {
   output: {
@@ -102,7 +105,7 @@ const chromeSpecific = {
   ]
 }
 
-const firefox = Object.assign({}, base, firefoxSpecific);
-const chrome  = Object.assign({}, base, chromeSpecific);
+const firefox = Object.assign({}, base, firefoxSpecific)
+const chrome  = Object.assign({}, base, chromeSpecific)
 
-module.exports = [firefox, chrome];
+module.exports = [firefox, chrome]
