@@ -41,15 +41,13 @@ browser.notifications.onClicked.addListener(notificationId => {
     case installNotificationId:
       browser.notifications.clear(notificationId)
       browser.tabs.create({
-        url:
-          "https://inmypocketaddon.com/faq.html?utm_source=addon&utm_medium=notification&utm_campaign=install",
+        url: "https://inmypocketaddon.com/faq.html?utm_source=addon&utm_medium=notification&utm_campaign=install",
       })
       break
     case upgradeNotificationId:
       browser.notifications.clear(notificationId)
       browser.tabs.create({
-        url:
-          "https://inmypocketaddon.com/changelog.html?utm_source=addon&utm_medium=notification&utm_campaign=upgrade",
+        url: "https://inmypocketaddon.com/changelog.html?utm_source=addon&utm_medium=notification&utm_campaign=upgrade",
       })
       break
   }
