@@ -227,6 +227,14 @@ body {
     // second duration is the delay after which the transition must begin
     transition: height 250ms, padding 250ms, opacity 0s 200ms, border-bottom-width 0s 240ms;
 
+    // When the item is visually disappearing from the list
+    &.disappearing {
+      height: 0px;
+      padding: 0;
+      opacity: 0;
+      border-bottom-width: 0px;
+    }
+
     &.editing {
       span.title {
         display: none;
