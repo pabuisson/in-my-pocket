@@ -37,6 +37,9 @@ browser.runtime.onMessage.addListener(function (eventData) {
     case "delete-item":
       Items.deleteItem(eventData.id, eventData.tabId)
       break
+    case "update-item":
+      Items.updateItem(eventData.id, eventData)
+      break
     case "update-badge-count":
       Badge.updateCount()
       break

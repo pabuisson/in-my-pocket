@@ -154,22 +154,34 @@ body {
       line-height: 1.2;
     }
 
-    .favicon, .tab-icon {
-      height: 16px;
-      width: 16px;
-      margin-right: 0.5rem;
-      vertical-align: middle;
-      position: relative;
-      border-radius: 2px;
-    }
+    .favicon-and-title {
+      display: flex;
 
-    .title {
-      min-height: 20px;
-      font-size: 1.25rem;
-      color: $ff-primary-text;
-      user-select: text;
+      .favicon, .tab-icon {
+        height: 16px;
+        width: 16px;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+        position: relative;
+        border-radius: 2px;
+      }
 
-      cursor: pointer;
+      .title {
+        flex: 1;
+        min-height: 20px;
+        font-size: 1.25rem;
+        color: $ff-primary-text;
+        user-select: text;
+
+        cursor: pointer;
+      }
+
+      input.title {
+        display: none;
+        font-size: 1rem;
+        border: 1px solid #bbb;
+        border-radius: 2px;
+      }
     }
 
     .url-and-tags {
@@ -215,12 +227,17 @@ body {
     // second duration is the delay after which the transition must begin
     transition: height 250ms, padding 250ms, opacity 0s 200ms, border-bottom-width 0s 240ms;
 
-    // When the item is visually disappearing from the list
-    &.disappearing {
-      height: 0px;
-      padding: 0;
-      opacity: 0;
-      border-bottom-width: 0px;
+    &.editing {
+      span.title {
+        display: none;
+      }
+      input.title {
+        display: inline;
+        cursor: text;
+      }
+      .actions-container {
+        display: none;
+      }
     }
 
     // Removing: when the "delete/archive" button has been clicked and the spinner is spinning,
@@ -249,6 +266,7 @@ body {
       flex-direction: row;
 
       .favorite-action,
+      .edit-action,
       .tick-action,
       .delete-action {
         cursor: pointer;
@@ -281,6 +299,13 @@ body {
 
       .favorite-action:hover {
         background-color: $favorite-action;
+      }
+
+      .edit-action {
+        background-color: lavenderblush;
+      }
+      .edit-action:hover {
+        background-color: crimson;
       }
 
       .tick-action:hover {

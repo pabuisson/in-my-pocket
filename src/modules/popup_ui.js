@@ -281,11 +281,33 @@ const PopupUI = (function () {
       })
     },
 
+    // NOTE: logic is not so smart. Rescan whole item list although I come from the click inside one item,
+    // so I actually already know where I'm starting from. I could simply take the ev.target item parent
+    enableEdition: itemId => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`)
+      Logger.log(`existing title: ${item.querySelector("span.title").textContent}`)
+      item.querySelector("input.title").value = item.querySelector("span.title").textContent
+      item.classList.add("editing")
+    },
+
+    disableEdition: itemId => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`)
+      item.classList.remove("editing")
+    },
+
     fadeOutItem: (...itemIds) => {
       itemIds.forEach(itemId => {
         Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list}`)
         document.querySelector(`.item[data-id='${itemId}']`).classList.add("disappearing")
       })
+    },
+
+    // NOTE: overkill for now but will surely be useful when dealing with tags
+    updateItem: (itemId, details) => {
+      browser.runtime.sendMessage({ action: "update-item", id: itemId, ...details })
+
+      const item = document.querySelector(`.item[data-id='${itemId}']`)
+      item.querySelector("span.title").textContent = details.title
     },
 
     updateFavoriteStatus: items => {
