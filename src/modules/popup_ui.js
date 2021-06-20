@@ -297,7 +297,7 @@ const PopupUI = (function () {
 
     fadeOutItem: (...itemIds) => {
       itemIds.forEach(itemId => {
-        Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list}`)
+        Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list`)
         document.querySelector(`.item[data-id='${itemId}']`).classList.add("disappearing")
       })
     },
