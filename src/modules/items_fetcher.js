@@ -124,6 +124,7 @@ const ItemsFetcher = (function () {
 
               for (const itemId in response.list) {
                 const item = response.list[itemId]
+                const itemIndex = allItems.findIndex(item => item.id === itemId)
 
                 switch (item.status) {
                   case PocketApiStatus.ARCHIVED:
@@ -131,13 +132,12 @@ const ItemsFetcher = (function () {
                     Logger.log(
                       `(ItemsFetcher.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.title})`
                     )
-                    const removedItemIdx = allItems.findIndex(item => item.id === itemId)
 
-                    if (removedItemIdx >= 0) {
+                    if (itemIndex >= 0) {
                       Logger.log(
                         "(ItemsFetcher.retrieveDiff) Item found,  will be removed from the stored items"
                       )
-                      allItems.splice(removedItemIdx, 1)
+                      allItems.splice(itemIndex, 1)
                     } else {
                       Logger.warn(
                         "(ItemsFetcher.retrieveDiff) Could not find the item to archive in the stored items"
@@ -146,14 +146,12 @@ const ItemsFetcher = (function () {
                     break
 
                   case PocketApiStatus.CREATED:
-                    const itemIdx = allItems.findIndex(item => item.id === itemId)
-
-                    if (itemIdx >= 0) {
+                    if (itemIndex >= 0) {
                       Logger.log(
                         `(ItemsFetcher.retriveDiff) Existing item ${itemId} (${item.title}) will be updated`
                       )
-                      allItems[itemIdx] = Object.assign(
-                        allItems[itemIdx],
+                      allItems[itemIndex] = Object.assign(
+                        allItems[itemIndex],
                         Items.formatPocketItemForStorage(item)
                       )
                     } else {
