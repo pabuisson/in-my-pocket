@@ -27,14 +27,14 @@ const ContextMenu = (function () {
   }
 
   // "tab" context does not exist for chrome and older firefoxes, feature will be broken for them
-  function getAvaiableContexts() {
-    const availabeContexts = browser.contextMenus.ContextType
-    const contexts = [availabeContexts.PAGE, availabeContexts.LINK]
+  function getAvailableContexts() {
+    const availableContexts = browser.contextMenus.ContextType
+    const contexts = [availableContexts.PAGE, availableContexts.LINK]
 
     // Use the tab context only if it exist and if we can update the context menus when it's shown
     // (right-clicking on a tab in Pocket must display different state then a tab not in pocket)
-    if (availabeContexts.TAB && browser.contextMenus.onShown) {
-      contexts.push(availabeContexts.TAB)
+    if (availableContexts.TAB && browser.contextMenus.onShown) {
+      contexts.push(availableContexts.TAB)
     }
 
     return contexts
@@ -54,7 +54,7 @@ const ContextMenu = (function () {
     createEntries: function () {
       Logger.log("(ContextMenu.createEntries) create all right-click entries")
       browser.contextMenus.create({
-        contexts: getAvaiableContexts(),
+        contexts: getAvailableContexts(),
         id: ContextMenu.addId,
         title: "Add to Pocket",
         icons: {
@@ -62,7 +62,7 @@ const ContextMenu = (function () {
         },
       })
       browser.contextMenus.create({
-        contexts: getAvaiableContexts(),
+        contexts: getAvailableContexts(),
         id: ContextMenu.archiveId,
         title: "Mark as read",
         icons: {
@@ -70,7 +70,7 @@ const ContextMenu = (function () {
         },
       })
       browser.contextMenus.create({
-        contexts: getAvaiableContexts(),
+        contexts: getAvailableContexts(),
         id: ContextMenu.deleteId,
         title: "Delete",
         icons: {
