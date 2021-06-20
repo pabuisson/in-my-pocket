@@ -257,9 +257,9 @@ body {
       position: absolute;
       top: 0;
       right: 0;
-      width: 10rem;
+      width: 14rem;
       height: 100%;
-      background-color: transparentize($ff-grey-20, 0.25);
+      background-color: transparentize($ff-grey-20, 0.2);
       border-left: 1px solid $ff-grey-20;
 
       display: flex;
@@ -287,11 +287,13 @@ body {
           font-size: 1.5rem;
         }
 
+        $loader-size: 1.3rem;
+
         .loader {
           height: $loader-size;
           width: $loader-size;
           animation: rotate 0.8s infinite linear;
-          border: 0.3rem solid #444;
+          border: 0.4rem solid $ff-grey-60;
           border-radius: 50%;
           border-right-color: transparent;
         }
@@ -301,11 +303,8 @@ body {
         background-color: $favorite-action;
       }
 
-      .edit-action {
-        background-color: lavenderblush;
-      }
       .edit-action:hover {
-        background-color: crimson;
+        background-color: transparentize($ff-ink-70, 0.7);
       }
 
       .tick-action:hover {
