@@ -254,11 +254,14 @@ const PopupItemList = (function () {
   }
 
   function keydownEventListener(ev) {
-    if (Utility.matchesOrHasParent(ev.target, "input.title")) {
+    if (
+      Utility.matchesOrHasParent(ev.target, "input.title") ||
+      Utility.matchesOrHasParent(ev.target, ".submit-edit")
+    ) {
       if (ev.key === "Enter") {
         const targetItem = Utility.getParent(ev.target, ".item")
         const targetItemId = targetItem.dataset.id
-        const editedTitle = ev.target.value
+        const editedTitle = targetItem.querySelector("input.title").value
 
         browser.storage.local.get("items").then(({ items }) => {
           const matchingItem = Items.find(items, { id: targetItemId })
@@ -272,6 +275,12 @@ const PopupItemList = (function () {
           })
           PopupUI.disableEdition(targetItemId)
         })
+      }
+    } else if (Utility.matchesOrHasParent(ev.target, ".cancel-edit")) {
+      if (ev.key === "Enter") {
+        const targetItem = Utility.getParent(ev.target, ".item")
+        const targetItemId = targetItem.dataset.id
+        PopupUI.disableEdition(targetItemId)
       }
     }
   }
@@ -317,6 +326,29 @@ const PopupItemList = (function () {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Edit item ${targetItemId}`)
             PopupUI.enableEdition(targetItemId)
+          }
+        } else if (Utility.matchesOrHasParent(ev.target, ".cancel-edit")) {
+          if (ev.button === MouseButtons.LEFT) {
+            Logger.log(`(PopupItemList.eventListener) Cancel edition for item ${targetItemId}`)
+            PopupUI.disableEdition(targetItemId)
+          }
+        } else if (Utility.matchesOrHasParent(ev.target, ".submit-edit")) {
+          if (ev.button === MouseButtons.LEFT) {
+            Logger.log(`(PopupItemList.eventListener) Submit edition for item ${targetItemId}`)
+            // TODO: duplicate code with keydown event listener
+            const targetItem = Utility.getParent(ev.target, ".item")
+            const targetItemId = targetItem.dataset.id
+            const editedTitle = targetItem.querySelector("input.title").value
+
+            browser.storage.local.get("items").then(({ items }) => {
+              const matchingItem = Items.find(items, { id: targetItemId })
+              PopupUI.updateItem(targetItemId, {
+                title: editedTitle,
+                url: matchingItem.url,
+                created_at: matchingItem.created_at,
+              })
+              PopupUI.disableEdition(targetItemId)
+            })
           }
         } else if (ev.target.matches("span.title") || ev.target.matches("span.url")) {
           const openInNewTab = true
