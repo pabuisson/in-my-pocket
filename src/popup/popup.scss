@@ -151,11 +151,11 @@ body {
       white-space: nowrap;
       overflow-x: hidden;
       text-overflow: ellipsis;
-      line-height: 1.2;
     }
 
     .favicon-and-title {
       display: flex;
+      align-items: center;
 
       .favicon, .tab-icon {
         height: 16px;
@@ -166,10 +166,16 @@ body {
         border-radius: 2px;
       }
 
-      .title {
+      span.title {
         flex: 1;
-        min-height: 20px;
+        display: inline-block;
+
+        line-height: calc(1.25rem + 2px);
         font-size: 1.25rem;
+        // So that editing the title doesn't move items around, span.title being the exact
+        // same height as the input + buttons
+        padding: 2px 0px;
+
         color: $ff-primary-text;
         user-select: text;
 
@@ -180,14 +186,21 @@ body {
         flex: 1;
         display: none;
         font-size: 1rem;
-        border: 1px solid #bbb;
+        border: 1px solid $ff-grey-40;
         border-radius: 2px;
+        outline: none;
+        padding: 2px;
       }
       button.cancel-edit,
       input.submit-edit[type='submit'] {
         display: none;
         margin-left: 0.2rem;
         margin-right: 0.2rem;
+        font-size: 1rem;
+
+        &:focus {
+          outline: none;
+        }
       }
     }
 
