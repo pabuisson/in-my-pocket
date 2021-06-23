@@ -285,9 +285,15 @@ const PopupUI = (function () {
     // so I actually already know where I'm starting from. I could simply take the ev.target item parent
     enableEdition: itemId => {
       const item = document.querySelector(`.item[data-id='${itemId}']`)
-      Logger.log(`existing title: ${item.querySelector("span.title").textContent}`)
-      item.querySelector("input.title").value = item.querySelector("span.title").textContent
+      const titleField = item.querySelector("input.title")
+      Logger.log(
+        `(PopupUI.enableEdition) Existing title: ${item.querySelector("span.title").textContent}`
+      )
+      titleField.value = item.querySelector("span.title").textContent
       item.classList.add("editing")
+      setTimeout(() => {
+        titleField.focus()
+      }, 100)
     },
 
     disableEdition: itemId => {
