@@ -259,22 +259,7 @@ const PopupItemList = (function () {
       Utility.matchesOrHasParent(ev.target, ".submit-edit")
     ) {
       if (ev.key === "Enter") {
-        const targetItem = Utility.getParent(ev.target, ".item")
-        const targetItemId = targetItem.dataset.id
-        const editedTitle = targetItem.querySelector("input.title").value
-
-        browser.storage.local.get("items").then(({ items }) => {
-          const matchingItem = Items.find(items, { id: targetItemId })
-          Logger.log(
-            `(PopupItemList.keyupEventListener) Update item ${targetItemId} with title ${editedTitle}`
-          )
-          PopupUI.updateItem(targetItemId, {
-            title: editedTitle,
-            url: matchingItem.url,
-            created_at: matchingItem.created_at,
-          })
-          PopupUI.disableEdition(targetItemId)
-        })
+        submitEdition(ev)
       }
     } else if (Utility.matchesOrHasParent(ev.target, ".cancel-edit")) {
       if (ev.key === "Enter") {
@@ -283,6 +268,25 @@ const PopupItemList = (function () {
         PopupUI.disableEdition(targetItemId)
       }
     }
+  }
+
+  function submitEdition(ev) {
+    const targetItem = Utility.getParent(ev.target, ".item")
+    const targetItemId = targetItem.dataset.id
+    const editedTitle = targetItem.querySelector("input.title").value
+
+    browser.storage.local.get("items").then(({ items }) => {
+      const matchingItem = Items.find(items, { id: targetItemId })
+      Logger.log(
+        `(PopupItemList.submitEdition) Update item ${targetItemId} with title ${editedTitle}`
+      )
+      PopupUI.updateItem(targetItemId, {
+        title: editedTitle,
+        url: matchingItem.url,
+        created_at: matchingItem.created_at,
+      })
+      PopupUI.disableEdition(targetItemId)
+    })
   }
 
   return {
@@ -335,20 +339,7 @@ const PopupItemList = (function () {
         } else if (Utility.matchesOrHasParent(ev.target, ".submit-edit")) {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Submit edition for item ${targetItemId}`)
-            // TODO: duplicate code with keydown event listener
-            const targetItem = Utility.getParent(ev.target, ".item")
-            const targetItemId = targetItem.dataset.id
-            const editedTitle = targetItem.querySelector("input.title").value
-
-            browser.storage.local.get("items").then(({ items }) => {
-              const matchingItem = Items.find(items, { id: targetItemId })
-              PopupUI.updateItem(targetItemId, {
-                title: editedTitle,
-                url: matchingItem.url,
-                created_at: matchingItem.created_at,
-              })
-              PopupUI.disableEdition(targetItemId)
-            })
+            submitEdition(ev)
           }
         } else if (ev.target.matches("span.title") || ev.target.matches("span.url")) {
           const openInNewTab = true
