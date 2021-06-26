@@ -29,15 +29,24 @@
           <img class="favicon" src="" loading="lazy" />
           <object class="tab-icon" type="image/svg+xml"></object>
           <span class="title"></span>
-          <input class="title" type="text" />
-          <button class='cancel-edit'>Cancel</button>
-          <input class='submit-edit' type="submit" value="Save" />
         </span>
 
         <span class="url-and-tags">
           <span class="url"></span>
           <span class="tags"></span>
         </span>
+      </li>
+    </template>
+    <template id='item-edition-template'>
+      <li class="item editing" data-id="">
+        <p>
+          <input class="title" type="text" />
+        </p>
+        <p>
+          <input class="tags" type="text" />
+          <button class='cancel-edit'>Cancel</button>
+          <input class='submit-edit' type="submit" value="Save" />
+        </p>
       </li>
     </template>
   </head>
