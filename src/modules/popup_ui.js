@@ -19,6 +19,9 @@ const PopupUI = (function () {
   const listComponent = document.querySelector(".list-component")
   const placeholderNoResults = document.querySelector(".search-no-results")
 
+  // FIXME: duplication with PopupItemList
+  const CURRENT_ITEM_CLASS = "current-page"
+
   function setupEventListeners() {
     PopupPagination.setupEventListeners()
     PopupTopActions.setupEventListeners()
@@ -283,22 +286,32 @@ const PopupUI = (function () {
 
     // NOTE: logic is not so smart. Rescan whole item list although I come from the click inside one item,
     // so I actually already know where I'm starting from. I could simply take the ev.target item parent
-    enableEdition: itemId => {
-      const item = document.querySelector(`.item[data-id='${itemId}']`)
-      const titleField = item.querySelector("input.title")
+    // TODO: here I should move this to PopupItemList
+    enableEdition: (itemId, opts) => {
+      const initialItem = document.querySelector(`.item[data-id='${itemId}']`)
       Logger.log(
-        `(PopupUI.enableEdition) Existing title: ${item.querySelector("span.title").textContent}`
+        `(PopupUI.enableEdition) Existing title: ${
+          initialItem.querySelector("span.title").textContent
+        }`
       )
-      titleField.value = item.querySelector("span.title").textContent
-      item.classList.add("editing")
+
+      const editionTemplate = document.querySelector("#item-edition-template")
+      const clone = editionTemplate.content.cloneNode(true)
+      const li = clone.querySelector("li")
+      if (opts.current) li.classList.add(CURRENT_ITEM_CLASS)
+      li.dataset.id = itemId
+
+      const titleField = clone.querySelector("input.title")
+      const tagsField = clone.querySelector("input.tags")
+
+      titleField.value = initialItem.querySelector("span.title").textContent
+      tagsField.value = initialItem.querySelector("span.tags").textContent
+
       setTimeout(() => {
         titleField.focus()
       }, 100)
-    },
 
-    disableEdition: itemId => {
-      const item = document.querySelector(`.item[data-id='${itemId}']`)
-      item.classList.remove("editing")
+      initialItem.parentNode.replaceChild(clone, initialItem)
     },
 
     fadeOutItem: (...itemIds) => {
@@ -306,14 +319,6 @@ const PopupUI = (function () {
         Logger.log(`(PopupUI.fadeOutItem) Will make ${itemId} item disappear from the list`)
         document.querySelector(`.item[data-id='${itemId}']`).classList.add("disappearing")
       })
-    },
-
-    // NOTE: overkill for now but will surely be useful when dealing with tags
-    updateItem: (itemId, details) => {
-      browser.runtime.sendMessage({ action: "update-item", id: itemId, ...details })
-
-      const item = document.querySelector(`.item[data-id='${itemId}']`)
-      item.querySelector("span.title").textContent = details.title
     },
 
     updateFavoriteStatus: items => {

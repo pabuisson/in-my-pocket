@@ -12,6 +12,7 @@ import { MouseButtons, concealedProtocols } from "../modules/constants.js"
 
 const PopupItemList = (function () {
   const ITEMS_PER_BATCH = 200
+  // FIXME: duplication with PopupItemList
   const CURRENT_ITEM_CLASS = "current-page"
   const itemsContainer = document.querySelector(".list-component")
   const itemTemplate = document.querySelector("#item-template")
@@ -263,11 +264,26 @@ const PopupItemList = (function () {
       }
     } else if (Utility.matchesOrHasParent(ev.target, ".cancel-edit")) {
       if (ev.key === "Enter") {
-        const targetItem = Utility.getParent(ev.target, ".item")
-        const targetItemId = targetItem.dataset.id
-        PopupUI.disableEdition(targetItemId)
+        cancelEdition(ev)
       }
     }
+  }
+
+  function cancelEdition(ev) {
+    const targetItem = Utility.getParent(ev.target, ".item")
+    const targetItemId = targetItem.dataset.id
+    browser.storage.local.get("items").then(({ items }) => {
+      const matchingItem = Items.find(items, { id: targetItemId })
+      Logger.log(`(PopupItemList.cancelEdition) Cancel editing item ${targetItemId}`)
+
+      // Rebuild a li with the not edited item
+      const restoredItem = buildItemElement(matchingItem, {
+        current: targetItem.classList.contains(CURRENT_ITEM_CLASS),
+      })
+
+      // Replace the current "form" item with the new built item
+      targetItem.parentNode.replaceChild(restoredItem, targetItem)
+    })
   }
 
   function submitEdition(ev) {
@@ -277,15 +293,25 @@ const PopupItemList = (function () {
 
     browser.storage.local.get("items").then(({ items }) => {
       const matchingItem = Items.find(items, { id: targetItemId })
-      Logger.log(
-        `(PopupItemList.submitEdition) Update item ${targetItemId} with title ${editedTitle}`
-      )
-      PopupUI.updateItem(targetItemId, {
+      Logger.log(`(PopupItemList.submitEdition) Update item ${targetItemId}`)
+
+      // Send message to background for actual item update + send to API
+      browser.runtime.sendMessage({
+        action: "update-item",
+        id: matchingItem.id,
         title: editedTitle,
         url: matchingItem.url,
         created_at: matchingItem.created_at,
       })
-      PopupUI.disableEdition(targetItemId)
+
+      // Rebuild a li with the edited item
+      const updatedItem = buildItemElement(
+        { ...matchingItem, title: editedTitle },
+        { current: targetItem.classList.contains(CURRENT_ITEM_CLASS) }
+      )
+
+      // Replace the current "form" item with the new built item
+      targetItem.parentNode.replaceChild(updatedItem, targetItem)
     })
   }
 
@@ -329,12 +355,14 @@ const PopupItemList = (function () {
         } else if (Utility.matchesOrHasParent(ev.target, ".edit-action")) {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Edit item ${targetItemId}`)
-            PopupUI.enableEdition(targetItemId)
+            PopupUI.enableEdition(targetItemId, {
+              current: targetItem.classList.contains(CURRENT_ITEM_CLASS),
+            })
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".cancel-edit")) {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Cancel edition for item ${targetItemId}`)
-            PopupUI.disableEdition(targetItemId)
+            cancelEdition(ev)
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".submit-edit")) {
           if (ev.button === MouseButtons.LEFT) {
