@@ -1,5 +1,6 @@
 "use strict"
 
+import FeatureSwitches from "./feature_switches.js"
 import Logger from "./logger.js"
 import Request from "./request.js"
 import { consumerKey } from "./constants.js"
@@ -101,20 +102,48 @@ class PocketApiRequester {
     return request.fetch()
   }
 
-  update(itemId, { title, url, created_at }) {
-    Logger.log(`(PocketApiRequester.update) ${itemId} - ${title} - ${url}`)
+  update(itemId, { title, tags, previousTags, url, created_at }) {
+    Logger.log(`(PocketApiRequester.update) ${itemId} - ${title} - ${tags} - ${url}`)
     // NOTE: by default, it touches both the time_added and time_updated timestamp on the items
     // and therefore it fucks my items sorting completely
     // if I pass the initial creation time, then the creation time remains the same and the update
     // time is correctly updated. Misleading but it works
-    const requestUrl = "https://getpocket.com/v3/add"
+    const actions = [
+      {
+        action: "add",
+        item_id: itemId,
+        title: title,
+        url: url,
+        time: created_at,
+      },
+    ]
+
+    if (FeatureSwitches.TAGS_ENABLED) {
+      const addedTags = tags.filter(tag => !previousTags.includes(tag))
+      const removedTags = previousTags.filter(previousTag => !tags.includes(previousTag))
+
+      if (addedTags.length > 0) {
+        actions.push({
+          action: "tags_add",
+          item_id: itemId,
+          tags: addedTags,
+        })
+      }
+
+      if (removedTags.length > 0) {
+        actions.push({
+          action: "tags_remove",
+          item_id: itemId,
+          tags: removedTags,
+        })
+      }
+    }
+
+    const requestUrl = "https://getpocket.com/v3/send"
     const requestParams = {
       consumer_key: consumerKey,
       access_token: this.accessToken,
-      item_id: itemId,
-      title: title,
-      url: url,
-      time: created_at,
+      actions: actions,
     }
 
     const request = new Request("POST", requestUrl, requestParams)

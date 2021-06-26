@@ -256,6 +256,7 @@ const PopupItemList = (function () {
   function keydownEventListener(ev) {
     if (
       Utility.matchesOrHasParent(ev.target, "input.title") ||
+      Utility.matchesOrHasParent(ev.target, "input.tags") ||
       Utility.matchesOrHasParent(ev.target, ".submit-edit")
     ) {
       if (ev.key === "Enter") {
@@ -286,7 +287,9 @@ const PopupItemList = (function () {
     const tagsField = clone.querySelector("input.tags")
 
     titleField.value = initialItem.querySelector("span.title").textContent
-    tagsField.value = initialItem.querySelector("span.tags").textContent
+    tagsField.value = Array.from(initialItem.querySelectorAll("span.tag"))
+      .map(tag => tag.textContent)
+      .join(", ")
 
     setTimeout(() => {
       titleField.focus()
@@ -316,6 +319,11 @@ const PopupItemList = (function () {
     const targetItem = Utility.getParent(ev.target, ".item")
     const targetItemId = targetItem.dataset.id
     const editedTitle = targetItem.querySelector("input.title").value
+    const editedTags = targetItem
+      .querySelector("input.tags")
+      .value.split(",")
+      .map(tag => tag.trim())
+      .filter(tag => !!tag)
 
     browser.storage.local.get("items").then(({ items }) => {
       const matchingItem = Items.find(items, { id: targetItemId })
@@ -326,13 +334,15 @@ const PopupItemList = (function () {
         action: "update-item",
         id: matchingItem.id,
         title: editedTitle,
+        tags: editedTags,
+        previousTags: matchingItem.tags,
         url: matchingItem.url,
         created_at: matchingItem.created_at,
       })
 
       // Rebuild a li with the edited item
       const updatedItem = buildItemElement(
-        { ...matchingItem, title: editedTitle },
+        { ...matchingItem, title: editedTitle, tags: editedTags },
         { current: targetItem.classList.contains(CURRENT_ITEM_CLASS) }
       )
 

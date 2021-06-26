@@ -341,6 +341,8 @@ const Items = (function () {
             // Update item in parsedItems
             const updatedItem = parsedItems.find(item => item.id == itemId)
             updatedItem.title = details.title
+            updatedItem.tags = FeatureSwitches.TAGS_ENABLED ? details.tags : []
+
             // TODO: store the time_updated? but it's not in the add/send payload
             //       maybe the time_updated being touched, it will simply come
             //       in the next regular sync?
