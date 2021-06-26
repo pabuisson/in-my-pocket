@@ -19,9 +19,6 @@ const PopupUI = (function () {
   const listComponent = document.querySelector(".list-component")
   const placeholderNoResults = document.querySelector(".search-no-results")
 
-  // FIXME: duplication with PopupItemList
-  const CURRENT_ITEM_CLASS = "current-page"
-
   function setupEventListeners() {
     PopupPagination.setupEventListeners()
     PopupTopActions.setupEventListeners()
@@ -282,36 +279,6 @@ const PopupUI = (function () {
       browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {
         browser.runtime.sendMessage({ action: "delete-item", id: itemId, tabId: currentTab.id })
       })
-    },
-
-    // NOTE: logic is not so smart. Rescan whole item list although I come from the click inside one item,
-    // so I actually already know where I'm starting from. I could simply take the ev.target item parent
-    // TODO: here I should move this to PopupItemList
-    enableEdition: (itemId, opts) => {
-      const initialItem = document.querySelector(`.item[data-id='${itemId}']`)
-      Logger.log(
-        `(PopupUI.enableEdition) Existing title: ${
-          initialItem.querySelector("span.title").textContent
-        }`
-      )
-
-      const editionTemplate = document.querySelector("#item-edition-template")
-      const clone = editionTemplate.content.cloneNode(true)
-      const li = clone.querySelector("li")
-      if (opts.current) li.classList.add(CURRENT_ITEM_CLASS)
-      li.dataset.id = itemId
-
-      const titleField = clone.querySelector("input.title")
-      const tagsField = clone.querySelector("input.tags")
-
-      titleField.value = initialItem.querySelector("span.title").textContent
-      tagsField.value = initialItem.querySelector("span.tags").textContent
-
-      setTimeout(() => {
-        titleField.focus()
-      }, 100)
-
-      initialItem.parentNode.replaceChild(clone, initialItem)
     },
 
     fadeOutItem: (...itemIds) => {

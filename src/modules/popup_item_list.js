@@ -12,7 +12,6 @@ import { MouseButtons, concealedProtocols } from "../modules/constants.js"
 
 const PopupItemList = (function () {
   const ITEMS_PER_BATCH = 200
-  // FIXME: duplication with PopupItemList
   const CURRENT_ITEM_CLASS = "current-page"
   const itemsContainer = document.querySelector(".list-component")
   const itemTemplate = document.querySelector("#item-template")
@@ -269,6 +268,33 @@ const PopupItemList = (function () {
     }
   }
 
+  function enterEdition(itemId, opts) {
+    const initialItem = document.querySelector(`.item[data-id='${itemId}']`)
+    Logger.log(
+      `(PopupItemList.enterEdition) Existing title: ${
+        initialItem.querySelector("span.title").textContent
+      }`
+    )
+
+    const editionTemplate = document.querySelector("#item-edition-template")
+    const clone = editionTemplate.content.cloneNode(true)
+    const li = clone.querySelector("li")
+    if (opts.current) li.classList.add(CURRENT_ITEM_CLASS)
+    li.dataset.id = itemId
+
+    const titleField = clone.querySelector("input.title")
+    const tagsField = clone.querySelector("input.tags")
+
+    titleField.value = initialItem.querySelector("span.title").textContent
+    tagsField.value = initialItem.querySelector("span.tags").textContent
+
+    setTimeout(() => {
+      titleField.focus()
+    }, 100)
+
+    initialItem.parentNode.replaceChild(clone, initialItem)
+  }
+
   function cancelEdition(ev) {
     const targetItem = Utility.getParent(ev.target, ".item")
     const targetItemId = targetItem.dataset.id
@@ -355,7 +381,7 @@ const PopupItemList = (function () {
         } else if (Utility.matchesOrHasParent(ev.target, ".edit-action")) {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Edit item ${targetItemId}`)
-            PopupUI.enableEdition(targetItemId, {
+            enterEdition(targetItemId, {
               current: targetItem.classList.contains(CURRENT_ITEM_CLASS),
             })
           }
