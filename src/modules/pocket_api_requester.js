@@ -89,7 +89,32 @@ class PocketApiRequester {
     const requestParams = {
       consumer_key: consumerKey,
       access_token: this.accessToken,
-      actions: [{ action: "unfavorite", item_id: itemId }],
+      actions: [
+        {
+          action: "unfavorite",
+          item_id: itemId,
+        },
+      ],
+    }
+
+    const request = new Request("POST", requestUrl, requestParams)
+    return request.fetch()
+  }
+
+  update(itemId, { title, url, created_at }) {
+    Logger.log(`(PocketApiRequester.update) ${itemId} - ${title} - ${url}`)
+    // NOTE: by default, it touches both the time_added and time_updated timestamp on the items
+    // and therefore it fucks my items sorting completely
+    // if I pass the initial creation time, then the creation time remains the same and the update
+    // time is correctly updated. Misleading but it works
+    const requestUrl = "https://getpocket.com/v3/add"
+    const requestParams = {
+      consumer_key: consumerKey,
+      access_token: this.accessToken,
+      item_id: itemId,
+      title: title,
+      url: url,
+      time: created_at,
     }
 
     const request = new Request("POST", requestUrl, requestParams)

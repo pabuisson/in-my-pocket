@@ -226,10 +226,15 @@ const Items = (function () {
       }
 
       return {
+        // given_title - The title that was saved along with the item.
+        // resolved_title - The title that Pocket found for the item when it was parsed
         title: itemFromApi.given_title || itemFromApi.resolved_title,
+        // given_url - The actual url that was saved with the item. This url should be used if the user wants to view the item.
+        // resolved_url - The final url of the item. For example if the item was a shortened bit.ly link, this will be the actual article the url linked to.
         url: itemFromApi.given_url || itemFromApi.resolved_url,
         fav: itemFromApi.favorite,
         created_at: itemFromApi.time_added,
+        updated_at: itemFromApi.time_updated,
         tags: tags,
       }
     },
@@ -327,6 +332,43 @@ const Items = (function () {
     },
     unfavoriteItem: function (itemId) {
       setFavorite(itemId, "unfavorite")
+    },
+
+    updateItem: function (itemId, details) {
+      Logger.log(`(Items.updateItem) Item '${itemId}'`)
+
+      browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
+        Badge.startLoadingSpinner()
+        const requester = new PocketApiRequester(access_token)
+
+        requester
+          .update(itemId, details)
+          .then(response => {
+            const parsedItems = Utility.parseJson(items) || []
+
+            // Update item in parsedItems
+            const updatedItem = parsedItems.find(item => item.id == itemId)
+            updatedItem.title = details.title
+            // TODO: store the time_updated? but it's not in the add/send payload
+            //       maybe the time_updated being touched, it will simply come
+            //       in the next regular sync?
+
+            // Save item list in storage and update badge count
+            browser.storage.local.set({ items: JSON.stringify(parsedItems) })
+
+            // Send a message back to the UI
+            // TODO: is this needed? I don't use it right now
+            browser.runtime.sendMessage({ action: "updated", id: itemId })
+
+            // Display an indicator on the badge that everything went well
+            Badge.flashSuccess()
+          })
+          .catch(error => {
+            BugReporter.captureException(error)
+            Logger.error(`(Items.updateItem) Error for update : ${JSON.stringify(error)}`)
+            Badge.flashError()
+          })
+      })
     },
 
     addItem: function (itemsToAdd) {

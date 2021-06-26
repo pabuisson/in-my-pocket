@@ -151,25 +151,57 @@ body {
       white-space: nowrap;
       overflow-x: hidden;
       text-overflow: ellipsis;
-      line-height: 1.2;
     }
 
-    .favicon, .tab-icon {
-      height: 16px;
-      width: 16px;
-      margin-right: 0.5rem;
-      vertical-align: middle;
-      position: relative;
-      border-radius: 2px;
-    }
+    .favicon-and-title {
+      display: flex;
+      align-items: center;
 
-    .title {
-      min-height: 20px;
-      font-size: 1.25rem;
-      color: $ff-primary-text;
-      user-select: text;
+      .favicon, .tab-icon {
+        height: 16px;
+        width: 16px;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+        position: relative;
+        border-radius: 2px;
+      }
 
-      cursor: pointer;
+      span.title {
+        flex: 1;
+        display: inline-block;
+
+        line-height: calc(1.25rem + 2px);
+        font-size: 1.25rem;
+        // So that editing the title doesn't move items around, span.title being the exact
+        // same height as the input + buttons
+        padding: 2px 0px;
+
+        color: $ff-primary-text;
+        user-select: text;
+
+        cursor: pointer;
+      }
+
+      input.title {
+        flex: 1;
+        display: none;
+        font-size: 1rem;
+        border: 1px solid $ff-grey-40;
+        border-radius: 2px;
+        outline: none;
+        padding: 2px;
+      }
+      button.cancel-edit,
+      input.submit-edit[type='submit'] {
+        display: none;
+        margin-left: 0.2rem;
+        margin-right: 0.2rem;
+        font-size: 1rem;
+
+        &:focus {
+          outline: none;
+        }
+      }
     }
 
     .url-and-tags {
@@ -223,6 +255,23 @@ body {
       border-bottom-width: 0px;
     }
 
+    &.editing {
+      span.title {
+        display: none;
+      }
+      input.title {
+        display: inline;
+        cursor: text;
+      }
+      button.cancel-edit,
+      input.submit-edit[type='submit'] {
+        display: inline;
+      }
+      .actions-container {
+        display: none;
+      }
+    }
+
     // Removing: when the "delete/archive" button has been clicked and the spinner is spinning,
     // we maintain the visibility of its actions container (so that user keep on seeing the
     // spinning spinner during the deletion)
@@ -240,15 +289,16 @@ body {
       position: absolute;
       top: 0;
       right: 0;
-      width: 10rem;
+      width: 14rem;
       height: 100%;
-      background-color: transparentize($ff-grey-20, 0.25);
+      background-color: transparentize($ff-grey-20, 0.2);
       border-left: 1px solid $ff-grey-20;
 
       display: flex;
       flex-direction: row;
 
       .favorite-action,
+      .edit-action,
       .tick-action,
       .delete-action {
         cursor: pointer;
@@ -269,11 +319,13 @@ body {
           font-size: 1.5rem;
         }
 
+        $loader-size: 1.3rem;
+
         .loader {
           height: $loader-size;
           width: $loader-size;
           animation: rotate 0.8s infinite linear;
-          border: 0.3rem solid #444;
+          border: 0.4rem solid $ff-grey-60;
           border-radius: 50%;
           border-right-color: transparent;
         }
@@ -281,6 +333,10 @@ body {
 
       .favorite-action:hover {
         background-color: $favorite-action;
+      }
+
+      .edit-action:hover {
+        background-color: transparentize($ff-ink-70, 0.7);
       }
 
       .tick-action:hover {
