@@ -217,6 +217,14 @@ const Items = (function () {
 
   return {
     formatPocketItemForStorage: function (itemFromApi) {
+      const tags = []
+
+      if (FeatureSwitches.TAGS_ENABLED) {
+        for (const tag in itemFromApi.tags) {
+          tags.push(tag)
+        }
+      }
+
       return {
         // given_title - The title that was saved along with the item.
         // resolved_title - The title that Pocket found for the item when it was parsed
@@ -224,10 +232,10 @@ const Items = (function () {
         // given_url - The actual url that was saved with the item. This url should be used if the user wants to view the item.
         // resolved_url - The final url of the item. For example if the item was a shortened bit.ly link, this will be the actual article the url linked to.
         url: itemFromApi.given_url || itemFromApi.resolved_url,
-        tags: FeatureSwitches.TAGS_ENABLED ? itemFromApi.tags : [],
         fav: itemFromApi.favorite,
         created_at: itemFromApi.time_added,
         updated_at: itemFromApi.time_updated,
+        tags: tags,
       }
     },
 
