@@ -150,7 +150,12 @@ const PopupItemList = (function () {
       for (const tag of item.tags) {
         const tagElement = document.createElement("span")
         tagElement.className = "tag"
-        tagElement.textContent = tag
+
+        const tagIcon = document.createElement("i")
+        tagIcon.classList.add('icon', 'ion-md-pricetag')
+
+        tagElement.appendChild(tagIcon)
+        tagElement.appendChild(document.createTextNode(tag))
 
         tagsElement.appendChild(tagElement)
       }
