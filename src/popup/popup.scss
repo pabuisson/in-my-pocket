@@ -186,12 +186,12 @@ body {
 
     .url-and-tags {
       position: relative;
-      font-size: 0.75rem;
-
       display: flex;
 
       // Prevent scrolling from being enabled on items with tags
       overflow-y: hidden;
+
+      font-size: 0.85rem;
 
       .url {
         flex: 1;
@@ -203,6 +203,7 @@ body {
         white-space: nowrap;
 
         color: $ff-secondary-text;
+
         cursor: pointer;
       }
 
@@ -211,8 +212,8 @@ body {
 
         .tag {
           margin-left: 0.5rem;
-          &:before {
-            content: "⭓ ";
+          .icon {
+            margin-right: 0.2rem;
           }
         }
       }
