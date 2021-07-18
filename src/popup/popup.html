@@ -39,16 +39,20 @@
     </template>
     <template id='item-edition-template'>
       <li class="item editing" data-id="">
-        <p class='row'>
+        <div class='row'>
           <label>Title</label>
           <input class="title" type="text" />
-        </p>
-        <p class='row'>
+        </div>
+        <div class='row'>
           <label>Tags</label>
-          <input class="tags" type="text" placeholder="tag1, tag2, ..." />
+          <div class='tags'>
+            <!-- Existing tags -->
+            <input class="new-tag" type="text" list='tags-datalist' placeholder="tag1, tag2, ..." />
+            <datalist id='tags-datalist' />
+          </div>
           <button class='cancel-edit'>Cancel</button>
           <input class='submit-edit' type="submit" value="Save" />
-        </p>
+        </div>
       </li>
     </template>
   </head>
