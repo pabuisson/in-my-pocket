@@ -261,6 +261,7 @@ const PopupItemList = (function () {
   function keydownEventListener(ev) {
     if (
       Utility.matchesOrHasParent(ev.target, "input.title") ||
+      Utility.matchesOrHasParent(ev.target, "input.tags") ||
       Utility.matchesOrHasParent(ev.target, ".submit-edit")
     ) {
       if (ev.key === "Enter") {
@@ -268,29 +269,90 @@ const PopupItemList = (function () {
       }
     } else if (Utility.matchesOrHasParent(ev.target, ".cancel-edit")) {
       if (ev.key === "Enter") {
-        const targetItem = Utility.getParent(ev.target, ".item")
-        const targetItemId = targetItem.dataset.id
-        PopupUI.disableEdition(targetItemId)
+        cancelEdition(ev)
       }
     }
+  }
+
+  function enterEdition(itemId, opts) {
+    const initialItem = document.querySelector(`.item[data-id='${itemId}']`)
+    Logger.log(
+      `(PopupItemList.enterEdition) Existing title: ${
+        initialItem.querySelector("span.title").textContent
+      }`
+    )
+
+    const editionTemplate = document.querySelector("#item-edition-template")
+    const clone = editionTemplate.content.cloneNode(true)
+    const li = clone.querySelector("li")
+    if (opts.current) li.classList.add(CURRENT_ITEM_CLASS)
+    li.dataset.id = itemId
+
+    const titleField = clone.querySelector("input.title")
+    const tagsField = clone.querySelector("input.tags")
+
+    titleField.value = initialItem.querySelector("span.title").textContent
+    tagsField.value = Array.from(initialItem.querySelectorAll("span.tag"))
+      .map(tag => tag.textContent)
+      .join(", ")
+
+    setTimeout(() => {
+      titleField.focus()
+    }, 100)
+
+    initialItem.parentNode.replaceChild(clone, initialItem)
+  }
+
+  function cancelEdition(ev) {
+    const targetItem = Utility.getParent(ev.target, ".item")
+    const targetItemId = targetItem.dataset.id
+    browser.storage.local.get("items").then(({ items }) => {
+      const matchingItem = Items.find(items, { id: targetItemId })
+      Logger.log(`(PopupItemList.cancelEdition) Cancel editing item ${targetItemId}`)
+
+      // Rebuild a li with the not edited item
+      const restoredItem = buildItemElement(matchingItem, {
+        current: targetItem.classList.contains(CURRENT_ITEM_CLASS),
+      })
+
+      // Replace the current "form" item with the new built item
+      targetItem.parentNode.replaceChild(restoredItem, targetItem)
+    })
   }
 
   function submitEdition(ev) {
     const targetItem = Utility.getParent(ev.target, ".item")
     const targetItemId = targetItem.dataset.id
     const editedTitle = targetItem.querySelector("input.title").value
+    const editedTags = targetItem
+      .querySelector("input.tags")
+      .value.split(",")
+      .map(tag => tag.trim())
+      .filter(tag => !!tag)
 
     browser.storage.local.get("items").then(({ items }) => {
       const matchingItem = Items.find(items, { id: targetItemId })
-      Logger.log(
-        `(PopupItemList.submitEdition) Update item ${targetItemId} with title ${editedTitle}`
-      )
-      PopupUI.updateItem(targetItemId, {
+      Logger.log(`(PopupItemList.submitEdition) Update item ${targetItemId}`)
+
+      // Send message to background for actual item update + send to API
+      browser.runtime.sendMessage({
+        action: "update-item",
+        id: matchingItem.id,
         title: editedTitle,
+        tags: editedTags,
+        previousTags: matchingItem.tags,
         url: matchingItem.url,
         created_at: matchingItem.created_at,
       })
-      PopupUI.disableEdition(targetItemId)
+
+      // Rebuild a li with the edited item
+      const updatedItem = buildItemElement(
+        { ...matchingItem, title: editedTitle, tags: editedTags },
+        { current: targetItem.classList.contains(CURRENT_ITEM_CLASS) }
+      )
+
+      // Replace the current "form" item with the new built item
+      targetItem.parentNode.replaceChild(updatedItem, targetItem)
     })
   }
 
@@ -334,12 +396,14 @@ const PopupItemList = (function () {
         } else if (Utility.matchesOrHasParent(ev.target, ".edit-action")) {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Edit item ${targetItemId}`)
-            PopupUI.enableEdition(targetItemId)
+            enterEdition(targetItemId, {
+              current: targetItem.classList.contains(CURRENT_ITEM_CLASS),
+            })
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".cancel-edit")) {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Cancel edition for item ${targetItemId}`)
-            PopupUI.disableEdition(targetItemId)
+            cancelEdition(ev)
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".submit-edit")) {
           if (ev.button === MouseButtons.LEFT) {

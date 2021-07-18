@@ -148,9 +148,6 @@ body {
 
     & > span {
       margin-left: 0.5rem;
-      white-space: nowrap;
-      overflow-x: hidden;
-      text-overflow: ellipsis;
     }
 
     .favicon-and-title {
@@ -178,30 +175,13 @@ body {
 
         color: $ff-primary-text;
         user-select: text;
+        white-space: nowrap;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
 
         cursor: pointer;
       }
 
-      input.title {
-        flex: 1;
-        display: none;
-        font-size: 1rem;
-        border: 1px solid $ff-grey-40;
-        border-radius: 2px;
-        outline: none;
-        padding: 2px;
-      }
-      button.cancel-edit,
-      input.submit-edit[type='submit'] {
-        display: none;
-        margin-left: 0.2rem;
-        margin-right: 0.2rem;
-        font-size: 1rem;
-
-        &:focus {
-          outline: none;
-        }
-      }
     }
 
     .url-and-tags {
@@ -257,20 +237,42 @@ body {
     }
 
     &.editing {
-      span.title {
-        display: none;
+      height: 4rem;
+
+      p.row {
+        margin: 0.2rem;
+        display: flex;
+        flex-direction: row;
+
+        label {
+          display: inline-block;
+          width: 5rem;
+        }
+
+        input.title, input.tags {
+          flex: 1;
+          display: inline;
+          cursor: text;
+          font-size: 1rem;
+          border: 1px solid $ff-grey-40;
+          border-radius: 2px;
+          outline: none;
+          padding: 2px;
+        }
+
+        button.cancel-edit,
+        input.submit-edit[type='submit'] {
+          display: inline;
+          margin-left: 0.2rem;
+          margin-right: 0.2rem;
+          font-size: 1rem;
+
+          &:focus {
+            outline: none;
+          }
+        }
       }
-      input.title {
-        display: inline;
-        cursor: text;
-      }
-      button.cancel-edit,
-      input.submit-edit[type='submit'] {
-        display: inline;
-      }
-      .actions-container {
-        display: none;
-      }
+
     }
 
     // Removing: when the "delete/archive" button has been clicked and the spinner is spinning,

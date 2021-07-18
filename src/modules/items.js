@@ -217,14 +217,6 @@ const Items = (function () {
 
   return {
     formatPocketItemForStorage: function (itemFromApi) {
-      const tags = []
-
-      if (FeatureSwitches.TAGS_ENABLED) {
-        for (const tag in itemFromApi.tags) {
-          tags.push(tag)
-        }
-      }
-
       return {
         // given_title - The title that was saved along with the item.
         // resolved_title - The title that Pocket found for the item when it was parsed
@@ -235,7 +227,7 @@ const Items = (function () {
         fav: itemFromApi.favorite,
         created_at: itemFromApi.time_added,
         updated_at: itemFromApi.time_updated,
-        tags: tags,
+        tags: FeatureSwitches.TAGS_ENABLED ? Object.keys(itemFromApi.tags || {}) : [],
       }
     },
 
@@ -349,6 +341,8 @@ const Items = (function () {
             // Update item in parsedItems
             const updatedItem = parsedItems.find(item => item.id == itemId)
             updatedItem.title = details.title
+            updatedItem.tags = FeatureSwitches.TAGS_ENABLED ? details.tags : []
+
             // TODO: store the time_updated? but it's not in the add/send payload
             //       maybe the time_updated being touched, it will simply come
             //       in the next regular sync?
