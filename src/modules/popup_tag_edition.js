@@ -51,6 +51,7 @@ const PopupTagEdition = (function () {
 
       const newTagField = editedItem.querySelector(".new-tag")
       newTagField.value = ""
+      ev.target.dataset.previousValue = ""
 
       editedItem.querySelector(".tags").insertBefore(newTag, newTagField)
     },

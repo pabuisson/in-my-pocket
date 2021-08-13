@@ -277,13 +277,20 @@ const PopupItemList = (function () {
           }
           break
         case "Backspace":
-          if (ev.target.value === "") PopupTagEdition.deleteLastTag(ev)
+          if (ev.target.dataset.previousValue == "") {
+            PopupTagEdition.deleteLastTag(ev)
+          } else {
+            ev.target.dataset.previousValue = ev.target.value
+          }
           break
         case "ArrowLeft":
           if (ev.target.value === "") PopupTagEdition.focusPreviousTag(ev)
           break
         case "ArrowRight":
           if (ev.target.value === "") PopupTagEdition.focusNextTag(ev)
+          break
+        default:
+          ev.target.dataset.previousValue = ev.target.value
           break
       }
     } else if (Utility.matchesOrHasParent(ev.target, "span.tag")) {
