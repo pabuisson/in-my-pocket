@@ -239,17 +239,19 @@ body {
     &.editing {
       height: 4rem;
 
-      p.row {
+      .row {
         margin: 0.2rem;
         display: flex;
         flex-direction: row;
 
         label {
           display: inline-block;
-          width: 5rem;
+          // For vertical-centering
+          line-height: 2rem;
+          width: 4rem;
         }
 
-        input.title, input.tags {
+        input.title {
           flex: 1;
           display: inline;
           cursor: text;
@@ -258,6 +260,40 @@ body {
           border-radius: 2px;
           outline: none;
           padding: 2px;
+        }
+
+        .tags {
+          flex: 1;
+          border: 1px solid $ff-grey-40;
+          border-radius: 2px;
+          padding: 2px;
+
+          display: flex;
+
+          .tag {
+            flex: initial;
+
+            margin: 0 0.2rem;
+            padding: 1px 3px;
+
+            background-color: $ff-grey-20;
+            border: 1px solid $ff-grey-40;
+            border-radius: 2px;
+            color: $ff-primary-text;
+
+            &:focus {
+              outline: 1px solid $ff-blue-70;
+            }
+          }
+
+          input.new-tag {
+            flex: 1;
+
+            cursor: text;
+            font-size: 1rem;
+            border: 0px none;
+            outline: none;
+          }
         }
 
         button.cancel-edit,

@@ -4,6 +4,7 @@ import FeatureSwitches from "./feature_switches.js"
 import Items from "../modules/items.js"
 import Logger from "../modules/logger.js"
 import PopupUI from "../modules/popup_ui.js"
+import PopupTagEdition from "../modules/popup_tag_edition.js"
 import TextSelectionHandler from "../modules/text_selection_handler.js"
 import Utility from "../modules/utility.js"
 import { MouseButtons, concealedProtocols } from "../modules/constants.js"
@@ -152,7 +153,7 @@ const PopupItemList = (function () {
         tagElement.className = "tag"
 
         const tagIcon = document.createElement("i")
-        tagIcon.classList.add('icon', 'ion-md-pricetag')
+        tagIcon.classList.add("icon", "ion-md-pricetag")
 
         tagElement.appendChild(tagIcon)
         tagElement.appendChild(document.createTextNode(tag))
@@ -258,14 +259,51 @@ const PopupItemList = (function () {
     }
   }
 
-  function keydownEventListener(ev) {
+  function keyupEventListener(ev) {
     if (
       Utility.matchesOrHasParent(ev.target, "input.title") ||
-      Utility.matchesOrHasParent(ev.target, "input.tags") ||
       Utility.matchesOrHasParent(ev.target, ".submit-edit")
     ) {
       if (ev.key === "Enter") {
         submitEdition(ev)
+      }
+    } else if (Utility.matchesOrHasParent(ev.target, "input.new-tag")) {
+      switch (ev.key) {
+        case "Enter":
+          if (ev.target.value === "") {
+            submitEdition(ev)
+          } else {
+            PopupTagEdition.appendTagToItem(ev)
+          }
+          break
+        case "Backspace":
+          if (ev.target.dataset.previousValue == "") {
+            PopupTagEdition.deleteLastTag(ev)
+          } else {
+            ev.target.dataset.previousValue = ev.target.value
+          }
+          break
+        case "ArrowLeft":
+          if (ev.target.value === "") PopupTagEdition.focusPreviousTag(ev)
+          break
+        case "ArrowRight":
+          if (ev.target.value === "") PopupTagEdition.focusNextTag(ev)
+          break
+        default:
+          ev.target.dataset.previousValue = ev.target.value
+          break
+      }
+    } else if (Utility.matchesOrHasParent(ev.target, "span.tag")) {
+      switch (ev.key) {
+        case "Backspace":
+          PopupTagEdition.deleteFocusedTagAndFocusPreviousOne(ev)
+          break
+        case "ArrowLeft":
+          PopupTagEdition.focusPreviousTag(ev)
+          break
+        case "ArrowRight":
+          PopupTagEdition.focusNextTag(ev)
+          break
       }
     } else if (Utility.matchesOrHasParent(ev.target, ".cancel-edit")) {
       if (ev.key === "Enter") {
@@ -289,18 +327,46 @@ const PopupItemList = (function () {
     li.dataset.id = itemId
 
     const titleField = clone.querySelector("input.title")
-    const tagsField = clone.querySelector("input.tags")
-
     titleField.value = initialItem.querySelector("span.title").textContent
-    tagsField.value = Array.from(initialItem.querySelectorAll("span.tag"))
-      .map(tag => tag.textContent)
-      .join(", ")
 
     setTimeout(() => {
       titleField.focus()
     }, 100)
 
-    initialItem.parentNode.replaceChild(clone, initialItem)
+    if (FeatureSwitches.TAGS_ENABLED) {
+      browser.storage.local.get("items", ({ items }) => {
+        const itemsList = Utility.parseJson(items)
+
+        const itemTags = Array.from(initialItem.querySelectorAll("span.tag")).map(
+          tag => tag.textContent
+        )
+        const tagsContainer = clone.querySelector(".tags")
+        const newTagField = clone.querySelector(".new-tag")
+        for (const itemTag of itemTags) {
+          const tagElement = document.createElement("span")
+          tagElement.classList.add("tag")
+          tagElement.setAttribute("tabIndex", -1)
+          tagElement.textContent = itemTag
+
+          tagsContainer.insertBefore(tagElement, newTagField)
+        }
+
+        // Tags datalist
+        const allExistingTags = [...new Set(itemsList.flatMap(item => item.tags))]
+        const tagsDatalist = clone.querySelector("#tags-datalist")
+        for (const tag of allExistingTags.sort()) {
+          const tagOption = document.createElement("option")
+          tagOption.value = tag
+          tagOption.textContent = tag
+
+          tagsDatalist.appendChild(tagOption)
+        }
+
+        initialItem.parentNode.replaceChild(clone, initialItem)
+      })
+    } else {
+      initialItem.parentNode.replaceChild(clone, initialItem)
+    }
   }
 
   function cancelEdition(ev) {
@@ -324,11 +390,9 @@ const PopupItemList = (function () {
     const targetItem = Utility.getParent(ev.target, ".item")
     const targetItemId = targetItem.dataset.id
     const editedTitle = targetItem.querySelector("input.title").value
-    const editedTags = targetItem
-      .querySelector("input.tags")
-      .value.split(",")
-      .map(tag => tag.trim())
-      .filter(tag => !!tag)
+    // TODO: only if tags enabled
+    const editedTagElements = targetItem.querySelectorAll(".tags .tag")
+    const editedTags = Array.from(editedTagElements).map(tag => tag.textContent.trim())
 
     browser.storage.local.get("items").then(({ items }) => {
       const matchingItem = Items.find(items, { id: targetItemId })
@@ -358,7 +422,7 @@ const PopupItemList = (function () {
 
   return {
     setupEventListeners: function () {
-      document.addEventListener("keydown", keydownEventListener)
+      document.addEventListener("keyup", keyupEventListener)
 
       itemsContainer.addEventListener("mouseup", function (ev) {
         if (!ev.target) return
