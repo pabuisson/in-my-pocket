@@ -362,6 +362,11 @@ const PopupItemList = (function () {
           tagsDatalist.appendChild(tagOption)
         }
 
+        // Focused events on new-tag: must outline the outer div,
+        // and not the new-tag input itself
+        newTagField.addEventListener("focus", () => tagsContainer.classList.add("focused"))
+        newTagField.addEventListener("blur", () => tagsContainer.classList.remove("focused"))
+
         initialItem.parentNode.replaceChild(clone, initialItem)
       })
     } else {

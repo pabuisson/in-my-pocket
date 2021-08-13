@@ -258,8 +258,12 @@ body {
           font-size: 1rem;
           border: 1px solid $ff-grey-40;
           border-radius: 2px;
-          outline: none;
           padding: 2px;
+          margin-top: 1px; // so that the outline does not hit the upper item
+
+          &:focus {
+            outline: 1px solid $ff-blue-70;
+          }
         }
 
         .tags {
@@ -294,6 +298,12 @@ body {
             border: 0px none;
             outline: none;
           }
+
+          // Manually add the focused class to the whole tags container
+          // when the new-tag field has the focus
+          &.focused {
+            outline: 1px solid $ff-blue-70;
+          }
         }
 
         button.cancel-edit,
@@ -303,8 +313,11 @@ body {
           margin-right: 0.2rem;
           font-size: 1rem;
 
+          // Outlining with a solid border would make a rectangular outline
+          // around the slightly rounded buttons, which looks plain ugly
           &:focus {
             outline: none;
+            box-shadow: 0px 0px 0px 1px $ff-blue-70;
           }
         }
       }
@@ -509,7 +522,10 @@ $top-actions-height: 2.2rem;
       border: 0px transparent;
       color: $ff-grey-80;
       font-size: 1.1rem;
-      outline: none;
+
+      &:focus {
+        outline: none;
+      }
     }
   }
 }
