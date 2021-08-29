@@ -1,12 +1,13 @@
 # Changelog
 
 
-## Not released yet
+## 0.12.0 - August 2021
 
-* FEATURE: since version 66 released in March 2019, Firefox provides a dedicated user interface to manage all your addons keyboard shortcuts. I was previously maintaining custom code and had to deal with custom bugs it generated. As of now, keyboard shortcuts can't be set from the addons settings and must be handled by using Firefox dedicated page. Have a look at [Mozilla Support: Manage extension shortcuts in Firefox](https://support.mozilla.org/en-US/kb/manage-extension-shortcuts-firefox) for more details
+* FEATURE: you've been asking for this feature for a very long time, it was a lot of work implementing this right, but here they finally are: tags! You can see them in your items list, and can update them when editing an item. More updates related to tags in the next versions!
+* FEATURE: if the current page you're reading is in your Pocket list, this item will now be pinned at the top of the items list, making it much easier to interact with it.
+* FEATURE: see this new "pencil" action icon in the items list? It means you can now edit items title and tags right from the popup!
+* FEATURE: since version 66 released in March 2019, Firefox provides a dedicated user interface to manage keyboard shortcuts for your addons. I was previously maintaining custom code for this, and had to deal with custom bugs it generated. As of now, keyboard shortcuts will have to be handled through Firefox dedicated page. Have a look at [Mozilla Support: Manage extension shortcuts in Firefox](https://support.mozilla.org/en-US/kb/manage-extension-shortcuts-firefox) for more details
 * FEATURE: InMyPocket now has a sidebar mode! You'll find InMyPocket in the addons list in the sidebar, and can now browse while keeping your pocket list conveniently displayed at all times!
-* FEATURE: when you're reading an article from your items list and open the popup, this item is now pinned at the top of the items list, so that it's much easier to interact with it.
-* FEATURE: see this new "pencil" action icon in the items list? It means you can now edit items title right from the popup.
 * FIX: "close tab when mark as read" automation was actually not closing the tab if item was displayed in reader mode or in the getpocket.com webapp.
 * PERFS: improve performances for items list building
 * UPDATE: account for the new getpocket.com reader URL format
