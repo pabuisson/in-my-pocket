@@ -102,7 +102,7 @@ class PocketApiRequester {
     return request.fetch()
   }
 
-  update(itemId, { title, tags, previousTags, url, created_at }) {
+  update(itemId, { title, tags = [], previousTags = [], url, created_at }) {
     Logger.log(`(PocketApiRequester.update) ${itemId} - ${title} - ${tags} - ${url}`)
     // NOTE: by default, it touches both the time_added and time_updated timestamp on the items
     // and therefore it fucks my items sorting completely
