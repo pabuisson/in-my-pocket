@@ -13,6 +13,11 @@
 * UPDATE: account for the new getpocket.com reader URL format
 
 
+## 0.11.10 - January 2021
+
+* FIX: error reporting code was generating errors itself. How ironic. This is now fixed.
+
+
 ## 0.11.9 - November 2020
 
 * FIX: normalized paths in stacktrace for better debugging capabilities
