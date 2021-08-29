@@ -385,9 +385,13 @@ const PopupItemList = (function () {
     const targetItem = Utility.getParent(ev.target, ".item")
     const targetItemId = targetItem.dataset.id
     const editedTitle = targetItem.querySelector("input.title").value
-    // TODO: only if tags enabled
-    const editedTagElements = targetItem.querySelectorAll(".tags .tag")
-    const editedTags = Array.from(editedTagElements).map(tag => tag.textContent.trim())
+
+    let uniqueEditedTags = []
+    if (FeatureSwitches.TAGS_ENABLED) {
+      const editedTagElements = targetItem.querySelectorAll(".tags .tag")
+      const editedTags = Array.from(editedTagElements).map(tag => tag.textContent.trim())
+      uniqueEditedTags = [...new Set(editedTags)]
+    }
 
     browser.storage.local.get("items").then(({ items }) => {
       const matchingItem = Items.find(items, { id: targetItemId })
@@ -398,7 +402,7 @@ const PopupItemList = (function () {
         action: "update-item",
         id: matchingItem.id,
         title: editedTitle,
-        tags: editedTags,
+        tags: uniqueEditedTags,
         previousTags: matchingItem.tags,
         url: matchingItem.url,
         created_at: matchingItem.created_at,
@@ -406,7 +410,11 @@ const PopupItemList = (function () {
 
       // Rebuild a li with the edited item
       const updatedItem = buildItemElement(
-        { ...matchingItem, title: editedTitle, tags: editedTags },
+        {
+          ...matchingItem,
+          title: editedTitle,
+          tags: uniqueEditedTags,
+        },
         { current: targetItem.classList.contains(CURRENT_ITEM_CLASS) }
       )
 
