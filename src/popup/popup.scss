@@ -106,14 +106,15 @@ body {
   .item {
     margin: 0;
     position: relative;
-    padding: 0.3rem;
+    padding: 0.5rem;
     border-bottom: 1px solid $ff-grey-20;
 
     color: $ff-grey-70;
 
-    // If I don't specify a height, I can't animate the disappearing of the item
-    // So I'm fucked, basically
-    height: 3.5rem;
+    // Item height used to be 3.5rem, fixed, for animation
+    // I'm no longer fixing the height but to animate disappearance, I rely on max-height
+    // https://css-tricks.com/using-css-transitions-auto-dimensions/
+    max-height: 6rem;
 
     display: flex;
     flex-direction: column;
@@ -171,7 +172,7 @@ body {
         font-size: 1.25rem;
         // So that editing the title doesn't move items around, span.title being the exact
         // same height as the input + buttons
-        padding: 2px 0px;
+        padding: 0.2rem 0px;
 
         color: $ff-primary-text;
         user-select: text;
@@ -191,10 +192,12 @@ body {
       // Prevent scrolling from being enabled on items with tags
       overflow-y: hidden;
 
-      font-size: 0.85rem;
+      font-size: 0.9rem;
 
       .url {
         flex: 1;
+        display: inline-block;
+        padding: 0.2rem 0px;
 
         overflow: hidden;
         text-decoration: none;
@@ -225,20 +228,22 @@ body {
 
     overflow: hidden;
     opacity: 1;
+
     // second duration is the delay after which the transition must begin
-    transition: height 250ms, padding 250ms, opacity 0s 200ms, border-bottom-width 0s 240ms;
+    // 'ease-out' timing function for max-height because I define a larger-than-the-item max-height,
+    // so I need the transition to be fast at first and then come back to a normal speed
+    transition: max-height 250ms ease-out, padding 250ms, opacity 0s 200ms, border-bottom-width 0s 240ms;
 
     // When the item is visually disappearing from the list
+    // Relies on max-height since height is no longer fixed
     &.disappearing {
-      height: 0px;
+      max-height: 0;
       padding: 0;
       opacity: 0;
       border-bottom-width: 0px;
     }
 
     &.editing {
-      height: 4rem;
-
       .row {
         margin: 0.2rem;
         display: flex;
@@ -246,8 +251,8 @@ body {
 
         label {
           display: inline-block;
-          // For vertical-centering
-          line-height: 2rem;
+          // // For vertical-centering
+          // line-height: 2rem;
           width: 4rem;
         }
 
@@ -268,16 +273,20 @@ body {
 
         .tags {
           flex: 1;
+
+          // I have to set a 1px padding-bottom for the spacing to be aligned, not sure what causes this
+          padding: 2px 2px 1px 2px;
+
           border: 1px solid $ff-grey-40;
           border-radius: 2px;
-          padding: 2px;
 
           display: flex;
+          flex-wrap: wrap;
 
           .tag {
             flex: initial;
 
-            margin: 0 0.2rem;
+            margin: 0.2rem 0.2rem 0.2rem 0;
             padding: 1px 3px;
 
             background-color: $ff-grey-20;
