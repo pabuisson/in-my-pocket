@@ -9,7 +9,7 @@ const VERSION_LEVELS = {
 }
 
 const VersionManager = (function () {
-  const forceResyncVersion = "0.11.0"
+  const forceResyncVersion = "0.12.0"
 
   // eslint-disable-next-line max-params
   function isGreater(
@@ -50,10 +50,7 @@ const VersionManager = (function () {
       if (details.reason !== "update") return false
 
       const currentVersion = VersionManager.getCurrentVersion()
-      const isMajorOrMinorUpdate = VersionManager.isMajorOrMinorUpdate(
-        currentVersion,
-        details.previousVersion
-      )
+      const isMajorOrMinorUpdate = VersionManager.isMajorOrMinorUpdate(currentVersion, details.previousVersion)
 
       return isMajorOrMinorUpdate
     },
