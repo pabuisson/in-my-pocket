@@ -23,8 +23,7 @@ const PopupItemList = (function () {
   }
 
   function areAllItemsBuilt() {
-    const isInitialized =
-      itemsBuilding.itemsToCreate !== undefined && itemsBuilding.createdItemsCount !== undefined
+    const isInitialized = itemsBuilding.itemsToCreate !== undefined && itemsBuilding.createdItemsCount !== undefined
     const areAllItemsBuilt = itemsBuilding.createdItemsCount === itemsBuilding.itemsToCreate.length
 
     return isInitialized && areAllItemsBuilt
@@ -260,10 +259,7 @@ const PopupItemList = (function () {
   }
 
   function keyupEventListener(ev) {
-    if (
-      Utility.matchesOrHasParent(ev.target, "input.title") ||
-      Utility.matchesOrHasParent(ev.target, ".submit-edit")
-    ) {
+    if (Utility.matchesOrHasParent(ev.target, "input.title") || Utility.matchesOrHasParent(ev.target, ".submit-edit")) {
       if (ev.key === "Enter") {
         submitEdition(ev)
       }
@@ -314,11 +310,7 @@ const PopupItemList = (function () {
 
   function enterEdition(itemId, opts) {
     const initialItem = document.querySelector(`.item[data-id='${itemId}']`)
-    Logger.log(
-      `(PopupItemList.enterEdition) Existing title: ${
-        initialItem.querySelector("span.title").textContent
-      }`
-    )
+    Logger.log(`(PopupItemList.enterEdition) Existing title: ${initialItem.querySelector("span.title").textContent}`)
 
     const editionTemplate = document.querySelector("#item-edition-template")
     const clone = editionTemplate.content.cloneNode(true)
@@ -337,9 +329,7 @@ const PopupItemList = (function () {
       browser.storage.local.get("items", ({ items }) => {
         const itemsList = Utility.parseJson(items)
 
-        const itemTags = Array.from(initialItem.querySelectorAll("span.tag")).map(
-          tag => tag.textContent
-        )
+        const itemTags = Array.from(initialItem.querySelectorAll("span.tag")).map(tag => tag.textContent)
         const tagsContainer = clone.querySelector(".tags")
         const newTagField = clone.querySelector(".new-tag")
         for (const itemTag of itemTags) {
@@ -483,9 +473,7 @@ const PopupItemList = (function () {
           const openInNewTab = true
           switch (ev.button) {
             case MouseButtons.MIDDLE:
-              Logger.log(
-                `(PopupItemList.eventListener) Middle-click, force opening ${targetItemId} in new tab`
-              )
+              Logger.log(`(PopupItemList.eventListener) Middle-click, force opening ${targetItemId} in new tab`)
               openLink(targetItemId, openInNewTab)
               break
             case MouseButtons.LEFT:
@@ -529,12 +517,8 @@ const PopupItemList = (function () {
 
     // Will build DOM for items and insert it before the item whose id=beforeItemId
     insertItems: async function (items, beforeItemId) {
-      const beforeNode = document.querySelector(
-        `.item:not(.disappearing)[data-id='${beforeItemId}']`
-      )
-      Logger.log(
-        `(PopupItemList.insertItems) Insert ${items.length} items before item ${beforeItemId}`
-      )
+      const beforeNode = document.querySelector(`.item:not(.disappearing)[data-id='${beforeItemId}']`)
+      Logger.log(`(PopupItemList.insertItems) Insert ${items.length} items before item ${beforeItemId}`)
       Logger.log(`(PopupItemList.insertItems) Insert before ${beforeNode}`)
       const domToInsert = buildDomFragment(items)
       itemsContainer.insertBefore(domToInsert, beforeNode)
@@ -547,9 +531,7 @@ const PopupItemList = (function () {
     },
 
     getVisibleItemsIds: function () {
-      const visibleItems = itemsContainer.querySelectorAll(
-        `.item:not(.disappearing):not(.${CURRENT_ITEM_CLASS})`
-      )
+      const visibleItems = itemsContainer.querySelectorAll(`.item:not(.disappearing):not(.${CURRENT_ITEM_CLASS})`)
 
       return Array.from(visibleItems).map(item => item.dataset.id)
     },
