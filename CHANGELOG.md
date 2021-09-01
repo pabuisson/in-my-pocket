@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.1 - September 2021
+
+* FIX: using Firefox 82 or earlier versions, the right part of the popup content was not visible (and therefore, action buttons in the item list could not be seen and used at all). This has been fixed
+
 
 ## 0.12.0 - August 2021
 

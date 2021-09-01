@@ -64,9 +64,7 @@ const PopupUI = (function () {
 
       // Updates display.displayedAt and page + query if they have been reset
       Object.assign(displayOptions, { displayedAt: currentTimestamp })
-      Logger.log(
-        "(PopupUI.setupAuthenticatedUI) Save display variable to local storage: " + displayOptions
-      )
+      Logger.log("(PopupUI.setupAuthenticatedUI) Save display variable to local storage: " + displayOptions)
       browser.storage.local.set({ display: JSON.stringify(displayOptions) })
     })
   }
@@ -210,8 +208,7 @@ const PopupUI = (function () {
 
             for (const itemToRender of itemsToRender) {
               if (itemToRender.id != nextVisibleItemId) {
-                if (predecessorTable[nextVisibleItemId])
-                  predecessorTable[nextVisibleItemId].push(itemToRender)
+                if (predecessorTable[nextVisibleItemId]) predecessorTable[nextVisibleItemId].push(itemToRender)
                 else predecessorTable[nextVisibleItemId] = [itemToRender]
               } else {
                 nextVisibleItemId = itemIdsToKeep.shift() || "last"

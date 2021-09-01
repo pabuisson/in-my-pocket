@@ -24,11 +24,8 @@ body {
   font-family: sans-serif;
   background-color: $ff-grey-10;
 
+  // NOTE: used to set flex: 1 for direct descendants but it generated a bug for Firefox < 83
   display: flex;
-  .authenticated,
-  .authentication {
-    flex: 1;
-  }
 
   &.sidebar {
     height: 100%;
