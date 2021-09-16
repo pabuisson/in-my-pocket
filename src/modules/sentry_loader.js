@@ -14,6 +14,12 @@ const SentryLoader = (function () {
         Sentry.init({
           dsn: "https://1207d464a72f4c788936641a73b872a2@o153528.ingest.sentry.io/1206746",
           release: "in-my-pocket@" + VersionManager.getCurrentVersion(),
+          integrations: [
+            new Sentry.Integrations.GlobalHandlers({
+              onerror: true,
+              onunhandledrejection: false, // disable sentries for unhandled promise rejection errors
+            }),
+          ],
 
           // If returns null, nothing get sent to Sentry
           beforeSend(event) {
