@@ -58,7 +58,7 @@ const PopupItemList = (function () {
   }
 
   function resetUI() {
-    itemsContainer.innerHTML = ""
+    itemsContainer.textContent = ""
   }
 
   function buildFavoriteAction() {

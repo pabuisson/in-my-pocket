@@ -23,7 +23,7 @@ const PopupFlash = (function () {
     show: function (message, flashClass, delay) {
       flashContainer.classList.remove(Object.values(FlashKind))
       flashContainer.classList.add(flashClass)
-      flashContainer.innerHTML = message
+      flashContainer.textContent = message
       flashContainer.classList.remove("hidden")
 
       if (delay) {
