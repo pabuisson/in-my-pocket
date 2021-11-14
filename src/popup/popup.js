@@ -7,18 +7,93 @@ import Authentication from "../modules/authentication.js"
 import Badge from "../modules/badge.js"
 import BugReporter from "../modules/bug_reporter.js"
 import Logger from "../modules/logger.js"
-import { PopupFlash, FlashKind } from "../modules/popup_flash.js"
 import PopupMainLoader from "../modules/popup_main_loader.js"
 import PopupUI from "../modules/popup_ui.js"
-import { VersionManager } from "../modules/version_manager.js"
-import { PocketError, PocketNotice, MouseButtons } from "../modules/constants.js"
 import SentryLoader from "../modules/sentry_loader.js"
+import { PocketError, PocketNotice, MouseButtons } from "../modules/constants.js"
+import { PopupFlash, FlashKind } from "../modules/popup_flash.js"
+import { VersionManager } from "../modules/version_manager.js"
 
 // -------------
 
 SentryLoader.init()
 
 // --- EVENTS ---
+
+function onMessage(eventData) {
+  Logger.log(`(popup onMessage): ${eventData.action}`)
+
+  switch (eventData.action) {
+    case "authenticated":
+      window.location.reload() // For sidebar mode
+      window.close() // For popup (but doesn't close a sidebar)
+      browser.runtime.sendMessage({ action: "update-badge-count" })
+      break
+
+    case "marked-as-read":
+    case "deleted":
+      PopupUI.fadeOutItem(eventData.id)
+      PopupUI.updateList()
+      break
+
+    case "added-item":
+      PopupUI.updateList()
+      break
+
+    case "favorited":
+      PopupUI.favoriteItem(eventData.id)
+      break
+
+    case "unfavorited":
+      PopupUI.unfavoriteItem(eventData.id)
+      break
+
+    case "retrieved-items":
+      PopupUI.updateList()
+      Badge.updateCount()
+
+      if (eventData.full) {
+        if (PopupFlash.isNeedResyncMessageDisplayed()) {
+          PopupFlash.show("<strong>All your items have been resynced, thank you!<strong> 🤗", FlashKind.SUCCESS, 5000)
+        }
+      }
+      break
+  }
+}
+
+function onError(eventData) {
+  Logger.warn(`(popup onError): ${eventData}`)
+
+  let flashMessage = "An error occurred: "
+  switch (eventData.error) {
+    case PocketError.UNREACHABLE:
+      flashMessage += "could not reach the server"
+      break
+    case PocketError.UNAUTHORIZED:
+      flashMessage += "unauthorized, you might need to login again"
+      break
+    case PocketError.PERMISSIONS:
+      flashMessage += "missing permissions"
+      break
+    case PocketError.RATE_LIMIT:
+      flashMessage += "max requests reached for this hour"
+      flashMessage += ` (reset in ${eventData.resetDelay})`
+      break
+  }
+
+  // Show flash message + flash the badge if an error occured
+  PopupFlash.show(flashMessage, FlashKind.ERROR, 5000)
+  browser.runtime.sendMessage({ action: "flash-error" })
+  BugReporter.captureException({ error: eventData.error })
+}
+
+function onNotice(eventData) {
+  Logger.warn(`(popup onNotice) : ${eventData}`)
+
+  if (eventData.notice === PocketNotice.ALREADY_IN_LIST) {
+    PopupFlash.show("This page is already in your Pocket :)", FlashKind.NOTICE, 5000)
+  }
+}
 
 // prevent general.autoScroll
 document.body.onmousedown = e => {
@@ -57,80 +132,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Listen for message from background
   browser.runtime.onMessage.addListener(function (eventData) {
     PopupMainLoader.disable()
-
-    if (eventData.error || eventData.notice) {
-      Logger.warn("(popup onMessage) : " + eventData)
-
-      if (eventData.error) {
-        let flashMessage = "An error occurred: "
-        switch (eventData.error) {
-          case PocketError.UNREACHABLE:
-            flashMessage += "could not reach the server"
-            break
-          case PocketError.UNAUTHORIZED:
-            flashMessage += "unauthorized, you might need to login again"
-            break
-          case PocketError.PERMISSIONS:
-            flashMessage += "missing permissions"
-            break
-          case PocketError.RATE_LIMIT:
-            flashMessage += "max requests reached for this hour"
-            flashMessage += ` (reset in ${eventData.resetDelay})`
-            break
-        }
-
-        // Show flash message + flash the badge if an error occured
-        PopupFlash.show(flashMessage, FlashKind.ERROR, 5000)
-        browser.runtime.sendMessage({ action: "flash-error" })
-        BugReporter.captureException({ error: eventData.error })
-      } else if (eventData.notice) {
-        if (eventData.notice === PocketNotice.ALREADY_IN_LIST) {
-          PopupFlash.show("This page is already in your Pocket :)", FlashKind.NOTICE, 5000)
-        }
-      }
+    if (eventData.error) {
+      onError(eventData)
+    } else if (eventData.notice) {
+      onNotice(eventData)
     } else {
-      Logger.log(`(popup onMessage) : ${eventData.action}`)
-
-      switch (eventData.action) {
-        case "authenticated":
-          window.location.reload() // For sidebar mode
-          window.close() // For popup (but doesn't close a sidebar)
-          browser.runtime.sendMessage({ action: "update-badge-count" })
-          break
-
-        case "marked-as-read":
-        case "deleted":
-          PopupUI.fadeOutItem(eventData.id)
-          PopupUI.updateList()
-          break
-
-        case "added-item":
-          PopupUI.updateList()
-          break
-
-        case "favorited":
-          PopupUI.favoriteItem(eventData.id)
-          break
-
-        case "unfavorited":
-          PopupUI.unfavoriteItem(eventData.id)
-          break
-
-        case "retrieved-items":
-          PopupUI.updateList()
-          Badge.updateCount()
-
-          if (eventData.full) {
-            if (PopupFlash.isNeedResyncMessageDisplayed()) {
-              PopupFlash.show(
-                "<strong>All your items have been resynced, thank you!<strong> 🤗",
-                FlashKind.SUCCESS,
-                5000
-              )
-            }
-          }
-          break
-      }
+      onMessage(eventData)
     }
   })
 })
