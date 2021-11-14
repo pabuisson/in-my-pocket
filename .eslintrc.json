@@ -25,13 +25,13 @@
           ]
         }
       ],
-      "complexity": "error",
+      "complexity": ["error", { "max": 15 }],
       "indent": ["warn", 2, { "SwitchCase": 1 }],
       "linebreak-style": ["error", "unix"],
       "max-depth": "error",
       "max-len": ["warn", { "code": 120 }],
-      "max-lines": "warn",
-      "max-lines-per-function": [ "warn", { "skipBlankLines": true, "skipComments": true }],
+      "max-lines": ["warn", { "max": 200 }],
+      "max-lines-per-function": [ "warn", { "max": 40, "skipBlankLines": true, "skipComments": true }],
       "max-params": "warn",
       "no-trailing-spaces": "error",
       "no-prototype-builtins": "off",
