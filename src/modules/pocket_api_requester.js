@@ -1,6 +1,5 @@
 "use strict"
 
-import FeatureSwitches from "./feature_switches.js"
 import Logger from "./logger.js"
 import Request from "./request.js"
 import { consumerKey } from "./constants.js"

@@ -2,7 +2,6 @@
 
 import Badge from "./badge.js"
 import BugReporter from "./bug_reporter.js"
-import FeatureSwitches from "./feature_switches.js"
 import Logger from "./logger.js"
 import PageAction from "./page_action.js"
 import PocketApiRequester from "./pocket_api_requester.js"

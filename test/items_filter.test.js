@@ -1,4 +1,3 @@
-import FeatureSwitch from "../src/modules/feature_switches.js"
 import Items from "../src/modules/items.js"
 
 describe("Items.filter", () => {

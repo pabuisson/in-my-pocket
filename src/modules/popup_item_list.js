@@ -1,6 +1,5 @@
 "use strict"
 
-import FeatureSwitches from "./feature_switches.js"
 import Items from "../modules/items.js"
 import Logger from "../modules/logger.js"
 import PopupUI from "../modules/popup_ui.js"
