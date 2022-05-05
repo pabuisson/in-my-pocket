@@ -76,7 +76,7 @@
       "suggested_key": {
         "default": "Alt+W"
       },
-      "description": "Send a 'toggle-page-status' event: adds the page to the item list, or archive it if it's already there"
+      "description": "Adds the current page to the item list, or archive it if it's already there"
     },
     "_execute_browser_action": {
       "suggested_key": {
@@ -94,13 +94,13 @@
       "suggested_key": {
         "default": "Alt+F"
       },
-      "description": "Send a 'open-first-item' event: opens the first item of the list"
+      "description": "Opens the first item of the list"
     },
     "open-random-item": {
       "suggested_key": {
         "default": "Alt+R"
       },
-      "description": "Send a 'open-random-item' event: opens a random item of the list"
+      "description": "Opens a random item of the list"
     }
   }
 }
