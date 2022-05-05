@@ -61,66 +61,7 @@ const PopupItemList = (function () {
     itemsContainer.textContent = ""
   }
 
-  function buildFavoriteAction() {
-    const favoriteAction = document.createElement("div")
-    const favoriteElement = document.createElement("div")
-    const favoriteIconFont = document.createElement("i")
-    const favoriteLoadElement = document.createElement("div")
-    favoriteAction.className = "favorite-action"
-    favoriteIconFont.classList.add("icon", "ion-md-star")
-    favoriteElement.className = "favorite"
-    favoriteLoadElement.classList.add("loader", "hidden")
-    favoriteElement.appendChild(favoriteIconFont)
-    favoriteAction.appendChild(favoriteElement)
-    favoriteAction.appendChild(favoriteLoadElement)
-
-    return favoriteAction
-  }
-
-  function buildTickAction() {
-    const tickAction = document.createElement("div")
-    const tickElement = document.createElement("div")
-    const tickIconFont = document.createElement("i")
-    const tickLoadElement = document.createElement("div")
-    tickAction.className = "tick-action"
-    tickIconFont.classList.add("icon", "ion-md-checkmark")
-    tickElement.className = "tick"
-    tickLoadElement.classList.add("loader", "hidden")
-    tickElement.appendChild(tickIconFont)
-    tickAction.appendChild(tickElement)
-    tickAction.appendChild(tickLoadElement)
-
-    return tickAction
-  }
-
-  function buildDeleteAction() {
-    const deleteAction = document.createElement("div")
-    const trashElement = document.createElement("div")
-    const trashIconFont = document.createElement("i")
-    const trashLoadElement = document.createElement("div")
-    deleteAction.className = "delete-action"
-    trashIconFont.classList.add("icon", "ion-md-trash")
-    trashElement.className = "trash"
-    trashLoadElement.classList.add("loader", "hidden")
-    trashElement.appendChild(trashIconFont)
-    deleteAction.appendChild(trashElement)
-    deleteAction.appendChild(trashLoadElement)
-
-    return deleteAction
-  }
-
-  function buildActionsContainer() {
-    const actionContainer = document.createElement("div")
-    actionContainer.className = "actions-container"
-
-    actionContainer.appendChild(buildTickAction())
-    actionContainer.appendChild(buildFavoriteAction())
-    actionContainer.appendChild(buildDeleteAction())
-
-    return actionContainer
-  }
-
-  function buildItemElementWithHtmlTemplate(item, opts) {
+  function buildItemElement(item, opts = { current: false }) {
     const clone = itemTemplate.content.cloneNode(true)
 
     const li = clone.querySelector("li")
@@ -162,60 +103,6 @@ const PopupItemList = (function () {
     }
 
     return clone
-  }
-
-  function buildItemElementWithJavascript(item, opts) {
-    const liElement = document.createElement("li")
-    const faviconElement = document.createElement("img")
-    const titleContent = document.createElement("span")
-    const urlContent = document.createElement("span")
-    const tagsContent = document.createElement("span")
-    const urlAndTagsContent = document.createElement("span")
-
-    liElement.className = "item"
-    if (item.fav == 1) liElement.classList.add("favorite")
-    if (opts.current) liElement.classList.add(CURRENT_ITEM_CLASS)
-
-    faviconElement.className = "favicon"
-    titleContent.className = "title"
-    urlContent.className = "url"
-    tagsContent.className = "tags"
-    urlAndTagsContent.className = "url-and-tags"
-
-    faviconElement.setAttribute("src", faviconUrl(item.url))
-
-    titleContent.appendChild(faviconElement)
-    titleContent.appendChild(document.createTextNode(formatTitle(item.title)))
-
-    urlContent.appendChild(document.createTextNode(formatUrl(item.url)))
-    urlAndTagsContent.appendChild(urlContent)
-
-    if (FeatureSwitches.TAGS_ENABLED && item.tags && item.tags.length > 0) {
-      for (const tag of item.tags) {
-        const tagElement = document.createElement("span")
-        tagElement.className = "tag"
-        tagElement.textContent = tag
-        tagsContent.appendChild(tagElement)
-      }
-      urlAndTagsContent.appendChild(tagsContent)
-    }
-
-    liElement.appendChild(buildActionsContainer())
-    liElement.appendChild(titleContent)
-    liElement.appendChild(urlAndTagsContent)
-
-    liElement.dataset.id = item.id
-    liElement.dataset.fav = item.fav
-
-    return liElement
-  }
-
-  function buildItemElement(item, opts = { current: false }) {
-    if (FeatureSwitches.HTML_TEMPLATES) {
-      return buildItemElementWithHtmlTemplate(item, opts)
-    } else {
-      return buildItemElementWithJavascript(item, opts)
-    }
   }
 
   function buildDomFragment(items) {
@@ -504,9 +391,6 @@ const PopupItemList = (function () {
 
     buildAll: function (items, currentItem) {
       Logger.log("(PopupItemList.buildAll)")
-
-      // Remove previous "requestAnimationFrame" registered in case
-      if (!FeatureSwitches.HTML_TEMPLATES) cancelAnimationFrame(buildBatch)
 
       // Reset list component content
       resetUI()
