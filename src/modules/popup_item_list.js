@@ -86,7 +86,7 @@ const PopupItemList = (function () {
     const url = li.getElementsByClassName("url")[0]
     url.textContent = formatUrl(item.url)
 
-    if (FeatureSwitches.TAGS_ENABLED && item.tags && item.tags.length > 0) {
+    if (item.tags && item.tags.length > 0) {
       const tagsElement = li.getElementsByClassName("tags")[0]
       for (const tag of item.tags) {
         const tagElement = document.createElement("span")
@@ -212,43 +212,39 @@ const PopupItemList = (function () {
       titleField.focus()
     }, 100)
 
-    if (FeatureSwitches.TAGS_ENABLED) {
-      browser.storage.local.get("items", ({ items }) => {
-        const itemsList = Utility.parseJson(items)
+    browser.storage.local.get("items", ({ items }) => {
+      const itemsList = Utility.parseJson(items)
 
-        const itemTags = Array.from(initialItem.querySelectorAll("span.tag")).map(tag => tag.textContent)
-        const tagsContainer = clone.querySelector(".tags")
-        const newTagField = clone.querySelector(".new-tag")
-        for (const itemTag of itemTags) {
-          const tagElement = document.createElement("span")
-          tagElement.classList.add("tag")
-          tagElement.setAttribute("tabIndex", -1)
-          tagElement.textContent = itemTag
+      const itemTags = Array.from(initialItem.querySelectorAll("span.tag")).map(tag => tag.textContent)
+      const tagsContainer = clone.querySelector(".tags")
+      const newTagField = clone.querySelector(".new-tag")
+      for (const itemTag of itemTags) {
+        const tagElement = document.createElement("span")
+        tagElement.classList.add("tag")
+        tagElement.setAttribute("tabIndex", -1)
+        tagElement.textContent = itemTag
 
-          tagsContainer.insertBefore(tagElement, newTagField)
-        }
+        tagsContainer.insertBefore(tagElement, newTagField)
+      }
 
-        // Tags datalist
-        const allExistingTags = [...new Set(itemsList.flatMap(item => item.tags))]
-        const tagsDatalist = clone.querySelector("#tags-datalist")
-        for (const tag of allExistingTags.sort()) {
-          const tagOption = document.createElement("option")
-          tagOption.value = tag
-          tagOption.textContent = tag
+      // Tags datalist
+      const allExistingTags = [...new Set(itemsList.flatMap(item => item.tags))]
+      const tagsDatalist = clone.querySelector("#tags-datalist")
+      for (const tag of allExistingTags.sort()) {
+        const tagOption = document.createElement("option")
+        tagOption.value = tag
+        tagOption.textContent = tag
 
-          tagsDatalist.appendChild(tagOption)
-        }
+        tagsDatalist.appendChild(tagOption)
+      }
 
-        // Focused events on new-tag: must outline the outer div,
-        // and not the new-tag input itself
-        newTagField.addEventListener("focus", () => tagsContainer.classList.add("focused"))
-        newTagField.addEventListener("blur", () => tagsContainer.classList.remove("focused"))
+      // Focused events on new-tag: must outline the outer div,
+      // and not the new-tag input itself
+      newTagField.addEventListener("focus", () => tagsContainer.classList.add("focused"))
+      newTagField.addEventListener("blur", () => tagsContainer.classList.remove("focused"))
 
-        initialItem.parentNode.replaceChild(clone, initialItem)
-      })
-    } else {
       initialItem.parentNode.replaceChild(clone, initialItem)
-    }
+    })
   }
 
   function cancelEdition(ev) {
@@ -274,11 +270,9 @@ const PopupItemList = (function () {
     const editedTitle = targetItem.querySelector("input.title").value
 
     let uniqueEditedTags = []
-    if (FeatureSwitches.TAGS_ENABLED) {
-      const editedTagElements = targetItem.querySelectorAll(".tags .tag")
-      const editedTags = Array.from(editedTagElements).map(tag => tag.textContent.trim())
-      uniqueEditedTags = [...new Set(editedTags)]
-    }
+    const editedTagElements = targetItem.querySelectorAll(".tags .tag")
+    const editedTags = Array.from(editedTagElements).map(tag => tag.textContent.trim())
+    uniqueEditedTags = [...new Set(editedTags)]
 
     browser.storage.local.get("items").then(({ items }) => {
       const matchingItem = Items.find(items, { id: targetItemId })

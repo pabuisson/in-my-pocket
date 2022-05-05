@@ -40,9 +40,7 @@ const Items = (function () {
     const isTaggedCriteria = lowerQuery.includes("is:tagged")
     const isUntaggedCriteria = lowerQuery.includes("is:untagged")
 
-    const keywordsToStripRegexp = FeatureSwitches.TAGS_ENABLED
-      ? /is:(faved|unfaved|tagged|untagged)/g
-      : /is:(faved|unfaved)/g
+    const keywordsToStripRegexp = /is:(faved|unfaved|tagged|untagged)/g
     const textCriteria = lowerQuery.replace(keywordsToStripRegexp, "").trim()
 
     return (
@@ -62,13 +60,10 @@ const Items = (function () {
     const lowerUrl = (item.url.replace(protocolsRemovalRegex, "") || "").toLowerCase()
     const lowerTitle = (item.title || "").toLowerCase()
 
-    const tags =
-      FeatureSwitches.TAGS_ENABLED && item.tags ? item.tags.map(tag => tag.toLowerCase()) : []
+    const tags = item.tags ? item.tags.map(tag => tag.toLowerCase()) : []
 
     return (
-      lowerTitle.includes(textToMatch) ||
-      lowerUrl.includes(textToMatch) ||
-      tags.find(tag => tag.includes(textToMatch))
+      lowerTitle.includes(textToMatch) || lowerUrl.includes(textToMatch) || tags.find(tag => tag.includes(textToMatch))
     )
   }
 
@@ -84,8 +79,6 @@ const Items = (function () {
   }
 
   function matchTaggedUntagged(item, keepTagged, keepUntagged) {
-    if (!FeatureSwitches.TAGS_ENABLED) return true
-
     if (keepTagged) {
       return item.tags && item.tags.length > 0
     } else if (keepUntagged) {
@@ -103,8 +96,7 @@ const Items = (function () {
 
     browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
       const apiRequester = new PocketApiRequester(access_token)
-      const removalPromise =
-        method == "archive" ? apiRequester.archive(itemId) : apiRequester.delete(itemId)
+      const removalPromise = method == "archive" ? apiRequester.archive(itemId) : apiRequester.delete(itemId)
 
       removalPromise
         .then(response => {
@@ -186,8 +178,7 @@ const Items = (function () {
     browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
       Badge.startLoadingSpinner()
       const requester = new PocketApiRequester(access_token)
-      const request =
-        action === "favorite" ? requester.favorite(itemId) : requester.unfavorite(itemId)
+      const request = action === "favorite" ? requester.favorite(itemId) : requester.unfavorite(itemId)
 
       request
         .then(response => {
@@ -227,7 +218,7 @@ const Items = (function () {
         fav: itemFromApi.favorite,
         created_at: itemFromApi.time_added,
         updated_at: itemFromApi.time_updated,
-        tags: FeatureSwitches.TAGS_ENABLED ? Object.keys(itemFromApi.tags || {}) : [],
+        tags: Object.keys(itemFromApi.tags || {}),
       }
     },
 
@@ -341,7 +332,7 @@ const Items = (function () {
             // Update item in parsedItems
             const updatedItem = parsedItems.find(item => item.id == itemId)
             updatedItem.title = details.title
-            updatedItem.tags = FeatureSwitches.TAGS_ENABLED ? details.tags : []
+            updatedItem.tags = details.tags
 
             // TODO: store the time_updated? but it's not in the add/send payload
             //       maybe the time_updated being touched, it will simply come
@@ -385,10 +376,7 @@ const Items = (function () {
 
         Badge.startLoadingSpinner()
         const requester = new PocketApiRequester(access_token)
-        const request =
-          newItemsToAdd.length === 1
-            ? requester.add(newItemsToAdd[0])
-            : requester.addBatch(newItemsToAdd)
+        const request = newItemsToAdd.length === 1 ? requester.add(newItemsToAdd[0]) : requester.addBatch(newItemsToAdd)
 
         request
           .then(response => {

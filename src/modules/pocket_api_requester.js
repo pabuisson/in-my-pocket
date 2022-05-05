@@ -118,25 +118,23 @@ class PocketApiRequester {
       },
     ]
 
-    if (FeatureSwitches.TAGS_ENABLED) {
-      const addedTags = tags.filter(tag => !previousTags.includes(tag))
-      const removedTags = previousTags.filter(previousTag => !tags.includes(previousTag))
+    const addedTags = tags.filter(tag => !previousTags.includes(tag))
+    const removedTags = previousTags.filter(previousTag => !tags.includes(previousTag))
 
-      if (addedTags.length > 0) {
-        actions.push({
-          action: "tags_add",
-          item_id: itemId,
-          tags: addedTags,
-        })
-      }
+    if (addedTags.length > 0) {
+      actions.push({
+        action: "tags_add",
+        item_id: itemId,
+        tags: addedTags,
+      })
+    }
 
-      if (removedTags.length > 0) {
-        actions.push({
-          action: "tags_remove",
-          item_id: itemId,
-          tags: removedTags,
-        })
-      }
+    if (removedTags.length > 0) {
+      actions.push({
+        action: "tags_remove",
+        item_id: itemId,
+        tags: removedTags,
+      })
     }
 
     const requestUrl = "https://getpocket.com/v3/send"

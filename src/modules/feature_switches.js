@@ -1,7 +1,5 @@
 "use strict"
 
-const FeatureSwitches = {
-  TAGS_ENABLED: true,
-}
+const FeatureSwitches = {}
 
 export default FeatureSwitches

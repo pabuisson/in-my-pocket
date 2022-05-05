@@ -173,14 +173,7 @@ describe("Items.filter", () => {
     })
   })
 
-  context("tags (if FeatureSwitch.TAGS_ENABLED)", () => {
-    before(function () {
-      FeatureSwitch.TAGS_ENABLED = true
-    })
-    after(function () {
-      FeatureSwitch.TAGS_ENABLED = false
-    })
-
+  context("tags", () => {
     context("query on tagged status", () => {
       it("returns tagged items if query contains is:tagged", () => {
         const query = "is:tagged"
@@ -276,12 +269,7 @@ describe("Items.filter", () => {
         url: "https://other.com",
         tags: ["other-tag"],
       }
-      const items = JSON.stringify([
-        matchingTextAndTag,
-        matchingTextNotTag,
-        matchingTagNotText,
-        notMatchingAnything,
-      ])
+      const items = JSON.stringify([matchingTextAndTag, matchingTextNotTag, matchingTagNotText, notMatchingAnything])
 
       it("returns items matching on title or tag", () => {
         const query = "matching"
@@ -297,14 +285,7 @@ describe("Items.filter", () => {
     })
   })
 
-  context("combinining tagged and favorited status (if FeatureSwitch.TAGS_ENABLED)", () => {
-    before(function () {
-      FeatureSwitch.TAGS_ENABLED = true
-    })
-    after(function () {
-      FeatureSwitch.TAGS_ENABLED = false
-    })
-
+  context("combinining tagged and favorited status", () => {
     const favoritedAndTagged = {
       title: "some text",
       url: "https://url.com",
@@ -319,12 +300,7 @@ describe("Items.filter", () => {
       tags: ["some-tag"],
     }
     const unfavedNotTagged = { title: "some text", url: "https://url.com", fav: "0", tags: [] }
-    const items = JSON.stringify([
-      favoritedAndTagged,
-      favoritedNotTagged,
-      unfavedAndTagged,
-      unfavedNotTagged,
-    ])
+    const items = JSON.stringify([favoritedAndTagged, favoritedNotTagged, unfavedAndTagged, unfavedNotTagged])
 
     it("is:faved is:tagged returns items matching both", () => {
       const query = "is:faved is:tagged"
