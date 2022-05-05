@@ -82,7 +82,13 @@
       "suggested_key": {
         "default": "Alt+Q"
       },
-      "description": "Open the popup containing pocket items"
+      "description": "Open Pocket list in popup"
+    },
+    "_execute_sidebar_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+Q"
+      },
+      "description": "Open Pocket list in sidebar"
     },
     "open-first-item": {
       "suggested_key": {

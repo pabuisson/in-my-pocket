@@ -54,7 +54,7 @@
       "suggested_key": {
         "default": "Alt+Q"
       },
-      "description": "Open the popup containing pocket items"
+      "description": "Open Pocket list in popup"
     },
     "open-first-item": {
       "suggested_key": {
