@@ -247,19 +247,19 @@ const PopupItemList = (function () {
   }
 
   function cancelEdition(ev) {
-    const targetItem = Utility.getParent(ev.target, ".item")
-    const targetItemId = targetItem.dataset.id
+    const targetItemElement = Utility.getParent(ev.target, ".item")
+    const targetItemId = targetItemElement.dataset.id
     browser.storage.local.get("items").then(({ items }) => {
       const matchingItem = Items.find(items, { id: targetItemId })
       Logger.log(`(PopupItemList.cancelEdition) Cancel editing item ${targetItemId}`)
 
       // Rebuild a li with the not edited item
       const restoredItem = buildItemElement(matchingItem, {
-        current: targetItem.classList.contains(CURRENT_ITEM_CLASS),
+        current: targetItemElement.classList.contains(CURRENT_ITEM_CLASS),
       })
 
       // Replace the current "form" item with the new built item
-      targetItem.parentNode.replaceChild(restoredItem, targetItem)
+      targetItemElement.parentNode.replaceChild(restoredItem, targetItemElement)
     })
   }
 
@@ -296,11 +296,11 @@ const PopupItemList = (function () {
           title: editedTitle,
           tags: uniqueEditedTags,
         },
-        { current: targetItem.classList.contains(CURRENT_ITEM_CLASS) }
+        { current: targetItemElement.classList.contains(CURRENT_ITEM_CLASS) }
       )
 
       // Replace the current "form" item with the new built item
-      targetItem.parentNode.replaceChild(updatedItem, targetItem)
+      targetItemElement.parentNode.replaceChild(updatedItem, targetItemElement)
     })
   }
 
@@ -323,8 +323,8 @@ const PopupItemList = (function () {
           return
         }
 
-        const targetItem = Utility.getParent(ev.target, ".item")
-        const targetItemId = targetItem.dataset.id
+        const targetItemElement = Utility.getParent(ev.target, ".item")
+        const targetItemId = targetItemElement.dataset.id
 
         if (Utility.matchesOrHasParent(ev.target, ".delete-action")) {
           if (ev.button === MouseButtons.LEFT) {
@@ -345,7 +345,7 @@ const PopupItemList = (function () {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Edit item ${targetItemId}`)
             enterEdition(targetItemId, {
-              current: targetItem.classList.contains(CURRENT_ITEM_CLASS),
+              current: targetItemElement.classList.contains(CURRENT_ITEM_CLASS),
             })
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".cancel-edit")) {
