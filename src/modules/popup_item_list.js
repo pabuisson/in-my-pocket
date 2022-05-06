@@ -264,29 +264,30 @@ const PopupItemList = (function () {
   }
 
   function submitEdition(ev) {
-    const targetItem = Utility.getParent(ev.target, ".item")
-    const targetItemId = targetItem.dataset.id
-    const editedTitle = targetItem.querySelector("input.title").value
+    const targetItemElement = Utility.getParent(ev.target, ".item")
+    const targetItemId = targetItemElement.dataset.id
+    const editedTitle = targetItemElement.querySelector("input.title").value
 
-    let uniqueEditedTags = []
-    const editedTagElements = targetItem.querySelectorAll(".tags .tag")
+    const editedTagElements = targetItemElement.querySelectorAll(".tags .tag")
     const editedTags = Array.from(editedTagElements).map(tag => tag.textContent.trim())
-    uniqueEditedTags = [...new Set(editedTags)]
+    const uniqueEditedTags = [...new Set(editedTags)]
 
     browser.storage.local.get("items").then(({ items }) => {
       const matchingItem = Items.find(items, { id: targetItemId })
-      Logger.log(`(PopupItemList.submitEdition) Update item ${targetItemId}`)
 
-      // Send message to background for actual item update + send to API
-      browser.runtime.sendMessage({
-        action: "update-item",
-        id: matchingItem.id,
-        title: editedTitle,
-        tags: uniqueEditedTags,
-        previousTags: matchingItem.tags,
-        url: matchingItem.url,
-        created_at: matchingItem.created_at,
-      })
+      // Send message to background for actual item update + send to API, if items have actually been updated
+      if (!Items.areSame(matchingItem, { title: editedTitle, tags: uniqueEditedTags })) {
+        Logger.log(`(PopupItemList.submitEdition) Update item ${targetItemId}`)
+        browser.runtime.sendMessage({
+          action: "update-item",
+          id: matchingItem.id,
+          title: editedTitle,
+          tags: uniqueEditedTags,
+          previousTags: matchingItem.tags,
+          url: matchingItem.url,
+          created_at: matchingItem.created_at,
+        })
+      }
 
       // Rebuild a li with the edited item
       const updatedItem = buildItemElement(

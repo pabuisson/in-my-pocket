@@ -3,6 +3,7 @@
 ## 0.12.2 - Not shipped yet
 
 * UPDATE: add a keyboard shortcut to open the Pocket list in the sidebar. By default, it's set to Alt+Shift+Q, but feel free to update it with your favorite keyboard shortcut!
+* PERFS only send an update request to Pocket API when the item has actually been modified
 
 
 ## 0.12.1 - September 2021
