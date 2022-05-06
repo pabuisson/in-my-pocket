@@ -235,8 +235,11 @@ body {
     // Relies on max-height since height is no longer fixed
     &.disappearing {
       max-height: 0;
+      margin-top: 0;
+      margin-bottom: 0;
       padding: 0;
       opacity: 0;
+      border-top-width: 0px;
       border-bottom-width: 0px;
     }
 
