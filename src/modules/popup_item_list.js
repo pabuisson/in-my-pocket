@@ -308,10 +308,10 @@ const PopupItemList = (function () {
 
   function togglePlaceholderVisibility(itemsCount) {
     if (itemsCount > 0) {
-      listComponent.classList.remove("hidden")
+      itemsContainer.classList.remove("hidden")
       placeholderNoResults.classList.add("hidden")
     } else {
-      listComponent.classList.add("hidden")
+      itemsContainer.classList.add("hidden")
       placeholderNoResults.classList.remove("hidden")
     }
   }
@@ -567,7 +567,7 @@ const PopupItemList = (function () {
             const itemIdsToDelete = visibleItemsIds.filter(id => !itemsToRenderIds.includes(id))
 
             // First step: all removed items still visible must disappear
-            fadeOutItem(...itemIdsToDelete)
+            PopupItemList.fadeOutItem(...itemIdsToDelete)
 
             // Second step: prepare the insertion of all missing items
             // Generate a table of all predecessors, to use insertBefore/appendChild to build the DOM
