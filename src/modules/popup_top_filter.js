@@ -1,7 +1,7 @@
 "use strict"
 
 import Logger from "./logger.js"
-import PopupUI from "./popup_ui.js"
+import PopupItemList from "./popup_item_list.js"
 import PopupMainLoader from "./popup_main_loader.js"
 import Utility from "./utility.js"
 import { FavoriteFilterState } from "./constants.js"
@@ -31,7 +31,7 @@ const PopupTopFilter = (function () {
 
     // Draw the items lists and update visual state
     Logger.log(`(onFilterChanged) will draw list with query=${query}`)
-    PopupUI.drawList({ page: 1, query: query })
+    PopupItemList.drawList({ page: 1, query: query })
     PopupTopFilter.updateFavoriteFilterIcon()
     PopupMainLoader.disable(true)
   }

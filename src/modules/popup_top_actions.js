@@ -2,7 +2,7 @@
 
 import PopupMainLoader from "./popup_main_loader.js"
 import PopupTopFilter from "./popup_top_filter"
-import PopupUI from "./popup_ui"
+import PopupItemList from "./popup_item_list.js"
 import Utility from "./utility"
 import { FavoriteFilterState } from "./constants"
 
@@ -51,7 +51,7 @@ const PopupTopActions = (function () {
           browser.storage.local.set({ display: JSON.stringify(displayOptions) })
         })
 
-        PopupUI.drawList({ page: 1, query: newQuery })
+        PopupItemList.drawList({ page: 1, query: newQuery })
       })
 
       addCurrentPageButton.addEventListener("click", function () {

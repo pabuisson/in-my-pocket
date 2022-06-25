@@ -1,7 +1,7 @@
 "use strict"
 
 import Logger from "./logger.js"
-import PopupUI from "./popup_ui.js"
+import PopupItemList from "./popup_item_list.js"
 import Settings from "./settings.js"
 import Utility from "./utility.js"
 import { parseIntBase } from "./constants.js"
@@ -22,8 +22,8 @@ const PopupPagination = (function () {
       const currentPage = display ? parsedDisplay.currentPage : 1
 
       Logger.log(`(PopupPagination) Load previous page: from ${currentPage} to ${currentPage - 1}`)
-      PopupUI.drawList({ page: currentPage - 1 })
-      PopupUI.scrollToTop()
+      PopupItemList.drawList({ page: currentPage - 1 })
+      PopupItemList.scrollToTop()
     })
   }
 
@@ -33,8 +33,8 @@ const PopupPagination = (function () {
       const currentPage = display ? parsedDisplay.currentPage : 1
 
       Logger.log(`(PopupPagination) Load next page: from ${currentPage} to ${currentPage + 1}`)
-      PopupUI.drawList({ page: currentPage + 1 })
-      PopupUI.scrollToTop()
+      PopupItemList.drawList({ page: currentPage + 1 })
+      PopupItemList.scrollToTop()
     })
   }
 
@@ -42,8 +42,8 @@ const PopupPagination = (function () {
     const pageToLoad = parseInt(event.target.value, parseIntBase)
 
     Logger.log(`(PopupPagination) Load page ${pageToLoad}`)
-    PopupUI.drawList({ page: pageToLoad })
-    PopupUI.scrollToTop()
+    PopupItemList.drawList({ page: pageToLoad })
+    PopupItemList.scrollToTop()
   }
 
   // ---------------
@@ -90,9 +90,7 @@ const PopupPagination = (function () {
     const pagesCount = Math.ceil(itemsCount / perPage)
 
     if (pagesCount === 0 || pagesCount === 1) {
-      Logger.log(
-        `(PopupPagination.updateButtonsState) Only 1 page, disable "next" & "previous" links`
-      )
+      Logger.log(`(PopupPagination.updateButtonsState) Only 1 page, disable "next" & "previous" links`)
 
       disableButton(paginationPreviousPageButton, previousPageEventListener)
       disableButton(paginationNextPageButton, nextPageEventListener)
@@ -102,17 +100,13 @@ const PopupPagination = (function () {
 
       // First page
       if (page === 1) {
-        Logger.log(
-          `(PopupPagination.updateButtonsState) Page 1/${pagesCount}, disable "previous" link`
-        )
+        Logger.log(`(PopupPagination.updateButtonsState) Page 1/${pagesCount}, disable "previous" link`)
         disableButton(paginationPreviousPageButton, previousPageEventListener)
       }
 
       // Last page
       if (page === pagesCount) {
-        Logger.log(
-          `(PopupPagination.updateButtonsState) Page ${page}/${pagesCount}, disable "next" link`
-        )
+        Logger.log(`(PopupPagination.updateButtonsState) Page ${page}/${pagesCount}, disable "next" link`)
         disableButton(paginationNextPageButton, nextPageEventListener)
       }
     }

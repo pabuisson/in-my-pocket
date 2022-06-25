@@ -2,8 +2,9 @@
 
 import Items from "../modules/items.js"
 import Logger from "../modules/logger.js"
-import PopupUI from "../modules/popup_ui.js"
+import PopupPagination from "../modules/popup_pagination.js"
 import PopupTagEdition from "../modules/popup_tag_edition.js"
+import Settings from "../modules/settings.js"
 import TextSelectionHandler from "../modules/text_selection_handler.js"
 import Utility from "../modules/utility.js"
 import { MouseButtons, concealedProtocols } from "../modules/constants.js"
@@ -13,6 +14,7 @@ import { MouseButtons, concealedProtocols } from "../modules/constants.js"
 const PopupItemList = (function () {
   const ITEMS_PER_BATCH = 200
   const CURRENT_ITEM_CLASS = "current-page"
+  const placeholderNoResults = document.querySelector(".search-no-results")
   const itemsContainer = document.querySelector(".list-component")
   const itemTemplate = document.querySelector("#item-template")
   const itemsBuilding = {
@@ -304,6 +306,90 @@ const PopupItemList = (function () {
     })
   }
 
+  function togglePlaceholderVisibility(itemsCount) {
+    if (itemsCount > 0) {
+      listComponent.classList.remove("hidden")
+      placeholderNoResults.classList.add("hidden")
+    } else {
+      listComponent.classList.add("hidden")
+      placeholderNoResults.classList.remove("hidden")
+    }
+  }
+
+  function getCurrentPageItem(items, currentUrl) {
+    const currentPageItem = (Utility.parseJson(items) || []).find(item => {
+      const possibleUrls = Utility.getPossibleUrls(item)
+      return possibleUrls.includes(currentUrl)
+    })
+
+    return currentPageItem
+  }
+
+  function updateFavoriteStatus(items) {
+    items.forEach(item => {
+      const itemElement = document.querySelector(`.item[data-id='${item.id}']`)
+      if (item.fav === "1") {
+        itemElement.classList.add("favorite")
+        itemElement.dataset.fav = "1"
+      } else if (item.fav === "0") {
+        itemElement.classList.remove("favorite")
+        itemElement.dataset.fav = "0"
+      }
+    })
+  }
+
+  function toggleFavorite(itemId) {
+    const item = document.querySelector(`.item[data-id='${itemId}']`)
+    const isFaved = item.dataset.fav
+    item.querySelector(".favorite-action .favorite").classList.add("hidden")
+    item.querySelector(".favorite-action .loader").classList.remove("hidden")
+
+    browser.runtime.sendMessage({
+      action: isFaved === "1" ? "unfavorite" : "favorite",
+      id: itemId,
+    })
+  }
+
+  function markAsRead(itemId) {
+    const item = document.querySelector(`.item[data-id='${itemId}']`)
+    item.classList.add("removing")
+    item.querySelector(".tick-action .tick").classList.add("hidden")
+    item.querySelector(".tick-action .loader").classList.remove("hidden")
+
+    browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {
+      browser.runtime.sendMessage({ action: "mark-as-read", id: itemId, tabId: currentTab.id })
+    })
+  }
+
+  function deleteItem(itemId) {
+    const item = document.querySelector(`.item[data-id='${itemId}']`)
+    item.classList.add("removing")
+    item.querySelector(".delete-action .trash").classList.add("hidden")
+    item.querySelector(".delete-action .loader").classList.remove("hidden")
+
+    browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {
+      browser.runtime.sendMessage({ action: "delete-item", id: itemId, tabId: currentTab.id })
+    })
+  }
+
+  function getVisibleItemsIds() {
+    const visibleItems = itemsContainer.querySelectorAll(`.item:not(.disappearing):not(.${CURRENT_ITEM_CLASS})`)
+    return Array.from(visibleItems).map(item => item.dataset.id)
+  }
+
+  function updateCurrentItem(item) {
+    const currentPageItemElement = itemsContainer.querySelector(`.${CURRENT_ITEM_CLASS}`)
+    const newCurrentPageItemElement = buildCurrentItem(item)
+
+    if (currentPageItemElement) {
+      if (currentPageItemElement.dataset.id !== item.id) {
+        itemsContainer.replaceChild(newCurrentPageItemElement, currentPageItemElement)
+      }
+    } else {
+      itemsContainer.insertBefore(newCurrentPageItemElement, itemsContainer.firstChild)
+    }
+  }
+
   return {
     setupEventListeners: function () {
       document.addEventListener("keyup", keyupEventListener)
@@ -329,17 +415,17 @@ const PopupItemList = (function () {
         if (Utility.matchesOrHasParent(ev.target, ".delete-action")) {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Clicked delete for item ${targetItemId}`)
-            PopupUI.deleteItem(targetItemId)
+            deleteItem(targetItemId)
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".tick-action")) {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Clicked tick for item ${targetItemId}`)
-            PopupUI.markAsRead(targetItemId)
+            markAsRead(targetItemId)
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".favorite-action")) {
           if (ev.button === MouseButtons.LEFT) {
             Logger.log(`(PopupItemList.eventListener) Clicked favorite for item ${targetItemId}`)
-            PopupUI.toggleFavorite(targetItemId)
+            toggleFavorite(targetItemId)
           }
         } else if (Utility.matchesOrHasParent(ev.target, ".edit-action")) {
           if (ev.button === MouseButtons.LEFT) {
@@ -383,8 +469,16 @@ const PopupItemList = (function () {
       })
     },
 
-    buildAll: function (items, currentItem) {
-      Logger.log("(PopupItemList.buildAll)")
+    scrollToTop: function () {
+      if (itemsContainer.scrollTop > 0) {
+        setTimeout(() => {
+          itemsContainer.scrollTo(0, 0)
+        }, 50)
+      }
+    },
+
+    buildAllItems: function (items, currentItem) {
+      Logger.log("(PopupItemList.buildAllItems)")
 
       // Reset list component content
       resetUI()
@@ -394,11 +488,128 @@ const PopupItemList = (function () {
       itemsBuilding.createdItemsCount = 0
 
       // Build and append current item
-      if (currentItem) PopupItemList.updateCurrentItem(currentItem)
+      if (currentItem) updateCurrentItem(currentItem)
 
       // Build the rest of the items list
-      Logger.log("(PopupItemList.buildAll) Request a 1st animation frame for buildBatch method")
+      Logger.log("(PopupItemList.buildAllItems) Request a 1st animation frame for buildBatch method")
       requestAnimationFrame(buildBatch)
+    },
+
+    // TODO: extract more of the pagination logic from here
+    // TODO: add some logging for paging and so forth
+    // TODO: reduce duplication with updateList !?
+    drawList: function (opts = {}) {
+      Settings.init()
+        .then(function () {
+          return Settings.get("perPage")
+        })
+        .then(function (perPage) {
+          browser.storage.local.get(["items", "display"]).then(async ({ items, display }) => {
+            const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
+            const query = opts.query || parsedDisplay.query
+            const pageToDisplay = opts.page || parsedDisplay.currentPage
+            const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
+
+            // Parse and filter the item list
+            const currentPageItem = await getCurrentPageItem(items, currentTab.url)
+            const filteredItems = Items.filter(items, query, currentTab.url)
+            const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
+
+            // Display the "no results" message or hide it
+            togglePlaceholderVisibility(itemsToRender.length + (currentPageItem ? 1 : 0))
+
+            // Rebuild all items
+            PopupItemList.buildAllItems(itemsToRender, currentPageItem)
+
+            // Record currentPage and query, in case they've been "forced" through the opts param
+            // `displayedAt` value must remain the same (that's why we assign `parsedDisplay`)
+            const actualDisplay = { currentPage: pageToDisplay, query: query }
+            const displayOptions = Object.assign({}, parsedDisplay, actualDisplay)
+            browser.storage.local.set({ display: JSON.stringify(displayOptions) })
+
+            // Updates the PopupUI: page selector with the current page options
+            PopupPagination.updatePaginationUI(pageToDisplay, perPage, filteredItems.length)
+          })
+        })
+
+      return
+    },
+
+    // TODO: extract more of the pagination logic from here
+    // TODO: add some logging for paging and so forth
+    // TODO: reduce duplication with drawList !?
+    updateList: function (opts = {}) {
+      Settings.init()
+        .then(function () {
+          return Settings.get("perPage")
+        })
+        .then(function (perPage) {
+          browser.storage.local.get(["items", "display"]).then(async ({ items, display }) => {
+            const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
+            const query = opts.query || parsedDisplay.query
+            const pageToDisplay = opts.page || parsedDisplay.currentPage
+            const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
+
+            // Parse and filter the item list
+            const currentPageItem = await getCurrentPageItem(items, currentTab.url)
+            const filteredItems = Items.filter(items, query, currentTab.url)
+            const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
+            const itemsToRenderIds = itemsToRender.map(item => item.id)
+
+            // Display the "no results" message or hide it
+            togglePlaceholderVisibility(itemsToRender.length + (currentPageItem ? 1 : 0))
+
+            if (currentPageItem) updateCurrentItem(currentPageItem)
+
+            // Rebuild all items
+            const visibleItemsIds = getVisibleItemsIds()
+            const itemIdsToKeep = visibleItemsIds.filter(id => itemsToRenderIds.includes(id))
+            const itemIdsToDelete = visibleItemsIds.filter(id => !itemsToRenderIds.includes(id))
+
+            // First step: all removed items still visible must disappear
+            fadeOutItem(...itemIdsToDelete)
+
+            // Second step: prepare the insertion of all missing items
+            // Generate a table of all predecessors, to use insertBefore/appendChild to build the DOM
+            const predecessorTable = {}
+            let nextVisibleItemId = itemIdsToKeep.shift()
+
+            for (const itemToRender of itemsToRender) {
+              if (itemToRender.id != nextVisibleItemId) {
+                if (predecessorTable[nextVisibleItemId]) predecessorTable[nextVisibleItemId].push(itemToRender)
+                else predecessorTable[nextVisibleItemId] = [itemToRender]
+              } else {
+                nextVisibleItemId = itemIdsToKeep.shift() || "last"
+              }
+            }
+
+            // Use the predecessor table to inject the new items at the proper place in the list
+            for (const key in predecessorTable) {
+              const itemsToInject = predecessorTable[key]
+              if (key != "last") {
+                // When key is an ID, we insert before the node having this ID
+                PopupItemList.insertItems(itemsToInject, key)
+              } else {
+                // When key is 'last', we append the dom at the end of the list
+                PopupItemList.appendItems(itemsToInject)
+              }
+            }
+
+            // Last step: update faved/unfaved items
+            updateFavoriteStatus(itemsToRender)
+
+            // Record currentPage and query, in case they've been "forced" through the opts param
+            // `displayedAt` value must remain the same (that's why we assign `parsedDisplay`)
+            const actualDisplay = { currentPage: pageToDisplay, query: query }
+            const displayOptions = Object.assign({}, parsedDisplay, actualDisplay)
+            browser.storage.local.set({ display: JSON.stringify(displayOptions) })
+
+            // Updates the PopupUI: page selector with the current page options
+            PopupPagination.updatePaginationUI(pageToDisplay, perPage, filteredItems.length)
+          })
+        })
+
+      return
     },
 
     // Will build DOM for items and insert it before the item whose id=beforeItemId
@@ -416,23 +627,27 @@ const PopupItemList = (function () {
       itemsContainer.appendChild(domToAppend)
     },
 
-    getVisibleItemsIds: function () {
-      const visibleItems = itemsContainer.querySelectorAll(`.item:not(.disappearing):not(.${CURRENT_ITEM_CLASS})`)
-
-      return Array.from(visibleItems).map(item => item.dataset.id)
+    fadeOutItem: (...itemIds) => {
+      itemIds.forEach(itemId => {
+        Logger.log(`(PopupItemList.fadeOutItem) Will make ${itemId} item disappear from the list`)
+        document.querySelector(`.item[data-id='${itemId}']`).classList.add("disappearing")
+      })
     },
 
-    updateCurrentItem: function (item) {
-      const currentPageItemElement = itemsContainer.querySelector(`.${CURRENT_ITEM_CLASS}`)
-      const newCurrentPageItemElement = buildCurrentItem(item)
+    favoriteItem: itemId => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`)
+      item.querySelector(".favorite-action .favorite").classList.remove("hidden")
+      item.querySelector(".favorite-action .loader").classList.add("hidden")
+      item.classList.add("favorite")
+      item.dataset.fav = "1"
+    },
 
-      if (currentPageItemElement) {
-        if (currentPageItemElement.dataset.id !== item.id) {
-          itemsContainer.replaceChild(newCurrentPageItemElement, currentPageItemElement)
-        }
-      } else {
-        itemsContainer.insertBefore(newCurrentPageItemElement, itemsContainer.firstChild)
-      }
+    unfavoriteItem: itemId => {
+      const item = document.querySelector(`.item[data-id='${itemId}']`)
+      item.querySelector(".favorite-action .favorite").classList.remove("hidden")
+      item.querySelector(".favorite-action .loader").classList.add("hidden")
+      item.classList.remove("favorite")
+      item.dataset.fav = "0"
     },
   }
 })()

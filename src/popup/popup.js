@@ -6,6 +6,7 @@ import "./popup.scss"
 import Badge from "../modules/badge.js"
 import BugReporter from "../modules/bug_reporter.js"
 import Logger from "../modules/logger.js"
+import PopupItemList from "../modules/popup_item_list.js"
 import PopupMainLoader from "../modules/popup_main_loader.js"
 import PopupUI from "../modules/popup_ui.js"
 import SentryLoader from "../modules/sentry_loader.js"
@@ -30,24 +31,24 @@ function onMessage(eventData) {
 
     case "marked-as-read":
     case "deleted":
-      PopupUI.fadeOutItem(eventData.id)
-      PopupUI.updateList()
+      PopupItemList.fadeOutItem(eventData.id)
+      PopupItemList.updateList()
       break
 
     case "added-item":
-      PopupUI.updateList()
+      PopupItemList.updateList()
       break
 
     case "favorited":
-      PopupUI.favoriteItem(eventData.id)
+      PopupItemList.favoriteItem(eventData.id)
       break
 
     case "unfavorited":
-      PopupUI.unfavoriteItem(eventData.id)
+      PopupItemList.unfavoriteItem(eventData.id)
       break
 
     case "retrieved-items":
-      PopupUI.updateList()
+      PopupItemList.updateList()
       Badge.updateCount()
 
       if (eventData.full) {
