@@ -3,7 +3,6 @@
 import "./popup.html"
 import "./popup.scss"
 
-import Authentication from "../modules/authentication.js"
 import Badge from "../modules/badge.js"
 import BugReporter from "../modules/bug_reporter.js"
 import Logger from "../modules/logger.js"
@@ -12,7 +11,6 @@ import PopupUI from "../modules/popup_ui.js"
 import SentryLoader from "../modules/sentry_loader.js"
 import { PocketError, PocketNotice, MouseButtons } from "../modules/constants.js"
 import { PopupFlash, FlashKind } from "../modules/popup_flash.js"
-import { VersionManager } from "../modules/version_manager.js"
 
 // -------------
 
@@ -111,23 +109,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Setup the UI and draw the list with items already in memory
   PopupUI.setup()
-
-  browser.storage.local
-    .get(["access_token", "lastFullSyncAtVersion"])
-    .then(({ access_token, lastFullSyncAtVersion }) => {
-      if (access_token && VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)) {
-        PopupFlash.showNeedResyncMessage()
-      }
-    })
-
-  Authentication.isAuthenticated().then(() => {
-    PopupUI.drawList()
-    // Enable the loading animation and try to update the list of items
-    setTimeout(() => {
-      PopupMainLoader.enable()
-      browser.runtime.sendMessage({ action: "retrieve-items", force: false })
-    }, 1000)
-  })
 
   // Listen for message from background
   browser.runtime.onMessage.addListener(function (eventData) {

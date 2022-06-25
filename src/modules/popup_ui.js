@@ -4,11 +4,14 @@ import Authentication from "../modules/authentication.js"
 import Items from "../modules/items.js"
 import Logger from "../modules/logger.js"
 import PopupItemList from "../modules/popup_item_list.js"
+import PopupMainLoader from "../modules/popup_main_loader.js"
 import PopupPagination from "../modules/popup_pagination.js"
 import PopupTopActions from "../modules/popup_top_actions.js"
 import PopupTopFilter from "../modules/popup_top_filter.js"
 import Settings from "../modules/settings.js"
 import Utility from "../modules/utility.js"
+import { VersionManager } from "../modules/version_manager.js"
+import { PopupFlash } from "../modules/popup_flash.js"
 
 // ----------------
 
@@ -34,6 +37,8 @@ const PopupUI = (function () {
   }
 
   function setupAuthenticatedUI() {
+    Logger.log("(PopupUI.setupAuthenticatedUI)")
+
     // User is authenticated
     document.querySelector(".authentication").classList.add("hidden")
     document.querySelector(".authenticated").classList.remove("hidden")
@@ -90,6 +95,16 @@ const PopupUI = (function () {
     })
   }
 
+  function ensureFullResyncTriggeredIfNeeded() {
+    browser.storage.local
+      .get(["access_token", "lastFullSyncAtVersion"])
+      .then(({ access_token, lastFullSyncAtVersion }) => {
+        if (access_token && VersionManager.mustTriggerFullResync(lastFullSyncAtVersion)) {
+          PopupFlash.showNeedResyncMessage()
+        }
+      })
+  }
+
   function togglePlaceholderVisibility(itemsCount) {
     if (itemsCount > 0) {
       listComponent.classList.remove("hidden")
@@ -110,22 +125,28 @@ const PopupUI = (function () {
   }
 
   return {
+    inSidebar: () => window.location.search.includes("ui=sidebar"),
+    inPopup: () => window.location.search.includes("ui=popup"),
+
     setup: function () {
-      // Set default zoom level based on Settings
       setZoomLevel()
 
       Authentication.isAuthenticated().then(
         () => {
           setupAuthenticatedUI()
+          ensureFullResyncTriggeredIfNeeded()
+          PopupUI.drawList()
+
+          setTimeout(() => {
+            PopupMainLoader.enable()
+            browser.runtime.sendMessage({ action: "retrieve-items", force: false })
+          }, 1000)
         },
         () => {
           setupUnauthenticatedUI()
         }
       )
     },
-
-    inSidebar: () => window.location.search.includes("ui=sidebar"),
-    inPopup: () => window.location.search.includes("ui=popup"),
 
     // TODO: extract more of the pagination logic from here
     // TODO: add some logging for paging and so forth
