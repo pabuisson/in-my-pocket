@@ -559,12 +559,17 @@ const PopupItemList = (function () {
             // Display the "no results" message or hide it
             togglePlaceholderVisibility(itemsToRender.length + (currentPageItem ? 1 : 0))
 
-            if (currentPageItem) updateCurrentItem(currentPageItem)
-
             // Rebuild all items
             const visibleItemsIds = getVisibleItemsIds()
             const itemIdsToKeep = visibleItemsIds.filter(id => itemsToRenderIds.includes(id))
             const itemIdsToDelete = visibleItemsIds.filter(id => !itemsToRenderIds.includes(id))
+
+            // if no currentPageItem anymore && a current page item is displayed,
+            // then we get its id and add it to the list of items to delete
+            const currentPageItemElement = itemsContainer.querySelector(`.${CURRENT_ITEM_CLASS}`)
+            if (!currentPageItem && currentPageItemElement) {
+              itemIdsToDelete.push(currentPageItemElement.dataset.id)
+            }
 
             // First step: all removed items still visible must disappear
             PopupItemList.fadeOutItem(...itemIdsToDelete)

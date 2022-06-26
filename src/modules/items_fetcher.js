@@ -20,9 +20,7 @@ const ItemsFetcher = (function () {
 
       browser.storage.local.get(["items", "last_retrieve"]).then(({ items, last_retrieve }) => {
         const timeSinceLastRetrieve = currentTimestamp - last_retrieve
-        Logger.log(
-          `(ItemsFetcher.retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`
-        )
+        Logger.log(`(ItemsFetcher.retrieveItems) timeout: ${timeSinceLastRetrieve} / ${intervalWithoutReload}`)
 
         if (force || !items || !last_retrieve) {
           // If force == true, we always reload the whole list
@@ -78,9 +76,7 @@ const ItemsFetcher = (function () {
                 ItemsFetcher.retrieveAll(retrievedItemsCount + offset)
                 return
               } else if (retrievedItemsCount === 0) {
-                Logger.log(
-                  `(ItemsFetcher.retrieveAll) 0 item in this page, all pages have been fetched succesfully`
-                )
+                Logger.log(`(ItemsFetcher.retrieveAll) 0 item in this page, all pages have been fetched succesfully`)
 
                 // Save timestamp where we retrieved items for the last time
                 // Save addon version that did the last full sync
@@ -129,35 +125,22 @@ const ItemsFetcher = (function () {
                 switch (item.status) {
                   case PocketApiStatus.ARCHIVED:
                   case PocketApiStatus.DELETED:
-                    Logger.log(
-                      `(ItemsFetcher.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.title})`
-                    )
+                    Logger.log(`(ItemsFetcher.retriveDiff) NEED TO ARCHIVE: ${itemId} (${item.title})`)
 
                     if (itemIndex >= 0) {
-                      Logger.log(
-                        "(ItemsFetcher.retrieveDiff) Item found,  will be removed from the stored items"
-                      )
+                      Logger.log("(ItemsFetcher.retrieveDiff) Item found,  will be removed from the stored items")
                       allItems.splice(itemIndex, 1)
                     } else {
-                      Logger.warn(
-                        "(ItemsFetcher.retrieveDiff) Could not find the item to archive in the stored items"
-                      )
+                      Logger.warn("(ItemsFetcher.retrieveDiff) Could not find the item to archive in the stored items")
                     }
                     break
 
                   case PocketApiStatus.CREATED:
                     if (itemIndex >= 0) {
-                      Logger.log(
-                        `(ItemsFetcher.retriveDiff) Existing item ${itemId} (${item.title}) will be updated`
-                      )
-                      allItems[itemIndex] = Object.assign(
-                        allItems[itemIndex],
-                        Items.formatPocketItemForStorage(item)
-                      )
+                      Logger.log(`(ItemsFetcher.retriveDiff) Existing item ${itemId} (${item.title}) will be updated`)
+                      allItems[itemIndex] = Object.assign(allItems[itemIndex], Items.formatPocketItemForStorage(item))
                     } else {
-                      Logger.log(
-                        `(ItemsFetcher.retriveDiff) Add new item: ${itemId} (${item.title})`
-                      )
+                      Logger.log(`(ItemsFetcher.retriveDiff) Add new item: ${itemId} (${item.title})`)
                       allItems.push({ id: item.item_id, ...Items.formatPocketItemForStorage(item) })
                     }
                     break
@@ -186,9 +169,7 @@ const ItemsFetcher = (function () {
 
               // Even if something went wrong while retrieving diff, we still can display the current
               // items, so we send the `retrieved-items` event back to popup to build the item list
-              Logger.warn(
-                `(ItemsFetcher.retrieveDiff) something went wrong: ${JSON.stringify(error)}`
-              )
+              Logger.warn(`(ItemsFetcher.retrieveDiff) something went wrong: ${JSON.stringify(error)}`)
 
               // Send a message back to the UI and updates the tabs page actions
               browser.runtime.sendMessage({ action: "retrieved-items" })
