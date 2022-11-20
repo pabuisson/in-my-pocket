@@ -40,9 +40,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
       })
     })
     .catch(() => {
-      Logger.log(
-        "(pageAction.tabsOnActivated) User not authenticated, no need to update pageAction"
-      )
+      Logger.log("(pageAction.tabsOnActivated) User not authenticated, no need to update pageAction")
     })
 })
 
@@ -59,14 +57,10 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
             const containsItem = Items.contains(items, query)
 
             if (containsItem) {
-              Logger.log(
-                `(pageAction.tabsOnActivated) switch to tab ${currentUrl} that IS in my list`
-              )
+              Logger.log(`(pageAction.tabsOnActivated) switch to tab ${currentUrl} that IS in my list`)
               PageAction.drawEnabled(tabId)
             } else {
-              Logger.log(
-                `(pageAction.tabsOnActivated) switch to tab ${currentUrl}, NOT in my list yet`
-              )
+              Logger.log(`(pageAction.tabsOnActivated) switch to tab ${currentUrl}, NOT in my list`)
               PageAction.drawDisabled(tabId)
             }
 
@@ -75,8 +69,6 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
         })
     })
     .catch(() => {
-      Logger.log(
-        "(pageAction.tabsOnActivated) User not authenticated, no need to update pageAction"
-      )
+      Logger.log("(pageAction.tabsOnActivated) User not authenticated, no need to update pageAction")
     })
 })

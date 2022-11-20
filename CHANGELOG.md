@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.12.2 - Not shipped yet
+## 0.12.3 - Not released yet
+
+* FIX: when clicking the "+" icon in the popup, the item you just added was not added to the list right away. It's now fixed! Thanks for your bug reports that allowed me to spot this one 🙌
+
+
+## 0.12.2 - October 2022
 
 * UPDATE: add a keyboard shortcut to open the Pocket list in the sidebar. By default, it's set to Alt+Shift+Q, but feel free to update it with your favorite keyboard shortcut!
 * UPDATE: improve the keyboard shortcuts description

@@ -2,6 +2,7 @@
 
 import Items from "../modules/items.js"
 import Logger from "../modules/logger.js"
+import { defaultDisplaySetting } from "../modules/popup_ui.js"
 import PopupPagination from "../modules/popup_pagination.js"
 import PopupTagEdition from "../modules/popup_tag_edition.js"
 import Settings from "../modules/settings.js"
@@ -378,6 +379,7 @@ const PopupItemList = (function () {
   }
 
   function updateCurrentItem(item) {
+    Logger.log(`(PopupItemList.updateCurrentItem) ${item}`)
     const currentPageItemElement = itemsContainer.querySelector(`.${CURRENT_ITEM_CLASS}`)
     const newCurrentPageItemElement = buildCurrentItem(item)
 
@@ -539,6 +541,7 @@ const PopupItemList = (function () {
     // TODO: add some logging for paging and so forth
     // TODO: reduce duplication with drawList !?
     updateList: function (opts = {}) {
+      Logger.log("PopupItemList.updateList")
       Settings.init()
         .then(function () {
           return Settings.get("perPage")
@@ -562,17 +565,22 @@ const PopupItemList = (function () {
             // Rebuild all items
             const visibleItemsIds = getVisibleItemsIds()
             const itemIdsToKeep = visibleItemsIds.filter(id => itemsToRenderIds.includes(id))
-            const itemIdsToDelete = visibleItemsIds.filter(id => !itemsToRenderIds.includes(id))
+            const itemIdsToHide = visibleItemsIds.filter(id => !itemsToRenderIds.includes(id))
 
-            // if no currentPageItem anymore && a current page item is displayed,
-            // then we get its id and add it to the list of items to delete
-            const currentPageItemElement = itemsContainer.querySelector(`.${CURRENT_ITEM_CLASS}`)
-            if (!currentPageItem && currentPageItemElement) {
-              itemIdsToDelete.push(currentPageItemElement.dataset.id)
+            if (currentPageItem) {
+              // if there is a currentPageItem then we need to build or update it
+              updateCurrentItem(currentPageItem)
+            } else {
+              // if no currentPageItem && the current page item is still displayed,
+              // then we get its id and add it to the list of items to delete
+              const currentPageItemElement = itemsContainer.querySelector(`.${CURRENT_ITEM_CLASS}`)
+              if (currentPageItemElement) {
+                itemIdsToHide.push(currentPageItemElement.dataset.id)
+              }
             }
 
             // First step: all removed items still visible must disappear
-            PopupItemList.fadeOutItem(...itemIdsToDelete)
+            PopupItemList.fadeOutItem(...itemIdsToHide)
 
             // Second step: prepare the insertion of all missing items
             // Generate a table of all predecessors, to use insertBefore/appendChild to build the DOM
@@ -628,6 +636,7 @@ const PopupItemList = (function () {
 
     // Will build DOM for items and insert it at the end of the list container
     appendItems: async function (items) {
+      Logger.log(`(PopupItemList.appendItems) Append ${items.length} items`)
       const domToAppend = buildDomFragment(items)
       itemsContainer.appendChild(domToAppend)
     },

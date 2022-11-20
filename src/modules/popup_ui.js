@@ -14,9 +14,10 @@ import { PopupFlash } from "../modules/popup_flash.js"
 
 // ----------------
 
+const defaultDisplaySetting = { currentPage: 1, query: "" }
+
 const PopupUI = (function () {
   const intervalWithoutOpening = 5 * 60
-  const defaultDisplaySetting = { currentPage: 1, query: "" }
 
   function setupEventListeners() {
     PopupPagination.setupEventListeners()
@@ -127,4 +128,5 @@ const PopupUI = (function () {
   }
 })()
 
+export { defaultDisplaySetting }
 export default PopupUI

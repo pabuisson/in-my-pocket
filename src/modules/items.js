@@ -89,6 +89,7 @@ const Items = (function () {
   }
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module
+  // method: archive|delete
   function removeItem(itemId, method, tabId) {
     Logger.log("(Items.removeItem) id to remove: " + itemId)
     Badge.startLoadingSpinner()
