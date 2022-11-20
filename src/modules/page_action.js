@@ -11,8 +11,10 @@ const PageAction = (function () {
   function pageActionEnabled() {
     const promise = new Promise((resolve, reject) => {
       Settings.init().then(() => {
-        Logger.log("page action enabled ? " + Settings.get("showPageAction"))
-        if (Settings.get("showPageAction")) {
+        const showPageActionSetting = Settings.get("showPageAction")
+        Logger.log(`page action enabled ? ${showPageActionSetting}`)
+
+        if (showPageActionSetting) {
           resolve()
         } else {
           reject()

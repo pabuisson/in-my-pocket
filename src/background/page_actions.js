@@ -20,24 +20,27 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
 
   Authentication.isAuthenticated()
     .then(() => {
-      browser.tabs.get(tabId).then(tab => {
-        if (tab.active) {
-          browser.storage.local.get("items").then(({ items }) => {
-            const query = Utility.getQuery(tab.url)
-            const containsItem = Items.contains(items, query)
+      browser.tabs
+        .get(tabId)
+        .then(tab => {
+          if (tab.active) {
+            browser.storage.local.get("items").then(({ items }) => {
+              const query = Utility.getQuery(tab.url)
+              const containsItem = Items.contains(items, query)
 
-            if (containsItem) {
-              Logger.log(`(pageAction.tabsOnUpdated) loading ${tab.url} that IS in my list`)
-              PageAction.drawEnabled(tabId)
-              PageAction.show(tabId)
-            } else {
-              Logger.log(`(pageAction.tabsOnUpdated) loading ${tab.url}, NOT in my list yet`)
-              PageAction.drawDisabled(tabId)
-              PageAction.show(tabId)
-            }
-          })
-        }
-      })
+              if (containsItem) {
+                Logger.log(`(pageAction.tabsOnUpdated) loading ${tab.url} that IS in my list`)
+                PageAction.drawEnabled(tabId)
+                PageAction.show(tabId)
+              } else {
+                Logger.log(`(pageAction.tabsOnUpdated) loading ${tab.url}, NOT in my list yet`)
+                PageAction.drawDisabled(tabId)
+                PageAction.show(tabId)
+              }
+            })
+          }
+        })
+        .catch(error => Logger.warn(`(pageAction.tabsOnUpdated) ${error}`))
     })
     .catch(() => {
       Logger.log("(pageAction.tabsOnActivated) User not authenticated, no need to update pageAction")
@@ -67,6 +70,7 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
             PageAction.show(tabId)
           })
         })
+        .catch(error => Logger.warn(`(pageAction.tabsOnActivated) ${error}`))
     })
     .catch(() => {
       Logger.log("(pageAction.tabsOnActivated) User not authenticated, no need to update pageAction")
