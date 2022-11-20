@@ -493,7 +493,9 @@ const Items = (function () {
 
     areSame: function (item1, item2) {
       const sameTitle = item1.title === item2.title
-      const sameTags = JSON.stringify(item1.tags.sort()) === JSON.stringify(item2.tags.sort())
+      const item1Tags = (item1.tags || []).sort()
+      const item2Tags = (item2.tags || []).sort()
+      const sameTags = JSON.stringify(item1Tags) === JSON.stringify(item2Tags)
       return sameTitle && sameTags
     },
   }

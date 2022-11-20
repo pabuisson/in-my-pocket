@@ -20,7 +20,7 @@ describe("Items.areSame", () => {
     })
   })
 
-  describe("change in tags", () => {
+  describe("difference in tags", () => {
     it("returns false if same title but removed a tag", () => {
       const otherItem = { title: "Hello World", tags: ["tag1"] }
       expect(Items.areSame(item, otherItem)).to.equal(false)
@@ -39,6 +39,11 @@ describe("Items.areSame", () => {
 
   it("returns false if same tags but different title", () => {
     const otherItem = { title: "Bonjour le Monde", tags: ["tag1", "tag2"] }
+    expect(Items.areSame(item, otherItem)).to.equal(false)
+  })
+
+  it("does not crash if tags is undefined for an item", () => {
+    const otherItem = { title: "Hello World" }
     expect(Items.areSame(item, otherItem)).to.equal(false)
   })
 })

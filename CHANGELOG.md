@@ -3,6 +3,7 @@
 ## 0.12.3 - Not released yet
 
 * FIX: when clicking the "+" icon in the popup, the item you just added was not added to the list right away. It's now fixed! Thanks for your bug reports that allowed me to spot this one 🙌
+* FIX: sometimes, working with items tags was crashing because of an unknown tags value. This is now correclty handled and you should experience fewer problems with tag management
 
 
 ## 0.12.2 - October 2022
