@@ -33,7 +33,7 @@ const PopupUI = (function () {
     })
   }
 
-  function setupAuthenticatedUI() {
+  async function setupAuthenticatedUI() {
     Logger.log("(PopupUI.setupAuthenticatedUI)")
 
     // User is authenticated
@@ -46,29 +46,33 @@ const PopupUI = (function () {
     // Set up the event listeners on the UI
     setupEventListeners()
 
-    browser.storage.local.get("display").then(({ display }) => {
-      const currentTimestamp = (Date.now() / 1000) | 0
-      const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
-      const lastDisplay = parsedDisplay.displayedAt
+    const {display} = await browser.storage.local.get("display");
 
-      const displayOptions = Object.assign({}, parsedDisplay)
+    const currentTimestamp = (Date.now() / 1000) | 0
+    const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
+    const lastDisplay = parsedDisplay.displayedAt
 
-      // Reset query and currentPage if more than `intervalWithoutOpening` since last opening
-      if (lastDisplay && currentTimestamp - lastDisplay > intervalWithoutOpening) {
-        Logger.log("(PopupUI.setupAuthenticatedUI) reset page to 1 and filter to ''")
-        Object.assign(displayOptions, defaultDisplaySetting)
-      }
+    const displayOptions = Object.assign({}, parsedDisplay)
 
-      // Set initial filter value in the PopupUI and focus the field
-      PopupTopFilter.setValue(displayOptions.query)
-      PopupTopFilter.updateFavoriteFilterIcon()
-      PopupTopFilter.focusSearchField()
+    // Reset query and currentPage if more than `intervalWithoutOpening` since last opening
+    if (lastDisplay && currentTimestamp - lastDisplay > intervalWithoutOpening) {
+      Logger.log(`(PopupUI.setupAuthenticatedUI) time elapsed=${currentTimestamp - lastDisplay}`)
+      Logger.log("(PopupUI.setupAuthenticatedUI) reset page to 1 and filter to ''")
+      Object.assign(displayOptions, defaultDisplaySetting)
+    }
 
-      // Updates display.displayedAt and page + query if they have been reset
-      Object.assign(displayOptions, { displayedAt: currentTimestamp })
-      Logger.log("(PopupUI.setupAuthenticatedUI) Save display variable to local storage: " + displayOptions)
-      browser.storage.local.set({ display: JSON.stringify(displayOptions) })
-    })
+    // Set initial filter value in the PopupUI and focus the field
+    PopupTopFilter.setValue(displayOptions.query)
+    PopupTopFilter.updateFavoriteFilterIcon()
+    PopupTopFilter.focusSearchField()
+
+    // Updates display.displayedAt and page + query if they have been reset
+    Object.assign(displayOptions, { displayedAt: currentTimestamp })
+    Logger.log("(PopupUI.setupAuthenticatedUI) Save display variable to local storage: " +
+      JSON.stringify(displayOptions))
+    await browser.storage.local.set({ display: JSON.stringify(displayOptions) });
+    // FIXME: popupItemList and popupUI pass `display` via browser.storage, which is slow.
+    PopupItemList.drawList();
   }
 
   function setupUnauthenticatedUI() {
@@ -113,7 +117,6 @@ const PopupUI = (function () {
         () => {
           setupAuthenticatedUI()
           ensureFullResyncTriggeredIfNeeded()
-          PopupItemList.drawList()
 
           setTimeout(() => {
             PopupMainLoader.enable()

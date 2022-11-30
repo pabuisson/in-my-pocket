@@ -21,15 +21,15 @@ const Settings = (function () {
     closeTabWhenRead: false,
   }
 
-  function load() {
-    return browser.storage.local.get("settings").then(data => {
-      _loaded = true
+  async function load() {
+    if (_loaded) return;
+    const data = await browser.storage.local.get("settings");
+    _loaded = true
 
-      settings = Object.assign(settings, defaultSettings)
-      if (data && data.settings) {
-        settings = Object.assign(settings, Utility.parseJson(data.settings) || {})
-      }
-    })
+    settings = Object.assign(settings, defaultSettings)
+    if (data && data.settings) {
+      settings = Object.assign(settings, Utility.parseJson(data.settings) || {})
+    }
   }
 
   return {

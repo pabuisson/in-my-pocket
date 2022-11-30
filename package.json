@@ -29,7 +29,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "scripts": {
-    "clean": "rm -rf build/*",
+    "clean": "npx shx rm -rf build/*",
     "build": "npm run clean && npx webpack",
     "watch": "npm run clean && npx webpack -w",
     "package": "npm run build && npm run package-firefox && npm run package-chrome && npm run zip-source",

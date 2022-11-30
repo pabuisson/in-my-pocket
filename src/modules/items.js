@@ -223,6 +223,7 @@ const Items = (function () {
     },
 
     filter: function (rawItems, query, currentUrl) {
+      Logger.log(`(Items.filter) query=${query}, currentUrl=${currentUrl}`);
       return parseItems(rawItems).filter(item => {
         let mustKeep = true
 
@@ -447,34 +448,42 @@ const Items = (function () {
       removeItem(itemId, "delete", tabId)
     },
 
+    openItem: async (item, forceNewTab = false, getTargetTab) => {
+      await Settings.init();
+      const openInNewTab = Settings.get("openInNewTab") || forceNewTab
+      const archiveWhenOpened = Settings.get("archiveWhenOpened")
+      const options = { url: item.url };
+      if (openInNewTab) {
+        browser.tabs.create(options);
+      } else {
+        const targetTab = getTargetTab && await getTargetTab();
+        if (targetTab) {
+          browser.tabs.update(targetTab.id, options);
+        } else {
+          browser.tabs.update(options);
+        }
+      }
+
+      if (archiveWhenOpened) {
+        Items.markAsRead(item.id)
+      }
+    },
+
     open: function (itemId, forceNewTab = false) {
-      Settings.init().then(() => {
-        const openInNewTab = Settings.get("openInNewTab") || forceNewTab
-        const archiveWhenOpened = Settings.get("archiveWhenOpened")
-
-        browser.storage.local.get("items").then(({ items }) => {
-          const item = Items.find(items, { id: itemId })
-
-          if (openInNewTab) {
-            browser.tabs.create({ url: item.url })
-          } else {
-            browser.tabs.update({ url: item.url })
-          }
-
-          if (archiveWhenOpened) {
-            Items.markAsRead(item.id)
-          }
-        })
+      browser.storage.local.get("items").then(({ items }) => {
+        const item = Items.find(items, { id: itemId })
+        Items.openItem(item, forceNewTab);
       })
     },
 
     openRandom: function (query = "") {
+      const pCurrentTab = browser.tabs.query({active: true, currentWindow: true}).then(([t]) => t);
       browser.storage.local.get("items").then(({ items }) => {
         const filteredItems = Items.filter(items, query)
 
         if (filteredItems.length > 0) {
           const item = filteredItems[Math.floor(Math.random() * filteredItems.length)]
-          Items.open(item.id)
+          Items.openItem(item, undefined, () => pCurrentTab);
         }
       })
     },

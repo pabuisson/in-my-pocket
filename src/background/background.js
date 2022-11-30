@@ -44,7 +44,11 @@ browser.runtime.onMessage.addListener(function (eventData) {
       Badge.updateCount()
       break
     case "read-item":
-      Items.open(eventData.itemId, eventData.openInNewTab)
+      if (eventData.item) {
+        Items.openItem(eventData.item, eventData.openInNewTab);
+      } else {
+        Items.open(eventData.itemId, eventData.openInNewTab)
+      }
       break
     case "random-item":
       Items.openRandom(eventData.query)
