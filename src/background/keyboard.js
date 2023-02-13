@@ -7,15 +7,12 @@ import { KeyboardShortcuts } from "../modules/constants.js"
 
 // ---------------
 
-function getCurrentTab() {
-  return browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => currentTab);
-}
-
 browser.commands.onCommand.addListener(command => {
   switch (command) {
     case KeyboardShortcuts.toggle:
       Logger.log("(keyboard) KeyboardShortcuts.toggle")
-      getCurrentTab().then(currentTab => {
+      // FIXME: deduplicate get current tab logic
+      browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {
         // FIXME: duplication with PageAction.toggle())
         browser.storage.local.get("items").then(({ items }) => {
           const query = Utility.getQuery(currentTab.url)

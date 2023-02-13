@@ -510,7 +510,7 @@ const PopupItemList = (function () {
         .then(function (perPage) {
           browser.storage.local.get(["items", "display"]).then(async ({ items, display }) => {
             const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
-            const query = opts.query != null ? opts.query : parsedDisplay.query
+            const query = opts.query || parsedDisplay.query
             const pageToDisplay = opts.page || parsedDisplay.currentPage
             const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
             Logger.log(`(PopupItemList.drawList) Start filtering item`)

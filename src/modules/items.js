@@ -469,13 +469,6 @@ const Items = (function () {
       }
     },
 
-    open: function (itemId, forceNewTab = false) {
-      browser.storage.local.get("items").then(({ items }) => {
-        const item = Items.find(items, { id: itemId })
-        Items.openItem(item, forceNewTab);
-      })
-    },
-
     openRandom: function (query = "") {
       const pCurrentTab = browser.tabs.query({active: true, currentWindow: true}).then(([t]) => t);
       browser.storage.local.get("items").then(({ items }) => {
@@ -495,7 +488,7 @@ const Items = (function () {
         if (filteredItems.length > 0) {
           const sortedItems = filteredItems.sort((a, b) => b.created_at - a.created_at)
           const firstItem = sortedItems[0]
-          Items.open(firstItem.id)
+          Items.openItem(firstItem)
         }
       })
     },
