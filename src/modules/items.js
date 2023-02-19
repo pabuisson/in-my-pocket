@@ -234,40 +234,14 @@ const Items = (function () {
       })
     },
 
-    contains: function (rawItems, searchedItem = {}) {
-      if (!searchedItem.hasOwnProperty("id") && !searchedItem.hasOwnProperty("url")) {
-        return false
-      }
-
-      const id = searchedItem.id
-      const url = searchedItem.url
+    contains: function (rawItems, url) {
       const parsedItems = parseItems(rawItems)
-
-      return parsedItems.some(item => {
-        let itemMatching = false
-        if (id) itemMatching = itemMatching || item.id == id
-        if (url) itemMatching = itemMatching || Items.matches(item, url)
-
-        return itemMatching
-      })
+      return parsedItems.some(item => Items.matches(item, url))
     },
 
-    find: function (rawItems, searchedItem = {}) {
-      if (!searchedItem.hasOwnProperty("id") && !searchedItem.hasOwnProperty("url")) {
-        return null
-      }
-
-      const id = searchedItem.id
-      const url = searchedItem.url
+    find: function (rawItems, url) {
       const parsedItems = parseItems(rawItems || [])
-
-      return parsedItems.find(item => {
-        let itemMatching = false
-        if (id) itemMatching = itemMatching || item.id == id
-        if (url) itemMatching = itemMatching || Items.matches(item, url)
-
-        return itemMatching
-      })
+      return parsedItems.find(item => Items.matches(item, url))
     },
 
     // TODO: I call both filter and paginate most of the time...but for consistency, I should

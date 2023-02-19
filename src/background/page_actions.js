@@ -25,9 +25,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
         .then(tab => {
           if (tab.active) {
             browser.storage.local.get("items").then(({ items }) => {
-              const query = Utility.getQuery(tab.url)
-              const containsItem = Items.contains(items, query)
-
+              const containsItem = Items.contains(items, tab.url)
               if (containsItem) {
                 Logger.log(`(pageAction.tabsOnUpdated) loading ${tab.url} that IS in my list`)
                 PageAction.drawEnabled(tabId)
@@ -56,9 +54,7 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
         .then(tab => tab.url)
         .then(currentUrl => {
           browser.storage.local.get("items").then(({ items }) => {
-            const query = Utility.getQuery(currentUrl)
-            const containsItem = Items.contains(items, query)
-
+            const containsItem = Items.contains(items, currentUrl)
             if (containsItem) {
               Logger.log(`(pageAction.tabsOnActivated) switch to tab ${currentUrl} that IS in my list`)
               PageAction.drawEnabled(tabId)

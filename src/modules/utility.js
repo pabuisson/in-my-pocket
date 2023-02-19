@@ -54,13 +54,6 @@ const Utility = (function () {
       return node.matches(selector) || Utility.hasParent(node, selector)
     },
 
-    getQuery: function (url) {
-      if (url.startsWith("about:reader?")) return { url: decodeURIComponent(url.replace("about:reader?url=", "")) }
-      if (url.startsWith("https://app.getpocket.com/read/"))
-        return { id: url.replace("https://app.getpocket.com/read/", "") }
-      return { url: url }
-    },
-
     getPossibleUrls: function ({ id, url }) {
       return [
         url,

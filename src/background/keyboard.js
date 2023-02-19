@@ -15,9 +15,7 @@ browser.commands.onCommand.addListener(command => {
       browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {
         // FIXME: duplication with PageAction.toggle())
         browser.storage.local.get("items").then(({ items }) => {
-          const query = Utility.getQuery(currentTab.url)
-          const matchingItem = Items.find(items, query)
-
+          const matchingItem = Items.find(items, currentTab.url)
           if (matchingItem) {
             browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {
               Items.markAsRead(matchingItem.id, currentTab.id)
