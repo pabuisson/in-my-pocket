@@ -47,3 +47,32 @@ describe("Items.areSame", () => {
     expect(Items.areSame(item, otherItem)).to.equal(false)
   })
 })
+
+describe("Items.matches", () => {
+  const item = { id: 1234, url: "https://37signals.com/podcast/good-enough-is-fine/" }
+
+  it("matches on firefox reader url", () => {
+    const url = "about:reader?url=https%3A%2F%2F37signals.com%2Fpodcast%2Fgood-enough-is-fine%2F"
+    expect(Items.matches(item, url)).to.equal(true)
+  })
+
+  it("matches on any possible string URL", () => {
+    const url1 = `https://app.getpocket.com/read/${item.url}`
+    const url2 = `https://app.getpocket.com/read/${item.id}`
+    const url3 = `https://getpocket.com/read/${item.id}`
+
+    expect(Items.matches(item, url1)).to.equal(true)
+    expect(Items.matches(item, url2)).to.equal(true)
+    expect(Items.matches(item, url3)).to.equal(true)
+  })
+
+  it("matches on any possible regexp URL", () => {
+    const url = `https://getpocket.com/fr/read/${item.id}`
+    expect(Items.matches(item, url)).to.equal(true)
+  })
+
+  it("does not match on a different URL", () => {
+    const url = "https://something.else.com/"
+    expect(Items.matches(item, url)).to.equal(false)
+  })
+})

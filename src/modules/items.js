@@ -137,12 +137,11 @@ const Items = (function () {
 
               // Disable page actions for removed items
               Logger.log("(Items.removeItem) item removed, update matching pageActions")
+
               const urlsToCheck = Utility.getPossibleUrls(removedItem)
-              urlsToCheck.forEach(url => {
-                browser.tabs.query({ url: url }).then(tabs => {
-                  const tabIds = tabs.map(tab => tab.id)
-                  PageAction.drawDisabled(...tabIds)
-                })
+              browser.tabs.query({ url: urlsToCheck }).then(tabs => {
+                const tabIds = tabs.map(tab => tab.id)
+                PageAction.drawDisabled(...tabIds)
               })
             })
           } else {
@@ -223,19 +222,13 @@ const Items = (function () {
     },
 
     filter: function (rawItems, query, currentUrl) {
-      Logger.log(`(Items.filter) query=${query}, currentUrl=${currentUrl}`);
+      Logger.log(`(Items.filter) query=${query}, currentUrl=${currentUrl}`)
       return parseItems(rawItems).filter(item => {
         let mustKeep = true
 
         // Don't return the currentUrl item, it's handled outside this items list
-        if (currentUrl) {
-          const possibleUrls = Utility.getPossibleUrls(item)
-          mustKeep = mustKeep && !possibleUrls.includes(currentUrl)
-        }
-
-        if (query && query !== "") {
-          mustKeep = mustKeep && matchQuery(item, query)
-        }
+        if (currentUrl) mustKeep = mustKeep && !Items.matches(item, currentUrl)
+        if (query && query !== "") mustKeep = mustKeep && matchQuery(item, query)
 
         return mustKeep
       })
@@ -252,13 +245,8 @@ const Items = (function () {
 
       return parsedItems.some(item => {
         let itemMatching = false
-        if (id) {
-          itemMatching = itemMatching || item.id == id
-        }
-        if (url) {
-          const possibleUrls = Utility.getPossibleUrls(item)
-          itemMatching = itemMatching || possibleUrls.includes(url)
-        }
+        if (id) itemMatching = itemMatching || item.id == id
+        if (url) itemMatching = itemMatching || Items.matches(item, url)
 
         return itemMatching
       })
@@ -275,13 +263,8 @@ const Items = (function () {
 
       return parsedItems.find(item => {
         let itemMatching = false
-        if (id) {
-          itemMatching = itemMatching || item.id == id
-        }
-        if (url) {
-          const possibleUrls = Utility.getPossibleUrls(item)
-          itemMatching = itemMatching || possibleUrls.includes(url)
-        }
+        if (id) itemMatching = itemMatching || item.id == id
+        if (url) itemMatching = itemMatching || Items.matches(item, url)
 
         return itemMatching
       })
@@ -449,18 +432,18 @@ const Items = (function () {
     },
 
     openItem: async (item, forceNewTab = false, getTargetTab) => {
-      await Settings.init();
+      await Settings.init()
       const openInNewTab = Settings.get("openInNewTab") || forceNewTab
       const archiveWhenOpened = Settings.get("archiveWhenOpened")
-      const options = { url: item.url };
+      const options = { url: item.url }
       if (openInNewTab) {
-        browser.tabs.create(options);
+        browser.tabs.create(options)
       } else {
-        const targetTab = getTargetTab && await getTargetTab();
+        const targetTab = getTargetTab && (await getTargetTab())
         if (targetTab) {
-          browser.tabs.update(targetTab.id, options);
+          browser.tabs.update(targetTab.id, options)
         } else {
-          browser.tabs.update(options);
+          browser.tabs.update(options)
         }
       }
 
@@ -470,13 +453,13 @@ const Items = (function () {
     },
 
     openRandom: function (query = "") {
-      const pCurrentTab = browser.tabs.query({active: true, currentWindow: true}).then(([t]) => t);
+      const pCurrentTab = browser.tabs.query({ active: true, currentWindow: true }).then(([t]) => t)
       browser.storage.local.get("items").then(({ items }) => {
         const filteredItems = Items.filter(items, query)
 
         if (filteredItems.length > 0) {
           const item = filteredItems[Math.floor(Math.random() * filteredItems.length)]
-          Items.openItem(item, undefined, () => pCurrentTab);
+          Items.openItem(item, undefined, () => pCurrentTab)
         }
       })
     },
@@ -499,6 +482,20 @@ const Items = (function () {
       const item2Tags = (item2.tags || []).sort()
       const sameTags = JSON.stringify(item1Tags) === JSON.stringify(item2Tags)
       return sameTitle && sameTags
+    },
+
+    matches: function (item, url) {
+      const allPossibleUrls = Utility.getPossibleUrls(item)
+
+      return allPossibleUrls.some(possibleUrl => {
+        if (typeof possibleUrl === "string") {
+          return possibleUrl === url
+        } else if (possibleUrl instanceof RegExp) {
+          return possibleUrl.test(url)
+        } else {
+          throw new Error("Unexpected URL format")
+        }
+      })
     },
   }
 })()

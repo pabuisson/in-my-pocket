@@ -320,8 +320,7 @@ const PopupItemList = (function () {
 
   function getCurrentPageItem(items, currentUrl) {
     const currentPageItem = (Utility.parseJson(items) || []).find(item => {
-      const possibleUrls = Utility.getPossibleUrls(item)
-      return possibleUrls.includes(currentUrl)
+      return Items.matches(item, currentUrl)
     })
 
     return currentPageItem
@@ -414,7 +413,7 @@ const PopupItemList = (function () {
 
         const targetItemElement = Utility.getParent(ev.target, ".item")
         const targetItemId = targetItemElement.dataset.id
-        const targetItem = {id: targetItemId, url: targetItemElement.dataset.url};
+        const targetItem = { id: targetItemId, url: targetItemElement.dataset.url }
 
         if (Utility.matchesOrHasParent(ev.target, ".delete-action")) {
           if (ev.button === MouseButtons.LEFT) {

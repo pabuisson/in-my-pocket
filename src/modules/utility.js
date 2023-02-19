@@ -55,8 +55,7 @@ const Utility = (function () {
     },
 
     getQuery: function (url) {
-      if (url.startsWith("about:reader?"))
-        return { url: decodeURIComponent(url.replace("about:reader?url=", "")) }
+      if (url.startsWith("about:reader?")) return { url: decodeURIComponent(url.replace("about:reader?url=", "")) }
       if (url.startsWith("https://app.getpocket.com/read/"))
         return { id: url.replace("https://app.getpocket.com/read/", "") }
       return { url: url }
@@ -65,10 +64,11 @@ const Utility = (function () {
     getPossibleUrls: function ({ id, url }) {
       return [
         url,
-        "about:reader?url=" + encodeURIComponent(url),
-        "https://app.getpocket.com/read/" + url,
-        "https://app.getpocket.com/read/" + id,
-        "https://getpocket.com/read/" + id,
+        `about:reader?url=${encodeURIComponent(url)}`,
+        `https://app.getpocket.com/read/${url}`,
+        `https://app.getpocket.com/read/${id}`,
+        `https://getpocket.com/read/${id}`,
+        new RegExp(`https://getpocket.com/[a-z]+/read/${id}`, "gi"),
       ]
     },
 
