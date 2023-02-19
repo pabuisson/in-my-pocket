@@ -120,7 +120,7 @@ const Items = (function () {
               // Close the current tab if setting closeTabWhenAdded is "on" and url matches the deleted item
               if (tabId) {
                 browser.tabs.get(tabId).then(currentTab => {
-                  const urlsToCheck = Utility.getPossibleUrls(removedItem)
+                  const urlsToCheck = Utility.getPossibleUrls(removedItem).filter(url => typeof url === "string")
                   if (urlsToCheck.includes(currentTab.url)) {
                     Settings.init().then(() => {
                       const closeTabWhenRead = Settings.get("closeTabWhenRead")
@@ -138,7 +138,7 @@ const Items = (function () {
               // Disable page actions for removed items
               Logger.log("(Items.removeItem) item removed, update matching pageActions")
 
-              const urlsToCheck = Utility.getPossibleUrls(removedItem)
+              const urlsToCheck = Utility.getPossibleUrls(removedItem).filter(url => typeof url === "string")
               browser.tabs.query({ url: urlsToCheck }).then(tabs => {
                 const tabIds = tabs.map(tab => tab.id)
                 PageAction.drawDisabled(...tabIds)
@@ -315,13 +315,6 @@ const Items = (function () {
     },
 
     addItem: function (itemsToAdd) {
-      itemsToAdd = itemsToAdd.map(item => {
-        item.url = item.url.startsWith("about:reader?")
-          ? decodeURIComponent(item.url.replace("about:reader?url=", ""))
-          : item.url
-        return item
-      })
-
       Logger.log("(Items.addItem)")
 
       browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
@@ -381,7 +374,7 @@ const Items = (function () {
                 return Utility.getPossibleUrls({
                   id: item.id,
                   url: item.given_url,
-                })
+                }).filter(url => typeof url === "string")
               })
 
               browser.tabs.query({ url: addedUrls }).then(tabs => {

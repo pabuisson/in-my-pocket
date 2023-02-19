@@ -115,7 +115,7 @@ const PageAction = (function () {
               Items.markAsRead(matchingItem.id, currentTab.id)
             })
           } else {
-            Items.addItem([{ url: query.url, title: tab.title, tabId: tab.id }])
+            Items.addItem([{ url: tab.url, title: tab.title, tabId: tab.id }])
           }
         })
       })

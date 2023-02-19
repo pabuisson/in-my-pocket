@@ -54,6 +54,10 @@ const Utility = (function () {
       return node.matches(selector) || Utility.hasParent(node, selector)
     },
 
+    // FIXME: browser.tabs.query can't deal with RegExp. As a consequence, I had to
+    // exclude the RegExp from all places we used this function to pass a list of URLs
+    // to browser.tabs.query... even though the RegExp-ed version of the URL should
+    // also be taken into account to update page action and such.
     getPossibleUrls: function ({ id, url }) {
       return [
         url,
