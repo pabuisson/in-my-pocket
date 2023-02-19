@@ -29,7 +29,7 @@ const PageAction = (function () {
     redraw: function (tabId, url) {
       pageActionEnabled().then(() => {
         browser.storage.local.get("items").then(({ items }) => {
-          const containsItem = Items.contains(items, { url: url })
+          const containsItem = Items.contains(items, url)
 
           if (containsItem) {
             PageAction.drawEnabled(tabId)

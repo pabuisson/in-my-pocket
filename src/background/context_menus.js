@@ -72,9 +72,7 @@ if (browser.contextMenus.onShown) {
     // If several tabs selected and user right-clicked one of them, we'll handle them differently
     browser.tabs.query({ currentWindow: true, highlighted: true }).then(highlightedTabs => {
       const multipleTabsSelected = highlightedTabs.length > 1
-      const currentTabsAmongMultipleSelection = highlightedTabs.some(
-        highlightedTab => highlightedTab.url == tab.url
-      )
+      const currentTabsAmongMultipleSelection = highlightedTabs.some(highlightedTab => highlightedTab.url == tab.url)
 
       if (multipleTabsSelected && currentTabsAmongMultipleSelection) {
         Logger.log("(background.onShown) multiple tabs selected, right-clicked one of them")
@@ -85,7 +83,7 @@ if (browser.contextMenus.onShown) {
         // If only one tab clicked OR tab clicked is outside the several highlighted tabs,
         // we'll only deal with this tab
         browser.storage.local.get("items").then(({ items }) => {
-          const containsItem = Items.contains(items, { url: url })
+          const containsItem = Items.contains(items, url)
 
           if (containsItem) {
             Logger.log(`(background.onShown) update contextMenu for ${url} that IS in my list`)
@@ -109,17 +107,13 @@ if (browser.contextMenus.onShown) {
       browser.tabs.get(tabId).then(tab => {
         if (tab.active) {
           browser.storage.local.get("items").then(({ items }) => {
-            const containsItem = Items.contains(items, { url: tab.url })
+            const containsItem = Items.contains(items, tab.url)
 
             if (containsItem) {
-              Logger.log(
-                `(background.tabsOnUpdated) current tab loading ${changeInfo.url} that IS in my list`
-              )
+              Logger.log(`(background.tabsOnUpdated) current tab loading ${changeInfo.url} that IS in my list`)
               ContextMenu.setState(ContextMenu.pageAlreadyInPocket)
             } else {
-              Logger.log(
-                `(background.tabsOnUpdated) current tab loading ${changeInfo.url} that ISN'T in my list`
-              )
+              Logger.log(`(background.tabsOnUpdated) current tab loading ${changeInfo.url} that ISN'T in my list`)
               ContextMenu.setState(ContextMenu.pageNotInPocket)
             }
           })
@@ -137,17 +131,13 @@ if (browser.contextMenus.onShown) {
       })
       .then(currentUrl => {
         browser.storage.local.get("items").then(({ items }) => {
-          const containsItem = Items.contains(items, { url: currentUrl })
+          const containsItem = Items.contains(items, currentUrl)
 
           if (containsItem) {
-            Logger.log(
-              `(background.tabsOnActivated) switch to a tab ${currentUrl} that IS in my list`
-            )
+            Logger.log(`(background.tabsOnActivated) switch to a tab ${currentUrl} that IS in my list`)
             ContextMenu.setState(ContextMenu.pageAlreadyInPocket)
           } else {
-            Logger.log(
-              `(background.tabsOnActivated) switch to a tab ${currentUrl} that ISN'T in my list`
-            )
+            Logger.log(`(background.tabsOnActivated) switch to a tab ${currentUrl} that ISN'T in my list`)
             ContextMenu.setState(ContextMenu.pageNotInPocket)
           }
         })

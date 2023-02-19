@@ -325,7 +325,7 @@ const Items = (function () {
       Logger.log("(Items.addItem)")
 
       browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
-        const newItemsToAdd = itemsToAdd.filter(item => !Items.contains(items, { url: item.url }))
+        const newItemsToAdd = itemsToAdd.filter(item => !Items.contains(items, item.url))
         if (newItemsToAdd.length === 0) {
           // Instead of just logging, send an event back to the UI and exit
           browser.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST })
