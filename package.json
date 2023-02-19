@@ -20,6 +20,7 @@
     "prettier": "2.7.1",
     "sass": "^1.33.0",
     "sass-loader": "^11.1.1",
+    "shx": "^0.3.4",
     "sinon": "^14.0.2",
     "speed-measure-webpack-plugin": "^1.5.0",
     "style-loader": "^2.0.0",
@@ -29,7 +30,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "scripts": {
-    "clean": "rm -rf build/*",
+    "clean": "shx rm -rf build/*",
     "build": "npm run clean && npx webpack",
     "watch": "npm run clean && npx webpack -w",
     "package": "npm run build && npm run package-firefox && npm run package-chrome && npm run zip-source",

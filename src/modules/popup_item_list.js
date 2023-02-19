@@ -51,10 +51,10 @@ const PopupItemList = (function () {
   }
 
   // openInNewTab param allows us to force the behaviour (ctrl-click or middle-click)
-  function openLink(itemId, openInNewTab = false) {
+  function openLink(item, openInNewTab = false) {
     browser.runtime.sendMessage({
       action: "read-item",
-      itemId: itemId,
+      item,
       openInNewTab: openInNewTab,
     })
   }
@@ -70,6 +70,7 @@ const PopupItemList = (function () {
     if (item.fav == 1) li.classList.add("favorite")
     if (opts.current) li.classList.add(CURRENT_ITEM_CLASS)
     li.dataset.id = item.id
+    li.dataset.url = item.url
     li.dataset.fav = item.fav
 
     const title = li.getElementsByClassName("title")[0]
@@ -413,6 +414,7 @@ const PopupItemList = (function () {
 
         const targetItemElement = Utility.getParent(ev.target, ".item")
         const targetItemId = targetItemElement.dataset.id
+        const targetItem = {id: targetItemId, url: targetItemElement.dataset.url};
 
         if (Utility.matchesOrHasParent(ev.target, ".delete-action")) {
           if (ev.button === MouseButtons.LEFT) {
@@ -451,19 +453,19 @@ const PopupItemList = (function () {
           switch (ev.button) {
             case MouseButtons.MIDDLE:
               Logger.log(`(PopupItemList.eventListener) Middle-click, force opening ${targetItemId} in new tab`)
-              openLink(targetItemId, openInNewTab)
+              openLink(targetItem, openInNewTab)
               break
             case MouseButtons.LEFT:
               if (ev.ctrlKey || ev.metaKey) {
                 Logger.log(
                   `(PopupItemList.eventListener) left-click + ctrlKey:${ev.ctrlKey}/metaKey:${ev.metaKey}, force opening ${targetItemId} in new tab`
                 )
-                openLink(targetItemId, openInNewTab)
+                openLink(targetItem, openInNewTab)
               } else {
                 Logger.log(
                   `(PopupItemList.eventListener) left-click, open ${targetItemId} based on openInNewTab setting`
                 )
-                openLink(targetItemId)
+                openLink(targetItem)
               }
               break
           }
@@ -511,6 +513,7 @@ const PopupItemList = (function () {
             const query = opts.query || parsedDisplay.query
             const pageToDisplay = opts.page || parsedDisplay.currentPage
             const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
+            Logger.log(`(PopupItemList.drawList) Start filtering item`)
 
             // Parse and filter the item list
             const currentPageItem = await getCurrentPageItem(items, currentTab.url)
