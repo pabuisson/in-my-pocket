@@ -228,7 +228,7 @@ const Items = (function () {
 
         // Don't return the currentUrl item, it's handled outside this items list
         if (currentUrl) mustKeep = mustKeep && !Items.matches(item, currentUrl)
-        if (query && query !== "") mustKeep = mustKeep && matchQuery(item, query)
+        if (query) mustKeep = mustKeep && matchQuery(item, query)
 
         return mustKeep
       })
