@@ -239,9 +239,14 @@ const Items = (function () {
       return parsedItems.some(item => Items.matches(item, url))
     },
 
-    find: function (rawItems, url) {
+    findByUrl: function (rawItems, url) {
       const parsedItems = parseItems(rawItems || [])
       return parsedItems.find(item => Items.matches(item, url))
+    },
+
+    findById: function (rawItems, id) {
+      const parsedItems = parseItems(rawItems || [])
+      return parsedItems.find(item => item.id === id)
     },
 
     // TODO: I call both filter and paginate most of the time...but for consistency, I should

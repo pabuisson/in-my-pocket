@@ -36,7 +36,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
     case ContextMenu.archiveId:
       browser.storage.local.get("items").then(({ items }) => {
-        const item = Items.find(items, { url: info.linkUrl || tab.url })
+        const item = Items.findByUrl(items, info.linkUrl || tab.url)
         if (item) {
           browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {
             Items.markAsRead(item.id, currentTab.id)
@@ -47,7 +47,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
     case ContextMenu.deleteId:
       browser.storage.local.get("items").then(({ items }) => {
-        const item = Items.find(items, { url: info.linkUrl || info.pageUrl })
+        const item = Items.findByUrl(items, info.linkUrl || info.pageUrl)
         if (item) {
           browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {
             Items.deleteItem(item.id, currentTab.id)

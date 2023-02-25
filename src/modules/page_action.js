@@ -108,7 +108,7 @@ const PageAction = (function () {
     toggle: function (tab) {
       pageActionEnabled().then(() => {
         browser.storage.local.get("items").then(({ items }) => {
-          const matchingItem = Items.find(items, tab.url)
+          const matchingItem = Items.findByUrl(items, tab.url)
 
           if (matchingItem) {
             browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {

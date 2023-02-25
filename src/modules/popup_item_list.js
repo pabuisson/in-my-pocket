@@ -254,7 +254,7 @@ const PopupItemList = (function () {
     const targetItemElement = Utility.getParent(ev.target, ".item")
     const targetItemId = targetItemElement.dataset.id
     browser.storage.local.get("items").then(({ items }) => {
-      const matchingItem = Items.find(items, { id: targetItemId })
+      const matchingItem = Items.findById(items, targetItemId)
       Logger.log(`(PopupItemList.cancelEdition) Cancel editing item ${targetItemId}`)
 
       // Rebuild a li with the not edited item
@@ -277,7 +277,7 @@ const PopupItemList = (function () {
     const uniqueEditedTags = [...new Set(editedTags)]
 
     browser.storage.local.get("items").then(({ items }) => {
-      const matchingItem = Items.find(items, { id: targetItemId })
+      const matchingItem = Items.findById(items, targetItemId)
 
       // Send message to background for actual item update + send to API, if items have actually been updated
       if (!Items.areSame(matchingItem, { title: editedTitle, tags: uniqueEditedTags })) {
