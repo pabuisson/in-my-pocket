@@ -101,9 +101,7 @@ const UI = (function () {
       fsContainer.parentNode.removeChild(fsContainer)
     } else {
       fsContainer.classList.remove("hidden")
-      fsContainer
-        .querySelector(".value")
-        .appendChild(document.createTextNode(enabledFeatureSwitches))
+      fsContainer.querySelector(".value").appendChild(document.createTextNode(enabledFeatureSwitches))
     }
   }
 
@@ -147,9 +145,19 @@ const UI = (function () {
       })
 
       // Event: "Enable bug reoprt" checkbox
-      enableBugReportCheckbox.addEventListener("change", function () {
+      enableBugReportCheckbox.addEventListener("change", async function () {
         Settings.set("bugReport", this.checked)
         Settings.save()
+
+        // Generate a UUID that will be used to anonymously differentiate users
+        // the first time they enable error reporting
+        const { uuid: currentUuid } = await browser.storage.local.get("uuid")
+        if (this.checked && !currentUuid) {
+          const uuid = self.crypto.randomUUID()
+          await browser.storage.local.set({ uuid: uuid })
+          SentryLoader.setUserId(uuid)
+        }
+
         flashSavedNotification(this.parentNode)
       })
 
