@@ -1,3 +1,4 @@
+const path = require('path')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
@@ -20,6 +21,7 @@ const base = {
   module: {
     rules: [{
       test: /\.html$/,
+      include: path.resolve(__dirname, 'src'),
       use: [
         {
           loader: 'file-loader',
@@ -30,7 +32,7 @@ const base = {
       ]
     }, {
       test: /\.js$/,
-      exclude: /node_modules/,
+      include: path.resolve(__dirname, 'src'),
       use: {
         loader: 'babel-loader',
         options: {
@@ -39,6 +41,7 @@ const base = {
       }
     },{
       test: /\.scss$/,
+      include: path.resolve(__dirname, 'src'),
       use: [
         MiniCssExtractPlugin.loader,
         "css-loader", // translates CSS into CommonJS
