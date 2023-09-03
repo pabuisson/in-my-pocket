@@ -4,7 +4,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const base = {
   context: __dirname + '/src',
-  mode: 'production',
   devtool: 'source-map',
   entry: {
     'popup/popup'              : './popup/popup.js',

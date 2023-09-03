@@ -31,8 +31,8 @@
   },
   "scripts": {
     "clean": "shx rm -rf build/*",
-    "build": "npm run clean && npx webpack",
-    "watch": "npm run clean && npx webpack -w",
+    "build": "npm run clean && npx webpack --mode=production",
+    "watch": "npm run clean && npx webpack -w --mode=development",
     "package": "npm run build && npm run package-firefox && npm run package-chrome && npm run zip-source",
     "package-firefox": "cd ./build/firefox && zip -r -FS ../../web-ext-artifacts/in_my_pocket-firefox.zip * -x .DS_Store -x *.map",
     "package-chrome": "cd ./build/chrome && zip -r -FS ../../web-ext-artifacts/in_my_pocket-chrome.zip * -x .DS_Store -x *.map",
