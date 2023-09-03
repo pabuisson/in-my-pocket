@@ -37,22 +37,32 @@ h2 {
 }
 
 .row {
+  display: flex;
+  align-item: center;
+
   margin: 0px;
-  padding: 6px 0px 6px 6px;
-  line-height: 16px;
-  border-top: 1px solid #e1e1e1;
+  padding: 0.5rem;
+  border: 2px transparent;  // so that toggling .highlight on a row won't move all items
+  line-height: 1.2rem;
 
   &.notice {
-    padding: 0.5rem 1rem;
+    display: block;
+    padding: 1rem;
+
     margin: 1rem 0rem;
-    color: #444;
     border-radius: 4px;
-    background-color: #bae1f2;
+    color: #333;
+    background-color: #daeaf2;
+  }
+
+  &.highlight {
+    border: 2px solid orange !important;
+    border-radius: 4px;
   }
 
   label {
     display: inline-block;
-    width: 45%;
+    width: 55%;
     min-width: 200px;
     margin-right: 1rem;
   }
@@ -82,10 +92,6 @@ h2 {
     width: 12rem;
   }
 
-  &:first-of-type {
-    border-top: 0px none;
-  }
-
   .disconnect-account-second-step-confirm {
     font-weight: bold;
   }
@@ -110,10 +116,17 @@ h2 {
   }
 
   .row {
-    border-top-color: transparentize($ff-dark-options-foreground, 0.8);
-
     img {
       border-color: transparentize($ff-dark-options-foreground, 0.5);
+    }
+
+    &.notice {
+      // TOOD: darker share of blue
+      background-color: #daeaf2;
+    }
+
+    &.highlight {
+      border-color: yellow;
     }
   }
 }

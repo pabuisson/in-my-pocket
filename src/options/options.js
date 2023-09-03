@@ -44,6 +44,10 @@ const savedNotificationElement = document.querySelector(".saved-notification")
 const UI = (function () {
   let savedNotificationTimerId = null
 
+  function unhighlightContainer(containerRow) {
+    containerRow.classList.remove("highlight")
+  }
+
   function flashSavedNotification(containerRow) {
     savedNotificationElement.classList.remove("hidden")
 
@@ -161,6 +165,7 @@ const UI = (function () {
           SentryLoader.setUserId(uuid)
         }
 
+        unhighlightContainer(this.parentNode) // This is the only row that can be highlighted
         flashSavedNotification(this.parentNode)
       })
 
@@ -251,4 +256,21 @@ const UI = (function () {
 
 document.addEventListener("DOMContentLoaded", function () {
   UI.setup()
+
+  browser.runtime.onMessage.addListener(function (eventData) {
+    if (eventData.action !== "settings:highlight") return
+
+    const { section } = eventData
+    switch (section) {
+      case "bug-report": {
+        const itemToHighlight = document.querySelector(".enable-bug-report-row")
+        if (itemToHighlight) {
+          itemToHighlight.classList.add("highlight")
+        } else {
+          Logger.error(`Could not find the section '${section}' that should be highlighted`)
+        }
+        break
+      }
+    }
+  })
 })
