@@ -44,10 +44,17 @@ const FavoriteFilterState = {
   UNSET: 2,
 }
 
+const NotificationIds = {
+  ADDON_INSTALLED: "0001",
+  ADDON_UPGRADED: "0002",
+  AN_ERROR_OCCURRED: "0003",
+}
+
 export {
   FavoriteFilterState,
   KeyboardShortcuts,
   MouseButtons,
+  NotificationIds,
   PocketApiStatus,
   PocketError,
   PocketNotice,

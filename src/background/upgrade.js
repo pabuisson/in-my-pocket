@@ -1,16 +1,14 @@
 "use strict"
 
-import ItemsFetcher from "../modules/items_fetcher.js"
-import Logger from "../modules/logger.js"
-import { VersionManager } from "../modules/version_manager.js"
-
-const installNotificationId = "0001"
-const upgradeNotificationId = "0002"
+import ItemsFetcher from "../modules/items_fetcher"
+import Logger from "../modules/logger"
+import { VersionManager } from "../modules/version_manager"
+import { NotificationIds } from "../modules/constants"
 
 browser.runtime.onInstalled.addListener(details => {
   if (details.reason === "install") {
     Logger.log("Fresh install! Welcome on board :)")
-    browser.notifications.create(installNotificationId, {
+    browser.notifications.create(NotificationIds.ADDON_INSTALLED, {
       type: "basic",
       title: "Yay, welcome to In My Pocket 🎉",
       message: "Click this message to learn more about the addon!",
@@ -18,7 +16,7 @@ browser.runtime.onInstalled.addListener(details => {
   } else if (VersionManager.mustShowUpdateNotification(details)) {
     // Upgrade notification
     Logger.log(`IMP has been upgraded from ${details.previousVersion} !`)
-    browser.notifications.create(upgradeNotificationId, {
+    browser.notifications.create(NotificationIds.ADDON_UPGRADED, {
       type: "basic",
       title: "Yay, In My Pocket has been upgraded 🎉",
       message: "Click this message to learn what's new!",
@@ -38,13 +36,13 @@ browser.runtime.onInstalled.addListener(details => {
 
 browser.notifications.onClicked.addListener(notificationId => {
   switch (notificationId) {
-    case installNotificationId:
+    case NotificationIds.ADDON_INSTALLED:
       browser.notifications.clear(notificationId)
       browser.tabs.create({
         url: "https://inmypocketaddon.com/faq.html?utm_source=addon&utm_medium=notification&utm_campaign=install",
       })
       break
-    case upgradeNotificationId:
+    case NotificationIds.ADDON_UPGRADED:
       browser.notifications.clear(notificationId)
       browser.tabs.create({
         url: "https://inmypocketaddon.com/changelog.html?utm_source=addon&utm_medium=notification&utm_campaign=upgrade",
