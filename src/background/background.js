@@ -6,8 +6,16 @@ import ContextMenu from "../modules/context_menu.js"
 import Items from "../modules/items.js"
 import ItemsFetcher from "../modules/items_fetcher.js"
 import Logger from "../modules/logger.js"
+import SentryLoader from "../modules/sentry_loader.js"
+import GlobalErrorDetector from "../modules/global_error_detector.js"
 
-// - - - MESSAGES - - -
+// -------------
+
+// TODO: if it works, do that in the other background scripts too
+SentryLoader.init()
+GlobalErrorDetector.init()
+
+// --- MESSAGES ---
 
 browser.runtime.onMessage.addListener(function (eventData) {
   Logger.log(`(bg.onMessage) eventData.action: ${eventData.action}`)
@@ -44,7 +52,7 @@ browser.runtime.onMessage.addListener(function (eventData) {
       Badge.updateCount()
       break
     case "read-item":
-      Items.openItem(eventData.item, eventData.openInNewTab);
+      Items.openItem(eventData.item, eventData.openInNewTab)
       break
     case "random-item":
       Items.openRandom(eventData.query)

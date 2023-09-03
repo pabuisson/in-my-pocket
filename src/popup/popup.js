@@ -10,12 +10,14 @@ import PopupItemList from "../modules/popup_item_list.js"
 import PopupMainLoader from "../modules/popup_main_loader.js"
 import PopupUI from "../modules/popup_ui.js"
 import SentryLoader from "../modules/sentry_loader.js"
+import GlobalErrorDetector from "../modules/global_error_detector.js"
 import { PocketError, PocketNotice, MouseButtons } from "../modules/constants.js"
 import { PopupFlash, FlashKind } from "../modules/popup_flash.js"
 
 // -------------
 
 SentryLoader.init()
+GlobalErrorDetector.init()
 
 // --- EVENTS ---
 

@@ -3,19 +3,22 @@
 import "./options.html"
 import "./options.scss"
 
-import Authentication from "../modules/authentication.js"
-import Badge from "../modules/badge.js"
-import BrowserDetector from "../modules/browser_detector.js"
-import ContextMenu from "../modules/context_menu.js"
-import FeatureSwitches from "../modules/feature_switches.js"
-import PageAction from "../modules/page_action.js"
-import Settings from "../modules/settings.js"
-import SentryLoader from "../modules/sentry_loader.js"
-import { parseIntBase } from "../modules/constants.js"
+import Authentication from "../modules/authentication"
+import Badge from "../modules/badge"
+import Logger from "../modules/logger"
+import BrowserDetector from "../modules/browser_detector"
+import ContextMenu from "../modules/context_menu"
+import FeatureSwitches from "../modules/feature_switches"
+import PageAction from "../modules/page_action"
+import Settings from "../modules/settings"
+import SentryLoader from "../modules/sentry_loader"
+import GlobalErrorDetector from "../modules/global_error_detector"
+import { parseIntBase } from "../modules/constants"
 
 // -------------
 
 SentryLoader.init()
+GlobalErrorDetector.init()
 
 // -------------
 
