@@ -17,9 +17,12 @@ const SentryLoader = (function () {
       const { uuid } = await browser.storage.local.get("uuid")
 
       Sentry.init({
-        dsn: "https://1207d464a72f4c788936641a73b872a2@o153528.ingest.sentry.io/1206746",
+        dsn: "https://ede671f16b29b8a41a80e53a86ca13c0@o4505838404698112.ingest.sentry.io/4505838405877760",
         release: "in-my-pocket@" + VersionManager.getCurrentVersion(),
         enabled: bugReportEnabled,
+        // Performance Monitoring
+        tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
+        // ----
         initialScope: {
           user: { id: uuid || DEFAULT_USER_ID },
         },
