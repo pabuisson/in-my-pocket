@@ -116,6 +116,17 @@ const UI = (function () {
     setup: async function () {
       initializeUIFromSettings()
 
+      // TEMPORARY: show the local storage for global error
+      const gedValue = document.querySelector(".enabled-global-error-detector .value")
+      browser.storage.local
+        .get("globalErrorDetector")
+        .then(({ globalErrorDetector }) => {
+          gedValue.textContent = JSON.stringify(globalErrorDetector) || "Missing"
+        })
+        .catch(() => {
+          gedValue.textContent = "Error while accessing storage"
+        })
+
       // Event: "Display count badge" checkbox
       displayBadgeCountCheckbox.addEventListener("change", function () {
         Settings.set("showBadge", this.checked)
