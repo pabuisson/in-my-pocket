@@ -1,10 +1,16 @@
 "use strict"
 
+import SentryLoader from "../modules/sentry_loader.js"
+import GlobalErrorDetector from "../modules/global_error_detector.js"
 import Authentication from "../modules/authentication.js"
 import Items from "../modules/items.js"
 import Logger from "../modules/logger.js"
 import PageAction from "../modules/page_action.js"
-import Utility from "../modules/utility"
+
+// ---------------
+
+SentryLoader.init()
+GlobalErrorDetector.init()
 
 // ---------------
 

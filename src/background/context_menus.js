@@ -1,8 +1,15 @@
 "use strict"
 
+import SentryLoader from "../modules/sentry_loader.js"
+import GlobalErrorDetector from "../modules/global_error_detector.js"
 import ContextMenu from "../modules/context_menu.js"
 import Items from "../modules/items.js"
 import Logger from "../modules/logger.js"
+
+// ---------------
+
+SentryLoader.init()
+GlobalErrorDetector.init()
 
 // ---------------
 
@@ -15,7 +22,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
         browser.tabs.query({ currentWindow: true, highlighted: true }).then(highlightedTabs => {
           const multipleTabsSelected = highlightedTabs.length > 1
           const currentTabsAmongMultipleSelection = highlightedTabs.some(
-            highlightedTab => highlightedTab.url == tab.url
+            highlightedTab => highlightedTab.url == tab.url,
           )
 
           if (multipleTabsSelected && currentTabsAmongMultipleSelection) {
