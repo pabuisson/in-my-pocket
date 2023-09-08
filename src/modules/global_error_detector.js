@@ -19,8 +19,8 @@ const GlobalErrorDetector = (function () {
     const today = new Date()
     const todayIso = today.toISOString().slice(0, 10)
 
-    const { GlobalErrorDetector: errorData = { countByDay: {}, lastNotifiedOn: null } } =
-      await browser.storage.local.get("GlobalErrorDetector")
+    const { globalErrorDetector: errorData = { countByDay: {}, lastNotifiedOn: null } } =
+      await browser.storage.local.get("globalErrorDetector")
 
     if (!errorData.countByDay[todayIso]) {
       errorData.countByDay[todayIso] = 1
@@ -30,7 +30,7 @@ const GlobalErrorDetector = (function () {
 
     // TODO: clean up items older than the max days to consider
 
-    await browser.storage.local.set({ GlobalErrorDetector: errorData })
+    await browser.storage.local.set({ globalErrorDetector: errorData })
 
     return
   }
@@ -41,8 +41,8 @@ const GlobalErrorDetector = (function () {
   // - TODO: previous notification at > 3.months.ago & count >= 100
   async function shouldNotify() {
     const {
-      GlobalErrorDetector: { countByDay, lastNotifiedOn },
-    } = await browser.storage.local.get("GlobalErrorDetector")
+      globalErrorDetector: { countByDay, lastNotifiedOn },
+    } = await browser.storage.local.get("globalErrorDetector")
 
     const relevantErrorsCount = Object.keys(countByDay).reduce((total, isoDateKey) => total + countByDay[isoDateKey], 0)
     console.log({ relevantErrorsCount })
@@ -50,10 +50,10 @@ const GlobalErrorDetector = (function () {
   }
 
   async function updateLastNotifiedOn() {
-    const { GlobalErrorDetector } = await browser.storage.local.get("GlobalErrorDetector")
-    GlobalErrorDetector.lastNotifiedOn = new Date().toISOString().slice(0, 10)
+    const { globalErrorDetector } = await browser.storage.local.get("globalErrorDetector")
+    globalErrorDetector.lastNotifiedOn = new Date().toISOString().slice(0, 10)
 
-    browser.storage.local.set({ GlobalErrorDetector })
+    browser.storage.local.set({ globalErrorDetector })
   }
 
   // FIXME: very buggy. If I don't click on the notification straight away, it looks like it has no event
