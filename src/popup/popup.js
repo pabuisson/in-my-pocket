@@ -25,7 +25,6 @@ function onMessage(eventData) {
   switch (eventData.action) {
     case "authenticated":
       window.location.reload() // For sidebar mode
-      window.close() // For popup (but doesn't close a sidebar)
       browser.runtime.sendMessage({ action: "update-badge-count" })
       break
 

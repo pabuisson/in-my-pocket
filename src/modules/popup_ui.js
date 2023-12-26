@@ -86,6 +86,7 @@ const PopupUI = (function () {
     document.querySelector(".authenticated").classList.add("hidden")
 
     authenticationButton.addEventListener("click", () => {
+      window.close() // Close the popup after starting authentication
       browser.runtime.sendMessage({ action: "authenticate" })
     })
 

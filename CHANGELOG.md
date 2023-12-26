@@ -6,6 +6,7 @@
     * partial because at the moment, it does not work with the `tabs.query` calls since possible urls now contain a `RegExp`
 * PERFS: make link opening faster ([contribution from eight04](https://bitbucket.org/pabuisson/in-my-pocket/pull-requests/175), thank you!)
 * FIX: the perf improvements ensure opening random items will always happen in the correct tab
+* FIX: during the authentication flow, close the addon popup after clicking on "Authenticate"
 
 
 ## 0.12.3 - November 2022
