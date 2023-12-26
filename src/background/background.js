@@ -53,13 +53,13 @@ browser.runtime.onMessage.addListener(function (eventData) {
       Badge.flashError()
       break
     default:
-      Logger.log(`(bg.onMessage) Unknown action: ${eventData.action}`)
+      Logger.warn(`(bg.onMessage) Unknown action: ${eventData.action}`)
   }
 })
 
 // - - - ON LOAD - - -
 
-Authentication.isAuthenticated().then(function () {
+Authentication.isAuthenticated().then(function() {
   ContextMenu.createEntries()
   Badge.updateCount()
 })
