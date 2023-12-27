@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/browser"
 import Settings from "../modules/settings.js"
+import Logger from "../modules/logger.js"
 import { VersionManager } from "../modules/version_manager.js"
 
 const SentryLoader = (function () {
@@ -10,11 +11,27 @@ const SentryLoader = (function () {
     return path.replace(basePath, "~/")
   }
 
+  const generateAndPersistUUID = async () => {
+    const uuid = self.crypto.randomUUID()
+
+    // No need to await for the storage to be done
+    browser.storage.local.set({ uuid: uuid }).then(() => {
+      Logger.log(`(SentryLoader.generateAndPersistUUID) New UUID generated and stored: ${uuid}`)
+    })
+
+    return uuid
+  }
+
+  const getUUID = async () => {
+    const { uuid: storedUuid } = await browser.storage.local.get("uuid")
+    return storedUuid || generateAndPersistUUID()
+  }
+
   return {
     init: async () => {
       await Settings.init()
       const bugReportEnabled = await Settings.get("bugReport")
-      const { uuid } = await browser.storage.local.get("uuid")
+      const uuid = await getUUID()
 
       Sentry.init({
         dsn: "https://ede671f16b29b8a41a80e53a86ca13c0@o4505838404698112.ingest.sentry.io/4505838405877760",
@@ -50,12 +67,6 @@ const SentryLoader = (function () {
           return event
         },
       })
-    },
-
-    // When setting the user ID for the first time from the settings page,
-    // outside the usual initialization sequence of Sentry
-    setUserId: uuid => {
-      Sentry.setUser({ id: uuid || DEFAULT_USER_ID })
     },
   }
 })()

@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 0.12.5 - December 2023
+
+* UPDATE: technical improvements to the way my bug reporting tool differentiates users
+
+
 ## 0.12.4 - December 2023
 
 * FIX: (partial) correctly highlight icon in address bar on the getpocket site
