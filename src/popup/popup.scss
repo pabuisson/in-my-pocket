@@ -165,11 +165,11 @@ body {
         flex: 1;
         display: inline-block;
 
-        line-height: calc(1.25rem + 2px);
+        line-height: calc(1.25rem + 6px);
         font-size: 1.25rem;
         // So that editing the title doesn't move items around, span.title being the exact
         // same height as the input + buttons
-        padding: 0.2rem 0px;
+        padding: 0.3rem 0px;
 
         color: $ff-primary-text;
         user-select: text;
@@ -245,15 +245,16 @@ body {
 
     &.editing {
       .row {
-        margin: 0.2rem;
+        margin: 0.1rem;
         display: flex;
         flex-direction: row;
 
         label {
-          display: inline-block;
-          // // For vertical-centering
-          // line-height: 2rem;
-          width: 4rem;
+          display: block;
+          // For vertical-centering
+          line-height: 1.8rem;
+          width: 3rem;
+          height: 100%;
         }
 
         input.title {
@@ -264,19 +265,17 @@ body {
           border: 1px solid $ff-grey-40;
           border-radius: 2px;
           padding: 2px;
-          margin-top: 1px; // so that the outline does not hit the upper item
 
           &:focus {
             outline: 1px solid $ff-blue-70;
           }
         }
 
+        // Fake tag input field
         .tags {
           flex: 1;
 
-          // I have to set a 1px padding-bottom for the spacing to be aligned, not sure what causes this
-          padding: 2px 2px 1px 2px;
-
+          padding: 2px;
           border: 1px solid $ff-grey-40;
           border-radius: 2px;
 
@@ -286,8 +285,9 @@ body {
           .tag {
             flex: initial;
 
-            margin: 0.2rem 0.2rem 0.2rem 0;
-            padding: 1px 3px;
+            margin-right: 2px;
+            margin-bottom: 1px;
+            padding: 0px 2px;
 
             background-color: $ff-grey-20;
             border: 1px solid $ff-grey-40;
@@ -299,6 +299,7 @@ body {
             }
           }
 
+          // Actual new tag input
           input.new-tag {
             flex: 1;
 
