@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.6 - February 2024
+
+* FIX: ensuring that entering the edition mode on an item does not alter the item height in the list. The list aspect should now remain more stable when editing an item
+
 
 ## 0.12.5 - December 2023
 
