@@ -2,7 +2,6 @@
 
 import Items from "../modules/items.js"
 import Logger from "../modules/logger.js"
-import Utility from "../modules/utility"
 import { KeyboardShortcuts } from "../modules/constants.js"
 
 // ---------------
