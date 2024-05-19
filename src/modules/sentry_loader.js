@@ -34,12 +34,10 @@ const SentryLoader = (function () {
       const uuid = await getUUID()
 
       Sentry.init({
-        dsn: "https://ede671f16b29b8a41a80e53a86ca13c0@o4505838404698112.ingest.sentry.io/4505838405877760",
+        dsn: "https://a6dcb8356fb92f218b162b76ddc60a5e@o4507282894487552.ingest.de.sentry.io/4507282896519248",
         release: "in-my-pocket@" + VersionManager.getCurrentVersion(),
         enabled: bugReportEnabled,
-        // Performance Monitoring
-        tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
-        // ----
+        tracesSampleRate: 1.0, // Performance monitoring: capture 100% of the transactions, reduce in production!
         initialScope: {
           user: { id: uuid || DEFAULT_USER_ID },
         },
