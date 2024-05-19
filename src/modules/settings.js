@@ -5,7 +5,6 @@ import Utility from "./utility.js"
 // --------------------------
 
 const Settings = (function () {
-  let _loaded = false
   let settings = {}
   const defaultSettings = {
     debugMode: false,
@@ -22,9 +21,7 @@ const Settings = (function () {
   }
 
   async function load() {
-    if (_loaded) return;
-    const data = await browser.storage.local.get("settings");
-    _loaded = true
+    const data = await browser.storage.local.get("settings")
 
     settings = Object.assign(settings, defaultSettings)
     if (data && data.settings) {
@@ -33,40 +30,29 @@ const Settings = (function () {
   }
 
   return {
+    // TODO: add a "cache: true|false" param, that _could_ be useful on some pages (typically, settings page)
+    // to avoid reaching for localStorage too often. This is a very low prio thing though, as the settings page
+    // is not used in the day-to-day and seems to be working fine
     init: function () {
       return load()
     },
 
     get: function (key) {
-      if (_loaded) {
-        if (key) {
-          return settings[key]
-        } else {
-          return settings
-        }
+      if (key) {
+        return settings[key]
+      } else {
+        return settings
       }
-
-      return undefined
     },
 
     set: function (key, value) {
-      if (_loaded) {
-        settings[key] = value
-        return true
-      }
-
-      return false
+      settings[key] = value
+      return true
     },
 
     save: function () {
-      // If settings not yet loaded, we don't need to save them (they can't have
-      // been modified since they've not even been loaded
-      if (_loaded) {
-        browser.storage.local.set({ settings: JSON.stringify(settings) })
-        return true
-      }
-
-      return false
+      browser.storage.local.set({ settings: JSON.stringify(settings) })
+      return true
     },
   }
 })()

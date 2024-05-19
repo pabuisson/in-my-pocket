@@ -47,6 +47,7 @@ const Badge = (function () {
         stopLoadingSpinner()
         Settings.init().then(function () {
           const showBadge = Settings.get("showBadge")
+
           if (showBadge === true) {
             browser.browserAction.setBadgeBackgroundColor({ color: defaultBackgroundColor })
 
@@ -63,7 +64,6 @@ const Badge = (function () {
               })
             }
           } else {
-            // If showBadge != true, we hide the count badge
             Badge.hide()
             resolve()
           }
