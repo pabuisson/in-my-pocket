@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.7 - May 2024
+
+* FIX: settings were sometimes not respected due to some caching issues. Disabled this caching to avoid this kind of bugs. Known bugs: disabling/enabling badge count, disabling/enabling automations, but this is surely the case for almost any configuration option.
+
+
 ## 0.12.6 - February 2024
 
 * FIX: ensuring that entering the edition mode on an item does not alter the item height in the list. The list aspect should now remain more stable when editing an item
