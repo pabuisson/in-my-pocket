@@ -44,7 +44,7 @@ const SentryLoader = (function () {
           user: { id: uuid || DEFAULT_USER_ID },
         },
         integrations: [
-          new Sentry.Integrations.GlobalHandlers({
+          Sentry.globalHandlersIntegration({
             onerror: true,
             onunhandledrejection: false, // disable sentries for unhandled promise rejection errors
           }),
