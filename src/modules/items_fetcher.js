@@ -40,11 +40,11 @@ const ItemsFetcher = (function () {
     },
 
     retrieveAll: function (offset = 0) {
-      Logger.log("(ItemsFetcher.retrieveAll) Retrieve all items")
+      Logger.log(`(ItemsFetcher.retrieveAll) Retrieve all items, offset=${offset}`)
       const isRetrievingFirstPage = offset === 0
 
       browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
-        const itemsList = items && !isRetrievingFirstPage ? Utility.parseJson(items) : []
+        const existingItems = items && !isRetrievingFirstPage ? Utility.parseJson(items) : []
         const requestParams = {
           consumer_key: consumerKey,
           access_token: access_token,
@@ -58,37 +58,31 @@ const ItemsFetcher = (function () {
         new Request("POST", "https://getpocket.com/v3/get", requestParams)
           .fetch()
           .then(response => {
-            const retrievedItemsCount = Object.keys(response.list).length
-            Logger.log(`(ItemsFetcher.retrieveAll) ${retrievedItemsCount} items in the response`)
-
-            const newItems = Object.keys(response.list).map(itemId => {
-              return { id: itemId, ...Items.formatPocketItemForStorage(response.list[itemId]) }
+            const rawRetrievedItems = response.list || {}
+            const retrievedItems = Object.entries(rawRetrievedItems).map(([itemId, item]) => {
+              return { id: itemId, ...Items.formatPocketItemForStorage(item) }
             })
 
-            const allItems = [...itemsList, ...newItems]
-
-            // Save item list in storage
-            browser.storage.local.set({ items: JSON.stringify(allItems) }).then(() => {
-              Badge.updateCount(allItems)
-
-              if (retrievedItemsCount > 0) {
-                Logger.log(`(ItemsFetcher.retrieveAll) Fetch next page: offset=${offset}`)
+            const retrievedItemsCount = retrievedItems.length
+            if (retrievedItemsCount > 0) {
+              Logger.log(`(ItemsFetcher.retrieveAll) ${retrievedItemsCount} items in the response`)
+              const allItems = [...existingItems, ...retrievedItems]
+              browser.storage.local.set({ items: JSON.stringify(allItems) }).then(() => {
+                Badge.updateCount(allItems)
                 ItemsFetcher.retrieveAll(retrievedItemsCount + offset)
-                return
-              } else if (retrievedItemsCount === 0) {
-                Logger.log(`(ItemsFetcher.retrieveAll) 0 item in this page, all pages have been fetched succesfully`)
+              })
+            } else {
+              Logger.log("(ItemsFetcher.retrieveAll) No item in this page, all pages fetched succesfully")
+              // Save timestamp where we retrieved items for the last time
+              // Save addon version that did the last full sync
+              browser.storage.local.set({
+                last_retrieve: response.since,
+                lastFullSyncAtVersion: VersionManager.getCurrentVersion(),
+              })
 
-                // Save timestamp where we retrieved items for the last time
-                // Save addon version that did the last full sync
-                browser.storage.local.set({
-                  last_retrieve: response.since,
-                  lastFullSyncAtVersion: VersionManager.getCurrentVersion(),
-                })
-
-                browser.runtime.sendMessage({ action: "retrieved-items", full: true })
-                PageAction.redrawAllTabs()
-              }
-            })
+              browser.runtime.sendMessage({ action: "retrieved-items", full: true })
+              PageAction.redrawAllTabs()
+            }
           })
           .catch(error => {
             BugReporter.captureException(error)
