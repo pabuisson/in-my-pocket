@@ -6,10 +6,10 @@ import { VersionManager } from "../modules/version_manager.js"
 const SentryLoader = (function () {
   const DEFAULT_USER_ID = "0"
 
-  const normalizePath = path => {
-    const basePath = browser.runtime.getURL("")
-    return path.replace(basePath, "~/")
-  }
+  // const normalizePath = path => {
+  //   const basePath = browser.runtime.getURL("")
+  //   return path.replace(basePath, "~/")
+  // }
 
   const generateAndPersistUUID = async () => {
     const uuid = self.crypto.randomUUID()
@@ -37,33 +37,33 @@ const SentryLoader = (function () {
         dsn: "https://a6dcb8356fb92f218b162b76ddc60a5e@o4507282894487552.ingest.de.sentry.io/4507282896519248",
         release: "in-my-pocket@" + VersionManager.getCurrentVersion(),
         enabled: bugReportEnabled,
-        tracesSampleRate: 1.0, // Performance monitoring: capture 100% of the transactions, reduce in production!
+        // tracesSampleRate: 1.0, // Performance monitoring: capture 100% of the transactions, reduce in production!
         initialScope: {
           user: { id: uuid || DEFAULT_USER_ID },
         },
-        integrations: [
-          new Sentry.Integrations.GlobalHandlers({
-            onerror: true,
-            onunhandledrejection: false, // disable sentries for unhandled promise rejection errors
-          }),
-        ],
-        // If returns null, nothing get sent to Sentry
-        beforeSend(event) {
-          if (event.request && event.request.url) {
-            event.request.url = normalizePath(event.request.url)
-          }
-          if (event.exception) {
-            event.exception.values.forEach(exception => {
-              if (exception.stacktrace && exception.stacktrace.frames) {
-                exception.stacktrace.frames.forEach(frame => {
-                  frame.filename = normalizePath(frame.filename)
-                })
-              }
-            })
-          }
+        // integrations: [
+        //   new Sentry.Integrations.GlobalHandlers({
+        //     onerror: true,
+        //     onunhandledrejection: false, // disable sentries for unhandled promise rejection errors
+        //   }),
+        // ],
+        // NOTE: if returns null, nothing get sent to Sentry
+        // beforeSend(event) {
+        //   if (event.request && event.request.url) {
+        //     event.request.url = normalizePath(event.request.url)
+        //   }
+        //   if (event.exception) {
+        //     event.exception.values.forEach(exception => {
+        //       if (exception.stacktrace && exception.stacktrace.frames) {
+        //         exception.stacktrace.frames.forEach(frame => {
+        //           frame.filename = normalizePath(frame.filename)
+        //         })
+        //       }
+        //     })
+        //   }
 
-          return event
-        },
+        //   return event
+        // },
       })
     },
   }
