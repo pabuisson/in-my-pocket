@@ -63,6 +63,27 @@ const ItemsFetcher = (function () {
               return { id: itemId, ...Items.formatPocketItemForStorage(item) }
             })
 
+            const archivedItems = Object.values(rawRetrievedItems).filter(
+              item => item.status === "0" || item.status === 0,
+            )
+            const deletedItems = Object.values(rawRetrievedItems).filter(
+              item => item.status === "2" || item.status === 2,
+            )
+
+            if (archivedItems.length > 0 || deletedItems.length > 0) {
+              const maxItemsToReport = 4
+              BugReporter.captureException(new Error("retrieveAll: received deleted or archived items"), {
+                totalItemsCount: retrievedItems.length,
+                offset: offset,
+                archivedItemsCount: archivedItems.length,
+                archivedItems: archivedItems
+                  .slice(0, maxItemsToReport)
+                  .map(item => Items.formatPocketItemForDebug(item)),
+                deletedItemsCount: deletedItems.length,
+                deletedItems: deletedItems.slice(0, maxItemsToReport).map(item => Items.formatPocketItemForDebug(item)),
+              })
+            }
+
             const retrievedItemsCount = retrievedItems.length
             if (retrievedItemsCount > 0) {
               Logger.log(`(ItemsFetcher.retrieveAll) ${retrievedItemsCount} items in the response`)
@@ -111,6 +132,7 @@ const ItemsFetcher = (function () {
             .then(function (response) {
               Logger.log(Object.keys(response.list).length + " items in the response")
               const allItems = Utility.parseJson(items) || []
+              const itemsWithUnknownStatus = []
 
               for (const itemId in response.list) {
                 const item = response.list[itemId]
@@ -141,8 +163,21 @@ const ItemsFetcher = (function () {
 
                   default:
                     Logger.log(`(ItemsFetcher.retriveDiff) Unknown item status: ${item.status}`)
+                    itemsWithUnknownStatus.push(item)
                     break
                 }
+              }
+
+              if (itemsWithUnknownStatus.length > 0) {
+                const maxItemsToReport = 4
+                BugReporter.captureException(new Error("retrieveDiff: items with unknown status"), {
+                  totalItemsCount: allItems.length,
+                  since: last_retrieve,
+                  itemsWithUnknownStatusCount: itemsWithUnknownStatus.length,
+                  itemsWithUnknownStatus: itemsWithUnknownStatus
+                    .slice(0, maxItemsToReport)
+                    .map(item => Items.formatPocketItemForDebug(item)),
+                })
               }
 
               // Save item list in storage and update badge count

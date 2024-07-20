@@ -221,6 +221,21 @@ const Items = (function () {
       }
     },
 
+    formatPocketItemForDebug: function (itemFromApi) {
+      return {
+        id: itemFromApi.item_id,
+        status: itemFromApi.status,
+        favorite: itemFromApi.favorite,
+        timeAdded: itemFromApi.time_added,
+        timeUpdated: itemFromApi.time_updated,
+        hasGivenTitle: itemFromApi.given_title && itemFromApi.given_title !== "",
+        hasResolvedTitle: itemFromApi.resolved_title && itemFromApi.resolved_title !== "",
+        hasGivenUrl: itemFromApi.given_url && itemFromApi.given_url !== "",
+        hasResolvedUrl: itemFromApi.resolved_url && itemFromApi.resolved_url !== "",
+        hasTags: Object.keys(itemFromApi.tags || {}).length > 0,
+      }
+    },
+
     filter: function (rawItems, query, currentUrl) {
       Logger.log(`(Items.filter) query=${query}, currentUrl=${currentUrl}`)
       return parseItems(rawItems).filter(item => {
