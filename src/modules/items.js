@@ -152,7 +152,7 @@ const Items = (function () {
         })
         .catch(error => {
           BugReporter.captureException(error)
-          Logger.error(`(Items.removeItem) Error while removing item: ${JSON.stringify(error)}`)
+          Logger.error(`(Items.removeItem) Error while removing item: ${error}`)
           Badge.flashError()
         })
     })
@@ -199,7 +199,7 @@ const Items = (function () {
         })
         .catch(error => {
           BugReporter.captureException(error)
-          Logger.error(`(Items.setFavorite) Error for action ${action} : ${JSON.stringify(error)}`)
+          Logger.error(`(Items.setFavorite) Error for action ${action} : ${error}`)
           Badge.flashError()
         })
     })
@@ -328,7 +328,7 @@ const Items = (function () {
           })
           .catch(error => {
             BugReporter.captureException(error)
-            Logger.error(`(Items.updateItem) Error for update : ${JSON.stringify(error)}`)
+            Logger.error(`(Items.updateItem) Error for update : ${error}`)
             Badge.flashError()
           })
       })
@@ -405,7 +405,7 @@ const Items = (function () {
           })
           .catch(error => {
             BugReporter.captureException(error)
-            Logger.error(`(Items.addItem) Error while adding item: ${JSON.stringify(error)}`)
+            Logger.error(`(Items.addItem) Error while adding item: ${error}`)
             Badge.flashError()
           })
       })

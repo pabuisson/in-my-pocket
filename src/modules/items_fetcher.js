@@ -107,7 +107,7 @@ const ItemsFetcher = (function () {
           })
           .catch(error => {
             BugReporter.captureException(error)
-            Logger.error(`(ItemsFetcher.retrieveAll) Error: ${JSON.stringify(error)}`)
+            Logger.error(`(ItemsFetcher.retrieveAll) Error: ${error}`)
             Badge.flashError()
           })
       })
@@ -198,7 +198,7 @@ const ItemsFetcher = (function () {
 
               // Even if something went wrong while retrieving diff, we still can display the current
               // items, so we send the `retrieved-items` event back to popup to build the item list
-              Logger.warn(`(ItemsFetcher.retrieveDiff) something went wrong: ${JSON.stringify(error)}`)
+              Logger.warn(`(ItemsFetcher.retrieveDiff) something went wrong: ${error}`)
 
               // Send a message back to the UI and updates the tabs page actions
               browser.runtime.sendMessage({ action: "retrieved-items" })
