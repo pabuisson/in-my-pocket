@@ -7,10 +7,10 @@ import Settings from "./settings.js"
 
 const BugReporter = (function () {
   return {
-    captureException: function (error) {
+    captureException: function (error, extraData = {}) {
       Settings.init().then(() => {
         if (Settings.get("bugReport")) {
-          Sentry.captureException(error)
+          Sentry.captureException(error, { extra: extraData })
         }
       })
     },
