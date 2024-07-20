@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.12.8 - July 2024
+
+* CHORE: make synchronization code hopefully a bit more solid than it was
+* FIX: add more debugging information during the synchronization step for more accurate error identification.
+* FIX: fix the integration of the error reporting tool I'm using. It wasn't reporting anything anymore.
+
+
 ## 0.12.7 - May 2024
 
 * FIX: settings were sometimes not respected due to some caching issues. Disabled this caching to avoid this kind of bugs. Known bugs: disabling/enabling badge count, disabling/enabling automations, but this is surely the case for almost any configuration option.
