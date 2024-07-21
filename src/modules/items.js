@@ -335,12 +335,11 @@ const Items = (function () {
     },
 
     addItem: function (itemsToAdd) {
-      Logger.log("(Items.addItem)")
+      Logger.log(`(Items.addItem) Trying to add ${itemsToAdd.length} items to Pocket`)
 
       browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
         const newItemsToAdd = itemsToAdd.filter(item => !Items.contains(items, item.url))
         if (newItemsToAdd.length === 0) {
-          // Instead of just logging, send an event back to the UI and exit
           browser.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST })
           return
         }
@@ -352,7 +351,7 @@ const Items = (function () {
         request
           .then(response => {
             const parsedItems = Utility.parseJson(items) || []
-            const addedItems = response.item ? [response.item] : response.action_results
+            const addedItems = (newItemsToAdd.length === 1 ? [response.item] : response.action_results) || []
             const enrichedAddedItems = enrichParsedItems(addedItems, newItemsToAdd)
 
             enrichedAddedItems.forEach(newItem => {
@@ -414,6 +413,7 @@ const Items = (function () {
     markAsRead: function (itemId, tabId) {
       removeItem(itemId, "archive", tabId)
     },
+
     deleteItem: function (itemId, tabId) {
       removeItem(itemId, "delete", tabId)
     },
