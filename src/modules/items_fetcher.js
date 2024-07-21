@@ -60,22 +60,18 @@ const ItemsFetcher = (function () {
           .fetch()
           .then(response => {
             const rawRetrievedItems = response.list || {}
-            const retrievedItems = Object.entries(rawRetrievedItems).map(([itemId, item]) => {
-              return { id: itemId, ...Items.formatPocketItemForStorage(item) }
-            })
+            const retrievedItems = Object.values(rawRetrievedItems).map(item =>
+              Items.formatFetchedPocketItemForStorage(item),
+            )
 
-            const archivedItems = Object.values(rawRetrievedItems).filter(
-              item => item.status === "1" || item.status === 1,
-            )
-            const deletedItems = Object.values(rawRetrievedItems).filter(
-              item => item.status === "2" || item.status === 2,
-            )
+            // NOTE: I voluntarily use loose equality to get strings and integers, just in case
+            const archivedItems = Object.values(rawRetrievedItems).filter(item => item.status == "1")
+            const deletedItems = Object.values(rawRetrievedItems).filter(item => item.status == "2")
 
             if (archivedItems.length > 0 || deletedItems.length > 0) {
               const maxItemsToReport = 4
               BugReporter.captureException(new Error("retrieveAll: received deleted or archived items"), {
                 totalItemsCount: retrievedItems.length,
-                offset: offset,
                 archivedItemsCount: archivedItems.length,
                 archivedItems: archivedItems
                   .slice(0, maxItemsToReport)
@@ -155,10 +151,13 @@ const ItemsFetcher = (function () {
                   case PocketApiStatus.CREATED:
                     if (itemIndex >= 0) {
                       Logger.log(`(ItemsFetcher.retriveDiff) Existing item ${itemId} (${item.title}) will be updated`)
-                      allItems[itemIndex] = Object.assign(allItems[itemIndex], Items.formatPocketItemForStorage(item))
+                      allItems[itemIndex] = Object.assign(
+                        allItems[itemIndex],
+                        Items.formatFetchedPocketItemForStorage(item),
+                      )
                     } else {
                       Logger.log(`(ItemsFetcher.retriveDiff) Add new item: ${itemId} (${item.title})`)
-                      allItems.push({ id: item.item_id, ...Items.formatPocketItemForStorage(item) })
+                      allItems.push(Items.formatFetchedPocketItemForStorage(item))
                     }
                     break
 

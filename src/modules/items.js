@@ -158,16 +158,16 @@ const Items = (function () {
     })
   }
 
-  // rawItems = items to add { url:, title:, tabId: }
-  // parsedItems = items returned by Pocket API
-  function enrichParsedItems(parsedItems, rawItems) {
-    return parsedItems.map(parsedItem => {
-      if (!parsedItem.title) {
-        const rawItem = rawItems.find(item => parsedItem.given_url == item.url)
-        parsedItem.title = rawItem ? rawItem.title : "—"
+  // rawObjectsToAdd = objects passed to addItem to be added to Pocket
+  // they're all of the following form: { url:, title:, tabId: }
+  function enrichItemsFromApi(rawItemsFromPocketAPI, rawObjectsToAdd) {
+    return rawItemsFromPocketAPI.map(itemFromPocketApi => {
+      if (!itemFromPocketApi.title) {
+        const matchingRawObject = rawObjectsToAdd.find(rawObject => itemFromPocketApi.given_url == rawObject.url)
+        itemFromPocketApi.title = matchingRawObject ? matchingRawObject.title : "—"
       }
 
-      return parsedItem
+      return itemFromPocketApi
     })
   }
 
@@ -205,9 +205,53 @@ const Items = (function () {
     })
   }
 
+  // NOTE: could be better placed somewhere else, let's keep it here for now for convenience
+  function reportExceptionInAddItemResponse(numberOfItemsToAdd, addResponse) {
+    const addActionFailed = numberOfItemsToAdd === 1 && !addResponse.item
+    const addBatchActionFailed = numberOfItemsToAdd > 1 && (addResponse.action_errors || []).filter(Boolean).length > 0
+
+    if (addActionFailed || addBatchActionFailed) {
+      const details = {
+        action: numberOfItemsToAdd === 1 ? "add" : "addBatch",
+        itemsToAdd: numberOfItemsToAdd,
+        addActionFailed: addActionFailed,
+        addBatchActionFailed: addBatchActionFailed,
+        responseStatus: addResponse.status,
+      }
+
+      if (addActionFailed) {
+        details.responseItemIsNullOrUndefined = addResponse.item === null || addResponse.item === undefined
+        details.responseItemIsEmpty = addResponse.item === {}
+      } else if (addBatchActionFailed) {
+        // NOTE: I'd like to avoid logging the whole error but Pocket does not document this
+        // https://getpocket.com/developer/docs/v3/modify
+        details.responseActionErrors = addResponse.action_errors
+      }
+
+      BugReporter.captureException(new Error("addItem: 200 addResponse but errors in the payload"), details)
+    }
+  }
+
   return {
-    formatPocketItemForStorage: function (itemFromApi) {
+    // Format items that have just been ADDED via the API, via the "add/send" endpoints.
+    // These items may or may not be already parsed and enriched by Pocket. If they've not been enriched,
+    // they have very little information available: given_url, item_id, normal_url and title. All the
+    // other attributes are null. The time_added/time_updated attributes are not even present.
+    formatPotentiallyNotParsedPocketItemForStorage: function (itemFromApi) {
       return {
+        id: itemFromApi.item_id,
+        title: itemFromApi.title,
+        url: itemFromApi.given_url,
+        created_at: (Date.now() / 1000) | 0,
+      }
+    },
+
+    // Format items that have been FETCHED from the API via the "get" endpoint.
+    // Items coming from the add/send endpoints don't necessarily have the same attributes
+    // NOTE: how come I do not store the item_id?!
+    formatFetchedPocketItemForStorage: function (itemFromApi) {
+      return {
+        id: itemFromApi.item_id,
         // given_title - The title that was saved along with the item.
         // resolved_title - The title that Pocket found for the item when it was parsed
         title: itemFromApi.given_title || itemFromApi.resolved_title,
@@ -286,8 +330,6 @@ const Items = (function () {
       }
     },
 
-    // ---------------
-
     favoriteItem: function (itemId) {
       setFavorite(itemId, "favorite")
     },
@@ -334,34 +376,35 @@ const Items = (function () {
       })
     },
 
-    addItem: function (itemsToAdd) {
-      Logger.log(`(Items.addItem) Trying to add ${itemsToAdd.length} items to Pocket`)
+    // rawObjectsToAdd = objects passed to addItem to be added to Pocket
+    // they're all of the following form: { url:, title:, tabId: }
+    addItem: function (rawObjectsToAdd) {
+      Logger.log(`(Items.addItem) Trying to add ${rawObjectsToAdd.length} items to Pocket`)
 
       browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
-        const newItemsToAdd = itemsToAdd.filter(item => !Items.contains(items, item.url))
-        if (newItemsToAdd.length === 0) {
+        const newRawObjectsToAdd = rawObjectsToAdd.filter(item => !Items.contains(items, item.url))
+        if (newRawObjectsToAdd.length === 0) {
           browser.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST })
           return
         }
 
         Badge.startLoadingSpinner()
         const requester = new PocketApiRequester(access_token)
-        const request = newItemsToAdd.length === 1 ? requester.add(newItemsToAdd[0]) : requester.addBatch(newItemsToAdd)
+        const request =
+          newRawObjectsToAdd.length === 1
+            ? requester.add(newRawObjectsToAdd[0])
+            : requester.addBatch(newRawObjectsToAdd)
 
         request
           .then(response => {
             const parsedItems = Utility.parseJson(items) || []
-            const addedItems = (newItemsToAdd.length === 1 ? [response.item] : response.action_results) || []
-            const enrichedAddedItems = enrichParsedItems(addedItems, newItemsToAdd)
+            const rawAddedItems = (newRawObjectsToAdd.length === 1 ? [response.item] : response.action_results) || []
+            const enrichedAddedItems = enrichItemsFromApi(rawAddedItems, newRawObjectsToAdd)
+
+            reportExceptionInAddItemResponse(newRawObjectsToAdd.length, response)
 
             enrichedAddedItems.forEach(newItem => {
-              // TODO: use formatPocketItemForStorage or a variant of this
-              parsedItems.push({
-                id: newItem.item_id,
-                title: newItem.title,
-                url: newItem.given_url,
-                created_at: (Date.now() / 1000) | 0,
-              })
+              parsedItems.push(this.formatPotentiallyNotParsedPocketItemForStorage(newItem))
             })
 
             // Save item list in storage and update badge count
@@ -371,7 +414,7 @@ const Items = (function () {
             // TODO: send multiple ids? what are they used for?
             browser.runtime.sendMessage({
               action: "added-item",
-              id: addedItems.map(item => item.item_id),
+              id: rawAddedItems.map(item => item.item_id),
             })
 
             // Display an indicator on the badge that everything went well
@@ -380,7 +423,7 @@ const Items = (function () {
               Settings.init().then(() => {
                 const closeTabWhenAdded = Settings.get("closeTabWhenAdded")
                 if (closeTabWhenAdded) {
-                  const tabIdsToClose = newItemsToAdd.map(item => item.tabId)
+                  const tabIdsToClose = newRawObjectsToAdd.map(item => item.tabId)
                   setTimeout(() => {
                     browser.tabs.remove(tabIdsToClose)
                   }, 200)
