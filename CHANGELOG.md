@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.11 - July 2024
+
+* FIX: it seems that Pocket API behaviour has changed lately, leading to some old items potentially appearing at sync time. For that reason, stop relying on supposedly correct default parameter for calls to Pocket API and explicitely ask for unread items during the initial syncs.
+
+
 ## 0.12.10 - July 2024
 
 * UPDATE: in the popup actions at the very top, move the "Refresh list" icon to the left, next to the settings icon. This action is not an action users are supposed to use on a regular basis, and having it right in the middle of other daily actions (such as "add new item" or "pick random item") made it too easy to click on this by mistake.

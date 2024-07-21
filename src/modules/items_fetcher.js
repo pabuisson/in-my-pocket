@@ -48,9 +48,10 @@ const ItemsFetcher = (function () {
         const requestParams = {
           consumer_key: consumerKey,
           access_token: access_token,
-          detailType: "complete",
           offset: offset,
           count: 2000,
+          detailType: "complete",
+          state: "unread",
           sort: "oldest",
         }
 
