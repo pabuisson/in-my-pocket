@@ -1,8 +1,16 @@
 # Changelog
 
+## 0.12.10 - July 2024
+
+* UPDATE: in the popup actions at the very top, move the "Refresh list" icon to the left, next to the settings icon. This action is not an action users are supposed to use on a regular basis, and having it right in the middle of other daily actions (such as "add new item" or "pick random item") made it too easy to click on this by mistake.
+* FIX: adding a new item sometimes errored due to unknown reasons. I added better error reporting around that function and made it a bit more resilient to unexpected cases.
+* CHORE: re-enable more advanced error reporting feature that will allow me to better pinpoint performance problems. As always, these performances reports are only sent if the error reporting setting is enabled.
+
+
 ## 0.12.9 - July 2024
 
 * FIX: debug code during synchronization was incorrectly reporting correct scenarios. I fixed this.
+
 
 ## 0.12.8 - July 2024
 
