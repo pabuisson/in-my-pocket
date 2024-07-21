@@ -64,7 +64,7 @@ const ItemsFetcher = (function () {
             })
 
             const archivedItems = Object.values(rawRetrievedItems).filter(
-              item => item.status === "0" || item.status === 0,
+              item => item.status === "1" || item.status === 1,
             )
             const deletedItems = Object.values(rawRetrievedItems).filter(
               item => item.status === "2" || item.status === 2,
