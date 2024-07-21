@@ -3,7 +3,6 @@
 import Logger from "./logger.js"
 import Settings from "./settings.js"
 import Items from "./items.js"
-import Utility from "./utility"
 
 // -------------------------------------
 

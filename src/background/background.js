@@ -44,7 +44,7 @@ browser.runtime.onMessage.addListener(function (eventData) {
       Badge.updateCount()
       break
     case "read-item":
-      Items.openItem(eventData.item, eventData.openInNewTab);
+      Items.openItem(eventData.item, eventData.openInNewTab)
       break
     case "random-item":
       Items.openRandom(eventData.query)
@@ -59,7 +59,7 @@ browser.runtime.onMessage.addListener(function (eventData) {
 
 // - - - ON LOAD - - -
 
-Authentication.isAuthenticated().then(function() {
+Authentication.isAuthenticated().then(function () {
   ContextMenu.createEntries()
   Badge.updateCount()
 })
