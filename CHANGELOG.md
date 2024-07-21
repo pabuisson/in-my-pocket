@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.9 - July 2024
+
+* FIX: debug code during synchronization was incorrectly reporting correct scenarios. I fixed this.
+
 ## 0.12.8 - July 2024
 
 * CHORE: make synchronization code hopefully a bit more solid than it was
