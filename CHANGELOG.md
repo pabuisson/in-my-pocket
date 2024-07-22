@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.12 - July 2024
+
+* CHORE: some users are facing issues when trying to add an item. I'm adding more precise debugging around these actions to try and pinpoint this new problem.
+
+
 ## 0.12.11 - July 2024
 
 * FIX: it seems that Pocket API behaviour has changed lately, leading to some old items potentially appearing at sync time. For that reason, stop relying on supposedly correct default parameter for calls to Pocket API and explicitely ask for unread items during the initial syncs.
