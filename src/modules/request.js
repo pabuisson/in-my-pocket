@@ -69,10 +69,10 @@ class Request {
 
           if (response.ok) {
             const data = response.json()
-            Logger.log(`Response OK, received data : ${JSON.stringify(data)}`)
+            Logger.log(`(Request.fetch) Response OK, received data : ${JSON.stringify(data)}`)
             resolve(data)
           } else {
-            Logger.error("Response not OK, something went wrong")
+            Logger.error("(Request.fetch) Response not OK, something went wrong")
             const errorObject = this.buildErrorObject(response)
 
             // Instead of just logging, send an event back to the UI

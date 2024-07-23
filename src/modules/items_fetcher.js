@@ -32,7 +32,9 @@ const ItemsFetcher = (function () {
           // Do this to stop the main-loader component
           // TODO: send a stop-loaded message instead of retrieved-items, no?
           //       retrieved-items has side effects on the items list building
-          browser.runtime.sendMessage({ action: "retrieved-items" })
+          browser.runtime
+            .sendMessage({ action: "retrieved-items" })
+            .catch(error => Logger.warn(`'action: retrieved-items' message could not be delivered: ${error}`))
           // Update the badge count, in case it wasn't displayed but no items reload happened
           Badge.updateCount()
         }
@@ -98,7 +100,9 @@ const ItemsFetcher = (function () {
                 lastFullSyncAtVersion: VersionManager.getCurrentVersion(),
               })
 
-              browser.runtime.sendMessage({ action: "retrieved-items", full: true })
+              browser.runtime
+                .sendMessage({ action: "retrieved-items", full: true })
+                .catch(error => Logger.warn(`'action: retrieved-items' message could not be delivered: ${error}`))
               PageAction.redrawAllTabs()
             }
           })
@@ -190,7 +194,9 @@ const ItemsFetcher = (function () {
               browser.storage.local.set({ last_retrieve: response.since })
 
               // Send a message back to the UI and updates the tabs page actions
-              browser.runtime.sendMessage({ action: "retrieved-items" })
+              browser.runtime
+                .sendMessage({ action: "retrieved-items" })
+                .catch(error => Logger.warn(`'action: retrieved-items' message could not be delivered: ${error}`))
               PageAction.redrawAllTabs()
             })
             .catch(error => {
@@ -201,7 +207,9 @@ const ItemsFetcher = (function () {
               Logger.warn(`(ItemsFetcher.retrieveDiff) something went wrong: ${error}`)
 
               // Send a message back to the UI and updates the tabs page actions
-              browser.runtime.sendMessage({ action: "retrieved-items" })
+              browser.runtime
+                .sendMessage({ action: "retrieved-items" })
+                .catch(error => Logger.warn(`'action: retrieved-items' message could not be delivered: ${error}`))
               PageAction.redrawAllTabs()
 
               // Flash the badge if an error occured

@@ -14,7 +14,9 @@ browser.runtime.onMessage.addListener(function (eventData) {
   switch (eventData.action) {
     case "authenticate":
       Authentication.authenticate().then(() => {
-        browser.runtime.sendMessage({ action: "authenticated" })
+        browser.runtime
+          .sendMessage({ action: "authenticated" })
+          .catch(error => Logger.warn(`'action: authenticated' message could not be delivered: ${error}`))
         ItemsFetcher.retrieveItems(true)
         ContextMenu.createEntries()
       })

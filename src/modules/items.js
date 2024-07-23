@@ -113,7 +113,9 @@ const Items = (function () {
 
             // Send a message back to the UI
             const callbackAction = method == "archive" ? "marked-as-read" : "deleted"
-            browser.runtime.sendMessage({ action: callbackAction, id: itemId })
+            browser.runtime
+              .sendMessage({ action: callbackAction, id: itemId })
+              .catch(error => Logger.warn(`'action: ${callbackAction}' message could not be delivered: ${error}`))
 
             // Display an indicator on the badge that everything went well and update badge count
             Badge.flashSuccess().then(() => {
@@ -170,7 +172,9 @@ const Items = (function () {
 
           // Send a message back to the UI: favorited/unfavorited
           const actionOver = `${action}d`
-          browser.runtime.sendMessage({ action: actionOver, id: itemId })
+          browser.runtime
+            .sendMessage({ action: actionOver, id: itemId })
+            .catch(error => Logger.warn(`'action: ${actionOver}' message could not be delivered: ${error}`))
 
           // Display an indicator on the badge that everything went well
           Badge.flashSuccess()
@@ -396,7 +400,9 @@ const Items = (function () {
 
             // Send a message back to the UI
             // TODO: is this needed? I don't use it right now
-            browser.runtime.sendMessage({ action: "updated", id: itemId })
+            browser.runtime
+              .sendMessage({ action: "updated", id: itemId })
+              .catch(error => Logger.warn(`'action: updated' message could not be delivered: ${error}`))
 
             // Display an indicator on the badge that everything went well
             Badge.flashSuccess()
@@ -417,7 +423,11 @@ const Items = (function () {
       browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
         const newRawObjectsToAdd = rawObjectsToAdd.filter(item => !Items.contains(items, item.url))
         if (newRawObjectsToAdd.length === 0) {
-          browser.runtime.sendMessage({ notice: PocketNotice.ALREADY_IN_LIST })
+          browser.runtime
+            .sendMessage({ notice: PocketNotice.ALREADY_IN_LIST })
+            .catch(error =>
+              Logger.warn(`'notice: ${PocketNotice.ALREADY_IN_LIST}' message could not be delivered: ${error}`),
+            )
           return
         }
 
@@ -445,10 +455,17 @@ const Items = (function () {
 
             // Send a message back to the UI
             // TODO: send multiple ids? what are they used for?
-            browser.runtime.sendMessage({
-              action: "added-item",
-              id: rawAddedItems.map(item => item.item_id),
-            })
+            const itemIdsToSendInEvent = rawAddedItems.map(item => item.item_id)
+            browser.runtime
+              .sendMessage({
+                action: "added-item",
+                id: itemIdsToSendInEvent,
+              })
+              .catch(error =>
+                Logger.warn(
+                  `'action: added-item, id: ${itemIdsToSendInEvent}' message could not be delivered: ${error}`,
+                ),
+              )
 
             // Display an indicator on the badge that everything went well
             Badge.flashSuccess().then(() => {
