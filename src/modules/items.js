@@ -249,20 +249,20 @@ const Items = (function () {
     })
   }
 
-  return {
-    // Format items that have just been ADDED via the API, via the "add/send" endpoints.
-    // These items may or may not be already parsed and enriched by Pocket. If they've not been enriched,
-    // they have very little information available: given_url, item_id, normal_url and title. All the
-    // other attributes are null. The time_added/time_updated attributes are not even present.
-    formatPotentiallyNotParsedPocketItemForStorage: function (itemFromApi) {
-      return {
-        id: itemFromApi.item_id,
-        title: itemFromApi.title,
-        url: itemFromApi.given_url,
-        created_at: (Date.now() / 1000) | 0,
-      }
-    },
+  // Format items that have just been ADDED via the API, via the "add/send" endpoints.
+  // These items may or may not be already parsed and enriched by Pocket. If they've not been enriched,
+  // they have very little information available: given_url, item_id, normal_url and title. All the
+  // other attributes are null. The time_added/time_updated attributes are not even present.
+  function formatPotentiallyNotParsedPocketItemForStorage(itemFromApi) {
+    return {
+      id: itemFromApi.item_id,
+      title: itemFromApi.title,
+      url: itemFromApi.given_url,
+      created_at: (Date.now() / 1000) | 0,
+    }
+  }
 
+  return {
     // Format items that have been FETCHED from the API via the "get" endpoint.
     // Items coming from the add/send endpoints don't necessarily have the same attributes
     // NOTE: how come I do not store the item_id?!
