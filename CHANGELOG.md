@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.15 - July 2024
+
+* FIX: version 0.12.14 allowed me to identify the occasional new behaviour of the "add" Pocket API. Not sure why and when it happens, but for now I'm just trying to hotfix this.
+
+
 ## 0.12.14 - July 2024
 
 * CHORE: improve error reporting around the "close tab when added" and "close tab when read" features.

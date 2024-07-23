@@ -213,6 +213,22 @@ const Items = (function () {
     }
   }
 
+  // add: Pocket should return an object, with a 'item' attribute holding the actual item
+  // NOTE: however since July 2024, *some* users have started receiving the object attributes at the
+  //       top level, instead of inside an 'item' attribute, which made all new item creation fail
+  // addBatch: Pocket should return all objects in a 'action_results' attributes
+  function getItemFromAddEndpointResponse(numberOfItemsToAdd, addResponse) {
+    if (numberOfItemsToAdd === 1) {
+      if (addResponse.item) {
+        return [addResponse.item]
+      } else {
+        return [addResponse]
+      }
+    } else {
+      return addResponse.action_results
+    }
+  }
+
   // rawObjectsToAdd = objects passed to addItem to be added to Pocket
   // they're all of the following form: { url:, title:, tabId: }
   function enrichItemsFromApi(itemsFromPocketAPI, rawObjectsToAdd) {
@@ -417,7 +433,7 @@ const Items = (function () {
             reportUnexpectedAddItemResponse(newRawObjectsToAdd.length, response)
 
             const parsedItems = Utility.parseJson(items) || []
-            const rawAddedItems = (newRawObjectsToAdd.length === 1 ? [response.item] : response.action_results) || []
+            const rawAddedItems = getItemFromAddEndpointResponse(newRawObjectsToAdd.length, response)
             const enrichedAddedItems = enrichItemsFromApi(rawAddedItems, newRawObjectsToAdd)
 
             enrichedAddedItems.forEach(newItem => {
