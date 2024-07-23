@@ -3,6 +3,7 @@
 ## 0.12.14 - July 2024
 
 * CHORE: improve error reporting around the "close tab when added" and "close tab when read" features.
+* CHORE: improve error reporting around the "add a new item" feature. Something is wrong/unusual in the responses sent by the Pocket API, but it is still hard to correctly diagnose.
 
 
 ## 0.12.12 & 0.12.13 - July 2024

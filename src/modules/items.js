@@ -149,19 +149,6 @@ const Items = (function () {
     })
   }
 
-  // rawObjectsToAdd = objects passed to addItem to be added to Pocket
-  // they're all of the following form: { url:, title:, tabId: }
-  function enrichItemsFromApi(rawItemsFromPocketAPI, rawObjectsToAdd) {
-    return rawItemsFromPocketAPI.map(itemFromPocketApi => {
-      if (!itemFromPocketApi.title) {
-        const matchingRawObject = rawObjectsToAdd.find(rawObject => itemFromPocketApi.given_url == rawObject.url)
-        itemFromPocketApi.title = matchingRawObject ? matchingRawObject.title : "—"
-      }
-
-      return itemFromPocketApi
-    })
-  }
-
   function setFavorite(itemId, action) {
     Logger.log(`(Items.setFavorite) action='${action}'`)
 
@@ -196,24 +183,27 @@ const Items = (function () {
     })
   }
 
-  // NOTE: could be better placed somewhere else, let's keep it here for now for convenience
+  // NOTE: may be better placed somewhere else, let's keep it here for now for convenience
   function reportUnexpectedAddItemResponse(numberOfItemsToAdd, addResponse) {
     const addActionFailed = numberOfItemsToAdd === 1 && !addResponse.item
     const addBatchActionFailed = numberOfItemsToAdd > 1 && (addResponse.action_errors || []).filter(Boolean).length > 0
 
     if (addActionFailed || addBatchActionFailed) {
+      const payloadKeysAndTypes = Object.keys(addResponse).map(key => {
+        const value = addResponse[key]
+        const valueType = Utility.getType(value)
+
+        return `${key}: ${valueType}`
+      })
+
       const details = {
         action: numberOfItemsToAdd === 1 ? "add" : "addBatch",
         itemsToAdd: numberOfItemsToAdd,
-        addActionFailed: addActionFailed,
-        addBatchActionFailed: addBatchActionFailed,
         responseStatus: addResponse.status,
+        responseKeys: payloadKeysAndTypes,
       }
 
-      if (addActionFailed) {
-        details.responseItemIsNullOrUndefined = addResponse.item === null || addResponse.item === undefined
-        details.responseItemIsEmpty = addResponse.item === {}
-      } else if (addBatchActionFailed) {
+      if (addBatchActionFailed) {
         // NOTE: I'd like to avoid logging the whole error but Pocket does not document this
         // https://getpocket.com/developer/docs/v3/modify
         details.responseActionErrors = addResponse.action_errors
@@ -221,6 +211,19 @@ const Items = (function () {
 
       BugReporter.captureException(new Error("addItem: 200 addResponse but errors in the payload"), details)
     }
+  }
+
+  // rawObjectsToAdd = objects passed to addItem to be added to Pocket
+  // they're all of the following form: { url:, title:, tabId: }
+  function enrichItemsFromApi(itemsFromPocketAPI, rawObjectsToAdd) {
+    return itemsFromPocketAPI.map(itemFromPocketApi => {
+      if (!itemFromPocketApi.title) {
+        const matchingRawObject = rawObjectsToAdd.find(rawObject => itemFromPocketApi.given_url == rawObject.url)
+        itemFromPocketApi.title = matchingRawObject ? matchingRawObject.title : "—"
+      }
+
+      return itemFromPocketApi
+    })
   }
 
   // tabIds: integer or array of integer The ids of the tab or tabs to close.
@@ -418,7 +421,7 @@ const Items = (function () {
             const enrichedAddedItems = enrichItemsFromApi(rawAddedItems, newRawObjectsToAdd)
 
             enrichedAddedItems.forEach(newItem => {
-              parsedItems.push(this.formatPotentiallyNotParsedPocketItemForStorage(newItem))
+              parsedItems.push(formatPotentiallyNotParsedPocketItemForStorage(newItem))
             })
 
             // Save item list in storage and update badge count

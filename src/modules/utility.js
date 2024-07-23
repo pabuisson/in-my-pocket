@@ -87,6 +87,16 @@ const Utility = (function () {
       link.setAttribute("href", url)
       return link.hostname
     },
+
+    getType: function (value) {
+      if (value === null) {
+        return "null"
+      } else if (Array.isArray(value)) {
+        return `Array(${value.length})`
+      } else {
+        return typeof value
+      }
+    },
   }
 })()
 
