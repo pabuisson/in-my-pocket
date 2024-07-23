@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "In My Pocket",
-  "version": "0.12.14",
+  "version": "0.12.15",
 
   "description": "For all those who are missing the old Firefox Pocket addon, here is an unofficial client for the excellent Pocket service. Goal is to provide a useful, but still lightweight means to access your Pocket account from your browser. Enjoy!",
   "homepage_url": "https://bitbucket.org/pabuisson/in-my-pocket",
