@@ -117,20 +117,11 @@ const Items = (function () {
 
             // Display an indicator on the badge that everything went well and update badge count
             Badge.flashSuccess().then(() => {
-              // Close the current tab if setting closeTabWhenAdded is "on" and url matches the deleted item
               if (tabId) {
                 browser.tabs.get(tabId).then(currentTab => {
                   const urlsToCheck = Utility.getPossibleUrls(removedItem).filter(url => typeof url === "string")
                   if (urlsToCheck.includes(currentTab.url)) {
-                    Settings.init().then(() => {
-                      const closeTabWhenRead = Settings.get("closeTabWhenRead")
-                      if (closeTabWhenRead) {
-                        Logger.log("(Items.removeItem) automatically close tab")
-                        setTimeout(() => {
-                          browser.tabs.remove(currentTab.id)
-                        }, 200)
-                      }
-                    })
+                    closeTabsIfNeeded(currentTab.id)
                   }
                 })
               }
@@ -206,7 +197,7 @@ const Items = (function () {
   }
 
   // NOTE: could be better placed somewhere else, let's keep it here for now for convenience
-  function reportExceptionInAddItemResponse(numberOfItemsToAdd, addResponse) {
+  function reportUnexpectedAddItemResponse(numberOfItemsToAdd, addResponse) {
     const addActionFailed = numberOfItemsToAdd === 1 && !addResponse.item
     const addBatchActionFailed = numberOfItemsToAdd > 1 && (addResponse.action_errors || []).filter(Boolean).length > 0
 
@@ -230,6 +221,29 @@ const Items = (function () {
 
       BugReporter.captureException(new Error("addItem: 200 addResponse but errors in the payload"), details)
     }
+  }
+
+  // tabIds: integer or array of integer The ids of the tab or tabs to close.
+  function closeTabsIfNeeded(tabIds) {
+    Settings.init().then(() => {
+      const closeTabWhenRead = Settings.get("closeTabWhenRead")
+
+      if (closeTabWhenRead) {
+        setTimeout(() => {
+          browser.tabs
+            .remove(tabIds)
+            .then(() => {
+              Logger.log(`(Items.closeTabsIfNeeded) succesfully closed the tabs ${tabIds}`)
+            })
+            .catch(error => {
+              // NOTE: the tabs removal will raise an exception AS SOON AS ONE TABID can't be closed
+              Logger.warn(`(Items.closeTabsIfNeeded) could not close all the tabs ${tabIds}`)
+              Logger.warn(`(Items.closeTabsIfNeeded) Erorr: ${error}`)
+              BugReporter.captureException(error)
+            })
+        }, 100)
+      }
+    })
   }
 
   return {
@@ -397,7 +411,7 @@ const Items = (function () {
 
         request
           .then(response => {
-            reportExceptionInAddItemResponse(newRawObjectsToAdd.length, response)
+            reportUnexpectedAddItemResponse(newRawObjectsToAdd.length, response)
 
             const parsedItems = Utility.parseJson(items) || []
             const rawAddedItems = (newRawObjectsToAdd.length === 1 ? [response.item] : response.action_results) || []
@@ -419,16 +433,9 @@ const Items = (function () {
 
             // Display an indicator on the badge that everything went well
             Badge.flashSuccess().then(() => {
-              // Close the given tab if setting closeTabWhenAdded is "on"
-              Settings.init().then(() => {
-                const closeTabWhenAdded = Settings.get("closeTabWhenAdded")
-                if (closeTabWhenAdded) {
-                  const tabIdsToClose = newRawObjectsToAdd.map(item => item.tabId)
-                  setTimeout(() => {
-                    browser.tabs.remove(tabIdsToClose)
-                  }, 200)
-                }
-              })
+              // If setting is enabled, close the tabs
+              const tabIds = newRawObjectsToAdd.map(item => item.tabId).filter(Boolean)
+              closeTabsIfNeeded(tabIds)
 
               // Redraw every page pageAction
               Logger.log("(Items.addItem) new items added, update matching pageActions")
