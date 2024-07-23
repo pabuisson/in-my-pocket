@@ -10,10 +10,10 @@
     "96": "assets/icons/icon-96.png"
   },
 
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "{cd7e22de-2e34-40f0-aeff-cec824cbccac}",
-      "strict_min_version": "58.0"
+      "strict_min_version": "62.0"
     }
   },
 
