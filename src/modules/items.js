@@ -397,11 +397,11 @@ const Items = (function () {
 
         request
           .then(response => {
+            reportExceptionInAddItemResponse(newRawObjectsToAdd.length, response)
+
             const parsedItems = Utility.parseJson(items) || []
             const rawAddedItems = (newRawObjectsToAdd.length === 1 ? [response.item] : response.action_results) || []
             const enrichedAddedItems = enrichItemsFromApi(rawAddedItems, newRawObjectsToAdd)
-
-            reportExceptionInAddItemResponse(newRawObjectsToAdd.length, response)
 
             enrichedAddedItems.forEach(newItem => {
               parsedItems.push(this.formatPotentiallyNotParsedPocketItemForStorage(newItem))

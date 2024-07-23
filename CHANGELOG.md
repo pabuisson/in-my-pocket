@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.12.12 - July 2024
+## 0.12.12 & 0.12.13 - July 2024
 
 * CHORE: some users are facing issues when trying to add an item. I'm adding more precise debugging around these actions to try and pinpoint this new problem.
 
