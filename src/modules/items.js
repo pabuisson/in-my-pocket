@@ -188,11 +188,8 @@ const Items = (function () {
   }
 
   // NOTE: may be better placed somewhere else, let's keep it here for now for convenience
-  function reportUnexpectedAddItemResponse(numberOfItemsToAdd, addResponse) {
-    const addActionFailed = numberOfItemsToAdd === 1 && !addResponse.item
-    const addBatchActionFailed = numberOfItemsToAdd > 1 && (addResponse.action_errors || []).filter(Boolean).length > 0
-
-    if (addActionFailed || addBatchActionFailed) {
+  function reportUnexpectedAddItemResponse(numberOfItemsToAdd, addResponse, addedItemsFromPocket) {
+    if (numberOfItemsToAdd != addedItemsFromPocket.length) {
       const payloadKeysAndTypes = Object.keys(addResponse).map(key => {
         const value = addResponse[key]
         const valueType = Utility.getType(value)
@@ -203,17 +200,13 @@ const Items = (function () {
       const details = {
         action: numberOfItemsToAdd === 1 ? "add" : "addBatch",
         itemsToAdd: numberOfItemsToAdd,
+        addedItems: addedItemsFromPocket.length,
+        nonNullAddedItems: addedItemsFromPocket.filter(Boolean).length,
         responseStatus: addResponse.status,
         responseKeys: payloadKeysAndTypes,
       }
 
-      if (addBatchActionFailed) {
-        // NOTE: I'd like to avoid logging the whole error but Pocket does not document this
-        // https://getpocket.com/developer/docs/v3/modify
-        details.responseActionErrors = addResponse.action_errors
-      }
-
-      BugReporter.captureException(new Error("addItem: 200 addResponse but errors in the payload"), details)
+      BugReporter.captureException(new Error("addItem: 200 response but unexpected number of items"), details)
     }
   }
 
@@ -440,11 +433,11 @@ const Items = (function () {
 
         request
           .then(response => {
-            reportUnexpectedAddItemResponse(newRawObjectsToAdd.length, response)
-
             const parsedItems = Utility.parseJson(items) || []
             const rawAddedItems = getItemFromAddEndpointResponse(newRawObjectsToAdd.length, response)
             const enrichedAddedItems = enrichItemsFromApi(rawAddedItems, newRawObjectsToAdd)
+
+            reportUnexpectedAddItemResponse(newRawObjectsToAdd.length, response, rawAddedItems)
 
             enrichedAddedItems.forEach(newItem => {
               parsedItems.push(formatPotentiallyNotParsedPocketItemForStorage(newItem))
