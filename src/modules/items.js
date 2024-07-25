@@ -243,6 +243,7 @@ const Items = (function () {
   function closeTabsIfNeeded(tabIds) {
     Settings.init().then(() => {
       const closeTabWhenRead = Settings.get("closeTabWhenRead")
+      Logger.log(`(Items.closeTabsIfNeeded) Setting value: '${closeTabWhenRead}'`)
 
       if (closeTabWhenRead) {
         setTimeout(() => {
