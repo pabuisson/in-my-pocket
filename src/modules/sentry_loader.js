@@ -7,10 +7,10 @@ import { VersionManager } from "../modules/version_manager.js"
 const SentryLoader = (function () {
   const DEFAULT_USER_ID = "0"
 
-  // const normalizePath = path => {
-  //   const basePath = browser.runtime.getURL("")
-  //   return path.replace(basePath, "~/")
-  // }
+  const normalizePath = path => {
+    const basePath = browser.runtime.getURL("")
+    return path.replace(basePath, "~/")
+  }
 
   const generateAndPersistUUID = async () => {
     const uuid = self.crypto.randomUUID()
@@ -43,23 +43,24 @@ const SentryLoader = (function () {
           user: { id: uuid || DEFAULT_USER_ID },
         },
         integrations: [new Integrations.BrowserTracing(), new Sentry.Integrations.GlobalHandlers({ onerror: true })],
-        // NOTE: if returns null, nothing get sent to Sentry
-        // beforeSend(event) {
-        //   if (event.request && event.request.url) {
-        //     event.request.url = normalizePath(event.request.url)
-        //   }
-        //   if (event.exception) {
-        //     event.exception.values.forEach(exception => {
-        //       if (exception.stacktrace && exception.stacktrace.frames) {
-        //         exception.stacktrace.frames.forEach(frame => {
-        //           frame.filename = normalizePath(frame.filename)
-        //         })
-        //       }
-        //     })
-        //   }
+        // NOTE: if beforeSend returns null, nothing get sent to Sentry
+        beforeSend(event) {
+          if (event.request && event.request.url) {
+            event.request.url = normalizePath(event.request.url)
+          }
 
-        //   return event
-        // },
+          if (event.exception) {
+            for (const exception of event.exception.values) {
+              if (exception.stacktrace && exception.stacktrace.frames) {
+                for (const frame of exception.stacktrace.frames) {
+                  frame.filename = normalizePath(frame.filename)
+                }
+              }
+            }
+          }
+
+          return event
+        },
       })
     },
   }

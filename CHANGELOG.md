@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 0.12.16 - July 2024
+
+* CHORE: cleanup source file paths in my error reporting to provide better and easier grouping of similar error reporterror reports.
+
+
 ## 0.12.15 - July 2024
 
 * FIX: version 0.12.14 allowed me to identify the occasional new behaviour of the "add" Pocket API. Not sure why and when it happens, but for now I'm just trying to hotfix this.
