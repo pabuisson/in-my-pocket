@@ -7,7 +7,7 @@ import PageAction from "./page_action.js"
 import PocketApiRequester from "./pocket_api_requester.js"
 import Settings from "./settings.js"
 import Utility from "./utility.js"
-import { PocketNotice, concealedProtocols } from "./constants.js"
+import { AutomationKind, RemovalMethod, PocketNotice, concealedProtocols } from "./constants.js"
 
 // ---------------
 
@@ -89,14 +89,15 @@ const Items = (function () {
   }
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module
-  // method: archive|delete
+  // method: RemovalMethod -> archive|delete
   function removeItem(itemId, method, tabId) {
     Logger.log("(Items.removeItem) id to remove: " + itemId)
     Badge.startLoadingSpinner()
 
     browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
       const apiRequester = new PocketApiRequester(access_token)
-      const removalPromise = method == "archive" ? apiRequester.archive(itemId) : apiRequester.delete(itemId)
+      const removalPromise =
+        method == RemovalMethod.archive ? apiRequester.archive(itemId) : apiRequester.delete(itemId)
 
       removalPromise
         .then(response => {
@@ -112,7 +113,7 @@ const Items = (function () {
             browser.storage.local.set({ items: JSON.stringify(parsedItems) })
 
             // Send a message back to the UI
-            const callbackAction = method == "archive" ? "marked-as-read" : "deleted"
+            const callbackAction = method == RemovalMethod.archive ? "marked-as-read" : "deleted"
             browser.runtime
               .sendMessage({ action: callbackAction, id: itemId })
               .catch(error => Logger.warn(`'action: ${callbackAction}' message could not be delivered: ${error}`))
@@ -123,7 +124,7 @@ const Items = (function () {
                 browser.tabs.get(tabId).then(currentTab => {
                   const urlsToCheck = Utility.getPossibleUrls(removedItem).filter(url => typeof url === "string")
                   if (urlsToCheck.includes(currentTab.url)) {
-                    closeTabsIfNeeded(currentTab.id)
+                    closeTabsIfNeeded(currentTab.id, AutomationKind.closeWhenRead)
                   }
                 })
               }
@@ -240,12 +241,22 @@ const Items = (function () {
   }
 
   // tabIds: integer or array of integer The ids of the tab or tabs to close.
-  function closeTabsIfNeeded(tabIds) {
+  function closeTabsIfNeeded(tabIds, onWhichEvent) {
     Settings.init().then(() => {
-      const closeTabWhenRead = Settings.get("closeTabWhenRead")
-      Logger.log(`(Items.closeTabsIfNeeded) Setting value: '${closeTabWhenRead}'`)
+      let shouldCloseTab = undefined
+      switch (onWhichEvent) {
+        case AutomationKind.closeWhenAdded:
+          shouldCloseTab = Settings.get("closeTabWhenAdded")
+          break
+        case AutomationKind.closeWhenRead:
+          shouldCloseTab = Settings.get("closeTabWhenRead")
+          break
+        default:
+          BugReporter.catchException(new Error(`closeTabsIfNeeded called with unknown event ${onWhichEvent}`))
+          return
+      }
 
-      if (closeTabWhenRead) {
+      if (shouldCloseTab) {
         setTimeout(() => {
           browser.tabs
             .remove(tabIds)
@@ -465,7 +476,7 @@ const Items = (function () {
             Badge.flashSuccess().then(() => {
               // If setting is enabled, close the tabs
               const tabIds = newRawObjectsToAdd.map(item => item.tabId).filter(Boolean)
-              closeTabsIfNeeded(tabIds)
+              closeTabsIfNeeded(tabIds, AutomationKind.closeWhenAdded)
 
               // Redraw every page pageAction
               Logger.log("(Items.addItem) new items added, update matching pageActions")
@@ -491,11 +502,11 @@ const Items = (function () {
     },
 
     markAsRead: function (itemId, tabId) {
-      removeItem(itemId, "archive", tabId)
+      removeItem(itemId, RemovalMethod.archive, tabId)
     },
 
     deleteItem: function (itemId, tabId) {
-      removeItem(itemId, "delete", tabId)
+      removeItem(itemId, RemovalMethod.delete, tabId)
     },
 
     openItem: async (item, forceNewTab = false, getTargetTab) => {

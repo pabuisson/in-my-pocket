@@ -44,13 +44,24 @@ const FavoriteFilterState = {
   UNSET: 2,
 }
 
+const AutomationKind = {
+  closeWhenAdded: "closeWhenAdded",
+  closeWhenRead: "closeWhenRead",
+}
+const RemovalMethod = {
+  archive: "archive",
+  delete: "delete",
+}
+
 export {
+  AutomationKind,
   FavoriteFilterState,
   KeyboardShortcuts,
   MouseButtons,
   PocketApiStatus,
   PocketError,
   PocketNotice,
+  RemovalMethod,
   concealedProtocols,
   consumerKey,
   parseIntBase,
