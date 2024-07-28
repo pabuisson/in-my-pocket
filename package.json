@@ -8,6 +8,7 @@
     "@babel/preset-env": "^7.22.0",
     "@babel/register": "^7.22.0",
     "@babel/runtime": "^7.22.0",
+    "@sentry/cli": "^1.77.0",
     "babel-loader": "^9.1.0",
     "chai": "^4.4.1",
     "copy-webpack-plugin": "^11.0.0",
