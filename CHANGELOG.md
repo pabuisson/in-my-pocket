@@ -3,7 +3,8 @@
 
 ## 0.12.16 - July 2024
 
-* CHORE: cleanup source file paths in my error reporting to provide better and easier grouping of similar error reporterror reports.
+* CHORE: cleanup source file paths in my error reporting to provide better and easier grouping of similar error reports.
+* CHORE: fix a few technical errors that are currently cluttering my error reporting tool
 
 
 ## 0.12.15 - July 2024
@@ -24,7 +25,7 @@
 
 ## 0.12.11 - July 2024
 
-* FIX: it seems that Pocket API behaviour has changed lately, leading to some old items potentially appearing at sync time. For that reason, stop relying on supposedly correct default parameter for calls to Pocket API and explicitely ask for unread items during the initial syncs.
+* FIX: it seems that Pocket API behaviour has changed lately, leading to some old items potentially appearing at sync time. For that reason, stop relying on supposedly correct default parameter for calls to Pocket API and explicitly ask for unread items during the initial syncs.
 
 
 ## 0.12.10 - July 2024
@@ -73,14 +74,14 @@
 ## 0.12.3 - November 2022
 
 * FIX: when clicking the "+" icon in the popup, the item you just added was not added to the list right away. It's now fixed! Thanks for your bug reports that allowed me to spot this one 🙌
-* FIX: sometimes, working with items tags was crashing because of an unknown tags value. This is now correclty handled and you should experience fewer problems with tag management
+* FIX: sometimes, working with items tags was crashing because of an unknown tags value. This is now correctly handled and you should experience fewer problems with tag management
 
 
 ## 0.12.2 - October 2022
 
 * UPDATE: add a keyboard shortcut to open the Pocket list in the sidebar. By default, it's set to Alt+Shift+Q, but feel free to update it with your favorite keyboard shortcut!
 * UPDATE: improve the keyboard shortcuts description
-* FIX: archiving/deleting the current page item was leaving some free space at the top of the items list. Nomore!
+* FIX: archiving/deleting the current page item was leaving some free space at the top of the items list. No more!
 * PERFS: only send an update request to Pocket API when the item has actually been modified
 
 
