@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.17 - July 2024
+
+* FIX: fix the behaviour of "close when added" and "close when read" that were buggy during 0.12.14 and 0.12.15 refactoring
+
 
 ## 0.12.16 - July 2024
 
