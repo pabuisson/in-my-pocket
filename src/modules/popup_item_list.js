@@ -16,6 +16,7 @@ const PopupItemList = (function () {
   const ITEMS_PER_BATCH = 200
   const CURRENT_ITEM_CLASS = "current-page"
   const placeholderNoResults = document.querySelector(".search-no-results")
+  const placeholderNeverFetched = document.querySelector(".onboarding-never-fetched")
   const itemsContainer = document.querySelector(".list-component")
   const itemTemplate = document.querySelector("#item-template")
   const itemsBuilding = {
@@ -300,7 +301,7 @@ const PopupItemList = (function () {
           title: editedTitle,
           tags: uniqueEditedTags,
         },
-        { current: targetItemElement.classList.contains(CURRENT_ITEM_CLASS) }
+        { current: targetItemElement.classList.contains(CURRENT_ITEM_CLASS) },
       )
 
       // Replace the current "form" item with the new built item
@@ -308,11 +309,21 @@ const PopupItemList = (function () {
     })
   }
 
-  function togglePlaceholderVisibility(itemsCount) {
-    if (itemsCount > 0) {
+  // NOTE: there are several steps depending on the local storage data
+  // -> No access_token = never authenticated
+  // -> No last_retrieve = authenticated but never finished the initial items sync
+  // TODO: maybe this should be moved to popup_ui instead?
+  function togglePlaceholderVisibility(haveAllItemsBeenFetchedAlready, itemsCount) {
+    if (!haveAllItemsBeenFetchedAlready) {
+      placeholderNeverFetched.classList.remove("hidden")
+      itemsContainer.classList.add("hidden")
+      placeholderNoResults.classList.add("hidden")
+    } else if (itemsCount > 0) {
+      placeholderNeverFetched.classList.add("hidden")
       itemsContainer.classList.remove("hidden")
       placeholderNoResults.classList.add("hidden")
     } else {
+      placeholderNeverFetched.classList.add("hidden")
       itemsContainer.classList.add("hidden")
       placeholderNoResults.classList.remove("hidden")
     }
@@ -457,12 +468,12 @@ const PopupItemList = (function () {
             case MouseButtons.LEFT:
               if (ev.ctrlKey || ev.metaKey) {
                 Logger.log(
-                  `(PopupItemList.eventListener) left-click + ctrlKey:${ev.ctrlKey}/metaKey:${ev.metaKey}, force opening ${targetItemId} in new tab`
+                  `(PopupItemList.eventListener) left-click + ctrlKey:${ev.ctrlKey}/metaKey:${ev.metaKey}, force opening ${targetItemId} in new tab`,
                 )
                 openLink(targetItem, openInNewTab)
               } else {
                 Logger.log(
-                  `(PopupItemList.eventListener) left-click, open ${targetItemId} based on openInNewTab setting`
+                  `(PopupItemList.eventListener) left-click, open ${targetItemId} based on openInNewTab setting`,
                 )
                 openLink(targetItem)
               }
@@ -507,34 +518,36 @@ const PopupItemList = (function () {
           return Settings.get("perPage")
         })
         .then(function (perPage) {
-          browser.storage.local.get(["items", "display"]).then(async ({ items, display }) => {
-            const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
-            // NOTE: empty query "" must be used and should not fall back to parsedDisplay value
-            const query = opts.query != null ? opts.query : parsedDisplay.query
-            const pageToDisplay = opts.page || parsedDisplay.currentPage
-            const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
-            Logger.log(`(PopupItemList.drawList) Start filtering item`)
+          browser.storage.local
+            .get(["items", "display", "last_retrieve"])
+            .then(async ({ items, display, last_retrieve }) => {
+              const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
+              // NOTE: empty query "" must be used and should not fall back to parsedDisplay value
+              const query = opts.query != null ? opts.query : parsedDisplay.query
+              const pageToDisplay = opts.page || parsedDisplay.currentPage
+              const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
+              Logger.log(`(PopupItemList.drawList) Start filtering item`)
 
-            // Parse and filter the item list
-            const currentPageItem = await getCurrentPageItem(items, currentTab.url)
-            const filteredItems = Items.filter(items, query, currentTab.url)
-            const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
+              // Parse and filter the item list
+              const currentPageItem = await getCurrentPageItem(items, currentTab.url)
+              const filteredItems = Items.filter(items, query, currentTab.url)
+              const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
 
-            // Display the "no results" message or hide it
-            togglePlaceholderVisibility(itemsToRender.length + (currentPageItem ? 1 : 0))
+              // Display the "no results" message or hide it
+              togglePlaceholderVisibility(!!last_retrieve, itemsToRender.length + (currentPageItem ? 1 : 0))
 
-            // Rebuild all items
-            PopupItemList.buildAllItems(itemsToRender, currentPageItem)
+              // Rebuild all items
+              PopupItemList.buildAllItems(itemsToRender, currentPageItem)
 
-            // Record currentPage and query, in case they've been "forced" through the opts param
-            // `displayedAt` value must remain the same (that's why we assign `parsedDisplay`)
-            const actualDisplay = { currentPage: pageToDisplay, query: query }
-            const displayOptions = Object.assign({}, parsedDisplay, actualDisplay)
-            browser.storage.local.set({ display: JSON.stringify(displayOptions) })
+              // Record currentPage and query, in case they've been "forced" through the opts param
+              // `displayedAt` value must remain the same (that's why we assign `parsedDisplay`)
+              const actualDisplay = { currentPage: pageToDisplay, query: query }
+              const displayOptions = Object.assign({}, parsedDisplay, actualDisplay)
+              browser.storage.local.set({ display: JSON.stringify(displayOptions) })
 
-            // Updates the PopupUI: page selector with the current page options
-            PopupPagination.updatePaginationUI(pageToDisplay, perPage, filteredItems.length)
-          })
+              // Updates the PopupUI: page selector with the current page options
+              PopupPagination.updatePaginationUI(pageToDisplay, perPage, filteredItems.length)
+            })
         })
 
       return
@@ -550,80 +563,82 @@ const PopupItemList = (function () {
           return Settings.get("perPage")
         })
         .then(function (perPage) {
-          browser.storage.local.get(["items", "display"]).then(async ({ items, display }) => {
-            const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
-            // NOTE: empty query "" must be used and should not fall back to parsedDisplay value
-            const query = opts.query != null ? opts.query : parsedDisplay.query
-            const pageToDisplay = opts.page || parsedDisplay.currentPage
-            const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
+          browser.storage.local
+            .get(["items", "display", "last_retrieve"])
+            .then(async ({ items, display, last_retrieve }) => {
+              const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
+              // NOTE: empty query "" must be used and should not fall back to parsedDisplay value
+              const query = opts.query != null ? opts.query : parsedDisplay.query
+              const pageToDisplay = opts.page || parsedDisplay.currentPage
+              const [currentTab] = await browser.tabs.query({ currentWindow: true, active: true })
 
-            // Parse and filter the item list
-            const currentPageItem = await getCurrentPageItem(items, currentTab.url)
-            const filteredItems = Items.filter(items, query, currentTab.url)
-            const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
-            const itemsToRenderIds = itemsToRender.map(item => item.id)
+              // Parse and filter the item list
+              const currentPageItem = await getCurrentPageItem(items, currentTab.url)
+              const filteredItems = Items.filter(items, query, currentTab.url)
+              const itemsToRender = Items.paginate(filteredItems, pageToDisplay, perPage)
+              const itemsToRenderIds = itemsToRender.map(item => item.id)
 
-            // Display the "no results" message or hide it
-            togglePlaceholderVisibility(itemsToRender.length + (currentPageItem ? 1 : 0))
+              // Display the "no results" message or hide it
+              togglePlaceholderVisibility(!!last_retrieve, itemsToRender.length + (currentPageItem ? 1 : 0))
 
-            // Rebuild all items
-            const visibleItemsIds = getVisibleItemsIds()
-            const itemIdsToKeep = visibleItemsIds.filter(id => itemsToRenderIds.includes(id))
-            const itemIdsToHide = visibleItemsIds.filter(id => !itemsToRenderIds.includes(id))
+              // Rebuild all items
+              const visibleItemsIds = getVisibleItemsIds()
+              const itemIdsToKeep = visibleItemsIds.filter(id => itemsToRenderIds.includes(id))
+              const itemIdsToHide = visibleItemsIds.filter(id => !itemsToRenderIds.includes(id))
 
-            if (currentPageItem) {
-              // if there is a currentPageItem then we need to build or update it
-              updateCurrentItem(currentPageItem)
-            } else {
-              // if no currentPageItem && the current page item is still displayed,
-              // then we get its id and add it to the list of items to delete
-              const currentPageItemElement = itemsContainer.querySelector(`.${CURRENT_ITEM_CLASS}`)
-              if (currentPageItemElement) {
-                itemIdsToHide.push(currentPageItemElement.dataset.id)
-              }
-            }
-
-            // First step: all removed items still visible must disappear
-            PopupItemList.fadeOutItem(...itemIdsToHide)
-
-            // Second step: prepare the insertion of all missing items
-            // Generate a table of all predecessors, to use insertBefore/appendChild to build the DOM
-            const predecessorTable = {}
-            let nextVisibleItemId = itemIdsToKeep.shift()
-
-            for (const itemToRender of itemsToRender) {
-              if (itemToRender.id != nextVisibleItemId) {
-                if (predecessorTable[nextVisibleItemId]) predecessorTable[nextVisibleItemId].push(itemToRender)
-                else predecessorTable[nextVisibleItemId] = [itemToRender]
+              if (currentPageItem) {
+                // if there is a currentPageItem then we need to build or update it
+                updateCurrentItem(currentPageItem)
               } else {
-                nextVisibleItemId = itemIdsToKeep.shift() || "last"
+                // if no currentPageItem && the current page item is still displayed,
+                // then we get its id and add it to the list of items to delete
+                const currentPageItemElement = itemsContainer.querySelector(`.${CURRENT_ITEM_CLASS}`)
+                if (currentPageItemElement) {
+                  itemIdsToHide.push(currentPageItemElement.dataset.id)
+                }
               }
-            }
 
-            // Use the predecessor table to inject the new items at the proper place in the list
-            for (const key in predecessorTable) {
-              const itemsToInject = predecessorTable[key]
-              if (key != "last") {
-                // When key is an ID, we insert before the node having this ID
-                PopupItemList.insertItems(itemsToInject, key)
-              } else {
-                // When key is 'last', we append the dom at the end of the list
-                PopupItemList.appendItems(itemsToInject)
+              // First step: all removed items still visible must disappear
+              PopupItemList.fadeOutItem(...itemIdsToHide)
+
+              // Second step: prepare the insertion of all missing items
+              // Generate a table of all predecessors, to use insertBefore/appendChild to build the DOM
+              const predecessorTable = {}
+              let nextVisibleItemId = itemIdsToKeep.shift()
+
+              for (const itemToRender of itemsToRender) {
+                if (itemToRender.id != nextVisibleItemId) {
+                  if (predecessorTable[nextVisibleItemId]) predecessorTable[nextVisibleItemId].push(itemToRender)
+                  else predecessorTable[nextVisibleItemId] = [itemToRender]
+                } else {
+                  nextVisibleItemId = itemIdsToKeep.shift() || "last"
+                }
               }
-            }
 
-            // Last step: update faved/unfaved items
-            updateFavoriteStatus(itemsToRender)
+              // Use the predecessor table to inject the new items at the proper place in the list
+              for (const key in predecessorTable) {
+                const itemsToInject = predecessorTable[key]
+                if (key != "last") {
+                  // When key is an ID, we insert before the node having this ID
+                  PopupItemList.insertItems(itemsToInject, key)
+                } else {
+                  // When key is 'last', we append the dom at the end of the list
+                  PopupItemList.appendItems(itemsToInject)
+                }
+              }
 
-            // Record currentPage and query, in case they've been "forced" through the opts param
-            // `displayedAt` value must remain the same (that's why we assign `parsedDisplay`)
-            const actualDisplay = { currentPage: pageToDisplay, query: query }
-            const displayOptions = Object.assign({}, parsedDisplay, actualDisplay)
-            browser.storage.local.set({ display: JSON.stringify(displayOptions) })
+              // Last step: update faved/unfaved items
+              updateFavoriteStatus(itemsToRender)
 
-            // Updates the PopupUI: page selector with the current page options
-            PopupPagination.updatePaginationUI(pageToDisplay, perPage, filteredItems.length)
-          })
+              // Record currentPage and query, in case they've been "forced" through the opts param
+              // `displayedAt` value must remain the same (that's why we assign `parsedDisplay`)
+              const actualDisplay = { currentPage: pageToDisplay, query: query }
+              const displayOptions = Object.assign({}, parsedDisplay, actualDisplay)
+              browser.storage.local.set({ display: JSON.stringify(displayOptions) })
+
+              // Updates the PopupUI: page selector with the current page options
+              PopupPagination.updatePaginationUI(pageToDisplay, perPage, filteredItems.length)
+            })
         })
 
       return

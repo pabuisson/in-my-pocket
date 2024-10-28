@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 0.12.18 (not released yet)
+
+* UPDATE: show a dedicated waiting screen as long as the initial items loading has not completed, instead of the current misleading "No items match this search"
+
+
 ## 0.12.17 - July 2024
 
 * FIX: fix the behaviour of "close when added" and "close when read" that were buggy during 0.12.14 and 0.12.15 refactoring

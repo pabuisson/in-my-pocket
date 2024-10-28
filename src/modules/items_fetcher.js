@@ -93,7 +93,7 @@ const ItemsFetcher = (function () {
               })
             } else {
               Logger.log("(ItemsFetcher.retrieveAll) No item in this page, all pages fetched succesfully")
-              // Save timestamp where we retrieved items for the last time
+              // Save timestamp where we retrieved *all* items for the last time
               // Save addon version that did the last full sync
               browser.storage.local.set({
                 last_retrieve: response.since,

@@ -58,7 +58,7 @@ body {
     border: 1px solid;
     border-radius: 4px;
     color: white;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     cursor: pointer;
 
     max-width: 80%;
@@ -76,6 +76,7 @@ body {
     margin: 2rem;
     width: 80%;
     color: $ff-secondary-text;
+    font-size: 1.1rem;
 
     a {
       color: $ff-secondary-text;
@@ -414,17 +415,20 @@ body {
 
 $top-actions-height: 2.2rem;
 
-.search-no-results {
+.search-no-results,
+.onboarding-never-fetched {
   flex: 1;
-
-  width: 100%;
   margin: 0;
-  padding-top: 2rem;
+  padding: 2rem;
   text-align: center;
 
   font-size: 1.5rem;
-  font-weight: bold;
   color: $ff-grey-80;
+
+  p {
+    text-align: left;
+    font-size: 1.2rem;
+  }
 }
 
 .top-actions {
