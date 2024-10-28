@@ -1,9 +1,10 @@
 # Changelog
 
 
-## 0.12.18 (not released yet)
+## 0.12.18 - October 2024
 
 * UPDATE: show a dedicated waiting screen as long as the initial items loading has not completed, instead of the current misleading "No items match this search"
+* CHORE: improve warnings and error handling in HTTP requests. They were sometimes lacking in details, which made debugging harder when needed.
 
 
 ## 0.12.17 - July 2024
