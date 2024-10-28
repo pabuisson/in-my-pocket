@@ -3,11 +3,13 @@
 const consumerKey = "58817-addc87503598b7ed29e5bf72"
 
 const PocketError = {
-  GENERIC: "generic",
-  UNREACHABLE: "unreachable",
   UNAUTHORIZED: "unauthorized",
-  PERMISSIONS: "missing_permissions",
   RATE_LIMIT: "user_rate_limit_reached",
+  PERMISSIONS: "missing_permissions",
+  NOT_FOUND: "not_found",
+  TIMEOUT: "timeout",
+  UNKNOWN: "unknown",
+  GENERIC: "generic",
 }
 
 const PocketApiStatus = {

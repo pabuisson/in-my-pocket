@@ -19,6 +19,7 @@ class Request {
 
   buildErrorObject(errorResponse) {
     const errorObject = {
+      url: this.url,
       httpCode: errorResponse.status,
       error: undefined,
     }
@@ -34,10 +35,10 @@ class Request {
         const userRemaining = errorResponse.headers.get("X-Limit-User-Remaining")
         if (userRemaining && userRemaining === 0) {
           const delayBeforeReset = errorResponse.headers.get("X-Limit-User-Reset")
+          Logger.error("403: access_denied (rate limit)")
+          Logger.error(`403: rate limit reset in ${delayBeforeReset} seconds`)
           errorObject.error = PocketError.RATE_LIMIT
           errorObject.resetDelay = delayBeforeReset
-          Logger.error("403: access_denied (rate limit)")
-          Logger.error("403: rate limit reset in " + delayBeforeReset + " seconds")
         } else {
           Logger.error("403: access_denied (missing permissions)")
           errorObject.error = PocketError.PERMISSIONS
@@ -46,11 +47,15 @@ class Request {
       }
       case 404:
         Logger.error("404: trying to reach a non-existing URL")
-        errorObject.error = PocketError.UNREACHABLE
+        errorObject.error = PocketError.NOT_FOUND
+        break
+      case 504:
+        Logger.error("504: timeout")
+        errorObject.error = PocketError.TIMEOUT
         break
       default:
-        Logger.error(errorResponse.status + " ERROR")
-        errorObject.error = PocketError.GENERIC
+        Logger.error(`${errorResponse.status} http error`)
+        errorObject.error = PocketError.UNKNOWN
         break
     }
 
@@ -75,20 +80,21 @@ class Request {
             Logger.error("(Request.fetch) Response not OK, something went wrong")
             const errorObject = this.buildErrorObject(response)
 
-            // Instead of just logging, send an event back to the UI
-            // TODO: since the error object is returned in the promise, I might not need this "send message" anymore
+            BugReporter.captureException(errorObject)
+
+            // Send an event back to the UI
             browser.runtime.sendMessage(errorObject)
             reject(errorObject)
           }
         })
         .catch(error => {
+          // NOTE: in which case do we get into the catch (instead of a then + !ok)?
           BugReporter.captureException(error)
 
-          Logger.error("(Request.fetch) error while reaching the server")
-          const errorObject = { error: PocketError.UNREACHABLE }
+          Logger.error("(Request.fetch) error while reaching the server or processing the response")
+          const errorObject = { error: PocketError.GENERIC }
 
-          // Instead of just logging, send an event back to the UI
-          // TODO: since the error object is returned in the promise, I might not need this "send message" anymore
+          // Send an event back to the UI
           browser.runtime.sendMessage(errorObject)
           reject(errorObject)
         })

@@ -64,18 +64,27 @@ function onError(eventData) {
 
   let flashMessage = "An error occurred: "
   switch (eventData.error) {
-    case PocketError.UNREACHABLE:
-      flashMessage += "could not reach the server"
-      break
     case PocketError.UNAUTHORIZED:
       flashMessage += "unauthorized, you might need to login again"
-      break
-    case PocketError.PERMISSIONS:
-      flashMessage += "missing permissions"
       break
     case PocketError.RATE_LIMIT:
       flashMessage += "max requests reached for this hour"
       flashMessage += ` (reset in ${eventData.resetDelay})`
+      break
+    case PocketError.PERMISSIONS:
+      flashMessage += "missing permissions"
+      break
+    case PocketError.NOT_FOUND:
+      flashMessage += "target URL does not exist"
+      break
+    case PocketError.TIMEOUT:
+      flashMessage += "timed out while contacting Pocket API"
+      break
+    case PocketError.UNKNOWN:
+      flashMessage += "unhandled HTTP response"
+      break
+    case PocketError.GENERIC:
+      flashMessage += "something went wrong that does not fit any known case"
       break
   }
 
