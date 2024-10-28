@@ -266,7 +266,7 @@ const Items = (function () {
             .catch(error => {
               // NOTE: the tabs removal will raise an exception AS SOON AS ONE TABID can't be closed
               Logger.warn(`(Items.closeTabsIfNeeded) could not close all the tabs ${tabIds}`)
-              Logger.warn(`(Items.closeTabsIfNeeded) Erorr: ${error}`)
+              Logger.warn(`(Items.closeTabsIfNeeded) Error: ${error}`)
               BugReporter.captureException(error)
             })
         }, 100)
