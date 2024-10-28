@@ -37,28 +37,23 @@ const Authentication = (function () {
         }
 
         Logger.log("(Authentication.authenticate) Requesting the requestToken")
-        new Request("POST", "https://getpocket.com/v3/oauth/request", requestParams)
-          .fetch()
-          .then(response => {
-            Logger.log("(Authentication.authenticate) Got the requestToken, open an authorize tab")
-            const requestToken = response.code
-            const authorizeUrl = `https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectIntermediate}`
+        new Request("POST", "https://getpocket.com/v3/oauth/request", requestParams).fetch().then(response => {
+          Logger.log("(Authentication.authenticate) Got the requestToken, open an authorize tab")
+          const requestToken = response.code
+          const authorizeUrl = `https://getpocket.com/auth/authorize?request_token=${requestToken}&redirect_uri=${redirectIntermediate}`
 
-            browser.tabs.create({ url: authorizeUrl }).then(tab => {
-              browser.tabs.onUpdated.addListener((tabId, changeInfo, updatedTab) => {
-                // callback url has been loaded
-                if (
-                  changeInfo.status == "complete" &&
-                  updatedTab.url.indexOf(redirectIntermediate) === 0
-                ) {
-                  Logger.log("(Authentication.authenticate) Authorize tab loaded correctly")
-                  browser.tabs.remove(tabId)
+          browser.tabs.create({ url: authorizeUrl }).then(_tab => {
+            browser.tabs.onUpdated.addListener((tabId, changeInfo, updatedTab) => {
+              // callback url has been loaded
+              if (changeInfo.status == "complete" && updatedTab.url.indexOf(redirectIntermediate) === 0) {
+                Logger.log("(Authentication.authenticate) Authorize tab loaded correctly")
+                browser.tabs.remove(tabId)
 
-                  authenticateStep2(requestToken).then(resolve).catch(reject)
-                }
-              })
+                authenticateStep2(requestToken).then(resolve).catch(reject)
+              }
             })
           })
+        })
       })
 
       return promise
