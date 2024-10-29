@@ -313,19 +313,25 @@ const PopupItemList = (function () {
   // -> No access_token = never authenticated
   // -> No last_retrieve = authenticated but never finished the initial items sync
   // TODO: maybe this should be moved to popup_ui instead?
-  function togglePlaceholderVisibility(haveAllItemsBeenFetchedAlready, itemsCount) {
-    if (!haveAllItemsBeenFetchedAlready) {
-      placeholderNeverFetched.classList.remove("hidden")
-      itemsContainer.classList.add("hidden")
-      placeholderNoResults.classList.add("hidden")
-    } else if (itemsCount > 0) {
+  function togglePlaceholderVisibility(haveAllItemsBeenFetchedAlready, visibleItemsCount) {
+    if (visibleItemsCount > 0) {
+      // Some items have already been fetched and are visible
+      // -> show the items list
       placeholderNeverFetched.classList.add("hidden")
+      placeholderNoResults.classList.add("hidden")
       itemsContainer.classList.remove("hidden")
+    } else if (!haveAllItemsBeenFetchedAlready) {
+      // No item has been fetched yet AND we never completed a sync yet
+      // -> show the "waiting for first sync to complete" placeholder
+      placeholderNeverFetched.classList.remove("hidden")
       placeholderNoResults.classList.add("hidden")
-    } else {
-      placeholderNeverFetched.classList.add("hidden")
       itemsContainer.classList.add("hidden")
+    } else {
+      // No items have been fetched yet AND we have completed a sync already
+      // -> show the "search matches nothing" placeholder
+      placeholderNeverFetched.classList.add("hidden")
       placeholderNoResults.classList.remove("hidden")
+      itemsContainer.classList.add("hidden")
     }
   }
 
