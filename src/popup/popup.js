@@ -91,6 +91,8 @@ function onError(eventData) {
   // Show flash message + flash the badge if an error occured
   PopupFlash.show(flashMessage, FlashKind.ERROR, 5000)
   browser.runtime.sendMessage({ action: "flash-error" })
+
+  // TODO: BugReporter is already called from Request. Is this useful at all?
   BugReporter.captureException({ error: eventData.error })
 }
 

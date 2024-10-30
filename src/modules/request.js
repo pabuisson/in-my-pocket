@@ -78,25 +78,25 @@ class Request {
             resolve(data)
           } else {
             Logger.error("(Request.fetch) Response not OK, something went wrong")
-            const errorObject = this.buildErrorObject(response)
+            const errorDetails = this.buildErrorObject(response)
 
-            BugReporter.captureException(errorObject)
+            BugReporter.captureException(new Error("Request.fetch: response !OK"), errorDetails)
 
             // Send an event back to the UI
-            browser.runtime.sendMessage(errorObject)
-            reject(errorObject)
+            browser.runtime.sendMessage(errorDetails)
+            reject(errorDetails)
           }
         })
         .catch(error => {
           // NOTE: in which case do we get into the catch (instead of a then + !ok)?
-          BugReporter.captureException(error)
+          BugReporter.captureException(new Error("Request.fetch: promise rejected"), error)
 
           Logger.error("(Request.fetch) error while reaching the server or processing the response")
-          const errorObject = { error: PocketError.GENERIC }
+          const errorDetails = { error: PocketError.GENERIC }
 
           // Send an event back to the UI
-          browser.runtime.sendMessage(errorObject)
-          reject(errorObject)
+          browser.runtime.sendMessage(errorDetails)
+          reject(errorDetails)
         })
     })
   }
