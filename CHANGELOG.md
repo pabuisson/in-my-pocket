@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.19 - October 2024
+
+* CHORE: try to improve error reporting for failing HTTP requests and JSON parsing. Trying to make them easier to group and identify
+
 
 ## 0.12.18 - October 2024
 
