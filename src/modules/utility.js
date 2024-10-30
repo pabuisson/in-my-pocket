@@ -33,7 +33,12 @@ const Utility = (function () {
       try {
         parsedResponse = JSON.parse(json)
       } catch (error) {
-        BugReporter.captureException(error)
+        const errorDetails = {
+          jsonWasAnEmptyString: json === "",
+          jsonWasUndefined: json === undefined,
+          jsonWasNull: json === null,
+        }
+        BugReporter.captureException(error, errorDetails)
         Logger.warn("Invalid JSON: could not parse " + json)
       }
 
