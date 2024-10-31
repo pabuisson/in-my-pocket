@@ -3,6 +3,7 @@
 ## 0.12.20 - Not released yet
 
 * CHORE: yet another attempt to improve error reporting for failing HTTP requests. Trying to make them easier to group and identify.
+* PERFS: try to improve long items lists rendering time. The browser should be smart enough to figure out what needs to be rendered, and avoid rendering the whole list all at once.
 
 
 ## 0.12.19 - October 2024

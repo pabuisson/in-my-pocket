@@ -87,7 +87,7 @@ body {
   }
 }
 
-.list-component {
+.items-list {
   flex: 1;
 
   width: 100%;
@@ -102,6 +102,11 @@ body {
   top: -2px;
 
   .item {
+    // Only renders the item when they need to be rendered. Should improve perfs
+    // for the rendering of long item lists
+    // NOTE: not sure how it behaves regarding image loading
+    content-visibility: auto;
+
     margin: 0;
     position: relative;
     padding: 0.5rem;
@@ -117,7 +122,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-
 
     &.favorite {
       background-color: transparentize($favorite-bg, 0.2);

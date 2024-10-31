@@ -17,7 +17,7 @@ const PopupItemList = (function () {
   const CURRENT_ITEM_CLASS = "current-page"
   const placeholderNoResults = document.querySelector(".search-no-results")
   const placeholderNeverFetched = document.querySelector(".onboarding-never-fetched")
-  const itemsContainer = document.querySelector(".list-component")
+  const itemsContainer = document.querySelector(".items-list")
   const itemTemplate = document.querySelector("#item-template")
   const itemsBuilding = {
     itemsToCreate: undefined,
