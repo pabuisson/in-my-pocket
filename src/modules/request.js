@@ -19,9 +19,9 @@ class Request {
 
   buildErrorObject(errorResponse) {
     const errorObject = {
+      error: undefined,
       url: this.url,
       httpCode: errorResponse.status,
-      error: undefined,
     }
 
     switch (errorResponse.status) {
@@ -80,7 +80,9 @@ class Request {
             Logger.error("(Request.fetch) Response not OK, something went wrong")
             const errorDetails = this.buildErrorObject(response)
 
-            BugReporter.captureException(new Error("Request.fetch: response !OK"), errorDetails)
+            // Error details are passed as tags
+            // Use "captureMessage" + tags to group all HTTP errors in one single sentry
+            BugReporter.captureMessage("HTTP response not OK", null, errorDetails)
 
             // Send an event back to the UI
             browser.runtime.sendMessage(errorDetails)
