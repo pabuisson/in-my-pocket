@@ -3,6 +3,7 @@
 ## 0.12.20 - Not released yet
 
 * CHORE: yet another attempt to improve error reporting for failing HTTP requests. Trying to make them easier to group and identify.
+* CHORE: relax the rules around alternative URL and improve the reporting around this portion of the code
 * PERFS: try to improve long items lists rendering time. The browser should be smart enough to figure out what needs to be rendered, and avoid rendering the whole list all at once.
 * PERFS: reduce the size of each page of items we ask to Pocket during the initial account sync, as there seem to be some performances issues lately and the initial sync often times out. That should mitigate this problem.
 

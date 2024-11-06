@@ -14,7 +14,7 @@ const BugReporter = (function () {
         }
       })
     },
-    captureMessage: function (message, _extraData = {}, tags = {}) {
+    captureMessage: function (message, extraData = {}, tags = {}) {
       Settings.init().then(() => {
         if (Settings.get("bugReport")) {
           Sentry.captureMessage(message, { extra: extraData, tags: tags })

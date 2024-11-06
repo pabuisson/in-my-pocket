@@ -563,15 +563,22 @@ const Items = (function () {
     },
 
     matches: function (item, url) {
-      const allPossibleUrls = Utility.getPossibleUrls(item)
-
-      return allPossibleUrls.some(possibleUrl => {
+      return Utility.getPossibleUrls(item).some(possibleUrl => {
         if (typeof possibleUrl === "string") {
           return possibleUrl === url
         } else if (possibleUrl instanceof RegExp) {
           return possibleUrl.test(url)
         } else {
-          throw new Error("Unexpected URL format")
+          BugReporter.captureMessage("possibleUrl is neither a string nor a regexp", {
+            extra: {
+              typeofUrl: typeof possibleUrl,
+              urlWasAnArray: Array.isArray(possibleUrl),
+              urlWasAnObject: typeof possibleUrl === "object" && !Array.isArray(possibleUrl),
+              urlWasUndefined: possibleUrl === undefined,
+              urlWasNull: possibleUrl === null,
+            },
+          })
+          return false
         }
       })
     },
