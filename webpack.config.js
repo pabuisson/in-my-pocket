@@ -17,6 +17,9 @@ const base = {
     'background/uninstall'     : './background/uninstall.js'
   },
   output: {},
+  resolve: {
+    extensions: ['.ts', '...']
+  },
   module: {
     rules: [{
       test: /\.html$/,
@@ -30,13 +33,10 @@ const base = {
         }
       ]
     }, {
-      test: /\.js$/,
+      test: /\.(js|ts)$/,
       include: path.resolve(__dirname, 'src'),
       use: {
-        loader: 'babel-loader',
-        options: {
-          cacheDirectory: true
-        }
+        loader: 'ts-loader'
       }
     },{
       test: /\.scss$/,

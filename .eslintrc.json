@@ -6,11 +6,15 @@
       "es6": true,
       "mocha": true
     },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-      "ecmaVersion": 9,
-      "sourceType": "module"
-    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier/@typescript-eslint",
+      "plugin:prettier/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
     "globals": {
       "expect": true,
       "global": true,
