@@ -13,6 +13,43 @@ import { consumerKey, PocketApiStatus } from "./constants.js"
 // ---------------
 
 const ItemsFetcher = (function () {
+  /* Expected format:
+   * - an object,
+   * - with a status attribute (not documented)
+   * - with a list attribute. `list` is an object, each key is an item ID, each value is the actual item
+   */
+  function isGetResponseValid(response) {
+    const isResponseAnObject = typeof response == "object" && !Array.isArray(response)
+    if (!isResponseAnObject) return false
+
+    const doesResponseContainExpectedAttributes = response.hasOwnProperty("list")
+    if (!doesResponseContainExpectedAttributes) return false
+
+    const isListAnObject = typeof response.list == "object" && !Array.isArray(response)
+    if (!isListAnObject) return false
+
+    return true
+  }
+
+  function reportUnexpectedGetResponse(response, fetchSource) {
+    const isResponseAnObject = typeof response == "object" && !Array.isArray(response)
+    const payloadKeysAndTypes = Object.keys(response).map(key => {
+      const value = response[key]
+      const valueType = Utility.getType(value)
+      return `${key}: ${valueType}`
+    })
+
+    const details = {
+      fetchSource,
+      responseStatus: response.status,
+      isResponseAnObject,
+      responseKeys: payloadKeysAndTypes,
+    }
+
+    Logger.error(`${fetchSource}: unexpected response format :: ${JSON.stringify(details)}`)
+    BugReporter.captureMessage(`${fetchSource}: unexpected response format`, details)
+  }
+
   return {
     retrieveItems: function (force) {
       const intervalWithoutReload = 15 * 60
@@ -61,6 +98,13 @@ const ItemsFetcher = (function () {
         new Request("POST", "https://getpocket.com/v3/get", requestParams)
           .fetch()
           .then(response => {
+            // NOTE: temporary logging to pinpoint issues with Pocket API
+            if (isGetResponseValid(response)) {
+              Logger.log("(ItemsFetch.retrieveAll) Response format is valid")
+            } else {
+              reportUnexpectedGetResponse(response, "retrieveAll")
+            }
+
             const rawRetrievedItems = response.list || {}
             const retrievedItems = Object.values(rawRetrievedItems).map(item =>
               Items.formatFetchedPocketItemForStorage(item),
@@ -131,6 +175,13 @@ const ItemsFetcher = (function () {
           new Request("POST", "https://getpocket.com/v3/get", requestParams)
             .fetch()
             .then(function (response) {
+              // NOTE: temporary logging to pinpoint issues with Pocket API
+              if (isGetResponseValid(response)) {
+                Logger.log("(ItemsFetch.retrieveDiff) Response format is valid")
+              } else {
+                reportUnexpectedGetResponse(response, "retrieveDiff")
+              }
+
               Logger.log(Object.keys(response.list).length + " items in the response")
               const allItems = Utility.parseJson(items) || []
               const itemsWithUnknownStatus = []

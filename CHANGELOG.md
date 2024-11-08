@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.21 - Novembre 2024
+
+* CHORE: still trying to identify the synchronization issue encountered by some users. I suspect a Pocket API change, so here is more error reporting code to dig into this hypothesis.
+
+
 ## 0.12.20 - Novembre 2024
 
 * CHORE: yet another attempt to improve error reporting for failing HTTP requests. Trying to make them easier to group and identify.

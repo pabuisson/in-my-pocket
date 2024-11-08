@@ -97,6 +97,7 @@ const Utility = (function () {
       if (value === null) {
         return "null"
       } else if (Array.isArray(value)) {
+        // NOTE: typeof an array == "object" so we need to handle this case separately
         return `Array(${value.length})`
       } else {
         return typeof value
