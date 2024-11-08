@@ -87,18 +87,10 @@ const ContextMenu = (function () {
     setState: function (state) {
       switch (state) {
         case ContextMenu.pageAlreadyInPocket:
-          return Promise.all([
-            disable(ContextMenu.addId),
-            enable(ContextMenu.archiveId),
-            enable(ContextMenu.deleteId),
-          ])
+          return Promise.all([disable(ContextMenu.addId), enable(ContextMenu.archiveId), enable(ContextMenu.deleteId)])
         case ContextMenu.pageNotInPocket:
         case ContextMenu.multipleTabSelection:
-          return Promise.all([
-            enable(ContextMenu.addId),
-            disable(ContextMenu.archiveId),
-            disable(ContextMenu.deleteId),
-          ])
+          return Promise.all([enable(ContextMenu.addId), disable(ContextMenu.archiveId), disable(ContextMenu.deleteId)])
       }
     },
   }

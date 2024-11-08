@@ -20,7 +20,13 @@ browser.commands.onCommand.addListener(command => {
               Items.markAsRead(matchingItem.id, currentTab.id)
             })
           } else {
-            Items.addItem([{ url: currentTab.url, title: currentTab.title, tabId: currentTab.id }])
+            Items.addItem([
+              {
+                url: currentTab.url,
+                title: currentTab.title,
+                tabId: currentTab.id,
+              },
+            ])
           }
         })
       })
