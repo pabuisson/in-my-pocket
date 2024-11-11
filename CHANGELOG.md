@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.12.22 - Novembre 2024
+## 0.12.22 and 0.12.23 - Novembre 2024
 
-* CHORE: apparently succesful API responses _can_ come with error headers. In that case, I now process them like failed responses, triggering error report, logging and feedback to the UI.
-* CHORE: succesful responses sometimes contain `error` attribute: log it if it happens
+* CHORE: apparently successful API responses _can_ come with error headers. In that case, I now process them like failed responses, triggering error report, logging and feedback to the UI.
+* CHORE: successful responses sometimes contain `error` attribute: log it if it happens
 
 
 ## 0.12.21 - Novembre 2024
