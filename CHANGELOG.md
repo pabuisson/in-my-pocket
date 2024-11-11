@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.22 - Novembre 2024
+
+* CHORE: apparently succesful API responses _can_ come with error headers. In that case, I now process them like failed responses, triggering error report, logging and feedback to the UI.
+* CHORE: succesful responses sometimes contain `error` attribute: log it if it happens
+
+
 ## 0.12.21 - Novembre 2024
 
 * CHORE: still trying to identify the synchronization issue encountered by some users. I suspect a Pocket API change, so here is more error reporting code to dig into this hypothesis.

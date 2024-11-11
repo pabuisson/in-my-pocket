@@ -36,6 +36,8 @@ const ItemsFetcher = (function () {
 
     const payloadKeysAndTypes = Object.keys(response).map(key => {
       const value = response[key]
+      // NOTE: I'm not sure we will ever reach this point now that I catch succesful response
+      //       with error headers and treat them as a fail HTTP response.
       const valueType = key === "error" ? value : Utility.getType(value)
       return `${key}: ${valueType}`
     })
