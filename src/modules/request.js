@@ -17,11 +17,20 @@ class Request {
     }
   }
 
+  // NOTE: A succesful response can contain error headers
+  // https://getpocket.com/developer/docs/errors
+  hasErrorHeaders(response) {
+    return !!response.headers.get("X-Error") || !!response.headers.get("X-Error-Code")
+  }
+
   buildErrorObject(errorResponse) {
     const errorObject = {
-      error: undefined,
       url: this.url,
       httpCode: errorResponse.status,
+      // NOTE: A succesful response can contain error headers
+      // https://getpocket.com/developer/docs/errors
+      xErrorHeader: errorResponse.headers.get("X-Error"),
+      xErrorCodeHeader: errorResponse.headers.get("X-Error-Code"),
     }
 
     switch (errorResponse.status) {
@@ -35,8 +44,7 @@ class Request {
         const userRemaining = errorResponse.headers.get("X-Limit-User-Remaining")
         if (userRemaining && userRemaining === 0) {
           const delayBeforeReset = errorResponse.headers.get("X-Limit-User-Reset")
-          Logger.error("403: access_denied (rate limit)")
-          Logger.error(`403: rate limit reset in ${delayBeforeReset} seconds`)
+          Logger.error(`403: access_denied (rate limit), reset in ${delayBeforeReset} seconds`)
           errorObject.error = PocketError.RATE_LIMIT
           errorObject.resetDelay = delayBeforeReset
         } else {
@@ -62,6 +70,26 @@ class Request {
     return errorObject
   }
 
+  handleSuccesfulResponse(response) {
+    const data = response.json()
+    Logger.log(`(Request.fetch) Response OK, received data : ${JSON.stringify(data)}`)
+
+    return data
+  }
+
+  handleFailedResponse(response, errorMessage) {
+    const data = response.json()
+    const errorDetails = this.buildErrorObject(response)
+
+    Logger.error(`${errorMessage}: ${JSON.stringify(data)}`)
+    BugReporter.captureMessage(errorMessage, null, errorDetails)
+
+    // Send an event back to the UI
+    browser.runtime.sendMessage(errorDetails)
+
+    return errorDetails
+  }
+
   fetch() {
     return new Promise((resolve, reject) => {
       fetch(this.url, {
@@ -73,25 +101,25 @@ class Request {
           Logger.log(`(Request.fetch) response for ${this.url} - ${response.status}`)
 
           if (response.ok) {
-            const data = response.json()
-            Logger.log(`(Request.fetch) Response OK, received data : ${JSON.stringify(data)}`)
-            resolve(data)
+            if (this.hasErrorHeaders(response)) {
+              const errorDetails = this.handleFailedResponse(
+                response,
+                "(Request.fetch) HTTP response OK but with error headers",
+              )
+              reject(errorDetails)
+            } else {
+              const data = this.handleSuccesfulResponse(response)
+              resolve(data)
+            }
           } else {
-            Logger.error("(Request.fetch) Response not OK, something went wrong")
-            const errorDetails = this.buildErrorObject(response)
-
-            // Error details are passed as tags
-            // Use "captureMessage" + tags to group all HTTP errors in one single sentry
-            BugReporter.captureMessage("HTTP response not OK", null, errorDetails)
-
-            // Send an event back to the UI
-            browser.runtime.sendMessage(errorDetails)
+            const errorDetails = this.handleFailedResponse(response, "(Request.fetch) HTTP response not OK")
             reject(errorDetails)
           }
         })
         .catch(error => {
           // NOTE: in which case do we get into the catch (instead of a then + !ok)?
-          BugReporter.captureException(new Error("Request.fetch: promise rejected"), error)
+          //       I can't find any sentry with this message
+          BugReporter.captureException(new Error("(Request.fetch): promise rejected"), error)
 
           Logger.error("(Request.fetch) error while reaching the server or processing the response")
           const errorDetails = { error: PocketError.GENERIC }
