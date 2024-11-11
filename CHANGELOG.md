@@ -1,17 +1,18 @@
 # Changelog
 
-## 0.12.22 - Novembre 2024
+## 0.12.22 and 0.12.23 - November 2024
 
-* CHORE: apparently succesful API responses _can_ come with error headers. In that case, I now process them like failed responses, triggering error report, logging and feedback to the UI.
-* CHORE: succesful responses sometimes contain `error` attribute: log it if it happens
+* CHORE: apparently successful API responses _can_ come with error headers. In that case, I now process them like failed responses, triggering error report, logging and feedback to the UI.
+* CHORE: successful responses sometimes contain `error` attribute: log it if it happens.
+* UI: fix position of the warning message in the popup.
 
 
-## 0.12.21 - Novembre 2024
+## 0.12.21 - November 2024
 
 * CHORE: still trying to identify the synchronization issue encountered by some users. I suspect a Pocket API change, so here is more error reporting code to dig into this hypothesis.
 
 
-## 0.12.20 - Novembre 2024
+## 0.12.20 - November 2024
 
 * CHORE: yet another attempt to improve error reporting for failing HTTP requests. Trying to make them easier to group and identify.
 * CHORE: relax the rules around alternative URL and improve reporting around this portion of the code.
