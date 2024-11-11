@@ -33,9 +33,10 @@ const ItemsFetcher = (function () {
 
   function reportUnexpectedGetResponse(response, fetchSource) {
     const isResponseAnObject = typeof response == "object" && !Array.isArray(response)
+
     const payloadKeysAndTypes = Object.keys(response).map(key => {
       const value = response[key]
-      const valueType = Utility.getType(value)
+      const valueType = key === "error" ? value : Utility.getType(value)
       return `${key}: ${valueType}`
     })
 
@@ -116,7 +117,7 @@ const ItemsFetcher = (function () {
 
             if (archivedItems.length > 0 || deletedItems.length > 0) {
               const maxItemsToReport = 4
-              BugReporter.captureException(new Error("retrieveAll: received deleted or archived items"), {
+              BugReporter.captureMessage("retrieveAll: received deleted or archived items", {
                 totalItemsCount: retrievedItems.length,
                 archivedItemsCount: archivedItems.length,
                 archivedItems: archivedItems
