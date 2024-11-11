@@ -78,10 +78,9 @@ class Request {
   }
 
   handleFailedResponse(response, errorMessage) {
-    const data = response.json()
     const errorDetails = this.buildErrorObject(response)
 
-    Logger.error(`${errorMessage}: ${JSON.stringify(data)}`)
+    Logger.error(`${errorMessage}: ${JSON.stringify(errorDetails)}`)
     BugReporter.captureMessage(errorMessage, null, errorDetails)
 
     // Send an event back to the UI
