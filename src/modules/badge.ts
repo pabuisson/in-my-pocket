@@ -1,22 +1,21 @@
 "use strict"
 
+import browser from "webextension-polyfill"
 import Logger from "./logger"
 import Settings from "./settings"
 import Utility from "./utility"
-
-// -------------------------------------
 
 const Badge = (function () {
   const defaultBackgroundColor = "#333"
   const successBackgroundColor = "#12bc00" // ff-green-60
   const errorBackgroundColor = "#ff0039" // ff-red-50
   const spinnerChars = "⌟⌞⌜⌝"
-  let spinnerCurrentChar
-  let spinnerIntervalID
+  let spinnerCurrentChar: string | null
+  let spinnerIntervalID: NodeJS.Timeout | null
 
-  function itemsNumbers(items) {
+  function itemsNumbers(items: any): string {
     if (items && Object.keys(items).length > 0) {
-      return Object.keys(items).length
+      return Object.keys(items).length.toString()
     } else {
       return ""
     }
@@ -32,7 +31,9 @@ const Badge = (function () {
   }
 
   function getNextSpinnerChar() {
-    const nextCharIndex = (spinnerChars.indexOf(spinnerCurrentChar) + 1) % spinnerChars.length
+    const nextCharIndex =
+      // @ts-ignore
+      (spinnerChars.indexOf(spinnerCurrentChar) + 1) % spinnerChars.length
     const nextSpinnerChar = spinnerChars[nextCharIndex]
     return nextSpinnerChar
   }
@@ -42,7 +43,7 @@ const Badge = (function () {
       browser.browserAction.setBadgeText({ text: "" })
     },
 
-    updateCount: function (items) {
+    updateCount: function (items?: any): Promise<void> {
       return new Promise(resolve => {
         stopLoadingSpinner()
         Settings.init().then(function () {
@@ -53,13 +54,18 @@ const Badge = (function () {
 
             if (items) {
               const itemsCount = itemsNumbers(items)
-              browser.browserAction.setBadgeText({ text: itemsCount.toString() })
+              browser.browserAction.setBadgeText({
+                text: itemsCount.toString(),
+              })
               resolve()
             } else {
               browser.storage.local.get("items").then(({ items }) => {
+                // @ts-ignore
                 const itemsCollection = Utility.parseJson(items) || []
                 const itemsCount = itemsNumbers(itemsCollection)
-                browser.browserAction.setBadgeText({ text: itemsCount.toString() })
+                browser.browserAction.setBadgeText({
+                  text: itemsCount.toString(),
+                })
                 resolve()
               })
             }
@@ -81,13 +87,15 @@ const Badge = (function () {
       }
     },
 
-    flashSuccess: function () {
+    flashSuccess: function (): Promise<void> {
       return new Promise(resolve => {
         setTimeout(() => {
           stopLoadingSpinner()
 
           browser.browserAction.setBadgeText({ text: "✓" })
-          browser.browserAction.setBadgeBackgroundColor({ color: successBackgroundColor })
+          browser.browserAction.setBadgeBackgroundColor({
+            color: successBackgroundColor,
+          })
 
           setTimeout(Badge.updateCount, 1500)
           resolve()
@@ -95,13 +103,15 @@ const Badge = (function () {
       })
     },
 
-    flashError: function () {
+    flashError: function (): Promise<void> {
       return new Promise(resolve => {
         setTimeout(() => {
           stopLoadingSpinner()
 
           browser.browserAction.setBadgeText({ text: "!" })
-          browser.browserAction.setBadgeBackgroundColor({ color: errorBackgroundColor })
+          browser.browserAction.setBadgeBackgroundColor({
+            color: errorBackgroundColor,
+          })
 
           setTimeout(Badge.updateCount, 1500)
           resolve()

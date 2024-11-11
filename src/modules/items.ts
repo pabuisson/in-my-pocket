@@ -1,5 +1,6 @@
 "use strict"
 
+import browser, { Tabs } from "webextension-polyfill"
 import Badge from "./badge"
 import BugReporter from "./bug_reporter"
 import Logger from "./logger"
@@ -7,15 +8,23 @@ import PageAction from "./page_action"
 import PocketApiRequester from "./pocket_api_requester"
 import Settings from "./settings"
 import Utility from "./utility"
-import { AutomationKind, RemovalMethod, PocketNotice, concealedProtocols } from "./constants"
-
-// ---------------
+import { PocketNotice, concealedProtocols } from "./constants"
+import {
+  AutomationKind,
+  Item,
+  ItemFromApi,
+  ItemId,
+  RawItem,
+  RemovalMethod,
+  TabId,
+  UpdateItemData,
+} from "../shared/types/index"
 
 const Items = (function () {
-  let currentChecksum = null
-  let parsedItems = null
+  let currentChecksum: number | null = null
+  let parsedItems: string | null = null
 
-  function parseItems(rawItems) {
+  function parseItems(rawItems: string) {
     const rawItemsChecksum = rawItems ? Utility.hashCode(rawItems) : 0
     Logger.log(`(Items.parseItems) checksum: "${currentChecksum}"; new: "${rawItemsChecksum}"`)
 
@@ -30,7 +39,7 @@ const Items = (function () {
   }
 
   // Query must be something like "a string" or "a string is:faved" or "a string is:unfaved"
-  function matchQuery(item, query) {
+  function matchQuery(item: Item, query: string): boolean {
     const lowerQuery = query.toLowerCase()
 
     const isFavedCriteria = lowerQuery.includes("is:faved")
@@ -49,7 +58,7 @@ const Items = (function () {
     )
   }
 
-  function matchText(item, textToMatch) {
+  function matchText(item: Item, textToMatch: string): boolean {
     if (textToMatch === "") return true
 
     const protocolsToRemove = concealedProtocols.join("|")
@@ -62,11 +71,11 @@ const Items = (function () {
     const tags = item.tags ? item.tags.map(tag => tag.toLowerCase()) : []
 
     return (
-      lowerTitle.includes(textToMatch) || lowerUrl.includes(textToMatch) || tags.find(tag => tag.includes(textToMatch))
+      lowerTitle.includes(textToMatch) || lowerUrl.includes(textToMatch) || tags.some(tag => tag.includes(textToMatch))
     )
   }
 
-  function matchFavedUnfaved(item, keepFaved, keepUnfaved) {
+  function matchFavedUnfaved(item: Item, keepFaved: boolean, keepUnfaved: boolean): boolean {
     if (keepFaved) {
       return item.fav === "1"
     } else if (keepUnfaved) {
@@ -77,7 +86,7 @@ const Items = (function () {
     return true
   }
 
-  function matchTaggedUntagged(item, keepTagged, keepUntagged) {
+  function matchTaggedUntagged(item: Item, keepTagged: boolean, keepUntagged: boolean): boolean {
     if (keepTagged) {
       return item.tags && item.tags.length > 0
     } else if (keepUntagged) {
@@ -89,8 +98,7 @@ const Items = (function () {
   }
 
   // TODO: 'method' param should not be a magical string. Define fixed values in a module
-  // method: RemovalMethod -> archive|delete
-  function removeItem(itemId, method, tabId) {
+  function removeItem(itemId: ItemId, method: RemovalMethod, tabId: TabId) {
     Logger.log("(Items.removeItem) id to remove: " + itemId)
     Badge.startLoadingSpinner()
 
@@ -101,7 +109,7 @@ const Items = (function () {
 
       removalPromise
         .then(response => {
-          const parsedItems = Utility.parseJson(items) || []
+          const parsedItems = (Utility.parseJson(items as string) || []) as Array<Item>
           const removedItemIdx = parsedItems.findIndex(item => item.id === itemId)
           const removedItem = parsedItems[removedItemIdx]
 
@@ -121,9 +129,9 @@ const Items = (function () {
             // Display an indicator on the badge that everything went well and update badge count
             Badge.flashSuccess().then(() => {
               if (tabId) {
-                browser.tabs.get(tabId).then(currentTab => {
+                browser.tabs.get(tabId).then((currentTab: Tabs.Tab) => {
                   const urlsToCheck = Utility.getPossibleUrls(removedItem).filter(url => typeof url === "string")
-                  if (urlsToCheck.includes(currentTab.url)) {
+                  if (!!currentTab.url && urlsToCheck.includes(currentTab.url)) {
                     closeTabsIfNeeded(currentTab.id, AutomationKind.closeWhenRead)
                   }
                 })
@@ -152,7 +160,7 @@ const Items = (function () {
     })
   }
 
-  function setFavorite(itemId, action) {
+  function setFavorite(itemId: ItemId, action: "favorite" | "unfavorite") {
     Logger.log(`(Items.setFavorite) action='${action}'`)
 
     browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
@@ -162,10 +170,12 @@ const Items = (function () {
 
       request
         .then(response => {
-          const parsedItems = Utility.parseJson(items) || []
+          const parsedItems = (Utility.parseJson(items as string) || []) as Array<Item>
 
           // Update item in parsedItems
           const updatedItem = parsedItems.find(item => item.id == itemId)
+          // FIXME: possible error if updatedItem is not found
+          // @ts-ignore
           updatedItem.fav = action === "favorite" ? "1" : "0"
 
           // Save item list in storage and update badge count
@@ -189,7 +199,11 @@ const Items = (function () {
   }
 
   // NOTE: may be better placed somewhere else, let's keep it here for now for convenience
-  function reportUnexpectedAddItemResponse(numberOfItemsToAdd, addResponse, addedItemsFromPocket) {
+  function reportUnexpectedAddItemResponse(
+    numberOfItemsToAdd: number,
+    addResponse: any,
+    addedItemsFromPocket: Array<any>,
+  ) {
     if (numberOfItemsToAdd != addedItemsFromPocket.length) {
       const payloadKeysAndTypes = Object.keys(addResponse).map(key => {
         const value = addResponse[key]
@@ -215,7 +229,7 @@ const Items = (function () {
   // NOTE: however since July 2024, *some* users have started receiving the object attributes at the
   //       top level, instead of inside an 'item' attribute, which made all new item creation fail
   // addBatch: Pocket should return all objects in a 'action_results' attributes
-  function getItemFromAddEndpointResponse(numberOfItemsToAdd, addResponse) {
+  function getItemFromAddEndpointResponse(numberOfItemsToAdd: number, addResponse: any): Array<ItemFromApi> {
     if (numberOfItemsToAdd === 1) {
       if (addResponse.item) {
         return [addResponse.item]
@@ -229,11 +243,11 @@ const Items = (function () {
 
   // rawObjectsToAdd = objects passed to addItem to be added to Pocket
   // they're all of the following form: { url:, title:, tabId: }
-  function enrichItemsFromApi(itemsFromPocketAPI, rawObjectsToAdd) {
+  function enrichItemsFromApi(itemsFromPocketAPI: Array<ItemFromApi>, rawObjectsToAdd: Array<RawItem>) {
     return itemsFromPocketAPI.map(itemFromPocketApi => {
       if (!itemFromPocketApi.title) {
         const matchingRawObject = rawObjectsToAdd.find(rawObject => itemFromPocketApi.given_url == rawObject.url)
-        itemFromPocketApi.title = matchingRawObject ? matchingRawObject.title : "—"
+        itemFromPocketApi.title = (matchingRawObject && matchingRawObject.title) || "—"
       }
 
       return itemFromPocketApi
@@ -241,7 +255,8 @@ const Items = (function () {
   }
 
   // tabIds: integer or array of integer The ids of the tab or tabs to close.
-  function closeTabsIfNeeded(tabIds, onWhichEvent) {
+  // FIXME: use AutomationKind constant instead of a raw string
+  function closeTabsIfNeeded(tabIds: TabId | Array<TabId>, onWhichEvent: AutomationKind) {
     Settings.init().then(() => {
       let shouldCloseTab = undefined
       switch (onWhichEvent) {
@@ -252,7 +267,7 @@ const Items = (function () {
           shouldCloseTab = Settings.get("closeTabWhenRead")
           break
         default:
-          BugReporter.catchException(new Error(`closeTabsIfNeeded called with unknown event ${onWhichEvent}`))
+          BugReporter.captureException(new Error(`closeTabsIfNeeded called with unknown event ${onWhichEvent}`))
           return
       }
 
@@ -278,12 +293,15 @@ const Items = (function () {
   // These items may or may not be already parsed and enriched by Pocket. If they've not been enriched,
   // they have very little information available: given_url, item_id, normal_url and title. All the
   // other attributes are null. The time_added/time_updated attributes are not even present.
-  function formatPotentiallyNotParsedPocketItemForStorage(itemFromApi) {
+  function formatPotentiallyNotParsedPocketItemForStorage(itemFromApi: ItemFromApi): Item {
     return {
       id: itemFromApi.item_id,
       title: itemFromApi.title,
       url: itemFromApi.given_url,
+      tags: [],
+      fav: "0",
       created_at: (Date.now() / 1000) | 0,
+      updated_at: (Date.now() / 1000) | 0,
     }
   }
 
@@ -291,7 +309,7 @@ const Items = (function () {
     // Format items that have been FETCHED from the API via the "get" endpoint.
     // Items coming from the add/send endpoints don't necessarily have the same attributes
     // NOTE: how come I do not store the item_id?!
-    formatFetchedPocketItemForStorage: function (itemFromApi) {
+    formatFetchedPocketItemForStorage: function (itemFromApi: ItemFromApi): Item {
       return {
         id: itemFromApi.item_id,
         // given_title - The title that was saved along with the item.
@@ -307,7 +325,7 @@ const Items = (function () {
       }
     },
 
-    formatPocketItemForDebug: function (itemFromApi) {
+    formatPocketItemForDebug: function (itemFromApi: ItemFromApi) {
       return {
         id: itemFromApi.item_id,
         status: itemFromApi.status,
@@ -322,9 +340,10 @@ const Items = (function () {
       }
     },
 
-    filter: function (rawItems, query, currentUrl) {
+    filter: function (rawItems: string, query: string, currentUrl?: string) {
       Logger.log(`(Items.filter) query=${query}, currentUrl=${currentUrl}`)
-      return parseItems(rawItems).filter(item => {
+      const parsedItems = parseItems(rawItems) as Array<Item>
+      return parsedItems.filter(item => {
         let mustKeep = true
 
         // Don't return the currentUrl item, it's handled outside this items list
@@ -335,24 +354,24 @@ const Items = (function () {
       })
     },
 
-    contains: function (rawItems, url) {
-      const parsedItems = parseItems(rawItems)
+    contains: function (rawItems: string, url: string): boolean {
+      const parsedItems = parseItems(rawItems) as Array<Item>
       return parsedItems.some(item => Items.matches(item, url))
     },
 
-    findByUrl: function (rawItems, url) {
-      const parsedItems = parseItems(rawItems || [])
+    findByUrl: function (rawItems: string, url: string): Item | undefined {
+      const parsedItems = parseItems(rawItems || "") as Array<Item>
       return parsedItems.find(item => Items.matches(item, url))
     },
 
-    findById: function (rawItems, id) {
-      const parsedItems = parseItems(rawItems || [])
+    findById: function (rawItems: string, id: ItemId): Item | undefined {
+      const parsedItems = parseItems(rawItems || "") as Array<Item>
       return parsedItems.find(item => item.id === id)
     },
 
     // TODO: I call both filter and paginate most of the time...but for consistency, I should
     //       call paginate with raw items as well?
-    paginate: function (parsedItems, page, perPage) {
+    paginate: function (parsedItems: Array<Item>, page: number, perPage: number) {
       const itemsCount = parsedItems.length
       const sortedItems = parsedItems.sort((a, b) => b.created_at - a.created_at)
 
@@ -372,28 +391,33 @@ const Items = (function () {
       }
     },
 
-    favoriteItem: function (itemId) {
+    favoriteItem: function (itemId: ItemId) {
       setFavorite(itemId, "favorite")
     },
-    unfavoriteItem: function (itemId) {
+    unfavoriteItem: function (itemId: ItemId) {
       setFavorite(itemId, "unfavorite")
     },
 
-    updateItem: function (itemId, details) {
+    updateItem: function (itemId: ItemId, details: UpdateItemData) {
       Logger.log(`(Items.updateItem) Item '${itemId}'`)
 
       browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
         Badge.startLoadingSpinner()
         const requester = new PocketApiRequester(access_token)
 
+        // FIXME: TS typing for details
         requester
+          // @ts-ignore
           .update(itemId, details)
           .then(response => {
-            const parsedItems = Utility.parseJson(items) || []
+            const parsedItems = (Utility.parseJson(items as string) || []) as Array<Item>
 
             // Update item in parsedItems
+            // FIXME: possible error if updatedItem is not found
             const updatedItem = parsedItems.find(item => item.id == itemId)
+            // @ts-ignore
             updatedItem.title = details.title
+            // @ts-ignore
             updatedItem.tags = details.tags
 
             // TODO: store the time_updated? but it's not in the add/send payload
@@ -422,11 +446,11 @@ const Items = (function () {
 
     // rawObjectsToAdd = objects passed to addItem to be added to Pocket
     // they're all of the following form: { url:, title:, tabId: }
-    addItem: function (rawObjectsToAdd) {
+    addItem: function (rawObjectsToAdd: Array<RawItem>) {
       Logger.log(`(Items.addItem) Trying to add ${rawObjectsToAdd.length} items to Pocket`)
 
       browser.storage.local.get(["access_token", "items"]).then(({ access_token, items }) => {
-        const newRawObjectsToAdd = rawObjectsToAdd.filter(item => !Items.contains(items, item.url))
+        const newRawObjectsToAdd = rawObjectsToAdd.filter(item => !Items.contains(items as string, item.url))
         if (newRawObjectsToAdd.length === 0) {
           browser.runtime
             .sendMessage({ notice: PocketNotice.ALREADY_IN_LIST })
@@ -445,7 +469,7 @@ const Items = (function () {
 
         request
           .then(response => {
-            const parsedItems = Utility.parseJson(items) || []
+            const parsedItems = (Utility.parseJson(items as string) || []) as Array<Item>
             const rawAddedItems = getItemFromAddEndpointResponse(newRawObjectsToAdd.length, response)
             const enrichedAddedItems = enrichItemsFromApi(rawAddedItems, newRawObjectsToAdd)
 
@@ -462,10 +486,7 @@ const Items = (function () {
             // TODO: send multiple ids? what are they used for?
             const itemIdsToSendInEvent = rawAddedItems.map(item => item.item_id)
             browser.runtime
-              .sendMessage({
-                action: "added-item",
-                id: itemIdsToSendInEvent,
-              })
+              .sendMessage({ action: "added-item", id: itemIdsToSendInEvent })
               .catch(error =>
                 Logger.warn(
                   `'action: added-item, id: ${itemIdsToSendInEvent}' message could not be delivered: ${error}`,
@@ -481,10 +502,9 @@ const Items = (function () {
               // Redraw every page pageAction
               Logger.log("(Items.addItem) new items added, update matching pageActions")
               const addedUrls = enrichedAddedItems.flatMap(item => {
-                return Utility.getPossibleUrls({
-                  id: item.id,
-                  url: item.given_url,
-                }).filter(url => typeof url === "string")
+                return Utility.getPossibleUrls({ id: item.id, url: item.given_url }).filter(
+                  url => typeof url === "string",
+                )
               })
 
               browser.tabs.query({ url: addedUrls }).then(tabs => {
@@ -501,15 +521,15 @@ const Items = (function () {
       })
     },
 
-    markAsRead: function (itemId, tabId) {
+    markAsRead: function (itemId: ItemId, tabId?: TabId) {
       removeItem(itemId, RemovalMethod.archive, tabId)
     },
 
-    deleteItem: function (itemId, tabId) {
+    deleteItem: function (itemId: ItemId, tabId?: TabId) {
       removeItem(itemId, RemovalMethod.delete, tabId)
     },
 
-    openItem: async (item, forceNewTab = false, getTargetTab) => {
+    openItem: async (item: Item, forceNewTab = false, getTargetTab?: Function) => {
       await Settings.init()
       const openInNewTab = Settings.get("openInNewTab") || forceNewTab
       const archiveWhenOpened = Settings.get("archiveWhenOpened")
@@ -533,7 +553,7 @@ const Items = (function () {
     openRandom: function (query = "") {
       const pCurrentTab = browser.tabs.query({ active: true, currentWindow: true }).then(([t]) => t)
       browser.storage.local.get("items").then(({ items }) => {
-        const filteredItems = Items.filter(items, query)
+        const filteredItems = Items.filter(items as string, query)
 
         if (filteredItems.length > 0) {
           const item = filteredItems[Math.floor(Math.random() * filteredItems.length)]
@@ -544,7 +564,7 @@ const Items = (function () {
 
     openFirst: function (query = "") {
       browser.storage.local.get("items").then(({ items }) => {
-        const filteredItems = Items.filter(items, query)
+        const filteredItems = Items.filter(items as string, query)
 
         if (filteredItems.length > 0) {
           const sortedItems = filteredItems.sort((a, b) => b.created_at - a.created_at)
@@ -554,7 +574,7 @@ const Items = (function () {
       })
     },
 
-    areSame: function (item1, item2) {
+    areSame: function (item1: Item, item2: Item) {
       const sameTitle = item1.title === item2.title
       const item1Tags = (item1.tags || []).sort()
       const item2Tags = (item2.tags || []).sort()
@@ -562,7 +582,7 @@ const Items = (function () {
       return sameTitle && sameTags
     },
 
-    matches: function (item, url) {
+    matches: function (item: Item, url: string) {
       return Utility.getPossibleUrls(item).some(possibleUrl => {
         if (typeof possibleUrl === "string") {
           return possibleUrl === url

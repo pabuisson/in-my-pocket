@@ -29,13 +29,6 @@ const MouseButtons = {
   RIGHT: 2,
 }
 
-const KeyboardShortcuts = {
-  toggle: "toggle-page-status",
-  openPopup: "_execute_browser_action",
-  openFirstItem: "open-first-item",
-  openRandomItem: "open-random-item",
-}
-
 const parseIntBase = 10
 
 const concealedProtocols = ["http", "https", "ftp", "ftps"]
@@ -46,24 +39,12 @@ const FavoriteFilterState = {
   UNSET: 2,
 }
 
-const AutomationKind = {
-  closeWhenAdded: "closeWhenAdded",
-  closeWhenRead: "closeWhenRead",
-}
-const RemovalMethod = {
-  archive: "archive",
-  delete: "delete",
-}
-
 export {
-  AutomationKind,
   FavoriteFilterState,
-  KeyboardShortcuts,
   MouseButtons,
   PocketApiStatus,
   PocketError,
   PocketNotice,
-  RemovalMethod,
   concealedProtocols,
   consumerKey,
   parseIntBase,

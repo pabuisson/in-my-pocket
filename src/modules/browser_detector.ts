@@ -2,8 +2,10 @@
 
 const BrowserDetector = (function () {
   return {
-    browserName: async function () {
+    browserName: async function (): Promise<string> {
+      // @ts-ignore
       if (browser.runtime.getBrowserInfo) {
+        // @ts-ignore
         const browserInfo = await browser.runtime.getBrowserInfo()
         return browserInfo.name
       } else {

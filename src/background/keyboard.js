@@ -2,7 +2,7 @@
 
 import Items from "../modules/items"
 import Logger from "../modules/logger"
-import { KeyboardShortcuts } from "../modules/constants"
+import { KeyboardShortcuts } from "../shared/types/index"
 
 // ---------------
 

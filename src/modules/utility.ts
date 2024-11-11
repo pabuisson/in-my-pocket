@@ -3,8 +3,6 @@
 import BugReporter from "./bug_reporter"
 import Logger from "./logger"
 
-// -------------------------------------
-
 const Utility = (function () {
   const defaultTimeout = 1000
 
@@ -67,13 +65,7 @@ const Utility = (function () {
     // also be taken into account to update page action and such.
     // TODO: ID should be a common type
     // FIXME: ID should not be either a string or a number, only of those two
-    getPossibleUrls: function ({
-      id,
-      url,
-    }: {
-      id: string | number
-      url: string
-    }) {
+    getPossibleUrls: function ({ id, url }: { id: string | number; url: string }) {
       return [
         url,
         `about:reader?url=${encodeURIComponent(url)}`,
@@ -86,7 +78,7 @@ const Utility = (function () {
 
     // Source: https://stackoverflow.com/a/7616484/85076
     // Source: https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-    hashCode: function (s: string) {
+    hashCode: function (s: string): number {
       let hash = 0
       for (let i = 0; i < s.length; i++) {
         hash = (hash << 5) - hash + s.charCodeAt(i)

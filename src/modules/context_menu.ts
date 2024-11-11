@@ -1,5 +1,6 @@
 "use strict"
 
+import browser from "webextension-polyfill"
 import Logger from "./logger"
 
 // Before Firefox 55 this API was also originally named contextMenus, and that name has been
@@ -7,8 +8,13 @@ import Logger from "./logger"
 // also in other browsers.
 // To use this API you need to have the "menus"  permission (or "contextMenus" for the alias)
 
+// TODO: narrow this down to the actual context menu values returned by ContextMenu
+type ContextMenuId = string
+// TODO: narrow this down to the page states returned by ContextMenu
+type PageState = string
+
 const ContextMenu = (function () {
-  function enable(id) {
+  function enable(id: ContextMenuId) {
     Logger.log(`(ContextMenu.enable) enable ${id} context menu`)
 
     const promiseEnable = browser.contextMenus.update(id, { enabled: true })
@@ -17,7 +23,7 @@ const ContextMenu = (function () {
     return Promise.all([promiseEnable, promiseVisible])
   }
 
-  function disable(id) {
+  function disable(id: ContextMenuId) {
     Logger.log(`(ContextMenu.enable) disable ${id} context menu`)
 
     const promiseEnable = browser.contextMenus.update(id, { enabled: false })
@@ -27,13 +33,17 @@ const ContextMenu = (function () {
   }
 
   // "tab" context does not exist for chrome and older firefoxes, feature will be broken for them
+  // FIXME: how do I handle this TS error? TS does not know the type of browser.contextMenus.ContextType
   function getAvailableContexts() {
     const availableContexts = browser.contextMenus.ContextType
+    // @ts-ignore
     const contexts = [availableContexts.PAGE, availableContexts.LINK]
 
     // Use the tab context only if it exist and if we can update the context menus when it's shown
     // (right-clicking on a tab in Pocket must display different state then a tab not in pocket)
+    // @ts-ignore
     if (availableContexts.TAB && browser.contextMenus.onShown) {
+      // @ts-ignore
       contexts.push(availableContexts.TAB)
     }
 
@@ -84,13 +94,21 @@ const ContextMenu = (function () {
       browser.contextMenus.removeAll()
     },
 
-    setState: function (state) {
+    setState: function (state: PageState) {
       switch (state) {
         case ContextMenu.pageAlreadyInPocket:
-          return Promise.all([disable(ContextMenu.addId), enable(ContextMenu.archiveId), enable(ContextMenu.deleteId)])
+          return Promise.all([
+            disable(ContextMenu.addId),
+            enable(ContextMenu.archiveId),
+            enable(ContextMenu.deleteId),
+          ])
         case ContextMenu.pageNotInPocket:
         case ContextMenu.multipleTabSelection:
-          return Promise.all([enable(ContextMenu.addId), disable(ContextMenu.archiveId), disable(ContextMenu.deleteId)])
+          return Promise.all([
+            enable(ContextMenu.addId),
+            disable(ContextMenu.archiveId),
+            disable(ContextMenu.deleteId),
+          ])
       }
     },
   }

@@ -1,8 +1,7 @@
 "use strict"
 
+import browser from "webextension-polyfill"
 import Utility from "./utility"
-
-// --------------------------
 
 const Settings = (function () {
   let settings = {}
@@ -25,6 +24,7 @@ const Settings = (function () {
 
     settings = Object.assign(settings, defaultSettings)
     if (data && data.settings) {
+      // @ts-ignore
       settings = Object.assign(settings, Utility.parseJson(data.settings) || {})
     }
   }
@@ -37,15 +37,17 @@ const Settings = (function () {
       return load()
     },
 
-    get: function (key) {
+    get: function (key: string): string | boolean | {} {
       if (key) {
+        // @ts-ignore
         return settings[key]
       } else {
         return settings
       }
     },
 
-    set: function (key, value) {
+    set: function (key: string, value: any) {
+      // @ts-ignore
       settings[key] = value
       return true
     },

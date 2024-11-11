@@ -1,10 +1,9 @@
 "use strict"
 
+import browser from "webextension-polyfill"
 import Logger from "./logger"
 import Settings from "./settings"
 import Items from "./items"
-
-// -------------------------------------
 
 const PageAction = (function () {
   function pageActionEnabled() {
@@ -14,6 +13,7 @@ const PageAction = (function () {
         Logger.log(`page action enabled ? ${showPageActionSetting}`)
 
         if (showPageActionSetting) {
+          // @ts-ignore
           resolve()
         } else {
           reject()
@@ -25,10 +25,10 @@ const PageAction = (function () {
   }
 
   return {
-    redraw: function (tabId, url) {
+    redraw: function (tabId: any, url: string) {
       pageActionEnabled().then(() => {
         browser.storage.local.get("items").then(({ items }) => {
-          const containsItem = Items.contains(items, url)
+          const containsItem = Items.contains(items as string, url)
 
           if (containsItem) {
             PageAction.drawEnabled(tabId)
@@ -53,7 +53,7 @@ const PageAction = (function () {
       })
     },
 
-    drawEnabled: function (...tabIds) {
+    drawEnabled: function (...tabIds: any[]) {
       pageActionEnabled().then(() => {
         tabIds.forEach(tabId => {
           // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
@@ -69,7 +69,7 @@ const PageAction = (function () {
       })
     },
 
-    drawDisabled: function (...tabIds) {
+    drawDisabled: function (...tabIds: any[]) {
       pageActionEnabled().then(() => {
         tabIds.forEach(tabId => {
           // NOTE: using path: "/path/to/svg" does not work properly for FF56 and older
@@ -87,7 +87,7 @@ const PageAction = (function () {
 
     // TODO: Can't I just add this in my public draw methods? so that it wouldn't be necessary
     //       to manually call this each time I draw some page actions
-    show: function (tabId) {
+    show: function (tabId: any) {
       pageActionEnabled().then(() => {
         browser.pageAction.show(tabId)
       })
@@ -96,7 +96,7 @@ const PageAction = (function () {
     hideAllTabs: function () {
       browser.tabs.query({}).then(tabs => {
         for (const tab of tabs) {
-          browser.pageAction.hide(tab.id)
+          if (tab.id) browser.pageAction.hide(tab.id)
         }
       })
     },
@@ -104,10 +104,10 @@ const PageAction = (function () {
     // FIXME: this violates SRP, should not be responsible of the PageAction visual state
     //        AND of adding/removing the item from the items list
     // FIXME: duplication with background/keyboard.js
-    toggle: function (tab) {
+    toggle: function (tab: any) {
       pageActionEnabled().then(() => {
         browser.storage.local.get("items").then(({ items }) => {
-          const matchingItem = Items.findByUrl(items, tab.url)
+          const matchingItem = Items.findByUrl(items as string, tab.url)
 
           if (matchingItem) {
             browser.tabs.query({ active: true, currentWindow: true }).then(([currentTab]) => {

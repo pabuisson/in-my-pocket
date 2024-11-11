@@ -10,8 +10,6 @@ import TextSelectionHandler from "../modules/text_selection_handler"
 import Utility from "../modules/utility"
 import { MouseButtons, concealedProtocols } from "../modules/constants"
 
-// ----------------
-
 const PopupItemList = (function () {
   const ITEMS_PER_BATCH = 200
   const CURRENT_ITEM_CLASS = "current-page"

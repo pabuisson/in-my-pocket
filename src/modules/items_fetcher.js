@@ -10,8 +10,6 @@ import Utility from "./utility"
 import { VersionManager } from "./version_manager"
 import { consumerKey, PocketApiStatus } from "./constants"
 
-// ---------------
-
 const ItemsFetcher = (function () {
   /* Expected format:
    * - an object,
