@@ -4,7 +4,6 @@ import Authentication from "../modules/authentication.js"
 import Items from "../modules/items.js"
 import Logger from "../modules/logger.js"
 import PageAction from "../modules/page_action.js"
-import Utility from "../modules/utility"
 
 // ---------------
 
