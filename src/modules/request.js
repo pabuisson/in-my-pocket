@@ -1,7 +1,7 @@
 "use strict"
 
 import BugReporter from "./bug_reporter.js"
-import Logger from "./logger.js"
+import Logger from "./logger"
 import { PocketError } from "./constants.js"
 
 // -----------------------------------

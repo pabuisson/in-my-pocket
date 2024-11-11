@@ -1,4 +1,4 @@
-import Utility from "../src/modules/utility.js"
+import Utility from "../src/modules/utility"
 
 describe("Utility.parseJson", () => {
   it("returns falsy value if can not parse", () => {

@@ -1,7 +1,7 @@
 "use strict"
 
 import BugReporter from "./bug_reporter.js"
-import Logger from "./logger.js"
+import Logger from "./logger"
 
 // -------------------------------------
 
@@ -9,10 +9,11 @@ const Utility = (function () {
   const defaultTimeout = 1000
 
   return {
-    debounce: (func, delay) => {
-      let timerId
+    debounce: (func: Function, delay: number) => {
+      let timerId: NodeJS.Timeout | null
 
       return function () {
+        // @ts-ignore
         const context = this
         const args = arguments
 
@@ -27,7 +28,7 @@ const Utility = (function () {
       }
     },
 
-    parseJson: json => {
+    parseJson: (json: string) => {
       let parsedResponse = undefined
 
       try {
@@ -45,17 +46,18 @@ const Utility = (function () {
       return parsedResponse
     },
 
-    getParent: function (node, selector) {
+    getParent: function (node: HTMLElement, selector: string) {
+      // @ts-ignore
       while (node && !node.matches(selector)) node = node.parentElement
 
       return node
     },
 
-    hasParent: function (node, selector) {
+    hasParent: function (node: HTMLElement, selector: string): boolean {
       return Utility.getParent(node, selector) ? true : false
     },
 
-    matchesOrHasParent: function (node, selector) {
+    matchesOrHasParent: function (node: HTMLElement, selector: string) {
       return node.matches(selector) || Utility.hasParent(node, selector)
     },
 
@@ -63,7 +65,15 @@ const Utility = (function () {
     // exclude the RegExp from all places we used this function to pass a list of URLs
     // to browser.tabs.query... even though the RegExp-ed version of the URL should
     // also be taken into account to update page action and such.
-    getPossibleUrls: function ({ id, url }) {
+    // TODO: ID should be a common type
+    // FIXME: ID should not be either a string or a number, only of those two
+    getPossibleUrls: function ({
+      id,
+      url,
+    }: {
+      id: string | number
+      url: string
+    }) {
       return [
         url,
         `about:reader?url=${encodeURIComponent(url)}`,
@@ -76,7 +86,7 @@ const Utility = (function () {
 
     // Source: https://stackoverflow.com/a/7616484/85076
     // Source: https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
-    hashCode: function (s) {
+    hashCode: function (s: string) {
       let hash = 0
       for (let i = 0; i < s.length; i++) {
         hash = (hash << 5) - hash + s.charCodeAt(i)
@@ -87,13 +97,13 @@ const Utility = (function () {
       return hash >>> 0
     },
 
-    domain: function (url) {
+    domain: function (url: string) {
       const link = document.createElement("a")
       link.setAttribute("href", url)
       return link.hostname
     },
 
-    getType: function (value) {
+    getType: function (value: any) {
       if (value === null) {
         return "null"
       } else if (Array.isArray(value)) {

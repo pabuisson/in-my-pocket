@@ -2,7 +2,7 @@
 
 import Authentication from "../modules/authentication.js"
 import Items from "../modules/items.js"
-import Logger from "../modules/logger.js"
+import Logger from "../modules/logger"
 import PageAction from "../modules/page_action.js"
 
 // ---------------

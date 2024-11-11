@@ -2,11 +2,11 @@
 
 import Badge from "./badge.js"
 import BugReporter from "./bug_reporter.js"
-import Logger from "./logger.js"
+import Logger from "./logger"
 import PageAction from "./page_action.js"
 import PocketApiRequester from "./pocket_api_requester.js"
 import Settings from "./settings.js"
-import Utility from "./utility.js"
+import Utility from "./utility"
 import { AutomationKind, RemovalMethod, PocketNotice, concealedProtocols } from "./constants.js"
 
 // ---------------

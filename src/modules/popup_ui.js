@@ -1,16 +1,16 @@
 "use strict"
 
 import Authentication from "../modules/authentication.js"
-import Logger from "../modules/logger.js"
+import Logger from "../modules/logger"
 import PopupItemList from "../modules/popup_item_list.js"
-import PopupMainLoader from "../modules/popup_main_loader.js"
+import PopupMainLoader from "../modules/popup_main_loader"
 import PopupPagination from "../modules/popup_pagination.js"
 import PopupTopActions from "../modules/popup_top_actions.js"
 import PopupTopFilter from "../modules/popup_top_filter.js"
 import Settings from "../modules/settings.js"
-import Utility from "../modules/utility.js"
-import { VersionManager } from "../modules/version_manager.js"
-import { PopupFlash } from "../modules/popup_flash.js"
+import Utility from "../modules/utility"
+import { VersionManager } from "../modules/version_manager"
+import { PopupFlash } from "../modules/popup_flash"
 
 // ----------------
 
@@ -46,7 +46,7 @@ const PopupUI = (function () {
     // Set up the event listeners on the UI
     setupEventListeners()
 
-    const {display} = await browser.storage.local.get("display");
+    const { display } = await browser.storage.local.get("display")
 
     const currentTimestamp = (Date.now() / 1000) | 0
     const parsedDisplay = Utility.parseJson(display) || defaultDisplaySetting
@@ -68,11 +68,12 @@ const PopupUI = (function () {
 
     // Updates display.displayedAt and page + query if they have been reset
     Object.assign(displayOptions, { displayedAt: currentTimestamp })
-    Logger.log("(PopupUI.setupAuthenticatedUI) Save display variable to local storage: " +
-      JSON.stringify(displayOptions))
-    await browser.storage.local.set({ display: JSON.stringify(displayOptions) });
+    Logger.log(
+      "(PopupUI.setupAuthenticatedUI) Save display variable to local storage: " + JSON.stringify(displayOptions),
+    )
+    await browser.storage.local.set({ display: JSON.stringify(displayOptions) })
     // FIXME: popupItemList and popupUI pass `display` via browser.storage, which is slow.
-    PopupItemList.drawList();
+    PopupItemList.drawList()
   }
 
   function setupUnauthenticatedUI() {
@@ -126,7 +127,7 @@ const PopupUI = (function () {
         },
         () => {
           setupUnauthenticatedUI()
-        }
+        },
       )
     },
   }

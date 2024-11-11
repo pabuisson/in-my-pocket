@@ -3,11 +3,11 @@
 import Badge from "./badge.js"
 import BugReporter from "../modules/bug_reporter.js"
 import Items from "./items.js"
-import Logger from "./logger.js"
+import Logger from "./logger"
 import PageAction from "./page_action.js"
 import Request from "./request.js"
-import Utility from "./utility.js"
-import { VersionManager } from "./version_manager.js"
+import Utility from "./utility"
+import { VersionManager } from "./version_manager"
 import { consumerKey, PocketApiStatus } from "./constants.js"
 
 // ---------------

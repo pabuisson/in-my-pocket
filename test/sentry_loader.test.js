@@ -1,13 +1,13 @@
 import SentryLoader from "../src/modules/sentry_loader.js"
-import {VersionManager} from "../src/modules/version_manager.js"
+import { VersionManager } from "../src/modules/version_manager"
 import * as Sentry from "@sentry/browser"
 
 describe("SentryLoader.init", () => {
   describe("uuid generation", () => {
     beforeEach(() => {
-      sinon.stub(self.crypto, 'randomUUID').returns('1234')
-      sinon.stub(Sentry, 'init')
-      sinon.stub(VersionManager, 'getCurrentVersion').returns('1.0.0')
+      sinon.stub(self.crypto, "randomUUID").returns("1234")
+      sinon.stub(Sentry, "init")
+      sinon.stub(VersionManager, "getCurrentVersion").returns("1.0.0")
     })
 
     afterEach(() => {
@@ -19,11 +19,11 @@ describe("SentryLoader.init", () => {
     })
 
     it("generates and stores a uuid the first time it is called", async () => {
-      const setSpy = sinon.spy(global.browser.storage.local, 'set')
-      const getStub = sinon.stub(global.browser.storage.local, 'get')
+      const setSpy = sinon.spy(global.browser.storage.local, "set")
+      const getStub = sinon.stub(global.browser.storage.local, "get")
 
       // First time it is called, the uuid is not stored yet
-      getStub.withArgs('uuid').resolves({ uuid: null })
+      getStub.withArgs("uuid").resolves({ uuid: null })
 
       await SentryLoader.init()
 
@@ -31,11 +31,11 @@ describe("SentryLoader.init", () => {
     })
 
     it("reuses the existing stored uuid the following times it is called", async () => {
-      const setSpy = sinon.spy(global.browser.storage.local, 'set')
-      const getStub = sinon.stub(global.browser.storage.local, 'get')
+      const setSpy = sinon.spy(global.browser.storage.local, "set")
+      const getStub = sinon.stub(global.browser.storage.local, "get")
 
       // The UUID has already been generated and stored in the extension storage
-      getStub.withArgs('uuid').resolves({ uuid: '1234' })
+      getStub.withArgs("uuid").resolves({ uuid: "1234" })
 
       await SentryLoader.init()
 

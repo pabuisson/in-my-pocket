@@ -1,6 +1,6 @@
 "use strict"
 
-import Utility from "../modules/utility.js"
+import Utility from "../modules/utility"
 
 const PopupTagEdition = (function () {
   function getTagElements(eventTarget) {

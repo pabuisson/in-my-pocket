@@ -1,6 +1,6 @@
 "use strict"
 
-import PopupMainLoader from "./popup_main_loader.js"
+import PopupMainLoader from "./popup_main_loader"
 import PopupTopFilter from "./popup_top_filter"
 import PopupItemList from "./popup_item_list.js"
 import Utility from "./utility"

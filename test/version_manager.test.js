@@ -1,4 +1,4 @@
-import { VersionManager } from "../src/modules/version_manager.js"
+import { VersionManager } from "../src/modules/version_manager"
 
 describe("VersionManager.isMajorOrMinorUpdate", () => {
   beforeEach(() => {

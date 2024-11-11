@@ -5,7 +5,7 @@ import Badge from "../modules/badge.js"
 import ContextMenu from "../modules/context_menu.js"
 import Items from "../modules/items.js"
 import ItemsFetcher from "../modules/items_fetcher.js"
-import Logger from "../modules/logger.js"
+import Logger from "../modules/logger"
 
 // - - - MESSAGES - - -
 

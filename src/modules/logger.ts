@@ -20,7 +20,7 @@ const Logger = (function () {
   }
 
   return {
-    log: function (message) {
+    log: function (message: string) {
       isLoggingEnabled()
         .then(() => {
           console.log(prefix + message)
@@ -30,7 +30,7 @@ const Logger = (function () {
           // 'catch' needed to avoid throwing error because of unhandled rejected promise
         })
     },
-    warn: function (message) {
+    warn: function (message: string) {
       isLoggingEnabled()
         .then(() => {
           console.warn(prefix + message)
@@ -40,7 +40,7 @@ const Logger = (function () {
           // 'catch' needed to avoid throwing error because of unhandled rejected promise
         })
     },
-    error: function (message) {
+    error: function (message: string) {
       console.error(prefix + message)
     },
   }

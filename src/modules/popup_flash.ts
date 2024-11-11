@@ -1,7 +1,5 @@
 "use strict"
 
-// ----------------
-
 const FlashKind = {
   ERROR: "error",
   NOTICE: "notice",
@@ -13,15 +11,25 @@ const PopupFlash = (function () {
 
   return {
     isVisible: function () {
-      return !flashContainer.classList.contains("hidden")
+      if (flashContainer) {
+        return !flashContainer.classList.contains("hidden")
+      } else {
+        return false
+      }
     },
 
     isNeedResyncMessageDisplayed: function () {
-      return PopupFlash.isVisible() && flashContainer.innerHTML.includes("refresh")
+      return (
+        // @ts-ignore
+        PopupFlash.isVisible() && flashContainer.innerHTML.includes("refresh")
+      )
     },
 
-    show: function (message, flashClass, delay) {
-      flashContainer.classList.remove(Object.values(FlashKind))
+    // TODO: flashClass should actually be of "FlashKind values" type
+    show: (message: string, flashClass: string, delay?: number) => {
+      if (!flashContainer) return
+
+      flashContainer.classList.remove(...Object.values(FlashKind))
       flashContainer.classList.add(flashClass)
       flashContainer.textContent = message
       flashContainer.classList.remove("hidden")

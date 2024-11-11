@@ -1,8 +1,8 @@
 import * as Sentry from "@sentry/browser"
 import { Integrations } from "@sentry/tracing"
 import Settings from "../modules/settings.js"
-import Logger from "../modules/logger.js"
-import { VersionManager } from "../modules/version_manager.js"
+import Logger from "../modules/logger"
+import { VersionManager } from "../modules/version_manager"
 
 const SentryLoader = (function () {
   const DEFAULT_USER_ID = "0"

@@ -1,6 +1,6 @@
 "use strict"
 
-import Logger from "./logger.js"
+import Logger from "./logger"
 import Settings from "./settings.js"
 import Items from "./items.js"
 

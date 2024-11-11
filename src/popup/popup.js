@@ -5,13 +5,13 @@ import "./popup.scss"
 
 import Badge from "../modules/badge.js"
 import BugReporter from "../modules/bug_reporter.js"
-import Logger from "../modules/logger.js"
+import Logger from "../modules/logger"
 import PopupItemList from "../modules/popup_item_list.js"
-import PopupMainLoader from "../modules/popup_main_loader.js"
+import PopupMainLoader from "../modules/popup_main_loader"
 import PopupUI from "../modules/popup_ui.js"
 import SentryLoader from "../modules/sentry_loader.js"
 import { PocketError, PocketNotice, MouseButtons } from "../modules/constants.js"
-import { PopupFlash, FlashKind } from "../modules/popup_flash.js"
+import { PopupFlash, FlashKind } from "../modules/popup_flash"
 
 // -------------
 

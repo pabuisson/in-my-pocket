@@ -1,6 +1,6 @@
 "use strict"
 
-import Logger from "./logger.js"
+import Logger from "./logger"
 
 // Before Firefox 55 this API was also originally named contextMenus, and that name has been
 // retained as an alias, so you can use contextMenus to write code that works in Firefox and

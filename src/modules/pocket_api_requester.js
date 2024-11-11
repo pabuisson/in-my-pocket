@@ -1,6 +1,6 @@
 "use strict"
 
-import Logger from "./logger.js"
+import Logger from "./logger"
 import Request from "./request.js"
 import { consumerKey } from "./constants.js"
 

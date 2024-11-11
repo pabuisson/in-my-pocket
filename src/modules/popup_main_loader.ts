@@ -5,13 +5,17 @@ const PopupMainLoader = (function () {
 
   return {
     enable: function () {
-      mainLoaderComponent.classList.add("loading")
+      if (mainLoaderComponent) {
+        mainLoaderComponent.classList.add("loading")
+      }
     },
 
     disable: function (instantly = true) {
       const timeoutDuration = instantly ? 0 : 1000
       setTimeout(function () {
-        mainLoaderComponent.classList.remove("loading")
+        if (mainLoaderComponent) {
+          mainLoaderComponent.classList.remove("loading")
+        }
       }, timeoutDuration)
     },
   }

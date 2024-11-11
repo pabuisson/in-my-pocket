@@ -1,8 +1,8 @@
 "use strict"
 
 import ItemsFetcher from "../modules/items_fetcher.js"
-import Logger from "../modules/logger.js"
-import { VersionManager } from "../modules/version_manager.js"
+import Logger from "../modules/logger"
+import { VersionManager } from "../modules/version_manager"
 
 const installNotificationId = "0001"
 const upgradeNotificationId = "0002"

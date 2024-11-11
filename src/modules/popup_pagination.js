@@ -1,9 +1,9 @@
 "use strict"
 
-import Logger from "./logger.js"
+import Logger from "./logger"
 import PopupItemList from "./popup_item_list.js"
 import Settings from "./settings.js"
-import Utility from "./utility.js"
+import Utility from "./utility"
 import { parseIntBase } from "./constants.js"
 
 // ---------------

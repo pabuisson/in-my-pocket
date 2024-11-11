@@ -1,13 +1,13 @@
 "use strict"
 
 import Items from "../modules/items.js"
-import Logger from "../modules/logger.js"
+import Logger from "../modules/logger"
 import { defaultDisplaySetting } from "../modules/popup_ui.js"
 import PopupPagination from "../modules/popup_pagination.js"
 import PopupTagEdition from "../modules/popup_tag_edition.js"
 import Settings from "../modules/settings.js"
-import TextSelectionHandler from "../modules/text_selection_handler.js"
-import Utility from "../modules/utility.js"
+import TextSelectionHandler from "../modules/text_selection_handler"
+import Utility from "../modules/utility"
 import { MouseButtons, concealedProtocols } from "../modules/constants.js"
 
 // ----------------
