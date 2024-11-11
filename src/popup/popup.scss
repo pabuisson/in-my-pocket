@@ -6,6 +6,11 @@
 
 // -----------
 
+:root {
+  --top-actions-height: 2.2rem;
+  --top-actions-y-padding: 0.4rem;
+}
+
 html {
   min-height: 300px;
   &.sidebar {
@@ -417,8 +422,6 @@ body {
   }
 }
 
-$top-actions-height: 2.2rem;
-
 .search-no-results,
 .onboarding-never-fetched {
   flex: 1;
@@ -442,8 +445,8 @@ $top-actions-height: 2.2rem;
   flex-direction: row;
   align-items: center;
 
-  height: $top-actions-height;
-  padding: 0.4rem 0;
+  height: var(--top-actions-height);
+  padding: var(--top-actions-y-padding) 0;
 
   background-color: $ff-ink-90;
   background-color: $my-dark-blue;
@@ -579,7 +582,7 @@ $top-actions-height: 2.2rem;
   z-index: 3;
   display: block !important;
   position: absolute;
-  top: $top-actions-height;
+  top: calc(var(--top-actions-height) + 2 * var(--top-actions-y-padding));
   width: 100%;
   opacity: 1;
   transition: height 200ms ease-out, opacity 200ms ease-out;
