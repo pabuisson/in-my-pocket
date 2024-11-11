@@ -34,6 +34,9 @@ class Request {
     }
 
     switch (errorResponse.status) {
+      case 200:
+        Logger.log("200: request was succesful but contains errors")
+        break
       case 401:
         Logger.error("401: unauthorized")
         errorObject.error = PocketError.UNAUTHORIZED
