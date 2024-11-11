@@ -570,13 +570,11 @@ const Items = (function () {
           return possibleUrl.test(url)
         } else {
           BugReporter.captureMessage("possibleUrl is neither a string nor a regexp", {
-            extra: {
-              typeofUrl: typeof possibleUrl,
-              urlWasAnArray: Array.isArray(possibleUrl),
-              urlWasAnObject: typeof possibleUrl === "object" && !Array.isArray(possibleUrl),
-              urlWasUndefined: possibleUrl === undefined,
-              urlWasNull: possibleUrl === null,
-            },
+            typeofUrl: typeof possibleUrl,
+            urlWasAnArray: Array.isArray(possibleUrl),
+            urlWasAnObject: typeof possibleUrl === "object" && !Array.isArray(possibleUrl),
+            urlWasUndefined: possibleUrl === undefined,
+            urlWasNull: possibleUrl === null,
           })
           return false
         }
