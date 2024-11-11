@@ -1,7 +1,7 @@
 "use strict"
 
 import * as Sentry from "@sentry/browser"
-import Settings from "./settings.js"
+import Settings from "./settings"
 
 // ---------------
 

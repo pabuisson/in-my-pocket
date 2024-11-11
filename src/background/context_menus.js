@@ -1,7 +1,7 @@
 "use strict"
 
-import ContextMenu from "../modules/context_menu.js"
-import Items from "../modules/items.js"
+import ContextMenu from "../modules/context_menu"
+import Items from "../modules/items"
 import Logger from "../modules/logger"
 
 // ---------------

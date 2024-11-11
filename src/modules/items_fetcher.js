@@ -1,14 +1,14 @@
 "use strict"
 
-import Badge from "./badge.js"
-import BugReporter from "../modules/bug_reporter.js"
-import Items from "./items.js"
+import Badge from "./badge"
+import BugReporter from "../modules/bug_reporter"
+import Items from "./items"
 import Logger from "./logger"
-import PageAction from "./page_action.js"
-import Request from "./request.js"
+import PageAction from "./page_action"
+import Request from "./request"
 import Utility from "./utility"
 import { VersionManager } from "./version_manager"
-import { consumerKey, PocketApiStatus } from "./constants.js"
+import { consumerKey, PocketApiStatus } from "./constants"
 
 // ---------------
 

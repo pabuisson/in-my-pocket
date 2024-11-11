@@ -2,7 +2,7 @@
 
 import PopupMainLoader from "./popup_main_loader"
 import PopupTopFilter from "./popup_top_filter"
-import PopupItemList from "./popup_item_list.js"
+import PopupItemList from "./popup_item_list"
 import Utility from "./utility"
 import { FavoriteFilterState } from "./constants"
 

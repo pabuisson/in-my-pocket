@@ -1,6 +1,6 @@
 "use strict"
 
-import BugReporter from "./bug_reporter.js"
+import BugReporter from "./bug_reporter"
 import Logger from "./logger"
 
 // -------------------------------------

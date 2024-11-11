@@ -1,10 +1,10 @@
 "use strict"
 
-import Authentication from "../modules/authentication.js"
-import Badge from "../modules/badge.js"
-import ContextMenu from "../modules/context_menu.js"
-import Items from "../modules/items.js"
-import ItemsFetcher from "../modules/items_fetcher.js"
+import Authentication from "../modules/authentication"
+import Badge from "../modules/badge"
+import ContextMenu from "../modules/context_menu"
+import Items from "../modules/items"
+import ItemsFetcher from "../modules/items_fetcher"
 import Logger from "../modules/logger"
 
 // - - - MESSAGES - - -

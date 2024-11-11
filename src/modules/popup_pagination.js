@@ -1,10 +1,10 @@
 "use strict"
 
 import Logger from "./logger"
-import PopupItemList from "./popup_item_list.js"
-import Settings from "./settings.js"
+import PopupItemList from "./popup_item_list"
+import Settings from "./settings"
 import Utility from "./utility"
-import { parseIntBase } from "./constants.js"
+import { parseIntBase } from "./constants"
 
 // ---------------
 

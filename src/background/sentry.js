@@ -1,4 +1,4 @@
-import SentryLoader from "../modules/sentry_loader.js"
+import SentryLoader from "../modules/sentry_loader"
 
 // --------------------------
 

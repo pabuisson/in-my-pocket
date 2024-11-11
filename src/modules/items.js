@@ -1,13 +1,13 @@
 "use strict"
 
-import Badge from "./badge.js"
-import BugReporter from "./bug_reporter.js"
+import Badge from "./badge"
+import BugReporter from "./bug_reporter"
 import Logger from "./logger"
-import PageAction from "./page_action.js"
-import PocketApiRequester from "./pocket_api_requester.js"
-import Settings from "./settings.js"
+import PageAction from "./page_action"
+import PocketApiRequester from "./pocket_api_requester"
+import Settings from "./settings"
 import Utility from "./utility"
-import { AutomationKind, RemovalMethod, PocketNotice, concealedProtocols } from "./constants.js"
+import { AutomationKind, RemovalMethod, PocketNotice, concealedProtocols } from "./constants"
 
 // ---------------
 

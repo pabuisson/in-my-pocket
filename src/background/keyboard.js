@@ -1,8 +1,8 @@
 "use strict"
 
-import Items from "../modules/items.js"
+import Items from "../modules/items"
 import Logger from "../modules/logger"
-import { KeyboardShortcuts } from "../modules/constants.js"
+import { KeyboardShortcuts } from "../modules/constants"
 
 // ---------------
 

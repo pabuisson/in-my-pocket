@@ -1,9 +1,9 @@
 "use strict"
 
-import Authentication from "../modules/authentication.js"
-import Items from "../modules/items.js"
+import Authentication from "../modules/authentication"
+import Items from "../modules/items"
 import Logger from "../modules/logger"
-import PageAction from "../modules/page_action.js"
+import PageAction from "../modules/page_action"
 
 // ---------------
 

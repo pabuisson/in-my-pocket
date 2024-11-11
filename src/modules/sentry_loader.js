@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/browser"
 import { Integrations } from "@sentry/tracing"
-import Settings from "../modules/settings.js"
+import Settings from "../modules/settings"
 import Logger from "../modules/logger"
 import { VersionManager } from "../modules/version_manager"
 

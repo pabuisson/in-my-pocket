@@ -3,14 +3,14 @@
 import "./popup.html"
 import "./popup.scss"
 
-import Badge from "../modules/badge.js"
-import BugReporter from "../modules/bug_reporter.js"
+import Badge from "../modules/badge"
+import BugReporter from "../modules/bug_reporter"
 import Logger from "../modules/logger"
-import PopupItemList from "../modules/popup_item_list.js"
+import PopupItemList from "../modules/popup_item_list"
 import PopupMainLoader from "../modules/popup_main_loader"
-import PopupUI from "../modules/popup_ui.js"
-import SentryLoader from "../modules/sentry_loader.js"
-import { PocketError, PocketNotice, MouseButtons } from "../modules/constants.js"
+import PopupUI from "../modules/popup_ui"
+import SentryLoader from "../modules/sentry_loader"
+import { PocketError, PocketNotice, MouseButtons } from "../modules/constants"
 import { PopupFlash, FlashKind } from "../modules/popup_flash"
 
 // -------------

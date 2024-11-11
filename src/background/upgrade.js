@@ -1,6 +1,6 @@
 "use strict"
 
-import ItemsFetcher from "../modules/items_fetcher.js"
+import ItemsFetcher from "../modules/items_fetcher"
 import Logger from "../modules/logger"
 import { VersionManager } from "../modules/version_manager"
 

@@ -1,10 +1,10 @@
 "use strict"
 
 import Logger from "./logger"
-import PopupItemList from "./popup_item_list.js"
+import PopupItemList from "./popup_item_list"
 import PopupMainLoader from "./popup_main_loader"
 import Utility from "./utility"
-import { FavoriteFilterState } from "./constants.js"
+import { FavoriteFilterState } from "./constants"
 
 // ----------------
 

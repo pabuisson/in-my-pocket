@@ -1,6 +1,6 @@
 "use strict"
 
-import Settings from "./settings.js"
+import Settings from "./settings"
 
 // Info and warning are only displayed if debug mode is enabled
 // Errors on the other hand are *ALWAYS* displayed in the browser console

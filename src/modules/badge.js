@@ -1,7 +1,7 @@
 "use strict"
 
 import Logger from "./logger"
-import Settings from "./settings.js"
+import Settings from "./settings"
 import Utility from "./utility"
 
 // -------------------------------------
