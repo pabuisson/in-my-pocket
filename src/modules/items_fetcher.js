@@ -89,7 +89,7 @@ const ItemsFetcher = (function () {
           consumer_key: consumerKey,
           access_token: access_token,
           offset: offset,
-          count: 1000,
+          count: 500,
           detailType: "complete",
           state: "unread",
           sort: "oldest",

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.24 - November 2024
+
+* PERFS: try to reduce (again) the size of items batch we ask Pocket during the initial account sync. Already went from 2k to 1k, now we're moving down to 500 items.
+
+
 ## 0.12.22 and 0.12.23 - November 2024
 
 * CHORE: apparently successful API responses _can_ come with error headers. In that case, I now process them like failed responses, triggering error report, logging and feedback to the UI.
