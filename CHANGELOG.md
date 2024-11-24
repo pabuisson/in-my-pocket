@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.12.24 - November 2024
+## 0.12.24 and 0.12.25 - November 2024
 
-* PERFS: try to reduce (again) the size of items batch we ask Pocket during the initial account sync. Already went from 2k to 1k, now we're moving down to 500 items.
+* PERFS: try to reduce (again) the size of items batch we ask Pocket during the initial account sync. Already went from 2k to 1k, now we're moving down to 500 items (0.12.24) and again to 200 items (0.12.25).
 
 
 ## 0.12.22 and 0.12.23 - November 2024
