@@ -53,7 +53,8 @@ const ItemsFetcher = (function () {
 
   return {
     retrieveItems: function (force) {
-      const intervalWithoutReload = 15 * 60
+      //const intervalWithoutReload = 15 * 60
+      const intervalWithoutReload = 10
       const currentTimestamp = (Date.now() / 1000) | 0
 
       browser.storage.local.get(["items", "last_retrieve"]).then(({ items, last_retrieve }) => {

@@ -42,7 +42,18 @@ const SentryLoader = (function () {
         initialScope: {
           user: { id: uuid || DEFAULT_USER_ID },
         },
-        integrations: [new Integrations.BrowserTracing(), new Sentry.Integrations.GlobalHandlers({ onerror: true })],
+        integrations: [
+          new Integrations.BrowserTracing({
+            tracingOrigins: [
+              /^https:\/\/getpocket.com\/v3\/\w+$/,
+              //tracingOrigins: [
+              //  "https://getpocket.com/v3/add",
+              //  "https://getpocket.com/v3/get",
+              //  "https://getpocket.com/v3/send",
+            ],
+          }),
+          new Sentry.Integrations.GlobalHandlers({ onerror: true }),
+        ],
         // NOTE: if beforeSend returns null, nothing get sent to Sentry
         beforeSend(event) {
           if (event.request && event.request.url) {
@@ -62,6 +73,11 @@ const SentryLoader = (function () {
           return event
         },
       })
+
+      const int = Sentry.getCurrentHub().getClient()?.getIntegration(Integrations.BrowserTracing)
+      console.log("🙏 tracingOrigins:", int.options.tracingOrigins)
+      console.log("🙏 shouldCreateSpanForRequest: ", int.option.shouldCreateSpanForRequest)
+      console.log("🙏 traceFetch:", int.options.traceFetch, "traceXHR: ", int.options.traceXHR)
     },
   }
 })()
