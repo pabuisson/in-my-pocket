@@ -1,43 +1,56 @@
 // Shared variables
 
-$background: #fcfcfc;
-$pocket-aqua: #50bcb6;
-$pocket-red: #f13044;
+:root {
+  --top-actions-height: 2.2rem;
+  --top-actions-y-padding: 0.4rem;
 
-$notice-blue: #58addd;
+  --background: #fcfcfc;
+  --pocket-aqua: #50bcb6;
+  --pocket-aqua-rgb: 80,188,182;
+  --pocket-red: #f13044;
+  --pocket-red-rgb: 241,48,68;
 
-$favorite-bg: #f9e890;
-$favorite-action: #fce158;
+  --notice-blue: #58addd;
+  --notice-blue-rgb: 88,173,221;
+
+  --favorite-bg: #f9e890;
+  --favorite-bg-rgb: 249,232,144;
+  --favorite-action: #fce158;
 
 // My own dark blue colour
-$my-dark-blue: #29303d;
+  --my-dark-blue: #29303d;
 
 // http://design.firefox.com/photon/visuals/color.html
-$ff-primary-text: #0c0c0d;
-$ff-secondary-text: #737373;
-$ff-grey-10: #f9f9fa;
-$ff-grey-20: #ededf0;
-$ff-grey-30: #d7d7db;
-$ff-grey-40: #b1b1b3;
-$ff-grey-50: #737373;
-$ff-grey-60: #4a4a4f;
-$ff-grey-70: #38383d;
-$ff-grey-80: #2a2a2e;
-$ff-grey-90: #0c0c0d;
-$ff-red-50: #ff0039;
-$ff-yellow-50: #ffe900;
-$ff-yellow-60: #d7b600;
-$ff-green-50: #30e60b;
-$ff-green-60: #12bc00;
-$ff-blue-50: #0a84ff;
-$ff-blue-60: #0060df;
-$ff-blue-70: #003eaa;
-$ff-blue-80: #002275;
-$ff-blue-90: #000f40;
+  --ff-primary-text: #0c0c0d;
+  --ff-secondary-text: #737373;
+  --ff-grey-10: #f9f9fa;
+  --ff-grey-20: #ededf0;
+  --ff-grey-20-rgb: 237,237,240;
+  --ff-grey-30: #d7d7db;
+  --ff-grey-40: #b1b1b3;
+  --ff-grey-50: #737373;
+  --ff-grey-60: #4a4a4f;
+  --ff-grey-70: #38383d;
+  --ff-grey-80: #2a2a2e;
+  --ff-grey-90: #0c0c0d;
+  --ff-red-50: #ff0039;
+  --ff-red-50-rgb: 255,0,57;
+  --ff-yellow-50: #ffe900;
+  --ff-yellow-60: #d7b600;
+  --ff-green-50: #30e60b;
+  --ff-green-60: #12bc00;
+  --ff-green-60-rgb: 18,188,0;
+  --ff-blue-50: #0a84ff;
+  --ff-blue-60: #0060df;
+  --ff-blue-70: #003eaa;
+  --ff-blue-80: #002275;
+  --ff-blue-90: #000f40;
+  --ff-ink-70: #363959;
+  --ff-ink-70-rgb: 54,57,89;
+  --ff-ink-80: #202340;
+  --ff-ink-90: #0f1126;
+}
 
-$ff-ink-70: #363959;
-$ff-ink-80: #202340;
-$ff-ink-90: #0f1126;
 
 // Shared animations
 

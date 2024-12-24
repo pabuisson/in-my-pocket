@@ -4,8 +4,6 @@
   display: none !important;
 }
 
-// -----------
-
 :root {
   --top-actions-height: 2.2rem;
   --top-actions-y-padding: 0.4rem;
@@ -27,7 +25,7 @@ body {
   margin: 0;
   overflow: hidden;
   font-family: sans-serif;
-  background-color: $ff-grey-10;
+  background-color: var(--ff-grey-10);
 
   // NOTE: used to set flex: 1 for direct descendants but it generated a bug for Firefox < 83
   display: flex;
@@ -59,7 +57,7 @@ body {
   button {
     margin: 2rem;
     padding: 1rem 2rem;
-    background-color: $ff-blue-50;
+    background-color: var(--ff-blue-50);
     border: 1px solid;
     border-radius: 4px;
     color: white;
@@ -69,24 +67,24 @@ body {
     max-width: 80%;
 
     &:hover {
-      background-color: $ff-blue-60;
+      background-color: var(--ff-blue-60);
     }
 
     &:active {
-      background-color: $ff-blue-70;
+      background-color: var(--ff-blue-70);
     }
   }
 
   .bottom {
     margin: 2rem;
     width: 80%;
-    color: $ff-secondary-text;
+    color: var(--ff-secondary-text);
     font-size: 1.1rem;
 
     a {
-      color: $ff-secondary-text;
+      color: var(--ff-secondary-text);
       &:hover {
-        color: $ff-blue-70;
+        color: var(--ff-blue-70);
       }
     }
   }
@@ -115,9 +113,9 @@ body {
     margin: 0;
     position: relative;
     padding: 0.5rem;
-    border-bottom: 1px solid $ff-grey-20;
+    border-bottom: 1px solid var(--ff-grey-20);
 
-    color: $ff-grey-70;
+    color: var(--ff-grey-70);
 
     // Item height used to be 3.5rem, fixed, for animation
     // I'm no longer fixing the height but to animate disappearance, I rely on max-height
@@ -129,22 +127,22 @@ body {
     justify-content: space-evenly;
 
     &.favorite {
-      background-color: transparentize($favorite-bg, 0.2);
+      background-color: rgba(var(--favorite-bg-rgb), 0.8);
     }
 
     &.current-page {
       background-color: white;
       &.favorite {
-        background-color: $favorite-bg;
+        background-color: var(--favorite-bg);
       }
 
-      border: 2px double $ff-ink-70;
+      border: 2px double var(--ff-ink-70);
       border-radius: 4px;
       margin: 0.2rem;
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
       font-weight: bold;
-      box-shadow: 0px 2px 8px 0px $ff-grey-30;
+      box-shadow: 0px 2px 8px 0px var(--ff-grey-30);
 
       .tab-icon {
         height: 20px;
@@ -181,7 +179,7 @@ body {
         // same height as the input + buttons
         padding: 0.3rem 0px;
 
-        color: $ff-primary-text;
+        color: var(--ff-primary-text);
         user-select: text;
         white-space: nowrap;
         overflow-x: hidden;
@@ -212,7 +210,7 @@ body {
         user-select: text;
         white-space: nowrap;
 
-        color: $ff-secondary-text;
+        color: var(--ff-secondary-text);
 
         cursor: pointer;
       }
@@ -230,7 +228,7 @@ body {
     }
 
     &:hover .title {
-      color: $ff-grey-90;
+      color: var(--ff-grey-90);
     }
 
     overflow: hidden;
@@ -272,12 +270,12 @@ body {
           display: inline;
           cursor: text;
           font-size: 1rem;
-          border: 1px solid $ff-grey-40;
+          border: 1px solid var(--ff-grey-40);
           border-radius: 2px;
           padding: 2px;
 
           &:focus {
-            outline: 1px solid $ff-blue-70;
+            outline: 1px solid var(--ff-blue-70);
           }
         }
 
@@ -286,7 +284,7 @@ body {
           flex: 1;
 
           padding: 2px;
-          border: 1px solid $ff-grey-40;
+          border: 1px solid var(--ff-grey-40);
           border-radius: 2px;
 
           display: flex;
@@ -299,13 +297,13 @@ body {
             margin-bottom: 1px;
             padding: 0px 2px;
 
-            background-color: $ff-grey-20;
-            border: 1px solid $ff-grey-40;
+            background-color: var(--ff-grey-20);
+            border: 1px solid var(--ff-grey-40);
             border-radius: 2px;
-            color: $ff-primary-text;
+            color: var(--ff-primary-text);
 
             &:focus {
-              outline: 1px solid $ff-blue-70;
+              outline: 1px solid var(--ff-blue-70);
             }
           }
 
@@ -322,7 +320,7 @@ body {
           // Manually add the focused class to the whole tags container
           // when the new-tag field has the focus
           &.focused {
-            outline: 1px solid $ff-blue-70;
+            outline: 1px solid var(--ff-blue-70);
           }
         }
 
@@ -337,7 +335,7 @@ body {
           // around the slightly rounded buttons, which looks plain ugly
           &:focus {
             outline: none;
-            box-shadow: 0px 0px 0px 1px $ff-blue-70;
+            box-shadow: 0px 0px 0px 1px var(--ff-blue-70);
           }
         }
       }
@@ -363,8 +361,8 @@ body {
       right: 0;
       width: 14rem;
       height: 100%;
-      background-color: transparentize($ff-grey-20, 0.2);
-      border-left: 1px solid $ff-grey-20;
+      background-color: rgba(var(--ff-grey-20-rgb), 0.8);
+      border-left: 1px solid var(--ff-grey-20);
 
       display: flex;
       flex-direction: row;
@@ -387,36 +385,36 @@ body {
         }
 
         .icon {
-          color: $ff-primary-text;
+          color: var(--ff-primary-text);
           font-size: 1.5rem;
         }
 
-        $loader-size: 1.3rem;
+        --loader-size: 1.3rem;
 
         .loader {
-          height: $loader-size;
-          width: $loader-size;
+          height: var(--loader-size);
+          width: var(--loader-size);
           animation: rotate 0.8s infinite linear;
-          border: 0.4rem solid $ff-grey-60;
+          border: 0.4rem solid var(--ff-grey-60);
           border-radius: 50%;
           border-right-color: transparent;
         }
       }
 
       .favorite-action:hover {
-        background-color: $favorite-action;
+        background-color: var(--favorite-action);
       }
 
       .edit-action:hover {
-        background-color: transparentize($ff-ink-70, 0.7);
+        background-color: rgba(var(--ff-ink-70-rgb), 0.3);
       }
 
       .tick-action:hover {
-        background-color: transparentize($pocket-aqua, 0.4);
+        background-color: rgba(var(--pocket-aqua-rgb), 0.6);
       }
 
       .delete-action:hover {
-        background-color: transparentize($pocket-red, 0.4);
+        background-color: rgba(var(--pocket-red-rgb), 0.6);
       }
     }
   }
@@ -430,7 +428,7 @@ body {
   text-align: center;
 
   font-size: 1.5rem;
-  color: $ff-grey-80;
+  color: var(--ff-grey-80);
 
   p {
     text-align: left;
@@ -448,8 +446,8 @@ body {
   height: var(--top-actions-height);
   padding: var(--top-actions-y-padding) 0;
 
-  background-color: $ff-ink-90;
-  background-color: $my-dark-blue;
+  background-color: var(--ff-ink-90);
+  background-color: var(--my-dark-blue);
 
   .top-icon {
     flex: initial;
@@ -509,10 +507,10 @@ body {
         text-align: center;
 
         &.badge-on {
-          background-color: $ff-green-60;
+          background-color: var(--ff-green-60);
         }
         &.badge-off {
-          background-color: $pocket-red;
+          background-color: var(--pocket-red);
         }
       }
     }
@@ -538,10 +536,10 @@ body {
       padding: 0.3rem 0.6rem;
       height: 1.6rem;
 
-      background-color: transparentize(white, 0.3);
+      background-color: rgba(255, 255, 255, 0.7);
       border-radius: 1rem;
       border: 0px transparent;
-      color: $ff-grey-80;
+      color: var(--ff-grey-80);
       font-size: 1.1rem;
 
       &:focus {
@@ -568,7 +566,7 @@ body {
     position: absolute;
     display: block;
     height: 100%;
-    background-color: $pocket-aqua;
+    background-color: var(--pocket-aqua);
     left: 0%;
     right: 100%;
 
@@ -594,16 +592,16 @@ body {
   text-align: center;
 
   &.error {
-    background-color: transparentize($ff-red-50, 0.1);
+    background-color: rgba(var(--ff-red-50-rgb), 0.9);
     color: white;
   }
   &.notice {
-    background-color: transparentize($notice-blue, 0.1);
-    color: $ff-grey-80;
+    background-color: rgba(var(--notice-blue-rgb), 0.9);
+    color: var(--ff-grey-80);
   }
   &.success {
-    background-color: transparentize($ff-green-60, 0.2);
-    color: $ff-grey-80;
+    background-color: rgba(var(--ff-green-60-rgb), 0.8);
+    color: var(--ff-grey-80);
   }
 
   &.hidden {
@@ -632,7 +630,7 @@ body {
   flex-direction: row;
 
   font-weight: bold;
-  color: $ff-grey-80;
+  color: var(--ff-grey-80);
 
   .pagination-previous,
   .pagination-next {
@@ -641,7 +639,7 @@ body {
     cursor: pointer;
 
     &:hover {
-      background-color: $ff-grey-20;
+      background-color: var(--ff-grey-20);
     }
 
     &.disabled,

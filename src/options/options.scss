@@ -1,7 +1,7 @@
 @import "../assets/shared";
 
 body {
-  color: $ff-grey-80;
+  color: var(--ff-grey-80);
   min-width: 600px;
 }
 
@@ -18,12 +18,12 @@ body {
   width: 100px;
   padding: 2px;
 
-  background-color: transparentize($ff-green-60, 0.8);
-  color: $ff-green-60;
+  background-color: rgba(var(--ff-green-60), 0.2);
+  color: var(--ff-green-60);
   font-weight: bold;
   text-align: center;
 
-  border: 2px solid $ff-green-60;
+  border: 2px solid var(--ff-green-60);
   border-radius: 2px;
 
   opacity: 1;
@@ -58,7 +58,7 @@ h2 {
   }
 
   a {
-    color: $ff-blue-50;
+    color: var(--ff-blue-50);
     text-decoration: none;
 
     &:hover {
@@ -67,7 +67,7 @@ h2 {
   }
 
   img {
-    border: 1px $ff-grey-20 solid;
+    border: 1px var(--ff-grey-20) solid;
     vertical-align: middle;
     margin-left: 2rem;
   }
@@ -97,11 +97,16 @@ h2 {
  */
 
 @media (prefers-color-scheme: dark) {
-  $ff-dark-options-background: #202023;
-  $ff-dark-options-foreground: #dadada;
+  :root {
+    --dark-options-background: #202023;
+    --dark-options-foreground: #dadada;
+    --dark-options-background-rgb: 32,32,35;
+    --dark-options-foreground-rgb: 218,218,218;
+  }
+
   body {
-    background-color: $ff-dark-options-background;
-    color: $ff-dark-options-foreground;
+    background-color: var(--dark-options-background);
+    color: var(--dark-options-foreground);
   }
 
   h2,
@@ -110,10 +115,10 @@ h2 {
   }
 
   .row {
-    border-top-color: transparentize($ff-dark-options-foreground, 0.8);
+    border-top-color: rgba(var(--dark-options-foreground-rgb), 0.2);
 
     img {
-      border-color: transparentize($ff-dark-options-foreground, 0.5);
+      border-color: rgba(var(--dark-options-foreground-rgb), 0.5);
     }
   }
 }
