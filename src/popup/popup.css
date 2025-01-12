@@ -27,7 +27,7 @@ body {
   font-family: sans-serif;
   background-color: var(--ff-grey-10);
 
-  // NOTE: used to set flex: 1 for direct descendants but it generated a bug for Firefox < 83
+  /* NOTE: used to set flex: 1 for direct descendants but it generated a bug for Firefox < 83 */
   display: flex;
 
   &.sidebar {
@@ -99,15 +99,15 @@ body {
   list-style-type: none;
   overflow-y: scroll;
 
-  // Move up since the main-loader is 2px high and is moved up on 2px
-  // (onto the top-actions container)
+  /* Move up since the main-loader is 2px high and is moved up on 2px
+   * (onto the top-actions container) */
   position: relative;
   top: -2px;
 
   .item {
-    // Only renders the item when they need to be rendered. Should improve perfs
-    // for the rendering of long item lists
-    // NOTE: not sure how it behaves regarding image loading
+    /* Only renders the item when they need to be rendered. Should improve perfs
+     * for the rendering of long item lists
+     * NOTE: not sure how it behaves regarding image loading */
     content-visibility: auto;
 
     margin: 0;
@@ -117,9 +117,9 @@ body {
 
     color: var(--ff-grey-70);
 
-    // Item height used to be 3.5rem, fixed, for animation
-    // I'm no longer fixing the height but to animate disappearance, I rely on max-height
-    // https://css-tricks.com/using-css-transitions-auto-dimensions/
+    /* Item height used to be 3.5rem, fixed, for animation
+     * I'm no longer fixing the height but to animate disappearance, I rely on max-height
+     * https://css-tricks.com/using-css-transitions-auto-dimensions/ */
     max-height: 6rem;
 
     display: flex;
@@ -175,8 +175,8 @@ body {
 
         line-height: calc(1.25rem + 6px);
         font-size: 1.25rem;
-        // So that editing the title doesn't move items around, span.title being the exact
-        // same height as the input + buttons
+        /* So that editing the title doesn't move items around, span.title being the exact
+         * same height as the input + buttons */
         padding: 0.3rem 0px;
 
         color: var(--ff-primary-text);
@@ -194,7 +194,7 @@ body {
       position: relative;
       display: flex;
 
-      // Prevent scrolling from being enabled on items with tags
+      /* Prevent scrolling from being enabled on items with tags */
       overflow-y: hidden;
 
       font-size: 0.9rem;
@@ -234,13 +234,13 @@ body {
     overflow: hidden;
     opacity: 1;
 
-    // second duration is the delay after which the transition must begin
-    // 'ease-out' timing function for max-height because I define a larger-than-the-item max-height,
-    // so I need the transition to be fast at first and then come back to a normal speed
+    /* second duration is the delay after which the transition must begin
+     * 'ease-out' timing function for max-height because I define a larger-than-the-item max-height,
+     * so I need the transition to be fast at first and then come back to a normal speed */
     transition: max-height 250ms ease-out, padding 250ms, opacity 0s 200ms, border-bottom-width 0s 240ms;
 
-    // When the item is visually disappearing from the list
-    // Relies on max-height since height is no longer fixed
+    /* When the item is visually disappearing from the list
+     * Relies on max-height since height is no longer fixed */
     &.disappearing {
       max-height: 0;
       margin-top: 0;
@@ -259,7 +259,7 @@ body {
 
         label {
           display: block;
-          // For vertical-centering
+          /* For vertical-centering */
           line-height: 1.8rem;
           width: 3rem;
           height: 100%;
@@ -279,7 +279,7 @@ body {
           }
         }
 
-        // Fake tag input field
+        /* Fake tag input field */
         .tags {
           flex: 1;
 
@@ -307,7 +307,7 @@ body {
             }
           }
 
-          // Actual new tag input
+          /* Actual new tag input */
           input.new-tag {
             flex: 1;
 
@@ -317,8 +317,8 @@ body {
             outline: none;
           }
 
-          // Manually add the focused class to the whole tags container
-          // when the new-tag field has the focus
+          /* Manually add the focused class to the whole tags container
+           * when the new-tag field has the focus */
           &.focused {
             outline: 1px solid var(--ff-blue-70);
           }
@@ -331,8 +331,8 @@ body {
           margin-right: 0.2rem;
           font-size: 1rem;
 
-          // Outlining with a solid border would make a rectangular outline
-          // around the slightly rounded buttons, which looks plain ugly
+          /* Outlining with a solid border would make a rectangular outline
+           * around the slightly rounded buttons, which looks plain ugly */
           &:focus {
             outline: none;
             box-shadow: 0px 0px 0px 1px var(--ff-blue-70);
@@ -342,9 +342,9 @@ body {
 
     }
 
-    // Removing: when the "delete/archive" button has been clicked and the spinner is spinning,
-    // we maintain the visibility of its actions container (so that user keep on seeing the
-    // spinning spinner during the deletion)
+    /* Removing: when the "delete/archive" button has been clicked and the spinner is spinning,
+     * we maintain the visibility of its actions container (so that user keep on seeing the
+     * spinning spinner during the deletion) */
     &:hover .actions-container,
     &.removing .actions-container {
       opacity: 1;
@@ -375,7 +375,7 @@ body {
         flex: 1;
         opacity: 0.8;
 
-        // So that tick/loader are automatically centered
+        /* So that tick/loader are automatically centered */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -475,8 +475,7 @@ body {
       font-weight: bold;
     }
 
-    // This icon is separated from the other "item lists" action
-    // hence a large right margin
+    /* This icon is separated from the other "item lists" action hence a large right margin */
     &.filter-faved {
       position: relative;
 
@@ -549,9 +548,7 @@ body {
   }
 }
 
-/*
- * Thanks to Che for this example: http://codepen.io/code_dependant/pen/ciGLA?editors=1100
- */
+/* Thanks to Che for this example: http://codepen.io/code_dependant/pen/ciGLA?editors=1100 */
 .main-loader {
   flex: initial;
 
@@ -605,16 +602,16 @@ body {
   }
 
   &.hidden {
-    // Needed to counter the 'display:none' of the .hidden class. Without this, the overlay
-    // display goes from block to none, and is hidden all at once
+    /* Needed to counter the 'display:none' of the .hidden class. Without this, the overlay
+     * display goes from block to none, and is hidden all at once */
     display: block !important;
 
     height: 0px;
     opacity: 0;
     transition: height 250ms ease-out, opacity 0 250ms ease-out;
 
-    // Let's make sure the item really takes no space in the popup, or it will
-    // prevent clicking on the first item of the list
+    /* Let's make sure the item really takes no space in the popup, or it will
+     * prevent clicking on the first item of the list */
     padding: 0px;
     line-height: 0;
   }
@@ -649,7 +646,7 @@ body {
   }
 
   .pagination-page-selector {
-    // On popup opening, the selector is hidden
+    /* On popup opening, the selector is hidden */
     display: none;
 
     flex: initial;
@@ -659,14 +656,11 @@ body {
   }
 }
 
-// -----------------------
-
-// Dealing with the popup width in case it's pinned to overflow menu
-// Apparently, overflow menu width must be around 425px atm
+/* Dealing with the popup width in case it's pinned to overflow menu
+ * Apparently, overflow menu width must be around 425px atm */
 
 @media (max-width: 400px) {
-  html,
-  body {
+  html, body {
     max-width: 100%;
   }
 }

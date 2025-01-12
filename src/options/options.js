@@ -1,8 +1,5 @@
 "use strict"
 
-import "./options.html"
-import "./options.scss"
-
 import Authentication from "../modules/authentication"
 import Badge from "../modules/badge"
 import BrowserDetector from "../modules/browser_detector"

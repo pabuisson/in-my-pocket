@@ -1,8 +1,5 @@
 "use strict"
 
-import "./popup.html"
-import "./popup.scss"
-
 import Badge from "../modules/badge"
 import BugReporter from "../modules/bug_reporter"
 import Logger from "../modules/logger"

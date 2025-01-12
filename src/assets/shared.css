@@ -1,5 +1,3 @@
-// Shared variables
-
 :root {
   --top-actions-height: 2.2rem;
   --top-actions-y-padding: 0.4rem;
@@ -17,10 +15,10 @@
   --favorite-bg-rgb: 249,232,144;
   --favorite-action: #fce158;
 
-// My own dark blue colour
+/* My own dark blue colour */
   --my-dark-blue: #29303d;
 
-// http://design.firefox.com/photon/visuals/color.html
+/* http://design.firefox.com/photon/visuals/color.html */
   --ff-primary-text: #0c0c0d;
   --ff-secondary-text: #737373;
   --ff-grey-10: #f9f9fa;
@@ -52,7 +50,7 @@
 }
 
 
-// Shared animations
+/* Shared animations */
 
 @keyframes linear-loading {
   0%   { left: 0;     right: 100%; }

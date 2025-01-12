@@ -1,4 +1,4 @@
-@import "../assets/shared";
+@import url("../assets/shared.css");
 
 body {
   color: var(--ff-grey-80);
