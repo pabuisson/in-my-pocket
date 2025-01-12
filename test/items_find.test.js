@@ -1,59 +1,59 @@
-import Items from "../src/modules/items.js"
+import Items from "../src/modules/items.ts"
 
 describe("Items.find", () => {
   const matchingItem = { id: "1234", title: "french", url: "www.quelquepart.fr" }
   const otherItem = { id: "5678", title: "other", url: "www.somewherelse.com" }
   const items = JSON.stringify([matchingItem, otherItem])
 
-  context("invalid searchedItem", () => {
-    it("no item given is falsy", () => {
-      expect(Items.findByUrl(items)).to.be.not.ok
+  describe("invalid searchedItem", () => {
+    test("no item given is falsy", () => {
+      expect(Items.findByUrl(items)).toBeFalsy()
     })
 
-    it("empty item given is falsy", () => {
-      expect(Items.findByUrl(items, "")).to.be.not.ok
+    test("empty item given is falsy", () => {
+      expect(Items.findByUrl(items, "")).toBeFalsy()
     })
   })
 
-  context("valid searchItem", () => {
-    it("matches nothing is falsy", () => {
+  describe("valid searchItem", () => {
+    test("matches nothing is falsy", () => {
       const searchFor = "www.a-url-that-doesnt-match.com"
-      expect(Items.findByUrl(items, searchFor)).to.be.not.ok
+      expect(Items.findByUrl(items, searchFor)).toBeFalsy()
     })
 
-    it("partially matches one item is falsy", () => {
+    test("partially matches one item is falsy", () => {
       const searchFor = "quelque"
-      expect(Items.findByUrl(items, searchFor)).to.be.not.ok
+      expect(Items.findByUrl(items, searchFor)).toBeFalsy()
     })
 
-    it("exactly matches one item returns the item", () => {
+    test("exactly matches one item returns the item", () => {
       const searchFor = matchingItem.url
-      expect(Items.findByUrl(items, searchFor)).to.eql(matchingItem)
+      expect(Items.findByUrl(items, searchFor)).toEqual(matchingItem)
     })
 
-    it("url matches the getpocket URL returns the item", () => {
+    test("url matches the getpocket URL returns the item", () => {
       const searchFor = "https://app.getpocket.com/read/" + matchingItem.url
-      expect(Items.findByUrl(items, searchFor)).to.eql(matchingItem)
+      expect(Items.findByUrl(items, searchFor)).toEqual(matchingItem)
     })
 
-    it("url matches the getpocket URL + ID returns the item", () => {
+    test("url matches the getpocket URL + ID returns the item", () => {
       const searchFor = "https://app.getpocket.com/read/" + matchingItem.id
-      expect(Items.findByUrl(items, searchFor)).to.eql(matchingItem)
+      expect(Items.findByUrl(items, searchFor)).toEqual(matchingItem)
     })
 
-    it("url matches the getpocket URL + ID returns the item", () => {
+    test("url matches the getpocket URL + ID returns the item", () => {
       const searchFor = "https://getpocket.com/read/" + matchingItem.id
-      expect(Items.findByUrl(items, searchFor)).to.eql(matchingItem)
+      expect(Items.findByUrl(items, searchFor)).toEqual(matchingItem)
     })
 
-    it("url matches the getpocket URL + locale + ID returns the item", () => {
+    test("url matches the getpocket URL + locale + ID returns the item", () => {
       const searchFor = "https://getpocket.com/fr/read/" + matchingItem.id
-      expect(Items.findByUrl(items, searchFor)).to.eql(matchingItem)
+      expect(Items.findByUrl(items, searchFor)).toEqual(matchingItem)
     })
 
-    it("url matches the firefox reader URL returns the item", () => {
+    test("url matches the firefox reader URL returns the item", () => {
       const searchFor = "about:reader?url=www.quelquepart.fr"
-      expect(Items.findByUrl(items, searchFor)).to.eql(matchingItem)
+      expect(Items.findByUrl(items, searchFor)).toEqual(matchingItem)
     })
   })
 })

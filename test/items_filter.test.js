@@ -1,4 +1,4 @@
-import Items from "../src/modules/items.js"
+import Items from "../src/modules/items.ts"
 
 describe("Items.filter", () => {
   const matchingItem = { id: 1234, title: "french", url: "https://www.quelquepart.fr" }
@@ -13,142 +13,142 @@ describe("Items.filter", () => {
   const items = JSON.stringify([matchingItem, otherItem, favedItem, taggedItem])
 
   it("returns all items if query is empty", () => {
-    expect(Items.filter(items, "").length).to.equal(4)
+    expect(Items.filter(items, "").length).toBe(4)
   })
 
   it("returns all items if query is undefined", () => {
-    expect(Items.filter(items, undefined).length).to.equal(4)
+    expect(Items.filter(items, undefined).length).toBe(4)
   })
 
   it("returns all items if query is null", () => {
-    expect(Items.filter(items, null).length).to.equal(4)
+    expect(Items.filter(items, null).length).toBe(4)
   })
 
-  context("with a given current item", () => {
+  describe("with a given current item", () => {
     it("does not return the item with given currentUrl in the item list", () => {
       const result = Items.filter(items, null, matchingItem.url)
-      expect(result.length).to.equal(3)
-      expect(result).not.to.deep.include(matchingItem)
+      expect(result.length).toBe(3)
+      expect(result).not.toContainEqual(matchingItem)
     })
 
     it("does not return the item with given currentUrl if considering reader url", () => {
       const readerUrl = "about:reader?url=" + encodeURIComponent(matchingItem.url)
       const result = Items.filter(items, null, readerUrl)
-      expect(result.length).to.equal(3)
-      expect(result).not.to.deep.include(matchingItem)
+      expect(result.length).toBe(3)
+      expect(result).not.toContainEqual(matchingItem)
     })
 
     it("does not return the item with given currentUrl if considering getpocket url with item url", () => {
       const getpocketUrl = "https://app.getpocket.com/read/" + matchingItem.url
       const result = Items.filter(items, null, getpocketUrl)
-      expect(result.length).to.equal(3)
-      expect(result).not.to.deep.include(matchingItem)
+      expect(result.length).toBe(3)
+      expect(result).not.toContainEqual(matchingItem)
     })
 
     it("does not return the item with given currentUrl if considering getpocket url with item id", () => {
       const getpocketUrl = "https://app.getpocket.com/read/" + matchingItem.id
       const result = Items.filter(items, null, getpocketUrl)
-      expect(result.length).to.equal(3)
-      expect(result).not.to.deep.include(matchingItem)
+      expect(result.length).toBe(3)
+      expect(result).not.toContainEqual(matchingItem)
     })
   })
 
-  context("query on title", () => {
-    context("with same case", () => {
+  describe("query on title", () => {
+    describe("with same case", () => {
       it("returns matching items", () => {
         const query = matchingItem.title
-        expect(Items.filter(items, query)).to.deep.include(matchingItem)
+        expect(Items.filter(items, query)).toContainEqual(matchingItem)
       })
 
       it("filters out non-matching items", () => {
         const query = matchingItem.title
-        expect(Items.filter(items, query)).not.to.include(otherItem)
+        expect(Items.filter(items, query)).not.toContain(otherItem)
       })
     })
 
-    context("with different case", () => {
+    describe("with different case", () => {
       it("returns matching items", () => {
         const query = matchingItem.title.toUpperCase()
-        expect(Items.filter(items, query)).to.deep.include(matchingItem)
+        expect(Items.filter(items, query)).toContainEqual(matchingItem)
       })
 
       it("does not return non-matching items", () => {
         const query = matchingItem.title
-        expect(Items.filter(items, query)).not.to.include(otherItem)
+        expect(Items.filter(items, query)).not.toContain(otherItem)
       })
     })
   })
 
-  context("query on url", () => {
-    context("query on protocol", () => {
+  describe("query on url", () => {
+    describe("query on protocol", () => {
       it("www is not taken into account", () => {
         const query = "www"
         const result = Items.filter(items, query)
-        expect(result).not.to.deep.include(matchingItem)
-        expect(result).not.to.deep.include(otherItem)
+        expect(result).not.toContainEqual(matchingItem)
+        expect(result).not.toContainEqual(otherItem)
       })
 
       it("http is not taken into account", () => {
         const query = "https"
         const result = Items.filter(items, query)
-        expect(result).not.to.deep.include(matchingItem)
-        expect(result).not.to.deep.include(otherItem)
+        expect(result).not.toContainEqual(matchingItem)
+        expect(result).not.toContainEqual(otherItem)
       })
     })
 
-    context("with same case", () => {
+    describe("with same case", () => {
       it("returns matching items", () => {
         const query = "quelquepart"
-        expect(Items.filter(items, query)).to.deep.include(matchingItem)
+        expect(Items.filter(items, query)).toContainEqual(matchingItem)
       })
 
       it("does not return non-matching items", () => {
         const query = "quelquepart"
-        expect(Items.filter(items, query)).not.to.include(otherItem)
+        expect(Items.filter(items, query)).not.toContain(otherItem)
       })
     })
 
-    context("query different case", () => {
+    describe("query different case", () => {
       it("returns matching items", () => {
         const query = "QUELQUEPART"
-        expect(Items.filter(items, query).length).to.equal(1)
+        expect(Items.filter(items, query).length).toBe(1)
       })
 
       it("does not return non-matching items", () => {
         const query = "QUELQUEPART"
-        expect(Items.filter(items, query)).not.to.include(otherItem)
+        expect(Items.filter(items, query)).not.toContain(otherItem)
       })
     })
   })
 
-  context("favorites", () => {
-    context("query on favorites", () => {
+  describe("favorites", () => {
+    describe("query on favorites", () => {
       it("returns favorite items if query contains is:faved", () => {
         const query = "is:faved"
-        expect(Items.filter(items, query)).to.deep.include(favedItem)
+        expect(Items.filter(items, query)).toContainEqual(favedItem)
       })
 
       it("does not return unfaved items if query contains is:faved", () => {
         const query = "is:faved"
         const result = Items.filter(items, query)
-        expect(result).not.to.include(matchingItem)
-        expect(result).not.to.include(otherItem)
+        expect(result).not.toContain(matchingItem)
+        expect(result).not.toContain(otherItem)
       })
 
       it("returns non-favorite items if query contains is:unfaved", () => {
         const query = "is:unfaved"
         const result = Items.filter(items, query)
-        expect(result).to.deep.include(matchingItem)
-        expect(result).to.deep.include(otherItem)
+        expect(result).toContainEqual(matchingItem)
+        expect(result).toContainEqual(otherItem)
       })
 
       it("does not return favorite items if query contains is:unfaved", () => {
         const query = "is:unfaved"
-        expect(Items.filter(items, query)).not.to.include(favedItem)
+        expect(Items.filter(items, query)).not.toContain(favedItem)
       })
     })
 
-    context("query on favorites + text", () => {
+    describe("query on favorites + text", () => {
       const matchingTextAndFav = { title: "matching text", url: "https://favorite.com", fav: "1" }
       const matchingTextNotFav = { title: "matching text", url: "https://favorite.com", fav: "0" }
       const matchingFavNotText = { title: "other text", url: "https://other.com", fav: "1" }
@@ -157,50 +157,50 @@ describe("Items.filter", () => {
       it("returns items matching on title and favorited if query contains is:faved", () => {
         const query = "is:faved favorite"
         const result = Items.filter(items, query)
-        expect(result).to.deep.include(matchingTextAndFav)
-        expect(result).not.to.include(matchingTextNotFav)
-        expect(result).not.to.include(matchingFavNotText)
+        expect(result).toContainEqual(matchingTextAndFav)
+        expect(result).not.toContain(matchingTextNotFav)
+        expect(result).not.toContain(matchingFavNotText)
       })
 
       it("returns items matching on url and favorited if query contains is:faved", () => {
         const query = "is:faved favorite.com"
         const result = Items.filter(items, query)
-        expect(result).to.deep.include(matchingTextAndFav)
-        expect(result).not.to.include(matchingTextNotFav)
-        expect(result).not.to.include(matchingFavNotText)
+        expect(result).toContainEqual(matchingTextAndFav)
+        expect(result).not.toContain(matchingTextNotFav)
+        expect(result).not.toContain(matchingFavNotText)
       })
     })
   })
 
-  context("tags", () => {
-    context("query on tagged status", () => {
+  describe("tags", () => {
+    describe("query on tagged status", () => {
       it("returns tagged items if query contains is:tagged", () => {
         const query = "is:tagged"
-        expect(Items.filter(items, query)).to.deep.include(taggedItem)
+        expect(Items.filter(items, query)).toContainEqual(taggedItem)
       })
 
       it("does not return untagged items if query contains is:tagged", () => {
         const query = "is:tagged"
         const result = Items.filter(items, query)
-        expect(result).not.to.deep.include(matchingItem)
-        expect(result).not.to.deep.include(otherItem)
-        expect(result).not.to.deep.include(favedItem)
+        expect(result).not.toContainEqual(matchingItem)
+        expect(result).not.toContainEqual(otherItem)
+        expect(result).not.toContainEqual(favedItem)
       })
 
       it("returns non-tagged items if query contains is:untagged", () => {
         const query = "is:untagged"
         const result = Items.filter(items, query)
-        expect(result).to.deep.include(otherItem)
+        expect(result).toContainEqual(otherItem)
       })
 
       it("does not return tagged items if query contains is:untagged", () => {
         const query = "is:untagged"
         const result = Items.filter(items, query)
-        expect(result).not.to.deep.include(taggedItem)
+        expect(result).not.toContainEqual(taggedItem)
       })
     })
 
-    context("query on tagged status + text", () => {
+    describe("query on tagged status + text", () => {
       const matchingTextWithTag = {
         title: "matching text",
         url: "https://tagged.com",
@@ -217,37 +217,37 @@ describe("Items.filter", () => {
       it("returns items matching on title and tagged if query contains is:tagged", () => {
         const query = "is:tagged matching text"
         const result = Items.filter(items, query)
-        expect(result).to.deep.include(matchingTextWithTag)
-        expect(result).not.to.deep.include(matchingTextNoTag)
-        expect(result).not.to.deep.include(nonMatchingTextWithTag)
+        expect(result).toContainEqual(matchingTextWithTag)
+        expect(result).not.toContainEqual(matchingTextNoTag)
+        expect(result).not.toContainEqual(nonMatchingTextWithTag)
       })
 
       it("returns items matching on url and tagged if query contains is:tagged", () => {
         const query = "is:tagged tagged.com"
         const result = Items.filter(items, query)
-        expect(result).to.deep.include(matchingTextWithTag)
-        expect(result).not.to.deep.include(matchingTextNoTag)
-        expect(result).not.to.deep.include(nonMatchingTextWithTag)
+        expect(result).toContainEqual(matchingTextWithTag)
+        expect(result).not.toContainEqual(matchingTextNoTag)
+        expect(result).not.toContainEqual(nonMatchingTextWithTag)
       })
 
       it("returns item matching on text and untagged if query contains is:untagged", () => {
         const query = "is:untagged matching"
         const result = Items.filter(items, query)
-        expect(result).to.deep.include(matchingTextNoTag)
-        expect(result).not.to.deep.include(matchingTextWithTag)
-        expect(result).not.to.deep.include(nonMatchingTextWithTag)
+        expect(result).toContainEqual(matchingTextNoTag)
+        expect(result).not.toContainEqual(matchingTextWithTag)
+        expect(result).not.toContainEqual(nonMatchingTextWithTag)
       })
 
       it("returns item matching on url and untagged if query contains is:untagged", () => {
         const query = "is:untagged tagged.com"
         const result = Items.filter(items, query)
-        expect(result).to.deep.include(matchingTextNoTag)
-        expect(result).not.to.deep.include(matchingTextWithTag)
-        expect(result).not.to.deep.include(nonMatchingTextWithTag)
+        expect(result).toContainEqual(matchingTextNoTag)
+        expect(result).not.toContainEqual(matchingTextWithTag)
+        expect(result).not.toContainEqual(nonMatchingTextWithTag)
       })
     })
 
-    context("query on item text and tag text", () => {
+    describe("query on item text and tag text", () => {
       const matchingTextAndTag = {
         title: "matching text",
         url: "https://matching.com",
@@ -274,17 +274,17 @@ describe("Items.filter", () => {
         const query = "matching"
         const result = Items.filter(items, query)
         // Both
-        expect(result).to.deep.include(matchingTextAndTag)
+        expect(result).toContainEqual(matchingTextAndTag)
         // Text only
-        expect(result).to.deep.include(matchingTextNotTag)
+        expect(result).toContainEqual(matchingTextNotTag)
         // Tag only
-        expect(result).to.deep.include(matchingTagNotText)
-        expect(result).not.to.deep.include(notMatchingAnything)
+        expect(result).toContainEqual(matchingTagNotText)
+        expect(result).not.toContainEqual(notMatchingAnything)
       })
     })
   })
 
-  context("combinining tagged and favorited status", () => {
+  describe("combinining tagged and favorited status", () => {
     const favoritedAndTagged = {
       title: "some text",
       url: "https://url.com",
@@ -304,37 +304,37 @@ describe("Items.filter", () => {
     it("is:faved is:tagged returns items matching both", () => {
       const query = "is:faved is:tagged"
       const result = Items.filter(items, query)
-      expect(result).to.deep.include(favoritedAndTagged)
-      expect(result).not.to.deep.include(favoritedNotTagged)
-      expect(result).not.to.deep.include(unfavedAndTagged)
-      expect(result).not.to.deep.include(unfavedNotTagged)
+      expect(result).toContainEqual(favoritedAndTagged)
+      expect(result).not.toContainEqual(favoritedNotTagged)
+      expect(result).not.toContainEqual(unfavedAndTagged)
+      expect(result).not.toContainEqual(unfavedNotTagged)
     })
 
     it("is:faved is:untagged returns items faved but no tagged", () => {
       const query = "is:faved is:untagged"
       const result = Items.filter(items, query)
-      expect(result).to.deep.include(favoritedNotTagged)
-      expect(result).not.to.deep.include(favoritedAndTagged)
-      expect(result).not.to.deep.include(unfavedAndTagged)
-      expect(result).not.to.deep.include(unfavedNotTagged)
+      expect(result).toContainEqual(favoritedNotTagged)
+      expect(result).not.toContainEqual(favoritedAndTagged)
+      expect(result).not.toContainEqual(unfavedAndTagged)
+      expect(result).not.toContainEqual(unfavedNotTagged)
     })
 
     it("is:unfaved is:tagged returns items unfaved but tagged", () => {
       const query = "is:unfaved is:tagged"
       const result = Items.filter(items, query)
-      expect(result).to.deep.include(unfavedAndTagged)
-      expect(result).not.to.deep.include(favoritedAndTagged)
-      expect(result).not.to.deep.include(favoritedNotTagged)
-      expect(result).not.to.deep.include(unfavedNotTagged)
+      expect(result).toContainEqual(unfavedAndTagged)
+      expect(result).not.toContainEqual(favoritedAndTagged)
+      expect(result).not.toContainEqual(favoritedNotTagged)
+      expect(result).not.toContainEqual(unfavedNotTagged)
     })
 
     it("is:unfaved is:untagged returns items neither faved nor tagged", () => {
       const query = "is:unfaved is:untagged"
       const result = Items.filter(items, query)
-      expect(result).to.deep.include(unfavedNotTagged)
-      expect(result).not.to.deep.include(favoritedAndTagged)
-      expect(result).not.to.deep.include(favoritedNotTagged)
-      expect(result).not.to.deep.include(unfavedAndTagged)
+      expect(result).toContainEqual(unfavedNotTagged)
+      expect(result).not.toContainEqual(favoritedAndTagged)
+      expect(result).not.toContainEqual(favoritedNotTagged)
+      expect(result).not.toContainEqual(unfavedAndTagged)
     })
   })
 })

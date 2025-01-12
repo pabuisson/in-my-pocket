@@ -1,4 +1,4 @@
-import Items from "../src/modules/items.js"
+import Items from "../src/modules/items.ts"
 
 describe("Items.paginate", () => {
   const item1 = {
@@ -29,116 +29,116 @@ describe("Items.paginate", () => {
   const items = [item1, item2, item3, item4, item5]
   const perPage = 4
 
-  context("pagination disabled", () => {
-    context("perPage undefined", () => {
+  describe("pagination disabled", () => {
+    describe("perPage undefined", () => {
       it("returns all items", () => {
-        expect(Items.paginate(items, 1, undefined)).to.deep.equal(items)
+        expect(Items.paginate(items, 1, undefined)).toEqual(items)
       })
 
       it("returns all items sorted by antechronological created_at", () => {
         const output = Items.paginate(items, 1, undefined)
-        expect(output[0]).to.equal(item5)
-        expect(output[1]).to.equal(item4)
-        expect(output[2]).to.equal(item3)
-        expect(output[3]).to.equal(item2)
-        expect(output[4]).to.equal(item1)
+        expect(output[0]).toEqual(item5)
+        expect(output[1]).toEqual(item4)
+        expect(output[2]).toEqual(item3)
+        expect(output[3]).toEqual(item2)
+        expect(output[4]).toEqual(item1)
       })
     })
 
-    context("perPage is null", () => {
+    describe("perPage is null", () => {
       it("returns all items", () => {
-        expect(Items.paginate(items, 1, null)).to.deep.equal(items)
+        expect(Items.paginate(items, 1, null)).toEqual(items)
       })
 
       it("returns all items sorted by antechronological created_at", () => {
         const output = Items.paginate(items, 1, null)
-        expect(output[0]).to.equal(item5)
-        expect(output[1]).to.equal(item4)
-        expect(output[2]).to.equal(item3)
-        expect(output[3]).to.equal(item2)
-        expect(output[4]).to.equal(item1)
+        expect(output[0]).toEqual(item5)
+        expect(output[1]).toEqual(item4)
+        expect(output[2]).toEqual(item3)
+        expect(output[3]).toEqual(item2)
+        expect(output[4]).toEqual(item1)
       })
     })
 
-    context("perPage is 0", () => {
+    describe("perPage is 0", () => {
       it("returns all items", () => {
-        expect(Items.paginate(items, 1, 0)).to.deep.equal(items)
+        expect(Items.paginate(items, 1, 0)).toEqual(items)
       })
 
       it("returns all items sorted by antechronological created_at", () => {
         const output = Items.paginate(items, 1, 0)
-        expect(output[0]).to.equal(item5)
-        expect(output[1]).to.equal(item4)
-        expect(output[2]).to.equal(item3)
-        expect(output[3]).to.equal(item2)
-        expect(output[4]).to.equal(item1)
+        expect(output[0]).toEqual(item5)
+        expect(output[1]).toEqual(item4)
+        expect(output[2]).toEqual(item3)
+        expect(output[3]).toEqual(item2)
+        expect(output[4]).toEqual(item1)
       })
     })
   })
 
-  context("not pagineable input", () => {
+  describe("not pagineable input", () => {
     it("returns [] if items = []", () => {
-      expect(Items.paginate([], 1, perPage)).to.be.empty
+      expect(Items.paginate([], 1, perPage)).toEqual([])
     })
 
     it("returns nothing if page param is < 0", () => {
       const negativePage = -1
-      expect(Items.paginate(items, negativePage, perPage)).not.to.be.ok
+      expect(Items.paginate(items, negativePage, perPage)).toBeFalsy()
     })
 
     it("returns nothing if page param is > max possible page", () => {
       const tooHighPage = 10
-      expect(Items.paginate(items, tooHighPage, perPage)).not.to.be.ok
+      expect(Items.paginate(items, tooHighPage, perPage)).toBeFalsy()
     })
   })
 
-  context("pagineable input", () => {
+  describe("pagineable input", () => {
     it("returns all items if perPage > total number of items", () => {
       const highPerPage = 50
-      expect(Items.paginate(items, 1, highPerPage)).to.deep.equal(items)
+      expect(Items.paginate(items, 1, highPerPage)).toEqual(items)
     })
 
     it("returns perPage items if perPage < total number of items", () => {
-      expect(Items.paginate(items, 1, perPage).length).to.equal(perPage)
+      expect(Items.paginate(items, 1, perPage).length).toBe(perPage)
     })
 
     it("sorts the items by antechronological created_at (newest first)", () => {
       const paginatedItems = Items.paginate(items, 1, perPage)
-      expect(paginatedItems[0]).to.equal(item5)
-      expect(paginatedItems[1]).to.equal(item4)
-      expect(paginatedItems[2]).to.equal(item3)
-      expect(paginatedItems[3]).to.equal(item2)
+      expect(paginatedItems[0]).toEqual(item5)
+      expect(paginatedItems[1]).toEqual(item4)
+      expect(paginatedItems[2]).toEqual(item3)
+      expect(paginatedItems[3]).toEqual(item2)
     })
 
-    context("given page=1", () => {
+    describe("given page=1", () => {
       it("returns the items of the 1st page", () => {
         const paginatedItems = Items.paginate(items, 1, perPage)
-        expect(paginatedItems).to.include(item5)
-        expect(paginatedItems).to.include(item4)
-        expect(paginatedItems).to.include(item3)
-        expect(paginatedItems).to.include(item2)
+        expect(paginatedItems).toContain(item5)
+        expect(paginatedItems).toContain(item4)
+        expect(paginatedItems).toContain(item3)
+        expect(paginatedItems).toContain(item2)
       })
 
       it("does not returns items of other pages", () => {
         const paginatedItems = Items.paginate(items, 1, perPage)
-        expect(paginatedItems).not.to.include(item1)
+        expect(paginatedItems).not.toContain(item1)
       })
     })
 
-    context("given page=n", () => {
+    describe("given page=n", () => {
       it("returns the items of the page", () => {
         const secondPage = 2
         const paginatedItems = Items.paginate(items, secondPage, perPage)
-        expect(paginatedItems).to.include(item1)
+        expect(paginatedItems).toContain(item1)
       })
 
       it("does not returns items of other pages", () => {
         const secondPage = 2
         const paginatedItems = Items.paginate(items, secondPage, perPage)
-        expect(paginatedItems).not.to.include(item5)
-        expect(paginatedItems).not.to.include(item4)
-        expect(paginatedItems).not.to.include(item3)
-        expect(paginatedItems).not.to.include(item2)
+        expect(paginatedItems).not.toContain(item5)
+        expect(paginatedItems).not.toContain(item4)
+        expect(paginatedItems).not.toContain(item3)
+        expect(paginatedItems).not.toContain(item2)
       })
     })
   })
