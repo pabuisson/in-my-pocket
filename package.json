@@ -30,14 +30,14 @@
     "build": "npm run clean && node esbuild.mjs",
     "watch": "npm run clean && node esbuild.mjs --watch",
     "package": "npm run build && npm run package-firefox && npm run zip-source",
-    "package-firefox": "cd ./build/esbuild && zip -r -FS ../../web-ext-artifacts/in_my_pocket-firefox-esbuild.zip * -x .DS_Store -x *.map",
+    "package-firefox": "cd ./build && zip -r -FS ../../web-ext-artifacts/in_my_pocket-firefox.zip * -x .DS_Store -x *.map",
     "zip-source": "zip -r -FS web-ext-artifacts/source.zip CHANGELOG.md README.md LICENSE package.json esbuild.mjs tsconfig.json src/ -x .DS_Store -x *.map",
     "test": "jest",
     "test-watch": "jest --watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/pabuisson/in-my-pocket.git"
+    "url": "git+ssh://git@github.com:pabuisson/in-my-pocket.git"
   },
   "keywords": [
     "firefox",
@@ -45,7 +45,7 @@
   ],
   "author": "Pierre-Adrien Buisson",
   "license": "MPL-2.0",
-  "homepage": "https://bitbucket.org/pabuisson/in-my-pocket#readme",
+  "homepage": "https://inmypocketaddon.com",
   "dependencies": {
     "@sentry/browser": "^6.19.0",
     "@sentry/tracing": "^6.19.0"

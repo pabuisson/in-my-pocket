@@ -32,7 +32,7 @@ const config = {
     ".json": "copy",
   },
   bundle: true,
-  outdir: "build/esbuild/",
+  outdir: "build/",
   target: ["firefox57"],
   logLevel: "debug",
 }
