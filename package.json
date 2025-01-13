@@ -31,12 +31,12 @@
     "build-new": "npm run clean && node esbuild.mjs",
     "watch": "npm run clean && npx webpack -w --mode=development",
     "package": "npm run build && npm run package-firefox && npm run package-chrome && npm run zip-source",
-    "package-firefox": "cd ./build/firefox && zip -r -FS ../../web-ext-artifacts/in_my_pocket-firefox.zip * -x .DS_Store -x *.map",
     "package-new": "cd ./build/esbuild && zip -r -FS ../../web-ext-artifacts/in_my_pocket-firefox-esbuild.zip * -x .DS_Store -x *.map",
+    "package-firefox": "cd ./build/firefox && zip -r -FS ../../web-ext-artifacts/in_my_pocket-firefox.zip * -x .DS_Store -x *.map",
     "package-chrome": "cd ./build/chrome && zip -r -FS ../../web-ext-artifacts/in_my_pocket-chrome.zip * -x .DS_Store -x *.map",
     "zip-source": "zip -r -FS web-ext-artifacts/source.zip CHANGELOG.md README.md LICENSE package.json webpack.config.js src/ -x .DS_Store -x *.map",
     "test": "jest",
-    "test-watch": "npx mocha -w ./test/helper/js ./test/**/*.test.js"
+    "test-watch": "jest --watch"
   },
   "repository": {
     "type": "git",
