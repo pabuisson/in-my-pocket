@@ -3,7 +3,7 @@ import * as esbuild from "esbuild"
 // TODO: handle both chrome and firefox builds
 // FIXME: ionicons.woof is copied + copied and hashed, it should be exported only once
 
-await esbuild.build({
+const config = {
   entryPoints: [
     { in: "./src/manifest_firefox.json", out: "manifest" },
     "./src/assets/**/*.css",
@@ -34,4 +34,14 @@ await esbuild.build({
   bundle: true,
   outdir: "build/esbuild/",
   target: ["firefox57"],
-})
+  logLevel: "debug",
+}
+
+// NOTE: be careful to use `node esbuild.mjs --watch` and not `node --watch esbuild.mjs`
+//       in which case the `--watch` option would be considered an option passed to node itself
+if (process.argv.includes("--watch")) {
+  const ctx = await esbuild.context(config)
+  await ctx.watch()
+} else {
+  await esbuild.build(config)
+}
