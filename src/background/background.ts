@@ -1,15 +1,17 @@
 "use strict"
 
+import browser from "webextension-polyfill"
 import Authentication from "../modules/authentication"
 import Badge from "../modules/badge"
 import ContextMenu from "../modules/context_menu"
 import Items from "../modules/items"
 import ItemsFetcher from "../modules/items_fetcher"
 import Logger from "../modules/logger"
+import { RuntimeEvent } from "../shared/types/index"
 
 // - - - MESSAGES - - -
 
-browser.runtime.onMessage.addListener(function (eventData) {
+browser.runtime.onMessage.addListener(function (eventData: RuntimeEvent) {
   Logger.log(`(bg.onMessage) eventData.action: ${eventData.action}`)
   switch (eventData.action) {
     case "authenticate":

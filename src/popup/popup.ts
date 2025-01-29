@@ -1,5 +1,6 @@
 "use strict"
 
+import browser from "webextension-polyfill"
 import Badge from "../modules/badge"
 import BugReporter from "../modules/bug_reporter"
 import Logger from "../modules/logger"
@@ -9,6 +10,7 @@ import PopupUI from "../modules/popup_ui"
 import SentryLoader from "../modules/sentry_loader"
 import { PocketError, PocketNotice, MouseButtons } from "../modules/constants"
 import { PopupFlash, FlashKind } from "../modules/popup_flash"
+import { RuntimeEvent } from "../shared/types/index"
 
 // -------------
 
@@ -16,7 +18,7 @@ SentryLoader.init()
 
 // --- EVENTS ---
 
-function onMessage(eventData) {
+function onMessage(eventData: RuntimeEvent) {
   Logger.log(`(popup onMessage): ${eventData.action}`)
 
   switch (eventData.action) {
@@ -56,7 +58,7 @@ function onMessage(eventData) {
   }
 }
 
-function onError(eventData) {
+function onError(eventData: RuntimeEvent) {
   Logger.warn(`(popup onError): ${eventData}`)
 
   let flashMessage = "An error occurred: "
@@ -93,7 +95,7 @@ function onError(eventData) {
   BugReporter.captureException({ error: eventData.error })
 }
 
-function onNotice(eventData) {
+function onNotice(eventData: RuntimeEvent) {
   Logger.warn(`(popup onNotice) : ${eventData}`)
 
   if (eventData.notice === PocketNotice.ALREADY_IN_LIST) {
@@ -119,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
   PopupUI.setup()
 
   // Listen for message from background
-  browser.runtime.onMessage.addListener(function (eventData) {
+  browser.runtime.onMessage.addListener(function (eventData: RuntimeEvent) {
     PopupMainLoader.disable()
     if (eventData.error) {
       onError(eventData)
