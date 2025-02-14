@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+* UI: change the popup header background from a dark color to a much lighter one, to keep a more consistent light-theme look.
+
+
 ## 0.12.24 and 0.12.25 - November 2024
 
 * PERFS: try to reduce (again) the size of items batch we ask Pocket during the initial account sync. Already went from 2k to 1k, now we're moving down to 500 items (0.12.24) and again to 200 items (0.12.25).
