@@ -4,9 +4,10 @@
   display: none !important;
 }
 
+/* TODO: remove actions-y-padding if not needed anymore */
 :root {
-  --top-actions-height: 2.2rem;
-  --top-actions-y-padding: 0.4rem;
+  --top-actions-height: 3rem;
+  --top-actions-y-padding: 1.5rem;
 }
 
 html {
@@ -442,9 +443,11 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 0.8rem;
 
-  height: var(--top-actions-height);
-  padding: var(--top-actions-y-padding) 0;
+  min-height: var(--top-actions-height);
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 
   background-color: var(--background-darker);
   color: var(--ff-grey-70);
@@ -455,18 +458,10 @@ body {
     cursor: pointer;
     font-size: 1.9rem;
 
-    width: 2rem;
-    margin-right: 0.4rem;
-
-    &:first-child {
-      margin-left: 0.4rem;
-    }
-
     &.random-item {
       font-weight: bold;
     }
 
-    /* This icon is separated from the other "item lists" action hence a large right margin */
     &.filter-faved {
       position: relative;
 
@@ -509,30 +504,27 @@ body {
   .filter-items-container {
     position: relative;
     flex: 1;
-    margin-right: 2rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
 
     .clear-search-box {
       position: absolute;
-      top: -0.2rem;
-      right: -1rem;
+      top: -0.35rem;
+      right: 0.15rem;
       color: var(--ff-grey-40);
       font-size: 2.2rem;
       cursor: pointer;
     }
 
     .filter-items {
+      box-sizing: border-box;
       width: 100%;
       padding: 0.3rem 0.6rem;
-      height: 1.6rem;
 
       background-color: rgba(255, 255, 255, 0.7);
       border-radius: 1rem;
       border: 0px transparent;
-      font-size: 1.1rem;
-
-      &:focus {
-        outline: none;
-      }
+      font-size: 1.15rem;
     }
   }
 }
@@ -566,6 +558,7 @@ body {
   z-index: 3;
   display: block !important;
   position: absolute;
+  /* TODO: check if this is still positionned correctly */
   top: calc(var(--top-actions-height) + 2 * var(--top-actions-y-padding));
   width: 100%;
   opacity: 1;
