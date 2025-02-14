@@ -26,7 +26,7 @@
     "build": "npm run clean && node esbuild.mjs",
     "watch": "npm run clean && node esbuild.mjs --watch",
     "package": "npm run build && npm run package-firefox && npm run zip-source",
-    "package-firefox": "cd ./build && zip -r -FS ../../web-ext-artifacts/in_my_pocket-firefox.zip * -x .DS_Store -x *.map",
+    "package-firefox": "cd ./build && zip -r -FS ../web-ext-artifacts/in_my_pocket-firefox.zip * -x .DS_Store -x *.map",
     "zip-source": "zip -r -FS web-ext-artifacts/source.zip CHANGELOG.md README.md LICENSE package.json esbuild.mjs tsconfig.json src/ -x .DS_Store -x *.map",
     "test": "jest",
     "test-watch": "jest --watch"
