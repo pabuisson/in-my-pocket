@@ -45,9 +45,11 @@ h2 {
   &.notice {
     padding: 0.5rem 1rem;
     margin: 1rem 0rem;
-    color: #444;
-    border-radius: 4px;
-    background-color: #bae1f2;
+
+    color: var(--ff-primary-text);
+    line-height: 1.4;
+    border-radius: 6px;
+    background-color: #d8ecf6;
   }
 
   label {
