@@ -42,10 +42,13 @@ const UI = (function () {
     savedNotificationElement.classList.remove("hidden")
 
     if (containerRow) {
-      const topMarginInPx = 2
+      const containerHeight = containerRow.offsetHeight
+      const notificationHeight = savedNotificationElement.offsetHeight
+      const topMarginInPx = Math.floor((containerHeight - notificationHeight) / 2)
       const offsetTop = parseInt(containerRow.offsetTop, parseIntBase) + topMarginInPx
       savedNotificationElement.style.top = `${offsetTop}px`
     } else {
+      // Move it all the way back to the top of the settings UI
       savedNotificationElement.style.top = "0px"
     }
 
