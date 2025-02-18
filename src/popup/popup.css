@@ -4,10 +4,8 @@
   display: none !important;
 }
 
-/* TODO: remove actions-y-padding if not needed anymore */
 :root {
   --top-actions-height: 3rem;
-  --top-actions-y-padding: 1.5rem;
 }
 
 html {
@@ -445,7 +443,7 @@ body {
   align-items: center;
   gap: 0.8rem;
 
-  min-height: var(--top-actions-height);
+  height: var(--top-actions-height);
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 
@@ -553,14 +551,13 @@ body {
 }
 
 .flash-overlay {
-  flex: initial;
+  /* Needed to counter the 'display:none' of the .hidden class. Without this, the overlay
+  * display goes from block to none, and is hidden all at once */
+  display: block !important;
 
   z-index: 3;
-  display: block !important;
   position: absolute;
-  /* TODO: check if this is still positionned correctly */
-  top: calc(var(--top-actions-height) + 2 * var(--top-actions-y-padding));
-  width: 100%;
+  top: var(--top-actions-height);
   opacity: 1;
   transition: height 200ms ease-out, opacity 200ms ease-out;
 
@@ -592,7 +589,7 @@ body {
     opacity: 0;
     transition: height 250ms ease-out, opacity 0 250ms ease-out;
 
-    /* Let's make sure the item really takes no space in the popup, or it will
+    /* Ensure the item really takes no space in the popup, or it will
      * prevent clicking on the first item of the list */
     padding: 0px;
     line-height: 0;

@@ -88,7 +88,7 @@ function onError(eventData: RuntimeEvent) {
   }
 
   // Show flash message + flash the badge if an error occured
-  PopupFlash.show(flashMessage, FlashKind.ERROR, 5000)
+  PopupFlash.show(flashMessage, FlashKind.ERROR, 6000)
   browser.runtime.sendMessage({ action: "flash-error" })
 
   // TODO: BugReporter is already called from Request. Is this useful at all?
