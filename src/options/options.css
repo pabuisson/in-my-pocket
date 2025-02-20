@@ -12,19 +12,22 @@ body {
 
 .saved-notification {
   position: absolute;
+
+  /* Starting position: the top value is then updated via JS
+   * to move the save notification to the correct row */
   right: 0;
   top: 1rem;
 
-  width: 100px;
-  padding: 2px;
+  margin-top: 0.2rem;
+  padding: 0.2rem 1rem;
 
-  background-color: rgba(var(--ff-green-60), 0.2);
+  background-color: rgba(var(--ff-green-60-rgb), 0.1);
   color: var(--ff-green-60);
   font-weight: bold;
   text-align: center;
 
   border: 2px solid var(--ff-green-60);
-  border-radius: 2px;
+  border-radius: 4px;
 
   opacity: 1;
   transition: opacity 400ms ease-out;
@@ -39,15 +42,17 @@ h2 {
 .row {
   margin: 0px;
   padding: 6px 0px 6px 6px;
-  line-height: 16px;
-  border-top: 1px solid #e1e1e1;
+  line-height: 1.2;
+  border-top: 1px solid var(--ff-grey-20);
 
   &.notice {
     padding: 0.5rem 1rem;
     margin: 1rem 0rem;
-    color: #444;
-    border-radius: 4px;
-    background-color: #bae1f2;
+
+    color: var(--ff-primary-text);
+    line-height: 1.4;
+    border-radius: 6px;
+    background-color: #d8ecf6;
   }
 
   label {

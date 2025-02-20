@@ -3,6 +3,7 @@
 ## Unreleased
 
 * UI: change the popup header background from a dark color to a much lighter one, to keep a more consistent light-theme look.
+* UI: fix the popup top-action height when the addon is used in sidebar mode, it was way too small and is now more consistent with the regular popup.
 
 
 ## 0.12.24 and 0.12.25 - November 2024
