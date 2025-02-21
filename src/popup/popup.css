@@ -6,10 +6,42 @@
 
 :root {
   --top-actions-height: 3rem;
+
+  --foreground-color: var(--ff-grey-70);
+  --foreground-secondary: var(--ff-grey-90);
+
+  --background-color: var(--ff-grey-10);
+  --background-secondary: #d2d3db;
+
+  --item-title-foreground-color: var(--ff-primary-text);
+  --item-url-foreground-color: var(--ff-secondary-text);
+
+  --current-page-background-color: white;
+  --current-page-border-color: var(--ff-ink-70);
+  --current-page-shadow-color: var(--ff-grey-30);
+
+  --tag-background-color: var(--ff-grey-20);
+  --tag-border-color: var(--ff-grey-40);
+  --tag-color: var(--ff-primary-text);
+
+  --actions-container-background-color-rgb: var(--ff-grey-20-rgb);
+  --actions-container-border-color: var(--ff-grey-20);
+  --actions-icon-color: var(--ff-primary-text);
+  --favorite-action: #fce158;
+  --edit-action-rgb: var(--ff-ink-70-rgb);
+
+  --clear-search-box-color: var(--ff-grey-40);
+  --clear-search-box-background-color: var(--ff-grey-10);
+
+  --favorite-bg: #f9e890;
+  --favorite-bg-rgb: 249,232,144;
 }
+
+
 
 html {
   min-height: 300px;
+
   &.sidebar {
     height: 100%;
   }
@@ -24,7 +56,7 @@ body {
   margin: 0;
   overflow: hidden;
   font-family: sans-serif;
-  background-color: var(--ff-grey-10);
+  background-color: var(--background-color);
 
   /* NOTE: used to set flex: 1 for direct descendants but it generated a bug for Firefox < 83 */
   display: flex;
@@ -77,6 +109,7 @@ body {
   .bottom {
     margin: 2rem;
     width: 80%;
+    /* FIXME: does this need to be updated for dark mode? */
     color: var(--ff-secondary-text);
     font-size: 1.1rem;
 
@@ -114,7 +147,7 @@ body {
     padding: 0.5rem;
     border-bottom: 1px solid var(--ff-grey-20);
 
-    color: var(--ff-grey-70);
+    color: var(--foreground-color);
 
     /* Item height used to be 3.5rem, fixed, for animation
      * I'm no longer fixing the height but to animate disappearance, I rely on max-height
@@ -130,18 +163,18 @@ body {
     }
 
     &.current-page {
-      background-color: white;
+      background-color: var(--current-page-background-color);
       &.favorite {
         background-color: var(--favorite-bg);
       }
 
-      border: 2px double var(--ff-ink-70);
+      border: 2px double var(--current-page-border-color);
       border-radius: 4px;
       margin: 0.2rem;
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
       font-weight: bold;
-      box-shadow: 0px 2px 8px 0px var(--ff-grey-30);
+      box-shadow: 0px 2px 8px 0px var(--current-page-shadow-color);
 
       .tab-icon {
         height: 20px;
@@ -178,7 +211,7 @@ body {
          * same height as the input + buttons */
         padding: 0.3rem 0px;
 
-        color: var(--ff-primary-text);
+        color: var(--item-title-foreground-color);
         user-select: text;
         white-space: nowrap;
         overflow-x: hidden;
@@ -186,7 +219,6 @@ body {
 
         cursor: pointer;
       }
-
     }
 
     .url-and-tags {
@@ -209,7 +241,7 @@ body {
         user-select: text;
         white-space: nowrap;
 
-        color: var(--ff-secondary-text);
+        color: var(--item-url-foreground-color);
 
         cursor: pointer;
       }
@@ -224,10 +256,6 @@ body {
           }
         }
       }
-    }
-
-    &:hover .title {
-      color: var(--ff-grey-90);
     }
 
     overflow: hidden;
@@ -272,10 +300,6 @@ body {
           border: 1px solid var(--ff-grey-40);
           border-radius: 2px;
           padding: 2px;
-
-          &:focus {
-            outline: 1px solid var(--ff-blue-70);
-          }
         }
 
         /* Fake tag input field */
@@ -296,13 +320,13 @@ body {
             margin-bottom: 1px;
             padding: 0px 2px;
 
-            background-color: var(--ff-grey-20);
-            border: 1px solid var(--ff-grey-40);
+            background-color: var(--tag-background-color);
+            border: 1px solid var(--tag-border-color);
             border-radius: 2px;
-            color: var(--ff-primary-text);
+            color: var(--tag-color);
 
             &:focus {
-              outline: 1px solid var(--ff-blue-70);
+              outline: 1px solid auto;
             }
           }
 
@@ -318,6 +342,7 @@ body {
 
           /* Manually add the focused class to the whole tags container
            * when the new-tag field has the focus */
+          /* TODO: auto does not work. How do I get the default outline color back? */
           &.focused {
             outline: 1px solid var(--ff-blue-70);
           }
@@ -360,8 +385,8 @@ body {
       right: 0;
       width: 14rem;
       height: 100%;
-      background-color: rgba(var(--ff-grey-20-rgb), 0.8);
-      border-left: 1px solid var(--ff-grey-20);
+      background-color: rgba(var(--actions-container-background-color-rgb), 0.8);
+      border-left: 1px solid var(--actions-container-border-color);
 
       display: flex;
       flex-direction: row;
@@ -384,7 +409,7 @@ body {
         }
 
         .icon {
-          color: var(--ff-primary-text);
+          color: var(--actions-icon-color);
           font-size: 1.5rem;
         }
 
@@ -405,7 +430,7 @@ body {
       }
 
       .edit-action:hover {
-        background-color: rgba(var(--ff-ink-70-rgb), 0.3);
+        background-color: rgba(var(--edit-action-rgb), 0.3);
       }
 
       .tick-action:hover {
@@ -427,7 +452,7 @@ body {
   text-align: center;
 
   font-size: 1.5rem;
-  color: var(--ff-grey-80);
+  color: var(--foreground-color);
 
   p {
     text-align: left;
@@ -447,14 +472,18 @@ body {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 
-  background-color: var(--background-darker);
-  color: var(--ff-grey-70);
+  background-color: var(--background-secondary);
+  color: var(--foreground-color);
 
   .top-icon {
     flex: initial;
     display: inline-block;
     cursor: pointer;
     font-size: 1.9rem;
+
+    &:hover {
+      color: var(--foreground-secondary);
+    }
 
     &.random-item {
       font-weight: bold;
@@ -509,7 +538,7 @@ body {
       position: absolute;
       top: -0.35rem;
       right: 0.15rem;
-      color: var(--ff-grey-40);
+      color: var(--clear-search-box-color);
       font-size: 2.2rem;
       cursor: pointer;
     }
@@ -519,7 +548,7 @@ body {
       width: 100%;
       padding: 0.3rem 0.6rem;
 
-      background-color: rgba(255, 255, 255, 0.7);
+      background-color: var(--clear-search-box-background-color);
       border-radius: 1rem;
       border: 0px transparent;
       font-size: 1.15rem;
@@ -600,13 +629,16 @@ body {
   flex: initial;
 
   z-index: 2;
-  height: 30px;
-  line-height: 30px;
+
+  height: 2.5rem;
+  line-height: 2.5rem;
+
   display: flex;
   flex-direction: row;
 
   font-weight: bold;
-  color: var(--ff-grey-80);
+  background: var(--background-secondary);
+  color: var(--foreground-color);
 
   .pagination-previous,
   .pagination-next {
@@ -615,7 +647,7 @@ body {
     cursor: pointer;
 
     &:hover {
-      background-color: var(--ff-grey-20);
+      color: var(--foreground-secondary);
     }
 
     &.disabled,
