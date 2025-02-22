@@ -8,8 +8,6 @@
   --notice-blue-rgb: 88,173,221;
 
   /* http://design.firefox.com/photon/visuals/color.html */
-  --ff-primary-text: #0c0c0d;
-  --ff-secondary-text: #737373;
   --ff-grey-10: #f9f9fa;
   --ff-grey-20: #ededf0;
   --ff-grey-20-rgb: 237,237,240;
@@ -17,6 +15,7 @@
   --ff-grey-40: #b1b1b3;
   --ff-grey-50: #737373;
   --ff-grey-60: #4a4a4f;
+  --ff-grey-60-rgb: 74,74,79;
   --ff-grey-70: #38383d;
   --ff-grey-80: #2a2a2e;
   --ff-grey-90: #0c0c0d;
@@ -27,6 +26,7 @@
   --ff-green-50: #30e60b;
   --ff-green-60: #12bc00;
   --ff-green-60-rgb: 18,188,0;
+  --ff-blue-40: #45a1ff;
   --ff-blue-50: #0a84ff;
   --ff-blue-60: #0060df;
   --ff-blue-70: #003eaa;
