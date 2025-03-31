@@ -4,6 +4,7 @@ import Authentication from "../modules/authentication"
 import Badge from "../modules/badge"
 import BrowserDetector from "../modules/browser_detector"
 import ContextMenu from "../modules/context_menu"
+import Environment from "../modules/environment"
 import FeatureSwitches from "../modules/feature_switches"
 import PageAction from "../modules/page_action"
 import Settings from "../modules/settings"
@@ -102,6 +103,11 @@ const UI = (function () {
     } else {
       fsContainer.classList.remove("hidden")
       fsContainer.querySelector(".value").appendChild(document.createTextNode(enabledFeatureSwitches))
+    }
+
+    const devModeContainer = document.querySelector(".enabled-development-mode")
+    if (Environment.isDevelopment()) {
+      devModeContainer.classList.remove("hidden")
     }
   }
 

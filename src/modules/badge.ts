@@ -4,9 +4,10 @@ import browser from "webextension-polyfill"
 import Logger from "./logger"
 import Settings from "./settings"
 import Utility from "./utility"
+import Environment from "./environment"
 
 const Badge = (function () {
-  const defaultBackgroundColor = "#333"
+  const defaultBackgroundColor = Environment.isDevelopment() ? Environment.DEV_MODE_COLOR : "#333"
   const successBackgroundColor = "#12bc00" // ff-green-60
   const errorBackgroundColor = "#ff0039" // ff-red-50
   const spinnerChars = "⌟⌞⌜⌝"

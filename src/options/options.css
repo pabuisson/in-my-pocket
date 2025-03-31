@@ -48,11 +48,21 @@ h2 {
   &.notice {
     padding: 0.5rem 1rem;
     margin: 1rem 0rem;
-
-    color: var(--ff-primary-text);
     line-height: 1.4;
     border-radius: 6px;
+
+    color: var(--ff-grey-80);
     background-color: #d8ecf6;
+  }
+  &.warning {
+    padding: 0.5rem 1rem;
+    margin: 1rem 0rem;
+    line-height: 1.4;
+    border-radius: 6px;
+
+    /* NOTE: same color as the development badge color */
+    background-color: #fcab10;
+    color: var(--ff-grey-80);
   }
 
   label {

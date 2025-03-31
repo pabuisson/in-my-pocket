@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/browser"
 import { Integrations } from "@sentry/tracing"
 import Settings from "../modules/settings"
 import Logger from "../modules/logger"
+import Environment from "../modules/environment"
 import { VersionManager } from "../modules/version_manager"
 
 const SentryLoader = (function () {
@@ -37,6 +38,7 @@ const SentryLoader = (function () {
       Sentry.init({
         dsn: "https://a6dcb8356fb92f218b162b76ddc60a5e@o4507282894487552.ingest.de.sentry.io/4507282896519248",
         release: "in-my-pocket@" + VersionManager.getCurrentVersion(),
+        environment: Environment.isDevelopment() === true ? "development" : "production",
         enabled: bugReportEnabled,
         tracesSampleRate: 1.0, // For performance monitoring
         initialScope: {
