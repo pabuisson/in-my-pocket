@@ -29,7 +29,8 @@
     --actions-container-background-color-rgb: var(--ff-grey-20-rgb);
     --actions-container-border-color: var(--ff-grey-20);
     --actions-icon-color: var(--ff-grey-90);
-    --favorite-action: #fce158;
+    --favorite-action-background-color: #f2c34d;
+    --favorite-action-foreground: var(--ff-grey-90);
     --edit-action-rgb: var(--ff-ink-70-rgb);
 
     --input-border-color: var(--ff-grey-30);
@@ -69,7 +70,8 @@
     --actions-container-background-color-rgb: var(--ff-grey-60-rgb);
     --actions-container-border-color: var(--ff-grey-60);
     --actions-icon-color: var(--foreground-color);
-    --favorite-action: #fce158;
+    --favorite-action-background-color: #fccd58;
+    --favorite-action-foreground-color: var(--ff-grey-90);
     --edit-action-rgb: var(--custom-ink-rgb);
 
     --input-border-color: var(--ff-grey-60);
@@ -484,17 +486,22 @@ body {
           height: var(--loader-size);
           width: var(--loader-size);
           animation: rotate 0.8s infinite linear;
-          border: 0.4rem solid var(--ff-grey-60);
+          border: 0.4rem solid var(--actions-icon-color);
           border-radius: 50%;
           border-right-color: transparent;
         }
       }
 
       .favorite-action:hover {
-        background-color: var(--favorite-action);
+        background-color: var(--favorite-action-background-color);
 
         .icon {
-          color: var(--ff-grey-90);
+          color: var(--favorite-action-foreground-color);
+        }
+
+        .loader {
+          border-color: var(--favorite-action-foreground-color);
+          border-right-color: transparent;
         }
       }
 
