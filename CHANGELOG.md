@@ -7,6 +7,7 @@
 > published. It'll also include changes related to Pocket shutting down, mainly to ease
 > the experience of users who still use the addon.
 
+* **Pocket shutdown: add an "export all items" option in the settings**
 * Pocket shutdown: disable the authentication screen, and show a notice about Pocket shutdown instead
 * Pocket shutdown: show a warning next to the 'disconnect' feature in the settings
 * UI: introducing a dark mode, finally! InMyPocket theme will automatically adjust to Firefox selected theme. You're using a dark mode? Then InMyPocket will adapt. You're more of a light mode fan? Fear not, InMyPocket also has you covered!

@@ -9,6 +9,7 @@ import FeatureSwitches from "../modules/feature_switches"
 import PageAction from "../modules/page_action"
 import Settings from "../modules/settings"
 import SentryLoader from "../modules/sentry_loader"
+import Utility from "../modules/utility"
 import { parseIntBase } from "../modules/constants"
 
 // -------------
@@ -23,6 +24,7 @@ const disconnectStep2 = document.querySelector(".disconnect-second-step")
 const disconnectActionStep1 = document.querySelector(".disconnect-first-step")
 const disconnectActionStep2Confirm = document.querySelector(".disconnect-second-step-confirm")
 const disconnectActionStep2Cancel = document.querySelector(".disconnect-second-step-cancel")
+const exportItemsButton = document.querySelector(".export-items-button")
 const displayBadgeCountCheckbox = document.querySelector(".display-badge-count")
 const displayPageActionCheckbox = document.querySelector(".display-page-action")
 const enableDebugModeCheckbox = document.querySelector(".enable-debug-mode")
@@ -235,6 +237,27 @@ const UI = (function () {
           PageAction.hideAllTabs()
 
           disconnectRow.classList.add("hidden")
+        })
+      })
+
+      // Event : "Export items" from the Pocket account
+      exportItemsButton.addEventListener("click", function (ev) {
+        browser.storage.local.get("items").then(({ items }) => {
+          const itemsList = Utility.parseJson(items)
+          const a = document.createElement("a")
+
+          const now = new Date().toISOString()
+          const separator = ";"
+          const lineSeparator = "\n"
+          const headers = ["url", "title", "tags", "created_at"].join(separator) + lineSeparator
+          const data = itemsList
+            .map(i => [i.url, i.title, i.tags.sort().join("|"), i.created_at].join(separator))
+            .join(lineSeparator)
+
+          a.href = `data:text/csv;charset=utf-8,${encodeURIComponent(headers)}${encodeURIComponent(data)}`
+          a.setAttribute("download", `export-${now}.csv`)
+          a.setAttribute("type", "text/csv")
+          a.dispatchEvent(new MouseEvent("click"))
         })
       })
     },
