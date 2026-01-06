@@ -688,10 +688,29 @@ body {
   }
 }
 
+.authenticated .pocket-eol-warning {
+  padding: 1rem 2rem;
+
+  background: var(--background-secondary);
+
+  border-bottom: 4px solid var(--pocket-red);
+  border-top: 4px solid var(--pocket-red);
+  margin-bottom: 2px;
+  margin-top: -2px;
+
+  text-align: center;
+  font-size: 1.2rem;
+
+  a {
+    color: var(--pocket-red);
+  }
+}
+
 .flash-overlay {
   /* Needed to counter the 'display:none' of the .hidden class. Without this, the overlay
   * display goes from block to none, and is hidden all at once */
   display: block !important;
+  width: 100%;
 
   z-index: 3;
   position: absolute;
@@ -701,9 +720,9 @@ body {
     height 200ms ease-out,
     opacity 200ms ease-out;
 
-  padding: 1rem;
+  padding: 0.5rem;
 
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: 1.4;
   text-align: center;
 
