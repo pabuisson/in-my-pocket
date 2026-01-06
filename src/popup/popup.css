@@ -5,6 +5,8 @@
 }
 
 :root {
+  color-scheme: light dark;
+
   --top-actions-height: 3rem;
 }
 
@@ -122,7 +124,8 @@ body {
   }
 }
 
-.authenticated, .authentication {
+.authenticated,
+.authentication {
   height: 100%;
   width: 100%;
 
@@ -133,6 +136,18 @@ body {
 .authentication {
   justify-content: space-between;
   align-items: center;
+
+  .pocket-eol-warning {
+    height: 100%;
+    padding: 2rem;
+
+    color: light-dark(var(--ff-grey-90), var(--ff-grey-10));
+    font-size: 1.4rem;
+
+    .signature {
+      margin-top: 4rem;
+    }
+  }
 
   button {
     margin: 3rem;

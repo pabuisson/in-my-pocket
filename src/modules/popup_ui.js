@@ -79,23 +79,23 @@ const PopupUI = (function () {
   function setupUnauthenticatedUI() {
     Logger.log("(PopupUI.setupUnauthenticatedUI)")
 
-    // User is not authenticated yet
-    const authenticationButton = document.querySelector(".authentication button")
-    const pocketSignupLink = document.querySelector(".authentication .signup")
+    // // User is not authenticated yet
+    // const authenticationButton = document.querySelector(".authentication button")
+    // const pocketSignupLink = document.querySelector(".authentication .signup")
 
-    document.querySelector(".authentication").classList.remove("hidden")
+    // document.querySelector(".authentication").classList.remove("hidden")
     document.querySelector(".authenticated").classList.add("hidden")
 
-    authenticationButton.addEventListener("click", () => {
-      window.close() // Close the popup after starting authentication
-      browser.runtime.sendMessage({ action: "authenticate" })
-    })
+    // authenticationButton.addEventListener("click", () => {
+    //   window.close() // Close the popup after starting authentication
+    //   browser.runtime.sendMessage({ action: "authenticate" })
+    // })
 
-    pocketSignupLink.addEventListener("click", () => {
-      setTimeout(() => {
-        window.close()
-      }, 200)
-    })
+    // pocketSignupLink.addEventListener("click", () => {
+    //   setTimeout(() => {
+    //     window.close()
+    //   }, 200)
+    // })
   }
 
   function ensureFullResyncTriggeredIfNeeded() {
