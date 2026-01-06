@@ -1,5 +1,9 @@
 @import url("../assets/shared.css");
 
+:root {
+  color-scheme: light dark;
+}
+
 body {
   color: var(--ff-grey-80);
   min-width: 600px;
@@ -101,7 +105,8 @@ h2 {
     border-top: 0px none;
   }
 
-  .disconnect-account-second-step-confirm {
+  .disconnect-second-step-confirm {
+    color: light-dark(#d71515, red);
     font-weight: bold;
   }
 }
@@ -115,8 +120,8 @@ h2 {
   :root {
     --dark-options-background: #202023;
     --dark-options-foreground: #dadada;
-    --dark-options-background-rgb: 32,32,35;
-    --dark-options-foreground-rgb: 218,218,218;
+    --dark-options-background-rgb: 32, 32, 35;
+    --dark-options-foreground-rgb: 218, 218, 218;
   }
 
   body {
