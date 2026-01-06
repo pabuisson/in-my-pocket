@@ -8,6 +8,7 @@
 > the experience of users who still use the addon.
 
 * Pocket shutdown: disable the authentication screen, and show a notice about Pocket shutdown instead
+* Pocket shutdown: show a warning next to the 'disconnect' feature in the settings
 * UI: introducing a dark mode, finally! InMyPocket theme will automatically adjust to Firefox selected theme. You're using a dark mode? Then InMyPocket will adapt. You're more of a light mode fan? Fear not, InMyPocket also has you covered!
 * UI: change the popup header background from a dark color to a much lighter one, to keep a more consistent light-theme look.
 * UI: fix the popup top-action height when the addon is used in sidebar mode, it was way too small and is now more consistent with the regular popup.
