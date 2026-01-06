@@ -42,16 +42,18 @@
     --clear-search-box-background-color: var(--background-color);
 
     --favorite-bg: #f9e890;
-    --favorite-bg-rgb: 249,232,144;
+    --favorite-bg-rgb: 249, 232, 144;
 
     --outline-color: var(--ff-blue-70);
+
+    --warning-accent: chocolate;
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --custom-ink: #8791EB;
-    --custom-ink-rgb: 135,145,235;
+    --custom-ink: #8791eb;
+    --custom-ink-rgb: 135, 145, 235;
 
     --foreground-color: var(--ff-grey-10);
     --foreground-secondary: var(--ff-grey-30);
@@ -83,12 +85,13 @@
     --clear-search-box-background-color: var(--background-color);
 
     --favorite-bg: #f9e890;
-    --favorite-bg-rgb: 249,232,144;
+    --favorite-bg-rgb: 249, 232, 144;
 
     --outline-color: var(--ff-blue-40);
+
+    --warning-accent: #d08770;
   }
 }
-
 
 html {
   min-height: 300px;
@@ -225,8 +228,12 @@ body {
       color: var(--ff-grey-90);
 
       /* NOTE: these overrides are needed as long as I use the same background-color for light and dark themes */
-      .favicon-and-title .title { color: var(--ff-grey-90); }
-      .url-and-tags .url { color: var(--ff-grey-70); }
+      .favicon-and-title .title {
+        color: var(--ff-grey-90);
+      }
+      .url-and-tags .url {
+        color: var(--ff-grey-70);
+      }
     }
 
     &.current-page {
@@ -249,7 +256,6 @@ body {
       }
     }
 
-
     & > span {
       margin-left: 0.5rem;
     }
@@ -259,7 +265,8 @@ body {
       align-items: center;
 
       /* FIXME: how can I CSS the stroke color for the tab-icon ? */
-      .favicon, .tab-icon {
+      .favicon,
+      .tab-icon {
         height: 16px;
         width: 16px;
         margin-right: 0.5rem;
@@ -331,7 +338,11 @@ body {
     /* second duration is the delay after which the transition must begin
      * 'ease-out' timing function for max-height because I define a larger-than-the-item max-height,
      * so I need the transition to be fast at first and then come back to a normal speed */
-    transition: max-height 250ms ease-out, padding 250ms, opacity 0s 200ms, border-bottom-width 0s 240ms;
+    transition:
+      max-height 250ms ease-out,
+      padding 250ms,
+      opacity 0s 200ms,
+      border-bottom-width 0s 240ms;
 
     /* When the item is visually disappearing from the list
      * Relies on max-height since height is no longer fixed */
@@ -433,7 +444,7 @@ body {
 
         /* FIXME: adapt button color and background */
         button.cancel-edit,
-        input.submit-edit[type='submit'] {
+        input.submit-edit[type="submit"] {
           display: inline;
           font-size: 1rem;
 
@@ -445,7 +456,6 @@ body {
           }
         }
       }
-
     }
 
     /* Removing: when the "delete/archive" button has been clicked and the spinner is spinning,
@@ -467,7 +477,10 @@ body {
       right: 0;
       width: 14rem;
       height: 100%;
-      background-color: rgba(var(--actions-container-background-color-rgb), 0.8);
+      background-color: rgba(
+        var(--actions-container-background-color-rgb),
+        0.8
+      );
       border-left: 1px solid var(--actions-container-border-color);
 
       display: flex;
@@ -684,7 +697,9 @@ body {
   position: absolute;
   top: var(--top-actions-height);
   opacity: 1;
-  transition: height 200ms ease-out, opacity 200ms ease-out;
+  transition:
+    height 200ms ease-out,
+    opacity 200ms ease-out;
 
   padding: 1rem;
 
@@ -712,7 +727,9 @@ body {
 
     height: 0px;
     opacity: 0;
-    transition: height 250ms ease-out, opacity 0 250ms ease-out;
+    transition:
+      height 250ms ease-out,
+      opacity 0 250ms ease-out;
 
     /* Ensure the item really takes no space in the popup, or it will
      * prevent clicking on the first item of the list */
@@ -767,7 +784,8 @@ body {
  * Apparently, overflow menu width must be around 425px atm */
 
 @media (max-width: 400px) {
-  html, body {
+  html,
+  body {
     max-width: 100%;
   }
 }
