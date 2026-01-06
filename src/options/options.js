@@ -17,6 +17,7 @@ SentryLoader.init()
 
 // -------------
 
+const accountSection = document.querySelector("section.account")
 const disconnectRow = document.querySelector(".disconnect-row")
 const disconnectStep2 = document.querySelector(".disconnect-second-step")
 const disconnectActionStep1 = document.querySelector(".disconnect-first-step")
@@ -63,9 +64,9 @@ const UI = (function () {
   }
 
   async function initializeUIFromSettings() {
-    // If user is not connected, hide the "disconnect" link
+    // If user is not connected, hide the export and "disconnect" link
     Authentication.isAuthenticated().catch(function () {
-      disconnectRow.style.display = "none"
+      accountSection.style.display = "none"
     })
 
     // Initialize the state of all UI elements
