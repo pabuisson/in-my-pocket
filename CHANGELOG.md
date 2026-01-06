@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased - Last version - January 2026
+## 0.13.0 - Last version? - January 2026
 
 > Pocket has shut down a few months ago. This is likely to be the very last version of
 > InMyPocket. It'll include some changes I made before Pocket shut down, and never
